@@ -139,9 +139,7 @@ class PromptBasedInputGenerator(InputGenerator):
             extracted_sentence = matched.group(1) if matched else ""
             # Clean the extracted sentence by removing unwanted tokens
             cleaned_sentence = (
-                extracted_sentence.replace("</s>", "")
-                .replace("<unk>", "")
-                .strip()
+                extracted_sentence.replace("</s>", "").replace("<unk>", "").strip()
             )
             return cleaned_sentence
 

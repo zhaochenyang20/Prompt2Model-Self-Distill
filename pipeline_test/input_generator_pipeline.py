@@ -24,6 +24,12 @@ prompt_spec = MockPromptSpec(
     examples="""input="Question: What is the capital city of China?", output="Shanghai"\n\ninput="Question: When was People's Republic of China founded?", output="October 1, 1949"\n\n""",  # noqa E501
 )
 
-input_generator = PromptBasedInputGenerator(pretrained_model_name="meta-llama/Llama-2-7b-chat-hf")
+input_generator = PromptBasedInputGenerator(
+    pretrained_model_name="meta-llama/Llama-2-7b-chat-hf"
+)
 
-inputs = input_generator.generate_inputs(generated_examples=generated_examples, prompt_spec=prompt_spec,hyperparameter_choices={})
+inputs = input_generator.generate_inputs(
+    generated_examples=generated_examples,
+    prompt_spec=prompt_spec,
+    hyperparameter_choices={"num_return_sequences": 1},
+)
