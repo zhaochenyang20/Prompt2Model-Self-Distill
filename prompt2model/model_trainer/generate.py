@@ -256,7 +256,7 @@ class GenerationModelTrainer(BaseTrainer):
 
         Args:
             hyperparameter_choices: A dictionary of hyperparameters for training.
-            training_datasets: Training datasets with `input_col` and `model_output`.
+            training_datasets: Training datasets with `model_input` and `model_output`.
             validation_datasets: Validation datasets during training. If not provided,
                 15% of training data will be spilt from training_datasets to validate.
 
