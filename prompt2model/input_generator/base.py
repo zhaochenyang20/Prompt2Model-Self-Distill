@@ -3,9 +3,11 @@
 from __future__ import annotations  # noqa FI58
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from prompt2model.dataset_generator.prompt_based import Example
 from prompt2model.prompt_parser import PromptSpec
 
 
@@ -26,12 +28,18 @@ class InputGenerator(ABC):
         )
 
     @abstractmethod
-    def generate_inputs(self, num_examples: int, prompt_spec: PromptSpec) -> list[str]:
+    def generate_inputs(
+        self,
+        generated_examples: list[Example],
+        prompt_spec: PromptSpec,
+        hyperparameter_choices=dict[str, Any],
+    ) -> list[str]:
         """Generate new inputs for a given prompt.
 
         Args:
-            num_examples: Expected number of inputs.
-            prompt_spec: A parsed prompt spec.
+            generated_examples: A list of currently generated examples.
+            prompt_spec: A prompt we use to generate new inputs.
+            hyperparameter_choices: A dictionary of hyperparameter choices.
 
         Returns:
             A list of new input strings.

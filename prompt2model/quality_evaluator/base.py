@@ -10,7 +10,7 @@ from prompt2model.prompt_parser import PromptSpec
 
 
 class QualityEvaluator(ABC):
-    """A class for generating inputs of examples from a prompt specification."""
+    """A class for evaluate generated exmaples and filter high-quality examples."""
 
     @abstractmethod
     def evaluate_input_output_pairs(

@@ -1,8 +1,8 @@
-"""Import Input Generator classes."""
-from prompt2model.input_generator.base import InputGenerator
-from prompt2model.input_generator.mock import MockInputGenerator
+"""Import quality evaluator classes."""
+from prompt2model.quality_evaluator.base import QualityEvaluator
+from prompt2model.quality_evaluator.mock import MockQualityEvaluator
 
 __all__ = (
-    "InputGenerator",
-    "MockInputGenerator",
+    "QualityEvaluator",
+    "MockQualityEvaluator",
 )
