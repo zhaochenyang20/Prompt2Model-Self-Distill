@@ -127,7 +127,7 @@ class PromptBasedInputGenerator(InputGenerator):
             top_k=hyperparameter_choices.get("top_k", 10),
             num_return_sequences=hyperparameter_choices.get("num_return_sequences", 5),
             eos_token_id=self.tokenizer.eos_token_id,
-            max_length=hyperparameter_choices.get("max_length", 400),
+            max_new_tokens=hyperparameter_choices.get("max_new_tokens", 400),
             temperature=hyperparameter_choices.get("temperature", 0.7),
         )
 
@@ -139,8 +139,8 @@ class PromptBasedInputGenerator(InputGenerator):
             extracted_sentence = matched.group(1) if matched else ""
             # Clean the extracted sentence by removing unwanted tokens
             cleaned_sentence = (
-                extracted_sentence.replace(self.tokenizer.eos_token, "")
-                .replace(self.tokenizer.pad_token, "")
+                extracted_sentence.replace("</s>", "")
+                .replace("<unk>", "")
                 .strip()
             )
             return cleaned_sentence
