@@ -25,11 +25,19 @@ prompt_spec = MockPromptSpec(
 )
 
 input_generator = PromptBasedInputGenerator(
-    pretrained_model_name="meta-llama/Llama-2-7b-chat-hf"
+    pretrained_model_name="sshleifer/tiny-gpt2"
+    # meta-llama/Llama-2-7b-chat-hf
 )
 
-inputs = input_generator.generate_inputs(
+prompt = input_generator.construct_prompt(
+    instruction=prompt_spec.instruction,
+    few_shot_example_string=prompt_spec.examples,
     generated_examples=generated_examples,
-    prompt_spec=prompt_spec,
-    hyperparameter_choices={"num_return_sequences": 1},
+    context_cutoff=3500,
 )
+
+# inputs = input_generator.generate_inputs(
+#     generated_examples=generated_examples,
+#     prompt_spec=prompt_spec,
+#     hyperparameter_choices={"num_return_sequences": 1},
+# )

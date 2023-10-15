@@ -37,8 +37,8 @@ class PromptBasedInputGenerator(InputGenerator):
         self.model = AutoModelForCausalLM.from_pretrained(
             pretrained_model_name,
             trust_remote_code=True,
-            device_map="auto",
-            quantization_config=quantization_config,
+            # device_map="auto",
+            # # quantization_config=quantization_config,
         )
 
     def construct_prompt(

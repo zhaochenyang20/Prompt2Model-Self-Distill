@@ -47,8 +47,8 @@ class PromptBasedOutputAnnotator(OutputAnnotator):
             self.model = AutoModelForCausalLM.from_pretrained(
                 pretrained_model_name,
                 trust_remote_code=True,
-                device_map="auto",
-                quantization_config=quantization_config,
+                # device_map="auto",
+                # quantization_config=quantization_config,
             )
 
     def construct_prompt(
@@ -162,7 +162,7 @@ class PromptBasedOutputAnnotator(OutputAnnotator):
             A dictionary mapping input strings to a list of candidate
                 outputs, i.e. dict[str, list[str]].
         """
-        outputs_dict = {}
+        outputs_list = []
         for input in input_strings:
             outputs = self.annotate_single_input(
                 input=input,
@@ -175,5 +175,7 @@ class PromptBasedOutputAnnotator(OutputAnnotator):
                     temperature=0.7,
                 ),
             )
-            outputs_dict[input] = outputs
-        return datasets.Dataset.from_dict(outputs_dict)
+            outputs_list.append(outputs)
+        return datasets.Dataset.from_dict(
+            dict(inputs=input_strings, outputs=outputs_list)
+        )
