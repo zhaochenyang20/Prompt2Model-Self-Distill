@@ -6,7 +6,7 @@ from typing import Any
 import datasets
 import torch
 from peft import PeftConfig, PeftModel
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 from prompt2model.output_annotator import OutputAnnotator
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
@@ -15,6 +15,10 @@ from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 
 logger = get_formatted_logger("OutputAnnotator")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+quantization_config = BitsAndBytesConfig(
+    load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16
+)
 
 
 class PromptBasedOutputAnnotator(OutputAnnotator):
@@ -33,18 +37,19 @@ class PromptBasedOutputAnnotator(OutputAnnotator):
         """
         if peft_model_id is not None:
             config = PeftConfig.from_pretrained(peft_model_id)
-            model = AutoModelForSeq2SeqLM.from_pretrained(
-                config.base_model_name_or_path
-            )
+            model = AutoModelForCausalLM.from_pretrained(config.base_model_name_or_path)
             self.model = PeftModel.from_pretrained(model, peft_model_id).to(device)
             self.tokenizer = AutoTokenizer.from_pretrained(
                 config.base_model_name_or_path
             )
         else:
             self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name)
-            self.model = AutoModelForSeq2SeqLM.from_pretrained(
-                pretrained_model_name, torch_dtype=torch.float16, trust_remote_code=True
-            ).to(device)
+            self.model = AutoModelForCausalLM.from_pretrained(
+                pretrained_model_name,
+                trust_remote_code=True,
+                device_map="auto",
+                quantization_config=quantization_config,
+            )
 
     def construct_prompt(
         self,
