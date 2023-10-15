@@ -20,7 +20,6 @@ quantization_config = BitsAndBytesConfig(
     load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16
 )
 
-
 class PromptBasedInputGenerator(InputGenerator):
     """Generate inputs from prompts."""
 
@@ -38,8 +37,8 @@ class PromptBasedInputGenerator(InputGenerator):
             pretrained_model_name,
             trust_remote_code=True,
             device_map="auto",
-            quantization_config=quantization_config,
-        ).to(device)
+            torch_dtype=torch.float16,
+        )
 
     def construct_prompt(
         self,
