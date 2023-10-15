@@ -5,7 +5,7 @@ import re
 from typing import Any
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 from prompt2model.dataset_generator.prompt_based import Example
 from prompt2model.input_generator import InputGenerator
@@ -15,6 +15,10 @@ from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 
 logger = get_formatted_logger("InputGenerator")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+quantization_config = BitsAndBytesConfig(
+    load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16
+)
 
 
 class PromptBasedInputGenerator(InputGenerator):
@@ -31,7 +35,9 @@ class PromptBasedInputGenerator(InputGenerator):
         """
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name)
         self.model = AutoModelForCausalLM.from_pretrained(
-            pretrained_model_name, torch_dtype=torch.float16, trust_remote_code=True
+            pretrained_model_name,
+            trust_remote_code=True,
+            quantization_config=quantization_config,
         ).to(device)
 
     def construct_prompt(
