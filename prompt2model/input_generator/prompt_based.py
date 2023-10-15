@@ -30,9 +30,9 @@ class PromptBasedInputGenerator(InputGenerator):
             pretrained_model_name: The name of a pre-trained decoder-only model.
         """
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name)
-        self.model = AutoModelForCausalLM.from_pretrained(pretrained_model_name).to(
-            device
-        )
+        self.model = AutoModelForCausalLM.from_pretrained(
+            pretrained_model_name, torch_dtype=torch.float16, trust_remote_code=True
+        ).to(device)
 
     def construct_prompt(
         self,
