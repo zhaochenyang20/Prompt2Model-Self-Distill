@@ -22,9 +22,7 @@ class OutputAnnotator(ABC):
                 same as the model of InputGenerator.
         """
         self.model = AutoModelForCausalLM.from_pretrained(pretrained_model_name)
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            pretrained_model_name, padding_side="left"
-        )
+        self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name)
 
     @abstractmethod
     def annotate_outputs(
