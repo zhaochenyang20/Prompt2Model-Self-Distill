@@ -6,14 +6,14 @@ from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 generated_examples = [
     Example(
-        input_col="Question: What is the capital city of France?", output_col="Paris"
+        input_col="Question: What is the capital city of Fran?", output_col="Paris"
     ),
     Example(
         input_col="Question: When was the American Declaration of Independence signed?",
         output_col="July 4, 1776",
     ),
     Example(
-        input_col="Question: What is the tallest mountain in the world?",
+        input_col="Question: The tallest mountain in the world?",
         output_col="Mount Everest",
     ),
 ]

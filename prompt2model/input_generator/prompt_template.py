@@ -2,17 +2,8 @@
 
 import random
 
-PROMPT_TEMPLATE = """{META_PROMPT}
----------------------------------------------------------------------------------------------
-Here are some [high-quality inputs] for the [new instruction]. These inputs can provide you with very strict format requirements. You should pay extreme attention to them!!!
-
-[high-quality inputs]:
-{high_quality_input_string}
---------------------------------------------------------------------------------------------
-These are some [low-quality inputs]. Their formats and contents may not be accurate. Please strictly follow the format of the [high-quality inputs], but you may also refer to the content of the [low-quality inputs].
-
-[low-quality inputs]:
-{low_quality_input_string}
+PROMPT_TEMPLATE = """[INST]<<SYS>>
+{META_PROMPT}
 --------------------------------------------------------------------------------------------
 Here are some examples you can refer to:
 
@@ -23,18 +14,39 @@ Here are some examples you can refer to:
 - Example 2
 
 {example_2}
---------------------------------------------------------------------------------------------
-Here is the requirement for the generation of a new input. Before generating a new input, ensure that you strictly adhere to the rules mentioned in the [new instruction] and follow the format of the [high-quality inputs]. Even if there are conflicts between [low-quality inputs] and [new instruction], prioritize the [new instruction] guidelines to maintain consistency and quality. Think twice before generating a new input.
 
+- Example 3
+
+{example_3}
+
+- Example 4
+
+{example_4}
+--------------------------------------------------------------------------------------------
+Here are some [high-quality inputs] for the [new instruction]. These inputs can provide you with very strict format requirements. You should pay extreme attention to them!!!
+
+[high-quality inputs]:
+{high_quality_input_string}
+--------------------------------------------------------------------------------------------
+These are some [low-quality inputs]. Their formats and contents may not be accurate. Please strictly follow the format of the [high-quality inputs], but you may also refer to the content of the [low-quality inputs].
+
+[low-quality inputs]:
+{low_quality_input_string}
+--------------------------------------------------------------------------------------------
+Here is the requirement for the generation of a new input. Before generating a new input, ensure that you strictly adhere to the rules mentioned in the [new instruction] and follow the format of the [high-quality inputs]. Even if there are conflicts between [low-quality inputs] and [new instruction], prioritize the [new instruction] guidelines to maintain consistency and quality.
+
+Think twice before generating a new input. Only give me the [new input] without any other information.
+
+<</SYS>>
 [new instruction]:
 {instruction}
-[new input]:"""  # noqa E501
+[input]:[/INST]"""  # noqa E501
 
-META_PROMPT = """As a InputGenerator, your task is to generate a new input based on the [new instruction] and some examples.
+META_PROMPT = """As an InputGenerator, your task is to generate a new input based on the [new instruction] and some examples.
 
-Try you best to ensure that the input you generate are distinct from the provided inputs while maintaining a diverse, detailed, precise, comprehensive, and high-quality response.
+Try your best to ensure that the input you generate is distinct from the provided inputs while maintaining a diverse, detailed, precise, comprehensive, and high-quality response.
 
-Avoid generate a input that is the same to the provided inputs.
+Avoid generating an input that is the same as the provided inputs.
 """  # noqa E501
 
 
@@ -73,7 +85,8 @@ def calculate_average(numbers):
 [input]=\"[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\"""",  # noqa E501
     """[instruction]: Extract all the country names in the paragraph, and list them separated by commas.
 [input]=\"Dr. No is the sixth novel by the English author Ian Fleming to feature his British Secret Service agent James Bond. Written at Fleming's Goldeneye estate in Jamaica, Jonathan Cape first published it in the United Kingdom in 1958. In the novel Bond looks into the disappearance in Jamaica of two fellow MI6 operatives who had been investigating Doctor No. Bond travels to No's Caribbean island and meets Honeychile Rider, who is there to collect shells. They are captured and taken to a luxurious facility carved into a mountain. The character of Doctor No, the son of a German missionary and a Chinese woman, was influenced by Sax Rohmer's Fu Manchu stories. Dr. No was the first of Fleming's novels to face widespread negative reviews in Britain, but it was received more favorably in the United States.\"""",  # noqa: E501
-    """[instruction]: Sort the given list ascendingly.""",  # noqa: E501
+    """[instruction]: Sort the given list ascendingly.
+[input]=\"[1, 3, 2, 4, 7, 6]\"""",  # noqa: E501
     """[instruction]: Suggest a better and more professional rephrasing of the following sentence.
 [input]=\"This house is surprisingly not constructed very well, and you probably need more money to fix it after you buy it. If you ask me, I would suggest you consider other candidates.\"""",  # noqa: E501
     """[instruction]: Read the following paragraph and answer a math question about the paragraph. You need to write out the calculation to get the final answer.
@@ -103,11 +116,13 @@ def construct_meta_prompt(
         str: A prompt template, where the `instruction` and `examples` fields
             are filled in.
     """
-    example_1, example_2 = random.sample(META_EXAMPLES, 2)
+    example_1, example_2, example_3, example_4 = random.sample(META_EXAMPLES, 4)
     return PROMPT_TEMPLATE.format(
         META_PROMPT=META_PROMPT,
         example_1=example_1,
         example_2=example_2,
+        example_3=example_3,
+        example_4=example_4,
         instruction=instruction,
         high_quality_input_string=high_quality_input_string,
         low_quality_input_string=low_quality_input_string,
