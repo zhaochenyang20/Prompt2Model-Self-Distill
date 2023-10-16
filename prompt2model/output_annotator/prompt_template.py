@@ -1,6 +1,7 @@
 """Utilities to construct an LLM "metaprompt" for our dataset generator."""
 
-PROMPT_TEMPLATE = """{META_PROMPT}
+PROMPT_TEMPLATE = """[INST]<<SYS>>
+{META_PROMPT}
 --------------------------------------------------------------------------------------------
 Here is the requirement for the task:
 
@@ -12,6 +13,7 @@ Here are some [examples] for the [requirement]. These examples can provide you w
 [examples]:
 {examples}
 ---------------------------------------------------------------------------------------------
+<</SYS>>
 Here is the new input:
 
 [input]:
@@ -19,7 +21,9 @@ Here is the new input:
 ----------------------------------------------------------------------------------------------
 Before generating your response, ensure that you strictly adhere to the rules mentioned in the [requirement] and follow the format of the [examples].
 
-[output]:"""  # noqa E501
+[output]:
+[/INST]
+"""  # noqa E501
 
 META_PROMPT = """As a smart AI agents, your task is to generate a response based on the [requirement] and some [examples].
 
