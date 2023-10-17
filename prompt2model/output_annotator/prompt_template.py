@@ -1,25 +1,30 @@
 """Utilities to construct an LLM "metaprompt" for our dataset generator."""
+import random
 
-PROMPT_TEMPLATE = """{META_PROMPT}
---------------------------------------------------------------------------------------------
-Here is the requirement for the task:
-
-[requirement]:
-{requirement}
+PROMPT_TEMPLATE = """[INST]<<SYS>>
+{META_PROMPT}
 ---------------------------------------------------------------------------------------------
-Here are some [examples] for the [requirement]. These examples can provide you with very strict format requirements. You should pay extreme attention to them!!!
+Here are some [examples] you may refer to:
 
-[examples]:
-{examples}
+- Example 1
+
+{example_1}
+
+- Example 2
+
+{example_2}
+--------------------------------------------------------------------------------------------
+Here is the [requirement] for the task:
+
+[requirement] = {requirement}
 ---------------------------------------------------------------------------------------------
 Here is the new input:
 
-[input]:
-{input}
+[input] = {input}
 ----------------------------------------------------------------------------------------------
 Before generating your response, ensure that you strictly adhere to the rules mentioned in the [requirement] and follow the format of the [examples].
-
-[output]:"""  # noqa E501
+<</SYS>>
+[output]=[/INST]"""  # noqa E501
 
 META_PROMPT = """As a smart AI agents, your task is to generate a response based on the [requirement] and some [examples].
 
@@ -38,9 +43,11 @@ def construct_meta_prompt(
         input: A new input to be annotated.
         high_quality_input_string: A string representing the high quality examples.
     """
+    example_1, example_2= high_quality_input_string.split('\n\n')[0:2]
     return PROMPT_TEMPLATE.format(
         META_PROMPT=META_PROMPT,
         requirement=instruction,
-        examples=high_quality_input_string,
+        example_1=example_1,
+        example_2=example_2,
         input=input,
     )
