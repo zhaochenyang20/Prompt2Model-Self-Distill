@@ -76,7 +76,7 @@ class PromptBasedInputGenerator(InputGenerator):
                     generated_examples, random_selected_generated_example_num
                 )
                 for example in random_examples:
-                    low_quality_input_string += f'[input]="{example.input_col}"\n'
+                    low_quality_input_string += f'input="{example.input_col}"\n'
 
             # Extract inputs from the few-shot examples.
             high_quality_inputs = re.findall(r'input="(.*?)"', few_shot_example_string)
@@ -85,7 +85,7 @@ class PromptBasedInputGenerator(InputGenerator):
             else:
                 high_quality_input_string = ""
                 for input in high_quality_inputs:
-                    high_quality_input_string += f'[input]="{input}"\n'
+                    high_quality_input_string += f'input="{input}"\n'
 
             # Construct the prompt.
             prompt = construct_meta_prompt(
