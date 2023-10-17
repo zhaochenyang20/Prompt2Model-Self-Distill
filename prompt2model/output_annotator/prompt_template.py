@@ -26,9 +26,9 @@ Before generating your response, ensure that you strictly adhere to the rules me
 <</SYS>>
 [output]=[/INST]"""  # noqa E501
 
-META_PROMPT = """As a smart AI agents, your task is to generate a response based on the [requirement] and some [examples].
+META_PROMPT = """As a smart AI agent, your task is to generate a response based on the [requirement] and some [examples].
 
-Try you best to ensure that the response you generate are detailed, precise, comprehensive, and high-quality."""  # noqa E501
+Try your best to ensure that the responses you generate are detailed, precise, comprehensive, and high-quality."""  # noqa E501
 
 
 def construct_meta_prompt(
