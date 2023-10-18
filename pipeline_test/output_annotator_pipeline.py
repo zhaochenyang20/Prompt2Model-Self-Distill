@@ -5,8 +5,8 @@ from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
-    instruction="Your task is to generate an answer to a natural question. In this task, the input is a question string. and the output is the corresponding answer string. The question can range from Math, Cultural, Social, Geometry, Biology, History, Sports, Technology, Science, and so on.",  # # noqa E501
-    examples="""input="Question: What is the capital city of China?", output="Shanghai"\n\ninput="Question: When was People's Republic of China founded?", output="October 1, 1949"\n\n""",  # noqa E501
+    instruction="Your task is to generate an answer to a natural question. In this task, the input is a question string. and the output is the corresponding answer string. The questions can range from Math, Cultural, Social, Geometry, Biology, History, Sports, Technology, Science, and so on.",  # # noqa E501
+    examples="""input="Question: What is the capital city of China?", output="Beijing"\n\ninput="Question: When was People's Republic of China founded?", output="October 1, 1949"\n\n""",  # noqa E501
 )
 
 output_annotator = PromptBasedOutputAnnotator(
