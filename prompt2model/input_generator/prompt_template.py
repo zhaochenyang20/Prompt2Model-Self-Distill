@@ -27,17 +27,17 @@ Here is the new [instruction] for a task.
 
 new [instruction]={instruction}
 --------------------------------------------------------------------------------------------
-Here are some high-quality [input] for the [instruction]. These [inputs] can provide you with very strict format requirements. You should pay extreme attention to them!!!
+Here are some high-quality [input] for the [instruction]. These input] can provide you with very strict format requirements. You should pay extreme attention to them!!!
 
-Some high-quality [inputs]:
+Some high-quality input]:
 {high_quality_input_string}
 --------------------------------------------------------------------------------------------
 These are some addtional [input]. Their formats and contents may not be accurate. However, you may also refer to the content of them.
 
-Some low-quality [inputs]:
+Some low-quality input]:
 {low_quality_input_string}
 --------------------------------------------------------------------------------------------
-Afters seeing example inputs, generate a new [input]. Before generating the new [input], ensure that you strictly adhere to the rules of the new [instruction] and follow the format of previous [inputs].
+Afters seeing example inputs, generate a new [input]. Before generating the new [input], ensure that you strictly adhere to the rules of the new [instruction] and follow the format of previous input].
 
 Prioritize the new [instruction] guidelines to maintain consistency and quality.
 
@@ -45,11 +45,11 @@ Think twice before generating a new [input]. Only response the new [input] witho
 
 [input]=[/INST]"""  # noqa E501
 
-META_PROMPT = """As an InputGenerator, your task is to generate a new [input] based on the new [instruction] and some example [inputs].
+META_PROMPT = """As an InputGenerator, your task is to generate a new [input] based on the new [instruction] and some example input].
 
-Try your best to ensure that the new [input] you generate is distinct from the provided [inputs] while maintaining a diverse, detailed, precise, comprehensive, and high-quality response.
+Try your best to ensure that the new [input] you generate is distinct from the provided input] while maintaining a diverse, detailed, precise, comprehensive, and high-quality response.
 
-Avoid generating a new [input] that is the same as the provided [inputs]."""  # noqa E501
+Avoid generating a new [input] that is the same as the provided input]."""  # noqa E501
 
 
 META_EXAMPLES = [
