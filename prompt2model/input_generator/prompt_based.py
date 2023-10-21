@@ -5,7 +5,7 @@ import re
 from typing import Any
 
 import torch
-from optimum.bettertransformer import BetterTransformer
+# from optimum.bettertransformer import BetterTransformer
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from prompt2model.dataset_generator.prompt_based import Example
