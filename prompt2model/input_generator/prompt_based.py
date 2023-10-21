@@ -5,8 +5,9 @@ import re
 from typing import Any
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 from optimum.bettertransformer import BetterTransformer
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
 from prompt2model.dataset_generator.prompt_based import Example
 from prompt2model.input_generator import InputGenerator
 from prompt2model.input_generator.prompt_template import construct_meta_prompt
@@ -144,9 +145,7 @@ class PromptBasedInputGenerator(InputGenerator):
 
         def extract_new_input(input_string: str) -> str:
             # Extract the sentence after "[new input]:"
-            matched = re.search(
-                r"\[new input\]:\s*(?:\n)?(.*?)(?=\n|</s>|<unk>|$)", input_string
-            )
+            matched = re.search(r'\[input\]="(.*?)"', input_string)
             extracted_sentence = matched.group(1) if matched else ""
             # Clean the extracted sentence by removing unwanted tokens
             cleaned_sentence = (

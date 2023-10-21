@@ -1,5 +1,4 @@
 """Utilities to construct an LLM "metaprompt" for our dataset generator."""
-import random
 
 PROMPT_TEMPLATE = """[INST]<<SYS>>
 {META_PROMPT}

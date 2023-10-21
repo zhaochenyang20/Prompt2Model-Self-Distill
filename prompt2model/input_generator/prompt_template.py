@@ -2,7 +2,7 @@
 
 import random
 
-PROMPT_TEMPLATE = """[INST]<<SYS>>
+PROMPT_TEMPLATE = """<<SYS>>
 {META_PROMPT}
 --------------------------------------------------------------------------------------------
 Here are some examples you can refer to:
@@ -43,7 +43,7 @@ Prioritize the new [instruction] guidelines to maintain consistency and quality.
 
 Think twice before generating a new [input]. Only response the new [input] without any other information.
 
-[input]=[/INST]"""  # noqa E501
+[input]="""  # noqa E501
 
 META_PROMPT = """As an InputGenerator, your task is to generate a new [input] based on the new [instruction] and some example input].
 
