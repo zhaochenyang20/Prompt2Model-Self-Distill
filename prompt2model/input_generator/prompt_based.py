@@ -42,9 +42,9 @@ class PromptBasedInputGenerator(InputGenerator):
             trust_remote_code=True,
             device_map="auto",
             torch_dtype=torch.bfloat16,
-            use_flash_attention_2=True,
+            # use_flash_attention_2=True,
         )
-        self.model = BetterTransformer.transform(model, keep_original_model=True)
+        # self.model = BetterTransformer.transform(model, keep_original_model=True)
 
     def construct_prompt(
         self,
