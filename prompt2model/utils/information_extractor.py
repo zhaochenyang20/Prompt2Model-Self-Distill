@@ -1,8 +1,9 @@
-from abc import ABC
-from transformers import AutoModelForCausalLM, AutoTokenizer
-import torch
 import re
+from abc import ABC
 from typing import Any
+
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -72,6 +73,7 @@ Output of the model:
 [abstracted] = [/INST]
 """
 
+
 class InformationExtractor(ABC):
     """Abstract useful information from the generated content of model."""
 
@@ -86,31 +88,30 @@ class InformationExtractor(ABC):
         # self.tokenizer = AutoTokenizer.from_pretrained(
         #     pretrained_model_name, padding_side="left"
         # )
-        self.prompt = ''
+        self.prompt = ""
 
     def construct_input_prompt(
-            self,
-            instruction: str = None,
-            input: str = None,
-    )->str:
+        self,
+        instruction: str = None,
+        input: str = None,
+    ) -> str:
         self.prompt = INPUT_FILTER_TEMPLATE.format(instruction=instruction, input=input)
         return self.prompt
 
     def construct_output_prompt(
-            self,
-            instruction: str = None,
-            input: str = None,
-            output: str = None
-    )->str:
-        self.prompt = OUTPUT_FILTER_TEMPLATE.format(instruction=instruction, input=input, output=output)
+        self, instruction: str = None, input: str = None, output: str = None
+    ) -> str:
+        self.prompt = OUTPUT_FILTER_TEMPLATE.format(
+            instruction=instruction, input=input, output=output
+        )
         return self.prompt
 
     def response_filter(
-            self,
-            data = dict[str, Any],
-            type: str = None,
-            hyperparameter_choices=dict[str, Any],
-    )-> str:
+        self,
+        data=dict[str, Any],
+        type: str = None,
+        hyperparameter_choices=dict[str, Any],
+    ) -> str:
         """
         Construct a prompt to filter response given by model to abstract the useful information by
         adding tags [info] and [/info] to wrap the content.
@@ -121,10 +122,14 @@ class InformationExtractor(ABC):
         Returns:
             str: The abstracted useful content of generated response or empty string if the model find no useful information.
         """
-        if type == 'input':
-            self.prompt = self.construct_input_prompt(data['instruction'], data['input'])
-        elif type == 'output':
-            self.prompt = self.construct_output_prompt(data['instruction'], data['input'], data['output'])
+        if type == "input":
+            self.prompt = self.construct_input_prompt(
+                data["instruction"], data["input"]
+            )
+        elif type == "output":
+            self.prompt = self.construct_output_prompt(
+                data["instruction"], data["input"], data["output"]
+            )
         input_ids = self.tokenizer.encode(self.prompt, return_tensors="pt").to(device)
         abstracted_content = self.model.generate(
             input_ids=input_ids,
@@ -138,5 +143,5 @@ class InformationExtractor(ABC):
         pattern = r"\[info\](.*?)\[/info\]"
         matches = re.findall(pattern, abstracted_content)
         if not matches:
-            return ''
+            return ""
         return matches[0]

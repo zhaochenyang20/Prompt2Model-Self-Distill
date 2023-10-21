@@ -43,7 +43,7 @@ def construct_meta_prompt(
         input: A new input to be annotated.
         high_quality_input_string: A string representing the high quality examples.
     """
-    example_1, example_2= high_quality_input_string.split('\n\n')[0:2]
+    example_1, example_2 = high_quality_input_string.split("\n\n")[0:2]
     return PROMPT_TEMPLATE.format(
         META_PROMPT=META_PROMPT,
         requirement=instruction,

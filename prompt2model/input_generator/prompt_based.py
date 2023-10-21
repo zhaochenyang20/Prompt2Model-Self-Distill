@@ -5,8 +5,8 @@ import re
 from typing import Any
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from optimum.bettertransformer import BetterTransformer
 from prompt2model.dataset_generator.prompt_based import Example
 from prompt2model.input_generator import InputGenerator
 from prompt2model.input_generator.prompt_template import construct_meta_prompt
@@ -16,30 +16,33 @@ from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 logger = get_formatted_logger("InputGenerator")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-quantization_config = BitsAndBytesConfig(
-    load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16
-)
-
 
 class PromptBasedInputGenerator(InputGenerator):
     """Generate inputs from prompts."""
 
     def __init__(
         self,
-        pretrained_model_name: str = "meta-llama/Llama-2-7b-chat-hf",
+        pretrained_model_name: str = "lmsys/vicuna-7b-v1.5",
     ) -> None:
         """Create a new instance of the PromptBasedInputGenerator.
 
         Args:
             pretrained_model_name: The name of a pre-trained decoder-only model.
         """
-        self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name)
-        self.model = AutoModelForCausalLM.from_pretrained(
+        if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                "/data/users/zhangjunlei/tyx/.hugging_face/vicuna_7b_tokenizer",
+                local_files_only=True,
+            )
+        else:
+            self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name)
+        model = AutoModelForCausalLM.from_pretrained(
             pretrained_model_name,
             trust_remote_code=True,
-            # device_map="auto",
-            # # quantization_config=quantization_config,
+            device_map="auto",
+            torch_dtype=torch.bfloat16,
         )
+        self.model = BetterTransformer.transform(model, keep_original_model=True)
 
     def construct_prompt(
         self,
