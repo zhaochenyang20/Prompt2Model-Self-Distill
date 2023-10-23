@@ -5,7 +5,7 @@ import re
 from typing import Any
 
 import torch
-# from optimum.bettertransformer import BetterTransformer
+from optimum.bettertransformer import BetterTransformer
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from prompt2model.dataset_generator.prompt_based import Example
@@ -32,7 +32,7 @@ class PromptBasedInputGenerator(InputGenerator):
         """
         if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.tokenizer = AutoTokenizer.from_pretrained(
-                "~/.vicuna-7b-1.5",
+                "/home/cyzhao/.vicuna-7b-1.5",
                 local_files_only=True,
             )
         else:
@@ -42,9 +42,9 @@ class PromptBasedInputGenerator(InputGenerator):
             trust_remote_code=True,
             device_map="auto",
             torch_dtype=torch.bfloat16,
-            # use_flash_attention_2=True,
+            use_flash_attention_2=True,
         )
-        # self.model = BetterTransformer.transform(model, keep_original_model=True)
+        self.model = BetterTransformer.transform(model, keep_original_model=True)
 
     def construct_prompt(
         self,

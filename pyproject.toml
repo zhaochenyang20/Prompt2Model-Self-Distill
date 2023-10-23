@@ -48,7 +48,8 @@ dependencies = [
     "litellm",
     "peft",
     "bitsandbytes",
-    "accelerate"
+    "accelerate",
+    "optimum"
 ]
 
 dynamic = ["version"]
