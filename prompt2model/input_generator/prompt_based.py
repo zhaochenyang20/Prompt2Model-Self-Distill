@@ -136,27 +136,29 @@ class PromptBasedInputGenerator(InputGenerator):
         output_sequences = self.model.generate(
             input_ids=input_ids,
             do_sample=True,
-            top_k=hyperparameter_choices.get("top_k", 10),
+            top_k=hyperparameter_choices.get("top_k", 50),
             num_return_sequences=hyperparameter_choices.get("num_return_sequences", 5),
             eos_token_id=self.tokenizer.eos_token_id,
             max_new_tokens=hyperparameter_choices.get("max_new_tokens", 400),
             temperature=hyperparameter_choices.get("temperature", 0.7),
         )
 
-        def extract_new_input(input_string: str) -> str:
-            # Extract the sentence after "[new input]:"
-            matched = re.search(r'\[input\]="(.*?)"', input_string)
-            extracted_sentence = matched.group(1) if matched else ""
-            # Clean the extracted sentence by removing unwanted tokens
-            cleaned_sentence = (
-                extracted_sentence.replace("</s>", "").replace("<unk>", "").strip()
-            )
-            return cleaned_sentence
-
-        generated_inputs = [
+        generated_strings = [
             self.tokenizer.decode(
                 generated_sequence.tolist(), clean_up_tokenization_spaces=True
             )
             for generated_sequence in output_sequences
         ]
-        return [extract_new_input(each) for each in generated_inputs]
+
+        def extract_tail(a, b):
+            start_index = b.find(a)
+            if start_index == -1 or start_index == 0:
+                return ""
+            end_index = start_index + len(a)
+            encoded = self.tokenizer.encode(b[end_index:])
+            return self.tokenizer.decode(
+                encoded, clean_up_tokenization_spaces=True, skip_special_tokens=True
+            )
+
+        generated_inputs = [extract_tail(prompt, each) for each in generated_strings]
+        return generated_inputs
