@@ -32,7 +32,7 @@ class PromptBasedInputGenerator(InputGenerator):
         """
         if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.tokenizer = AutoTokenizer.from_pretrained(
-                "/data/users/zhangjunlei/tyx/.hugging_face/vicuna_7b_tokenizer",
+                "~/.vicuna-7b-1.5",
                 local_files_only=True,
             )
         else:
