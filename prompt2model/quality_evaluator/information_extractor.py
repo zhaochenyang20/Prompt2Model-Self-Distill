@@ -138,29 +138,17 @@ class VLLMInformationExtractor(QualityEvaluator):
         ]
         # 如下部分去除了 "" 的内容，按照原本的格式返回列表
 
-        def match_content(content):
-            pattern = r"\[info\](.*?)\[/info\]"
-            matches = re.findall(pattern, content)
-            if not matches:
-                return ""
-            return matches[0]
-
         if type == "input":
             return list(
                 filter(
                     lambda x: x != "",
-                    [
-                        match_content(input_content)
-                        for input_content in abstracted_contents
-                    ],
+                    [abstracted_contents],
                 )
             )
         else:
             filtered_input_output_pairs = []
             for idx, output_content in abstracted_contents:
-                matched_output_content = match_content(output_content)
-                if matched_output_content != "":
-                    filtered_input_output_pairs.append(
-                        generated_responses[idx][0], matched_output_content
-                    )
+                filtered_input_output_pairs.append(
+                    generated_responses[idx][0], output_content
+                )
             return filtered_input_output_pairs
