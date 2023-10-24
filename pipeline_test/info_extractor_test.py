@@ -34,6 +34,8 @@ filtered_response = info_extractor.response_filter(
     prompt_spec, generated_responses, "input", {}
 )
 
+# TODO 测试 output 的 extractor
+
 generated_responses = [
     (
         """Question: What is the largest living structure on Earth?
