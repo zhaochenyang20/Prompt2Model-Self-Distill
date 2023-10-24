@@ -18,14 +18,14 @@ logger = get_formatted_logger("InputGenerator")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-class PromptBasedInputGenerator(InputGenerator):
+class HFPromptBasedInputGenerator(InputGenerator):
     """Generate inputs from prompts."""
 
     def __init__(
         self,
         pretrained_model_name: str = "lmsys/vicuna-7b-v1.5",
     ) -> None:
-        """Create a new instance of the PromptBasedInputGenerator.
+        """Create a new instance of the HFPromptBasedInputGenerator.
 
         Args:
             pretrained_model_name: The name of a pre-trained decoder-only model.
@@ -34,11 +34,13 @@ class PromptBasedInputGenerator(InputGenerator):
             self.tokenizer = AutoTokenizer.from_pretrained(
                 "/home/cyzhao/.vicuna-7b-1.5",
                 local_files_only=True,
-                padding_side='left',
+                padding_side="left",
                 trust_remote_code=True,
             )
         else:
-            self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name,  padding_side='left')
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                pretrained_model_name, padding_side="left"
+            )
         model = AutoModelForCausalLM.from_pretrained(
             pretrained_model_name,
             trust_remote_code=True,

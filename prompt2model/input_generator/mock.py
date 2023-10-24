@@ -15,7 +15,7 @@ class MockInputGenerator(InputGenerator):
         generated_examples: list[Example],
         prompt_spec: PromptSpec,
         inputs_num: int,
-        hyperparameter_choices: dict[str, Any],
+        hyperparameter_choices=dict[str, Any],
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
 
