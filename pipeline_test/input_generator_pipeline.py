@@ -1,7 +1,7 @@
 """Test Input Generator."""
 
 from prompt2model.dataset_generator.prompt_based import Example
-from prompt2model.input_generator import PromptBasedInputGenerator
+from prompt2model.input_generator import VLLMPromptBasedInputGenerator
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 generated_examples = [
@@ -41,7 +41,7 @@ output="Europe"
 """,  # noqa E501
 )
 
-input_generator = PromptBasedInputGenerator()
+input_generator = VLLMPromptBasedInputGenerator()
 
 prompt = input_generator.construct_prompt(
     instruction=prompt_spec.instruction,
@@ -54,5 +54,5 @@ inputs = input_generator.generate_inputs(
     generated_examples=generated_examples,
     prompt_spec=prompt_spec,
     inputs_num=12,
-    hyperparameter_choices={},
+    hyperparameter_choices={"temperature": 0.2},
 )

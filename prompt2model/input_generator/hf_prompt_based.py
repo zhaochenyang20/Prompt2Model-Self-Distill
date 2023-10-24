@@ -32,7 +32,7 @@ class HFPromptBasedInputGenerator(InputGenerator):
         """
         if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.tokenizer = AutoTokenizer.from_pretrained(
-                "/home/cyzhao/.vicuna-7b-1.5",
+                "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
                 local_files_only=True,
                 padding_side="left",
                 trust_remote_code=True,

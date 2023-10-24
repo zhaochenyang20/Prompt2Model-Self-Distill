@@ -3,6 +3,7 @@
 from __future__ import annotations  # noqa FI58
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 import datasets
 
@@ -12,9 +13,11 @@ from prompt2model.prompt_parser import PromptSpec
 class QualityEvaluator(ABC):
     """A class for evaluate generated exmaples and filter high-quality examples."""
 
-    @abstractmethod
-    def evaluate_input_output_pairs(
-        self, prompt_spec: PromptSpec, annotated_dataset: datasets.Dataset
+    def filter_dataset(
+        self,
+        prompt_spec: PromptSpec,
+        annotated_dataset: datasets.Dataset,
+        hyperparameter_choices: dict[str, Any],
     ) -> datasets.Dataset:
         """Generate new inputs for a given prompt.
 
@@ -27,3 +30,4 @@ class QualityEvaluator(ABC):
             A dataset with `model_input`, `model_output`, and `score`
             columns, where `score` is a scaled float for RLAIF training.
         """
+        _ = prompt_spec, annotated_dataset, hyperparameter_choices
