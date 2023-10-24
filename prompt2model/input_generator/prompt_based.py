@@ -4,7 +4,6 @@ import random
 import re
 from typing import Any
 
-import datasets
 import torch
 from optimum.bettertransformer import BetterTransformer
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -35,9 +34,10 @@ class PromptBasedInputGenerator(InputGenerator):
             self.tokenizer = AutoTokenizer.from_pretrained(
                 "/home/cyzhao/.vicuna-7b-1.5",
                 local_files_only=True,
+                padding_side='left',
             )
         else:
-            self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name)
+            self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name,  padding_side='left')
         model = AutoModelForCausalLM.from_pretrained(
             pretrained_model_name,
             trust_remote_code=True,
