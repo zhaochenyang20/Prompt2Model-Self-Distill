@@ -118,7 +118,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         """
         sampling_params = SamplingParams(
             top_k=hyperparameter_choices.get("top_k", 50),
-            max_new_tokens=hyperparameter_choices.get("max_new_tokens", 400),
             temperature=hyperparameter_choices.get("temperature", 0.7),
         )
         prompts = [
