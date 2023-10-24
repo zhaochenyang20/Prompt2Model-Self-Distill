@@ -35,6 +35,7 @@ class PromptBasedInputGenerator(InputGenerator):
                 "/home/cyzhao/.vicuna-7b-1.5",
                 local_files_only=True,
                 padding_side='left',
+                trust_remote_code=True,
             )
         else:
             self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name,  padding_side='left')
