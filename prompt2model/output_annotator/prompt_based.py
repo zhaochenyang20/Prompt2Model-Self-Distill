@@ -16,10 +16,6 @@ from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 logger = get_formatted_logger("OutputAnnotator")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-quantization_config = BitsAndBytesConfig(
-    load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16
-)
-
 
 class PromptBasedOutputAnnotator(OutputAnnotator):
     """Generate inputs from prompts."""

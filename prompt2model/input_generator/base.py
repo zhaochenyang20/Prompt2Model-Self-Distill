@@ -32,6 +32,7 @@ class InputGenerator(ABC):
         self,
         generated_examples: list[Example],
         prompt_spec: PromptSpec,
+        inputs_num: int,
         hyperparameter_choices=dict[str, Any],
     ) -> list[str]:
         """Generate new inputs for a given prompt.
@@ -39,6 +40,7 @@ class InputGenerator(ABC):
         Args:
             generated_examples: A list of currently generated examples.
             prompt_spec: A prompt we use to generate new inputs.
+            inputs_num: The number of new inputs to generate.
             hyperparameter_choices: A dictionary of hyperparameter choices.
 
         Returns:

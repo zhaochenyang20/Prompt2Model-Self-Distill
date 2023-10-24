@@ -16,6 +16,14 @@ generated_examples = [
         input_col="Question: The tallest mountain in the world?",
         output_col="Mount Everest",
     ),
+    Example(
+        input_col="Question: How many planets are there in our solar system?",
+        output_col="8",
+    ),
+    Example(
+        input_col="Question: Who was the first President of the United States?",
+        output_col="George Washington",
+    ),
 ]
 
 prompt_spec = MockPromptSpec(
@@ -36,5 +44,6 @@ prompt = input_generator.construct_prompt(
 inputs = input_generator.generate_inputs(
     generated_examples=generated_examples,
     prompt_spec=prompt_spec,
+    inputs_num=5,
     hyperparameter_choices={"num_return_sequences": 1},
 )

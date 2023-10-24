@@ -4,6 +4,7 @@ import random
 import re
 from typing import Any
 
+import datasets
 import torch
 from optimum.bettertransformer import BetterTransformer
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -113,25 +114,17 @@ class PromptBasedInputGenerator(InputGenerator):
                     )
                 continue
 
-    def generate_inputs(
+    def generate_input(
         self,
-        generated_examples: list[Example],
-        prompt_spec: PromptSpec,
-        hyperparameter_choices=dict[str, Any],
+        prompt: str,
+        hyperparameter_choices: dict[str, Any],
     ) -> list[str]:
-        """Generate new inputs for a given prompt with a pre-trained model.
+        """Generate new inputs for a given prompt.
 
         Args:
-            generated_examples: A list of currently generated examples.
-            prompt_spec: A prompt we use to generate new inputs.
+            prompt: A prompt we use to generate new inputs.
             hyperparameter_choices: A dictionary of hyperparameter choices.
         """
-        prompt = self.construct_prompt(
-            instruction=prompt_spec.instruction,
-            few_shot_example_string=prompt_spec.examples,
-            generated_examples=generated_examples,
-            context_cutoff=hyperparameter_choices.get("context_cutoff", 3500),
-        )
         input_ids = self.tokenizer.encode(prompt, return_tensors="pt").to(device)
         output_sequences = self.model.generate(
             input_ids=input_ids,
@@ -161,4 +154,78 @@ class PromptBasedInputGenerator(InputGenerator):
             )
 
         generated_inputs = [extract_tail(prompt, each) for each in generated_strings]
+        return generated_inputs
+
+    def generate_inputs(
+        self,
+        generated_examples: list[Example],
+        prompt_spec: PromptSpec,
+        inputs_num: int,
+        hyperparameter_choices: dict[str, Any],
+    ) -> list[str]:
+        """Generate new inputs for a given prompt with a pre-trained model.
+
+        Args:
+            generated_examples: A list of currently generated examples.
+            prompt_spec: A prompt we use to generate new inputs.
+            inputs_num: The number of new inputs to generate.
+            hyperparameter_choices: A dictionary of hyperparameter choices.
+        """
+        generated_inputs = []
+        prompts_list = [
+            self.construct_prompt(
+                instruction=prompt_spec.instruction,
+                few_shot_example_string=prompt_spec.examples,
+                generated_examples=generated_examples,
+                context_cutoff=hyperparameter_choices.get("context_cutoff", 3500),
+            )
+            for _ in range(inputs_num)
+        ]
+        for start_idx in range(
+            0, inputs_num, hyperparameter_choices.get("batch_size", 5)
+        ):
+            end_idx = min(
+                start_idx + hyperparameter_choices.get("batch_size", 5), inputs_num
+            )
+            batched_prompts = prompts_list[start_idx:end_idx]
+            encoded_inputs = self.tokenizer.batch_encode_plus(
+                batched_prompts,
+                truncation=True,
+                max_length=hyperparameter_choices.get("tokenizer_max_length", 3500),
+                padding=True,
+                return_tensors="pt",
+            )
+            device = self.model.device
+            input_ids = encoded_inputs["input_ids"].to(device)
+            attention_mask = encoded_inputs["attention_mask"].to(device)
+            output_sequences = self.model.generate(
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                do_sample=True,
+                top_k=hyperparameter_choices.get("top_k", 50),
+                eos_token_id=self.tokenizer.eos_token_id,
+                max_new_tokens=hyperparameter_choices.get("max_new_tokens", 400),
+                temperature=hyperparameter_choices.get("temperature", 0.7),
+            )
+            generated_strings = [
+                self.tokenizer.decode(
+                    generated_sequence.tolist(), clean_up_tokenization_spaces=True
+                )
+                for generated_sequence in output_sequences
+            ]
+
+            def extract_tail(a, b):
+                start_index = b.find(a)
+                if start_index == -1 or start_index == 0:
+                    return ""
+                end_index = start_index + len(a)
+                encoded = self.tokenizer.encode(b[end_index:])
+                return self.tokenizer.decode(
+                    encoded, clean_up_tokenization_spaces=True, skip_special_tokens=True
+                )
+
+            generated_inputs += [
+                extract_tail(batched_prompts[idx], each)
+                for (idx, each) in enumerate(generated_strings)
+            ]
         return generated_inputs
