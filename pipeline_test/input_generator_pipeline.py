@@ -4,6 +4,8 @@ from prompt2model.dataset_generator.prompt_based import Example
 from prompt2model.input_generator import VLLMPromptBasedInputGenerator
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
+# 测试
+
 generated_examples = [
     Example(
         input_col="Question: What is the capital city of Fran?", output_col="Paris"
