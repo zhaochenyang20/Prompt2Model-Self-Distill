@@ -116,12 +116,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             inputs_num: The number of new inputs to generate.
             hyperparameter_choices: A dictionary of hyperparameter choices.
         """
-        sampling_params = SamplingParams(
-            top_k=hyperparameter_choices.get("top_k", 50),
-            top_p=hyperparameter_choices.get("top_p", 0.7),
-            temperature=hyperparameter_choices.get("temperature", 0.7),
-            max_tokens=hyperparameter_choices.get("max_tokens", 500),
-        )
         prompts = [
             self.construct_prompt(
                 instruction=prompt_spec.instruction,
@@ -131,6 +125,19 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             )
             for _ in range(inputs_num)
         ]
+        sampling_params = SamplingParams(
+            top_k=hyperparameter_choices.get("top_k", -1),
+            top_p=hyperparameter_choices.get("top_p", 0.1),
+            temperature=hyperparameter_choices.get("temperature", 1),
+            max_tokens=hyperparameter_choices.get("max_tokens", 500),
+        )
         outputs = self.language_model.generate(prompts, sampling_params)
         generated_inputs = [each.outputs[0].text for each in outputs]
         return generated_inputs
+
+
+
+
+
+
+
