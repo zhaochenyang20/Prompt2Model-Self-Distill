@@ -5,7 +5,7 @@ ckpt_path = "/home/cyzhao/ckpt"
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 import gc
 from functools import partial
-from prompt2model.output_annotator.prompt_template import construct_meta_prompt
+from prompt2model.output_annotator import construct_meta_prompt
 import torch
 from datasets import load_from_disk
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
@@ -37,10 +37,10 @@ construct_prompt = partial(
 
 
 def map_func(example):
-    model_input = construct_prompt(new_input=example["input_col"])
-    return dict(
-        text=f"{model_input}\"{example['output_col']}\""
-    )
+    model_input = construct_meta_prompt(instruction=prompt_spec.instruction,examples=prompt_spec.examples,new_input=example["input_col"])
+    example["text"] = f"{model_input}\"{example['output_col']}\""
+    return example
+
 
 # TODO # 0.005 for "### INPUT:  {example['input_col']}\n### OUTPUT: {example['output_col']}"
 
