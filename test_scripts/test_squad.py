@@ -5,6 +5,7 @@ from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from vllm import LLM, SamplingParams
 from prompt2model.model_executor import ModelOutput
 from prompt2model.model_evaluator import Seq2SeqEvaluator
+from transformers import AutoTokenizer
 import evaluate
 
 test_dataset = datasets.load_from_disk(
@@ -24,7 +25,7 @@ prompt_spec = MockPromptSpec(
 [input]="Question: The Ottoman empire controlled territory on three continents, Africa, Asia and which other? Context: The Ottoman Empire was an imperial state that lasted from 1299 to 1923. During the 16th and 17th centuries, in particular at the height of its power under the reign of Suleiman the Magnificent, the Ottoman Empire was a powerful multinational, multilingual empire controlling much of Southeast Europe, Western Asia, the Caucasus, North Africa, and the Horn of Africa. At the beginning of the 17th century the empire contained 32 provinces and numerous vassal states. Some of these were later absorbed into the empire, while others were granted various types of autonomy during the course of centuries."
 [output]="Europe"
 """
-# noqa E501
+    # noqa E501
 )
 
 construct_prompt = partial(
@@ -33,10 +34,20 @@ construct_prompt = partial(
     examples=prompt_spec.examples,
 )
 
+tokenizer = AutoTokenizer.from_pretrained(
+    "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
+    local_files_only=True,
+    padding_side="left",
+    trust_remote_code=True,
+)
+
 
 def map_func(example):
     example["model_input"] = construct_prompt(new_input=example["input_col"])
     example["model_output"] = example["output_col"]
+    example["text"] = (
+        example["model_input"] + example["model_output"] + tokenizer.eos_token
+    )
     return example
 
 
@@ -68,28 +79,28 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 
 ### TODO base_vicuna 0.59
 
-base_vicuna = LLM(
-    model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-)
-base_vicuna_outputs = base_vicuna.generate(prompts, sampling_params)
-base_vicuna_generated_outputs = [each.outputs[0].text for each in base_vicuna_outputs]
-base_icuna_predicts = [ModelOutput(each, auxiliary_info={}) for each in base_vicuna_generated_outputs]
-
-index = 0
-for i in range(len(GROUND_TRUTH)):
-    if GROUND_TRUTH[i] in base_vicuna_generated_outputs[i] or GROUND_TRUTH[i] in base_vicuna_generated_outputs[i]:
-        index += 1
-print(index / len(GROUND_TRUTH))
-
-
-# tuned_vicuna = LLM(
-#     model="/home/cyzhao/cache"
+# base_vicuna = LLM(
+#     model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
 # )
-# tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
-# tuned_vicuna_generated_outputs = [each.outputs[0].text for each in tuned_vicuna_outputs]
+# base_vicuna_outputs = base_vicuna.generate(prompts, sampling_params)
+# base_vicuna_generated_outputs = [each.outputs[0].text for each in base_vicuna_outputs]
+# base_icuna_predicts = [ModelOutput(each, auxiliary_info={}) for each in base_vicuna_generated_outputs]
+
 # index = 0
 # for i in range(len(GROUND_TRUTH)):
-#     if GROUND_TRUTH[i] == tuned_vicuna_generated_outputs[i]:
+#     if GROUND_TRUTH[i] in base_vicuna_generated_outputs[i] or GROUND_TRUTH[i] in base_vicuna_generated_outputs[i]:
 #         index += 1
 # print(index / len(GROUND_TRUTH))
 
+
+tuned_vicuna = LLM(model="/home/cyzhao/cache")
+tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
+tuned_vicuna_generated_outputs = [each.outputs[0].text for each in tuned_vicuna_outputs]
+index = 0
+for i in range(len(GROUND_TRUTH)):
+    if (
+        GROUND_TRUTH[i] in tuned_vicuna_generated_outputs[i]
+        or tuned_vicuna_generated_outputs[i] in GROUND_TRUTH[i]
+    ):
+        index += 1
+print(index / len(GROUND_TRUTH))

@@ -1,9 +1,10 @@
-dataset_path = "/home/cyzhao/prompt2model_test/generation/generated_dataset/SQuAD_0.3_1.4_with_filtering"
+# dataset_path = "/home/cyzhao/prompt2model_test/generation/generated_dataset/SQuAD_0.3_1.4_with_filtering"
 model_path = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+# model_path = "/home/cyzhao/ckpt"
 ckpt_path = "/home/cyzhao/ckpt"
 
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
-import gc
+import gc, datasets
 from functools import partial
 from prompt2model.output_annotator import construct_meta_prompt
 import torch
@@ -11,7 +12,7 @@ from datasets import load_from_disk
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 
-dataset = load_from_disk(dataset_path)
+# dataset = load_from_disk(dataset_path)
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
@@ -26,33 +27,13 @@ prompt_spec = MockPromptSpec(
 [input]="Question: The Ottoman empire controlled territory on three continents, Africa, Asia and which other? Context: The Ottoman Empire was an imperial state that lasted from 1299 to 1923. During the 16th and 17th centuries, in particular at the height of its power under the reign of Suleiman the Magnificent, the Ottoman Empire was a powerful multinational, multilingual empire controlling much of Southeast Europe, Western Asia, the Caucasus, North Africa, and the Horn of Africa. At the beginning of the 17th century the empire contained 32 provinces and numerous vassal states. Some of these were later absorbed into the empire, while others were granted various types of autonomy during the course of centuries."
 [output]="Europe"
 """
-# noqa E501
+    # noqa E501
 )
 
 construct_prompt = partial(
     construct_meta_prompt,
     instruction=prompt_spec.instruction,
     examples=prompt_spec.examples,
-)
-
-
-def map_func(example):
-    model_input = construct_prompt(new_input=example["input_col"])
-    # model_input = construct_meta_prompt(instruction=prompt_spec.instruction, examples=prompt_spec.examples, new_input=example["input_col"])
-    return dict(text= f"{model_input}\"{example['output_col']}\"")
-
-
-# TODO # 0.005 for "### INPUT:  {example['input_col']}\n### OUTPUT: {example['output_col']}"
-
-mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
-
-print(mapped_dataset[1]["text"])
-
-model = AutoModelForCausalLM.from_pretrained(
-    model_path,
-    device_map="auto",
-    torch_dtype=torch.bfloat16,
-    use_flash_attention_2=True,
 )
 
 tokenizer = AutoTokenizer.from_pretrained(
@@ -63,6 +44,48 @@ tokenizer = AutoTokenizer.from_pretrained(
 )
 
 
+# def map_func(example):
+#     model_input = construct_prompt(new_input=example["input_col"])
+#     # model_input = construct_meta_prompt(instruction=prompt_spec.instruction, examples=prompt_spec.examples, new_input=example["input_col"])
+#     return dict(text=f"{model_input}\"{example['output_col']}\"{tokenizer.eos_token}")
+
+
+# TODO # 0.005 for "### INPUT:  {example['input_col']}\n### OUTPUT: {example['output_col']}"
+
+# mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
+
+tokenizer = AutoTokenizer.from_pretrained(
+    "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
+    local_files_only=True,
+    padding_side="left",
+    trust_remote_code=True,
+)
+
+
+def map_func(example):
+    example["model_input"] = construct_prompt(new_input=example["input_col"])
+    example["model_output"] = example["output_col"]
+    example["text"] = (
+        example["model_input"] + example["model_output"] + tokenizer.eos_token
+    )
+    return example
+
+
+test_dataset = datasets.Dataset.from_dict(
+    datasets.load_from_disk(
+        "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed"
+    )[:300]
+)
+mapped_dataset = test_dataset.map(map_func, load_from_cache_file=False)
+print(mapped_dataset[1]["text"])
+
+model = AutoModelForCausalLM.from_pretrained(
+    model_path,
+    device_map="auto",
+    torch_dtype=torch.bfloat16,
+    use_flash_attention_2=True,
+)
+
 response_template_with_context = "\n### Your Output:\n\n"
 response_template_ids = tokenizer.encode(
     response_template_with_context, add_special_tokens=False
@@ -71,10 +94,12 @@ response_template_ids = tokenizer.encode(
 data_collator = DataCollatorForCompletionOnlyLM(
     response_template_ids, tokenizer=tokenizer
 )
+
 training_args = TrainingArguments(
     output_dir=ckpt_path,
     do_eval=False,
-    save_strategy="epoch",
+    save_strategy="no",
+    num_train_epochs=1,
 )
 
 trainer = SFTTrainer(
@@ -83,10 +108,11 @@ trainer = SFTTrainer(
     train_dataset=mapped_dataset,
     dataset_text_field="text",
     data_collator=data_collator,
+    max_seq_length=1500,
 )
 
 trainer.train()
-
+del trainer
 gc.collect()
 torch.cuda.empty_cache()
 
