@@ -17,7 +17,7 @@ logger = get_formatted_logger("OutputAnnotator")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-class PromptBasedOutputAnnotator(OutputAnnotator):
+class HFPromptBasedOutputAnnotator(OutputAnnotator):
     """Generate inputs from prompts."""
 
     def __init__(
@@ -25,7 +25,7 @@ class PromptBasedOutputAnnotator(OutputAnnotator):
         peft_model_id: str = None,
         pretrained_model_name: str = "meta-llama/Llama-2-7b-chat-hf",
     ) -> None:
-        """Create a new instance of the PromptBasedOutputAnnotator.
+        """Create a new instance of the HFPromptBasedOutputAnnotator.
 
         Args:
             peft_model_id: The path of lora.

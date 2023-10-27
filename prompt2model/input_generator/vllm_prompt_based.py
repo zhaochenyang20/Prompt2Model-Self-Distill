@@ -72,7 +72,9 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     low_quality_input_string += f'[input]="{example.input_col}"\n'
 
             # Extract inputs from the few-shot examples.
-            high_quality_inputs = re.findall(r'input="(.*?)"', few_shot_example_string)
+            high_quality_inputs = re.findall(
+                r'[input]="(.*?)"', few_shot_example_string
+            )
             if len(high_quality_inputs) == 0:
                 high_quality_input_string = "N/A\n"
             else:
@@ -134,10 +136,3 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         outputs = self.language_model.generate(prompts, sampling_params)
         generated_inputs = [each.outputs[0].text for each in outputs]
         return generated_inputs
-
-
-
-
-
-
-

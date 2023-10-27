@@ -3,6 +3,7 @@
 from __future__ import annotations  # noqa FI58
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 import datasets
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -30,6 +31,7 @@ class OutputAnnotator(ABC):
         input_strings: list[str],
         num_candidate_outputs: int,
         prompt_spec: PromptSpec,
+        hyperparameter_choices: dict[str, Any],
     ) -> datasets.Dataset:
         """Generate candidate outputs for each given input.
 
