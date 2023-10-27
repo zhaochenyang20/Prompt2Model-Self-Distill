@@ -30,4 +30,5 @@ output_dataset = output_annotator.annotate_outputs(
     input_strings=inputs,
     num_candidate_outputs=2,
     prompt_spec=prompt_spec,
+    hyperparameter_choices={},
 )

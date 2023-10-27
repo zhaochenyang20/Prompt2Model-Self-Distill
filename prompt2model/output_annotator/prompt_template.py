@@ -6,7 +6,7 @@ PROMPT_TEMPLATE = """### Instructions:
 
 ### Examples:
 
-{exmaples}
+{examples}
 
 ### New Input:
 
