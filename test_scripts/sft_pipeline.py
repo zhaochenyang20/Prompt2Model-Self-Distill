@@ -37,7 +37,8 @@ construct_prompt = partial(
 
 
 def map_func(example):
-    model_input = construct_prompt(new_input=example["input_col"])
+    # model_input = construct_prompt(new_input=example["input_col"])
+    model_input = construct_meta_prompt(instruction=prompt_spec.instruction, examples=prompt_spec.examples, new_input=example["input_col"])
     return dict(text= f"{model_input}\"{example['output_col']}\"")
 
 
@@ -62,7 +63,7 @@ tokenizer = AutoTokenizer.from_pretrained(
 )
 
 
-response_template_with_context = "\n### Your Output:\n"
+response_template_with_context = "\n### Your Output:\n\n"
 response_template_ids = tokenizer.encode(
     response_template_with_context, add_special_tokens=False
 )[2:]

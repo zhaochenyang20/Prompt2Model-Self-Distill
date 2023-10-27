@@ -13,6 +13,7 @@ PROMPT_TEMPLATE = """### Instructions:
 {new_input}
 
 ### Your Output:
+
 """  # noqa E501
 
 
