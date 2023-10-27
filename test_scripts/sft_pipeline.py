@@ -44,7 +44,7 @@ def map_func(example):
 
 # TODO # 0.005 for "### INPUT:  {example['input_col']}\n### OUTPUT: {example['output_col']}"
 
-mapped_dataset = dataset.map(map_func)
+mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
 
 print(mapped_dataset[1]["text"])
 
