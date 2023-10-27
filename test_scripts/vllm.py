@@ -33,7 +33,8 @@ Your task is to generate an answer to a natural question. In this task, the inpu
 
 ### Your Output:
 
-[output]="""
+[output]=
+"""
 
 prompts = [prompt]
 

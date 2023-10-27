@@ -1,7 +1,15 @@
-"""Test Input Generator."""
-
-from prompt2model.output_annotator import VLLMPromptBasedOutputAnnotator
+import datasets
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
+from functools import partial
+from prompt2model.output_annotator.prompt_template import construct_meta_prompt
+from vllm import LLM, SamplingParams
+from prompt2model.model_executor import ModelOutput
+from prompt2model.model_evaluator import Seq2SeqEvaluator
+import evaluate
+
+test_dataset = datasets.load_from_disk(
+    "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed"
+)
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
@@ -15,20 +23,73 @@ prompt_spec = MockPromptSpec(
 
 [input]="Question: The Ottoman empire controlled territory on three continents, Africa, Asia and which other? Context: The Ottoman Empire was an imperial state that lasted from 1299 to 1923. During the 16th and 17th centuries, in particular at the height of its power under the reign of Suleiman the Magnificent, the Ottoman Empire was a powerful multinational, multilingual empire controlling much of Southeast Europe, Western Asia, the Caucasus, North Africa, and the Horn of Africa. At the beginning of the 17th century the empire contained 32 provinces and numerous vassal states. Some of these were later absorbed into the empire, while others were granted various types of autonomy during the course of centuries."
 [output]="Europe"
-""",  # noqa E501
+"""
+# noqa E501
 )
 
-output_annotator = VLLMPromptBasedOutputAnnotator()
-
-
-inputs = [
-    "Question: What's the capital city of China? Context: The capital city of China is Beijing. Beijing is one of the most populous and historically significant cities in China. It serves as the political, cultural, and educational center of the country. Beijing is not only the seat of the Chinese government, with the country's top government officials and institutions located there, but it also boasts a rich cultural heritage, including iconic landmarks like the Forbidden City, the Temple of Heaven, and the Great Wall of China, which are major tourist attractions.",
-    "Question: What's the capital city of United States? Context: The capital city of the United States is Washington, D.C. (District of Columbia). Washington, D.C. is not part of any state and was specifically created as the nation's capital. It serves as the center of the U.S. government, housing important institutions and landmarks such as the White House (the official residence of the President of the United States), the U.S. Capitol (where Congress meets), and various government agencies and embassies. Additionally, Washington, D.C. is known for its historical monuments and museums, making it a significant cultural and political hub in the United States.",
-]
-
-output_dataset = output_annotator.annotate_outputs(
-    input_strings=inputs,
-    num_candidate_outputs=2,
-    prompt_spec=prompt_spec,
-    hyperparameter_choices={},
+construct_prompt = partial(
+    construct_meta_prompt,
+    instruction=prompt_spec.instruction,
+    examples=prompt_spec.examples,
 )
+
+
+def map_func(example):
+    example["model_input"] = construct_prompt(new_input=example["input_col"])
+    example["model_output"] = example["output_col"]
+    return example
+
+
+test_dataset = test_dataset.map(map_func)
+prompts = test_dataset["model_input"]
+GROUND_TRUTH = test_dataset["model_output"]
+
+
+hyperparameter_choices = {}
+sampling_params = SamplingParams(
+    top_k=hyperparameter_choices.get("top_k", -1),
+    top_p=hyperparameter_choices.get("top_p", 1),
+    temperature=hyperparameter_choices.get("temperature", 0),
+    max_tokens=hyperparameter_choices.get("max_tokens", 500),
+)
+MODEL_INPUTS = prompts
+VALIDATION_DATASET = datasets.Dataset.from_dict(
+    {"model_ouput": GROUND_TRUTH, "model_input": MODEL_INPUTS}
+)
+evaluator = Seq2SeqEvaluator()
+
+# vicuna_performance = evaluator.evaluate_model(
+#     dataset=VALIDATION_DATASET,
+#     gt_column="model_ouput",
+#     model_input_column="model_input",
+#     predictions=base_icuna_predicts,
+#     encoder_model_name="xlm-roberta-base",
+# )
+
+### TODO base_vicuna 0.353
+
+# base_vicuna = LLM(
+#     model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+# )
+# base_vicuna_outputs = base_vicuna.generate(prompts, sampling_params)
+# base_vicuna_generated_outputs = [each.outputs[0].text for each in base_vicuna_outputs]
+# base_icuna_predicts = [ModelOutput(each, auxiliary_info={}) for each in base_vicuna_generated_outputs]
+
+# index = 0
+# for i in range(len(GROUND_TRUTH)):
+#     if GROUND_TRUTH[i] in base_vicuna_generated_outputs[i] or GROUND_TRUTH[i] in base_vicuna_generated_outputs[i]:
+#         index += 1
+# print(index / len(GROUND_TRUTH))
+
+
+tuned_vicuna = LLM(
+    model="/home/cyzhao/cache"
+)
+tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
+tuned_vicuna_generated_outputs = [each.outputs[0].text for each in tuned_vicuna_outputs]
+index = 0
+for i in range(len(GROUND_TRUTH)):
+    if GROUND_TRUTH[i] == tuned_vicuna_generated_outputs[i]:
+        index += 1
+print(index / len(GROUND_TRUTH))
+
