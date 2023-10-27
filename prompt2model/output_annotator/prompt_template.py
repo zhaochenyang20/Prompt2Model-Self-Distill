@@ -12,7 +12,8 @@ PROMPT_TEMPLATE = """### Instructions:
 
 {new_input}
 
-[your output]="""  # noqa E501
+### Your Output:
+"""  # noqa E501
 
 
 def construct_meta_prompt(

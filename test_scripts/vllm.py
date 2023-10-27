@@ -29,9 +29,9 @@ Your task is to generate an answer to a natural question. In this task, the inpu
 
 ### New Input:
 
-[input]="Question: What is the largest ocean in the world? Context: Oceans are large bodies of saltwater that cover more than 70% of the Earth's surface. The largest ocean in the world is the Pacific Ocean, which stretches across approximately 63 million square miles. It is located between the Western Hemisphere and the Eastern Hemisphere and is bordered by Asia and Australia to the west, and the Americas to the east."
+"Question: What is the largest ocean in the world? Context: Oceans are large bodies of saltwater that cover more than 70% of the Earth's surface. The largest ocean in the world is the Pacific Ocean, which stretches across approximately 63 million square miles. It is located between the Western Hemisphere and the Eastern Hemisphere and is bordered by Asia and Australia to the west, and the Americas to the east."
 
-[output]=
+### Your Output:
 """
 
 prompts = [prompt]
