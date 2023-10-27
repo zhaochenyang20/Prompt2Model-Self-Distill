@@ -66,7 +66,7 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 #     encoder_model_name="xlm-roberta-base",
 # )
 
-### TODO base_vicuna 0.353
+### TODO base_vicuna 0.59
 
 base_vicuna = LLM(
     model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
