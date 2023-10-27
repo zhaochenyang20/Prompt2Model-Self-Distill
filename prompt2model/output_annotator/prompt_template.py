@@ -28,8 +28,6 @@ def construct_meta_prompt(
         input: A new input to be annotated.
         high_quality_input_string: A string representing the high quality examples.
     """
-    if not new_input.startswith("[input]="):
-        new_input = "[input]=" + new_input
     return PROMPT_TEMPLATE.format(
         instruction=instruction,
         new_input=new_input,
