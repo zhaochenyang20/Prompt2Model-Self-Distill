@@ -40,7 +40,7 @@ def map_func(example):
     return example
 
 
-test_dataset = test_dataset.map(map_func)
+test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
 prompts = test_dataset["model_input"]
 GROUND_TRUTH = test_dataset["model_output"]
 
@@ -56,8 +56,8 @@ MODEL_INPUTS = prompts
 VALIDATION_DATASET = datasets.Dataset.from_dict(
     {"model_ouput": GROUND_TRUTH, "model_input": MODEL_INPUTS}
 )
-evaluator = Seq2SeqEvaluator()
 
+# evaluator = Seq2SeqEvaluator()
 # vicuna_performance = evaluator.evaluate_model(
 #     dataset=VALIDATION_DATASET,
 #     gt_column="model_ouput",
@@ -68,28 +68,28 @@ evaluator = Seq2SeqEvaluator()
 
 ### TODO base_vicuna 0.353
 
-# base_vicuna = LLM(
-#     model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-# )
-# base_vicuna_outputs = base_vicuna.generate(prompts, sampling_params)
-# base_vicuna_generated_outputs = [each.outputs[0].text for each in base_vicuna_outputs]
-# base_icuna_predicts = [ModelOutput(each, auxiliary_info={}) for each in base_vicuna_generated_outputs]
-
-# index = 0
-# for i in range(len(GROUND_TRUTH)):
-#     if GROUND_TRUTH[i] in base_vicuna_generated_outputs[i] or GROUND_TRUTH[i] in base_vicuna_generated_outputs[i]:
-#         index += 1
-# print(index / len(GROUND_TRUTH))
-
-
-tuned_vicuna = LLM(
-    model="/home/cyzhao/cache"
+base_vicuna = LLM(
+    model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
 )
-tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
-tuned_vicuna_generated_outputs = [each.outputs[0].text for each in tuned_vicuna_outputs]
+base_vicuna_outputs = base_vicuna.generate(prompts, sampling_params)
+base_vicuna_generated_outputs = [each.outputs[0].text for each in base_vicuna_outputs]
+base_icuna_predicts = [ModelOutput(each, auxiliary_info={}) for each in base_vicuna_generated_outputs]
+
 index = 0
 for i in range(len(GROUND_TRUTH)):
-    if GROUND_TRUTH[i] == tuned_vicuna_generated_outputs[i]:
+    if GROUND_TRUTH[i] in base_vicuna_generated_outputs[i] or GROUND_TRUTH[i] in base_vicuna_generated_outputs[i]:
         index += 1
 print(index / len(GROUND_TRUTH))
+
+
+# tuned_vicuna = LLM(
+#     model="/home/cyzhao/cache"
+# )
+# tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
+# tuned_vicuna_generated_outputs = [each.outputs[0].text for each in tuned_vicuna_outputs]
+# index = 0
+# for i in range(len(GROUND_TRUTH)):
+#     if GROUND_TRUTH[i] == tuned_vicuna_generated_outputs[i]:
+#         index += 1
+# print(index / len(GROUND_TRUTH))
 
