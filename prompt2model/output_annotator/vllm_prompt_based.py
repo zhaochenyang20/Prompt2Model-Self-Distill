@@ -2,8 +2,9 @@
 
 from typing import Any
 
-from vllm import LLM, SamplingParams
 import datasets
+from vllm import LLM, SamplingParams
+
 from prompt2model.output_annotator import OutputAnnotator
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import PromptSpec
@@ -101,19 +102,18 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                     new_input=input,
                     context_cutoff=3500,
                 )
-            ] * num_candidate_outputs
+            ]
 
         sampling_params = SamplingParams(
+            n=num_candidate_outputs,
             top_k=hyperparameter_choices.get("top_k", 10),
             top_p=hyperparameter_choices.get("top_p", 0.6),
             temperature=hyperparameter_choices.get("temperature", 0.3),
             max_tokens=hyperparameter_choices.get("max_tokens", 500),
         )
-        outputs = self.language_model.generate(prompts, sampling_params)
-        generated_outputs = [each.outputs[0].text for each in outputs]
+        output_sequence = self.language_model.generate(prompts, sampling_params)
         output_strings = [
-            generated_outputs[i : i + num_candidate_outputs]
-            for i in range(0, len(generated_outputs), num_candidate_outputs)
+            [output.text for output in each.outputs] for each in output_sequence
         ]
         return datasets.Dataset.from_dict(
             dict(input_strings=input_strings, outputs=output_strings)

@@ -6,6 +6,7 @@ language_model = LLM(
 
 
 sampling_params = SamplingParams(
+    n=2,
     top_k=-1,
     top_p=0.1,
     temperature=1,
@@ -35,8 +36,11 @@ Your task is to generate an answer to a natural question. In this task, the inpu
 
 """
 
-prompts = [prompt]
+prompts = [prompt, prompt]
 
-outputs = language_model.generate(prompts, sampling_params)
-generated_inputs = [each.outputs[0].text for each in outputs]
-generated_inputs[0]
+output_sequence = language_model.generate(prompts, sampling_params)
+
+generated_inputs = [
+    [output.text for output in each.outputs] for each in output_sequence
+]
+generated_inputs

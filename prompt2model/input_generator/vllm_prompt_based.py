@@ -133,6 +133,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             temperature=hyperparameter_choices.get("temperature", 1),
             max_tokens=hyperparameter_choices.get("max_tokens", 500),
         )
-        outputs = self.language_model.generate(prompts, sampling_params)
-        generated_inputs = [each.outputs[0].text for each in outputs]
+        output_sequence = self.language_model.generate(prompts, sampling_params)
+        generated_inputs = [each.outputs[0].text for each in output_sequence]
         return generated_inputs

@@ -3,14 +3,17 @@ model_path = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snaps
 # model_path = "/home/cyzhao/ckpt"
 ckpt_path = "/home/cyzhao/ckpt"
 
-from prompt2model.prompt_parser import MockPromptSpec, TaskType
-import gc, datasets
+import gc
 from functools import partial
-from prompt2model.output_annotator import construct_meta_prompt
+
+import datasets
 import torch
 from datasets import load_from_disk
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
+
+from prompt2model.output_annotator import construct_meta_prompt
+from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 # dataset = load_from_disk(dataset_path)
 

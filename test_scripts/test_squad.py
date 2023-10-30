@@ -1,12 +1,14 @@
-import datasets
-from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from functools import partial
-from prompt2model.output_annotator.prompt_template import construct_meta_prompt
-from vllm import LLM, SamplingParams
-from prompt2model.model_executor import ModelOutput
-from prompt2model.model_evaluator import Seq2SeqEvaluator
-from transformers import AutoTokenizer
+
+import datasets
 import evaluate
+from transformers import AutoTokenizer
+from vllm import LLM, SamplingParams
+
+from prompt2model.model_evaluator import Seq2SeqEvaluator
+from prompt2model.model_executor import ModelOutput
+from prompt2model.output_annotator.prompt_template import construct_meta_prompt
+from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 test_dataset = datasets.load_from_disk(
     "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed"
