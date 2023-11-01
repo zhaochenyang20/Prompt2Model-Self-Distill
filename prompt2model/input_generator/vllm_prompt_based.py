@@ -72,9 +72,8 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     low_quality_input_string += f'[input]="{example.input_col}"\n'
 
             # Extract inputs from the few-shot examples.
-            high_quality_inputs = re.findall(
-                r'[input]="(.*?)"', few_shot_example_string
-            )
+            matches = re.findall(r'\[input\]="(.*?)"\s*\[output\]="(.*?)"', few_shot_example_string, re.DOTALL)
+            high_quality_inputs = [match[0] for match in matches]
             if len(high_quality_inputs) == 0:
                 high_quality_input_string = "N/A\n"
             else:
