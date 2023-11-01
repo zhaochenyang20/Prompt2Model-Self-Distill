@@ -1,6 +1,7 @@
 """Utilities to construct an LLM "metaprompt" for our dataset generator."""
 
-PROMPT_TEMPLATE = """### Instructions:
+PROMPT_TEMPLATE = """
+### Instructions:
 
 {instruction}
 
