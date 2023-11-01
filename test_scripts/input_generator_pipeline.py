@@ -35,3 +35,5 @@ inputs = input_generator.batch_generation_inputs(
         max_tokens=500,
     ),
 )
+
+inputs = input_generator.generate_inputs([], prompt_spec, 10, {})
