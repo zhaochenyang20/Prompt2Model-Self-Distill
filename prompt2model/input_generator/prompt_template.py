@@ -58,11 +58,13 @@ Avoid generating a new [input] that is the same as the provided [input].
 Here are some high-quality [input] for the [instruction]. These [input] can provide you with very strict format requirements. You should pay extreme attention to them!!!
 
 Some high-quality [input]:
+
 {high_quality_input_string}
 --------------------------------------------------------------------------------------------
 These are some addtional [input]. Their formats and contents may not be accurate. However, you may also refer to the content of them.
 
 Some low-quality [input]:
+
 {low_quality_input_string}
 --------------------------------------------------------------------------------------------
 Afters seeing example inputs, generate a new [input]. Before generating the new [input], ensure that you strictly adhere to the rules of the new [instruction] and follow the format of high-quality [input].

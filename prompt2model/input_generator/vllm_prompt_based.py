@@ -69,7 +69,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     generated_examples, random_selected_generated_example_num
                 )
                 for example in random_examples:
-                    low_quality_input_string += f'[input]="{example.input_col}"\n'
+                    low_quality_input_string += f'[input]="{example.input_col}"\n\n'
 
             # Extract inputs from the few-shot examples.
             matches = re.findall(r'\[input\]="(.*?)"\s*\[output\]="(.*?)"', few_shot_example_string, re.DOTALL)
@@ -79,7 +79,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             else:
                 high_quality_input_string = ""
                 for input in high_quality_inputs:
-                    high_quality_input_string += f'[input]="{input}"\n'
+                    high_quality_input_string += f'[input]="{input}"\n\n'
 
             # Construct the prompt.
             prompt = construct_meta_prompt(
