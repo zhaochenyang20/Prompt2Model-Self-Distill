@@ -165,5 +165,5 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             )
             # TODO: filter inputs
             filtered_inputs = new_inputs
-            generated_inputs += filtered_inputs
+            generated_inputs.extend(filtered_inputs)
         return generated_inputs
