@@ -53,10 +53,10 @@ prompt = input_generator.construct_prompt(
 )
 
 inputs = input_generator.generate_inputs(
-    generated_examples=generated_examples,
-    prompt_spec=prompt_spec,
+    generated_examples,
+    prompt_spec,
     inputs_num=10,
-    hyperparameter_choices=dict(top_k=-1, top_p=0.1, temperature=0.01,),
+    hyperparameter_choices=dict(n=4, top_k=-1, top_p=0.1, temperature=0.01,),
 )
 
 len(set(inputs))

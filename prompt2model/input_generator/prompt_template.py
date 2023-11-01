@@ -45,7 +45,8 @@ import random
 
 # [input]="""  # noqa E501
 
-PROMPT_TEMPLATE = """As an InputGenerator, your task is to generate a new [input] based on the [instruction] and some example [input].
+PROMPT_TEMPLATE = """
+As an InputGenerator, your task is to generate a new [input] based on the [instruction] and some example [input].
 
 Try your best to ensure that the new [input] you generate is distinct from the provided [input] while maintaining a diverse, detailed, precise, comprehensive, and high-quality response.
 
@@ -73,7 +74,8 @@ Prioritize the new [instruction] guidelines to maintain consistency and quality.
 
 Think twice before generating a new [input]. Only response the new [input] without any other information.
 
-[input]="""  # noqa E501
+[input]=
+"""  # noqa E501
 
 META_PROMPT = """As an InputGenerator, your task is to generate a new [input] based on the new [instruction] and some example [input].
 
