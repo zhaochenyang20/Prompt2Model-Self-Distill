@@ -139,7 +139,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         )
         output_sequence = self.language_model.generate(prompts, sampling_params)
         new_inputs = [
-            [output.text for output in each.outputs] for each in output_sequence
+            output.text for each in output_sequence for output in each.outputs
         ]
         return new_inputs
 
