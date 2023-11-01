@@ -4,6 +4,7 @@ import random
 import re
 from typing import Any
 
+from tqdm import tqdm
 from vllm import LLM, SamplingParams
 
 from prompt2model.dataset_generator.prompt_based import Example
@@ -137,5 +138,32 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             max_tokens=hyperparameter_choices.get("max_tokens", 500),
         )
         output_sequence = self.language_model.generate(prompts, sampling_params)
-        new_inputs = [each.outputs[0].text for each in output_sequence]
+        new_inputs = [
+            [output.text for output in each.outputs] for each in output_sequence
+        ]
         return new_inputs
+
+    def batch_generation_inputs(
+        self,
+        prompt_spec: PromptSpec,
+        generation_epochs: int,
+        per_epoch_num: int,
+        hyperparameter_choices: dict[str, Any],
+    ) -> list[str]:
+        """Generate new inputs for a given prompt with a pre-trained model.
+
+        Args:
+            generation_epochs: The number of epochs to generate inputs.
+            prompt_spec: A prompt we use to generate new inputs.
+            inputs_num: The number of new inputs to generate.
+            hyperparameter_choices: A dictionary of hyperparameter choices.
+        """
+        generated_inputs = []
+        for _ in tqdm(generation_epochs):
+            new_inputs = self.generate_inputs(
+                generated_inputs, prompt_spec, per_epoch_num, hyperparameter_choices
+            )
+            # TODO: filter inputs
+            filtered_inputs = new_inputs
+            generated_inputs += filtered_inputs
+        return generated_inputs

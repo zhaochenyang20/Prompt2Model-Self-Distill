@@ -24,17 +24,14 @@ prompt_spec = MockPromptSpec(
 
 input_generator = VLLMPromptBasedInputGenerator()
 
-inputs = input_generator.generate_inputs(
-    generated_inputs,
+inputs = input_generator.batch_generation_inputs(
     prompt_spec,
-    inputs_num=10,
-    hyperparameter_choices=dict(
-        n=4,
+    2,
+    3,
+    dict(
         top_k=-1,
         top_p=0.1,
-        temperature=0.01,
+        temperature=0.4,
+        max_tokens=500,
     ),
 )
-
-len(set(inputs))
-inputs
