@@ -159,7 +159,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             hyperparameter_choices: A dictionary of hyperparameter choices.
         """
         generated_inputs = []
-        for _ in tqdm(generation_epochs):
+        for _ in tqdm(range(generation_epochs)):
             new_inputs = self.generate_inputs(
                 generated_inputs, prompt_spec, per_epoch_num, hyperparameter_choices
             )
