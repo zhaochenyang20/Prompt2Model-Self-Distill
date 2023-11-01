@@ -4,7 +4,8 @@ language_model = LLM(
     model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
 )
 
-prompt = """### Instructions:
+output_prompt = """
+### Instructions:
 
 Your task is to generate an answer to a natural question. In this task, the input is a string that consists of both a question and a context passage. The context is a descriptive passage related to the question and contains the answer. And the question can range from Math, Cultural, Social, Geometry, Biology, History, Sports, Technology, Science, and so on.
 
@@ -27,7 +28,7 @@ Your task is to generate an answer to a natural question. In this task, the inpu
 
 """
 
-prompt = """
+input_prompt = """
 As an InputGenerator, your task is to generate a new [input] based on the [instruction] and some example [input].
 
 Try your best to ensure that the new [input] you generate is distinct from the provided [input] while maintaining a diverse, detailed, precise, comprehensive, and high-quality response.
@@ -53,7 +54,11 @@ These are some addtional [input]. Their formats and contents may not be accurate
 
 Some low-quality [input]:
 
-N/A
+[input]="Question: What is the capital of France? Context: France is a country located in Western Europe. Its capital is Paris, which is also the country\'s most populous city. The population of France is approximately 67 million people. The official language is French, and the country is known for its rich history, art, and culture. Some famous landmarks in Paris include the Eiffel Tower, the Louvre Museum, and the Notre-Dame Cathedral.”
+
+[input]="Question: What is the largest desert in the world? Context: The largest desert in the world is the Antarctic Desert, which covers an area of 20 million square kilometers. It is located in the southern hemisphere and is the coldest desert in the world. The desert is home to a variety of unique plant and animal species, including the Antarctic penguin and the emperor penguin. The desert is also home to several research stations, including the Amundsen-Scott South Pole Station."
+
+[input]="Question: What is the capital of Japan? Context: Japan is a country located in East Asia. Its capital is Tokyo, which is also the country\'s most populous city. The population of Japan is approximately 127 million people. The official language is Japanese, and the country is known for its rich history, culture, and technology. Some famous landmarks in Tokyo include the Tokyo Tower, the Imperial Palace, and the Tokyo Skytree. The city is also home to many of Japan\'s largest corporations, including Toyota, Sony, and Nintendo."
 --------------------------------------------------------------------------------------------
 Afters seeing example inputs, generate a new [input]. Before generating the new [input], ensure that you strictly adhere to the rules of the new [instruction] and follow the format of high-quality [input].
 
@@ -64,46 +69,7 @@ Think twice before generating a new [input]. Only response the new [input] witho
 [input]=
 """
 
-failed_prompt = """
-As an InputGenerator, your task is to generate a new [input] based on the [instruction] and some example [input].
-
-Try your best to ensure that the new [input] you generate is distinct from the provided [input] while maintaining a diverse, detailed, precise, comprehensive, and high-quality response.
-
-Avoid generating a new [input] that is the same as the provided [input].
---------------------------------------------------------------------------------------------
-[instruction]
-
-Your task is to generate an answer to a natural question. In this task, the input is a string that consists of both a question and a context passage. The context is a descriptive passage related to the question and contains the answer. And the question can range from Math, Cultural, Social, Geometry, Biology, History, Sports, Technology, Science, and so on.
---------------------------------------------------------------------------------------------
-Here are some high-quality [input] for the [instruction]. These [input] can provide you with very strict format requirements. You should pay extreme attention to them!!!
-
-Some high-quality [input]:
-
-[input]="Question: What city did Super Bowl 50 take place in? Context: Super Bowl 50 was an American football game to determine the champion of the National Football League (NFL) for the 2015 season. The American Football Conference (AFC) champion Denver Broncos defeated the National Football Conference (NFC) champion Carolina Panthers 24–10 to earn their third Super Bowl title. The game was played on February 7, 2016, at Levi's Stadium in the San Francisco Bay Area at Santa Clara, California. As this was the 50th Super Bowl, the league emphasized the "golden anniversary" with various gold-themed initiatives, as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals (under which the game would have been known as "Super Bowl L"), so that the logo could prominently feature the Arabic numerals 50."
-
-[input]="Question: What river runs through Warsaw? Context: Warsaw (Polish: Warszawa [varˈʂava] ( listen); see also other names) is the capital and largest city of Poland. It stands on the Vistula River in east-central Poland, roughly 260 kilometres (160 mi) from the Baltic Sea and 300 kilometres (190 mi) from the Carpathian Mountains. Its population is estimated at 1.740 million residents within a greater metropolitan area of 2.666 million residents, which makes Warsaw the 9th most-populous capital city in the European Union. The city limits cover 516.9 square kilometres (199.6 sq mi), while the metropolitan area covers 6,100.43 square kilometres (2,355.39 sq mi)."
-
-[input]="Question: The Ottoman empire controlled territory on three continents, Africa, Asia and which other? Context: The Ottoman Empire was an imperial state that lasted from 1299 to 1923. During the 16th and 17th centuries, in particular at the height of its power under the reign of Suleiman the Magnificent, the Ottoman Empire was a powerful multinational, multilingual empire controlling much of Southeast Europe, Western Asia, the Caucasus, North Africa, and the Horn of Africa. At the beginning of the 17th century the empire contained 32 provinces and numerous vassal states. Some of these were later absorbed into the empire, while others were granted various types of autonomy during the course of centuries."
-
-
---------------------------------------------------------------------------------------------
-These are some addtional [input]. Their formats and contents may not be accurate. However, you may also refer to the content of them.
-
-Some low-quality [input]:
-
-N/A
-
---------------------------------------------------------------------------------------------
-Afters seeing example inputs, generate a new [input]. Before generating the new [input], ensure that you strictly adhere to the rules of the new [instruction] and follow the format of high-quality [input].
-
-Prioritize the new [instruction] guidelines to maintain consistency and quality.
-
-Think twice before generating a new [input]. Only response the new [input] without any other information.
-
-[input]=
-"""
-
-prompts = [failed_prompt]
+prompts = [input_prompt]
 
 sampling_params = SamplingParams(
     n=4,

@@ -1,32 +1,11 @@
 """Test Input Generator."""
 
-from prompt2model.dataset_generator.prompt_based import Example
 from prompt2model.input_generator import VLLMPromptBasedInputGenerator
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 # 测试
 
-generated_examples = [
-    # Example(
-    #     input_col="Question: What is the capital city of Fran?", output_col="Paris"
-    # ),
-    # Example(
-    #     input_col="Question: When was the American Declaration of Independence signed?",
-    #     output_col="July 4, 1776",
-    # ),
-    # Example(
-    #     input_col="Question: The tallest mountain in the world?",
-    #     output_col="Mount Everest",
-    # ),
-    # Example(
-    #     input_col="Question: How many planets are there in our solar system?",
-    #     output_col="8",
-    # ),
-    # Example(
-    #     input_col="Question: Who was the first President of the United States?",
-    #     output_col="George Washington",
-    # ),
-]
+generated_inputs = []
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
@@ -45,18 +24,16 @@ prompt_spec = MockPromptSpec(
 
 input_generator = VLLMPromptBasedInputGenerator()
 
-prompt = input_generator.construct_prompt(
-    instruction=prompt_spec.instruction,
-    few_shot_example_string=prompt_spec.examples,
-    generated_examples=generated_examples,
-    context_cutoff=3500,
-)
-
 inputs = input_generator.generate_inputs(
-    generated_examples,
+    generated_inputs,
     prompt_spec,
     inputs_num=10,
-    hyperparameter_choices=dict(n=4, top_k=-1, top_p=0.1, temperature=0.01,),
+    hyperparameter_choices=dict(
+        n=4,
+        top_k=-1,
+        top_p=0.1,
+        temperature=0.01,
+    ),
 )
 
 len(set(inputs))
