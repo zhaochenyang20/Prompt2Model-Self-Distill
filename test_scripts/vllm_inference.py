@@ -4,15 +4,6 @@ language_model = LLM(
     model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
 )
 
-
-sampling_params = SamplingParams(
-    n=2,
-    top_k=-1,
-    top_p=0.1,
-    temperature=1,
-    max_tokens=500,
-)
-
 prompt = """### Instructions:
 
 Your task is to generate an answer to a natural question. In this task, the input is a string that consists of both a question and a context passage. The context is a descriptive passage related to the question and contains the answer. And the question can range from Math, Cultural, Social, Geometry, Biology, History, Sports, Technology, Science, and so on.
@@ -36,7 +27,23 @@ Your task is to generate an answer to a natural question. In this task, the inpu
 
 """
 
-prompts = [prompt, prompt]
+prompts = [prompt]
+
+sampling_params = SamplingParams(
+    n=4,
+    top_k=10,
+    top_p=0.3,
+    temperature=0.7,
+    max_tokens=500,
+)
+
+sampling_params = SamplingParams(
+    n=4,
+    top_k=-1,
+    top_p=0.1,
+    temperature=0.01,
+    max_tokens=500,
+)
 
 output_sequence = language_model.generate(prompts, sampling_params)
 

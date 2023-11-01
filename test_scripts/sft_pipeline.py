@@ -76,8 +76,8 @@ def map_func(example):
 
 test_dataset = datasets.Dataset.from_dict(
     datasets.load_from_disk(
-        "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed"
-    )[:300]
+        "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_train"
+    )[:5000]
 )
 mapped_dataset = test_dataset.map(map_func, load_from_cache_file=False)
 print(mapped_dataset[1]["text"])
