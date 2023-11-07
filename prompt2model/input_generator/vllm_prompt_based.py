@@ -10,6 +10,10 @@ from vllm import LLM, SamplingParams
 from prompt2model.input_generator import InputGenerator
 from prompt2model.input_generator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import PromptSpec
+from prompt2model.quality_evaluator import (
+    ablation_list_filter,
+    check_paragraph_coherence,
+)
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 
 logger = get_formatted_logger("InputGenerator")
@@ -131,8 +135,11 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             for _ in range(inputs_num)
         ]
         sampling_params = SamplingParams(
+            n=hyperparameter_choices.get("n", 1),
+            repetition_penalty=hyperparameter_choices.get("repetition_penalty", 2),
+            do_sample=hyperparameter_choices.get("do_sample", True),
+            best_of=hyperparameter_choices.get("best_of", 1),
             top_k=hyperparameter_choices.get("top_k", -1),
-            top_p=hyperparameter_choices.get("top_p", 0.1),
             temperature=hyperparameter_choices.get("temperature", 1),
             max_tokens=hyperparameter_choices.get("max_tokens", 500),
         )
@@ -162,7 +169,8 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             new_inputs = self.generate_inputs(
                 generated_inputs, prompt_spec, per_epoch_num, hyperparameter_choices
             )
-            # TODO: filter inputs
-            filtered_inputs = new_inputs
-            generated_inputs.extend(filtered_inputs)
+            generated_inputs.extend(new_inputs)
+            generated_inputs = ablation_list_filter(
+                check_paragraph_coherence(generated_inputs)
+            )
         return generated_inputs
