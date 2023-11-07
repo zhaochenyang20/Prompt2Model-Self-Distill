@@ -8,6 +8,13 @@ import torch
 from optimum.bettertransformer import BetterTransformer
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+model = AutoModelForCausalLM.from_pretrained(
+    "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
+    trust_remote_code=True,
+    device_map="auto",
+    torch_dtype=torch.bfloat16,
+    use_flash_attention_2=True,
+)
 from prompt2model.dataset_generator.prompt_based import Example
 from prompt2model.input_generator import InputGenerator
 from prompt2model.input_generator.prompt_template import construct_meta_prompt
@@ -42,7 +49,7 @@ class HFPromptBasedInputGenerator(InputGenerator):
                 pretrained_model_name, padding_side="left"
             )
         model = AutoModelForCausalLM.from_pretrained(
-            pretrained_model_name,
+            "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
             trust_remote_code=True,
             device_map="auto",
             torch_dtype=torch.bfloat16,

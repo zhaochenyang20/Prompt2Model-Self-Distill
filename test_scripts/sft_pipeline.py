@@ -1,6 +1,5 @@
-# dataset_path = "/home/cyzhao/prompt2model_test/generation/generated_dataset/SQuAD_0.3_1.4_with_filtering"
+dataset_path = "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_train"
 model_path = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-# model_path = "/home/cyzhao/ckpt"
 ckpt_path = "/home/cyzhao/ckpt"
 
 import gc
@@ -8,14 +7,11 @@ from functools import partial
 
 import datasets
 import torch
-from datasets import load_from_disk
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 
 from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
-
-# dataset = load_from_disk(dataset_path)
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
@@ -47,16 +43,6 @@ tokenizer = AutoTokenizer.from_pretrained(
 )
 
 
-# def map_func(example):
-#     model_input = construct_prompt(new_input=example["input_col"])
-#     # model_input = construct_meta_prompt(instruction=prompt_spec.instruction, examples=prompt_spec.examples, new_input=example["input_col"])
-#     return dict(text=f"{model_input}\"{example['output_col']}\"{tokenizer.eos_token}")
-
-
-# TODO # 0.005 for "### INPUT:  {example['input_col']}\n### OUTPUT: {example['output_col']}"
-
-# mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
-
 tokenizer = AutoTokenizer.from_pretrained(
     "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
     local_files_only=True,
@@ -74,11 +60,7 @@ def map_func(example):
     return example
 
 
-test_dataset = datasets.Dataset.from_dict(
-    datasets.load_from_disk(
-        "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_train"
-    )[:5000]
-)
+test_dataset = datasets.Dataset.from_dict(datasets.load_from_disk(dataset_path)[:5000])
 mapped_dataset = test_dataset.map(map_func, load_from_cache_file=False)
 print(mapped_dataset[1]["text"])
 

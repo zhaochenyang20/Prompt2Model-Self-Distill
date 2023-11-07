@@ -12,8 +12,9 @@ greetings = [
     "I'm glad you asked.",
     "Alright, let me explain.",
     "Absolutely!",
-    "I understand your question."
+    "I understand your question.",
 ]
+
 
 def ablation_list_filter(strings):
     """
@@ -26,11 +27,10 @@ def ablation_list_filter(strings):
     list of str: A list of strings that do not contain any of the greetings.
     """
 
-
     filtered_strings = []
 
     for s in strings:
         if not any(greeting in s for greeting in greetings):
             filtered_strings.append(s)
-    
+
     return filtered_strings
