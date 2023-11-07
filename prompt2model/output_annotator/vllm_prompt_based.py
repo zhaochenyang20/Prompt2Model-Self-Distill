@@ -106,7 +106,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
 
         sampling_params = SamplingParams(
             n=num_candidate_outputs,
-            do_sample=hyperparameter_choices.get("do_sample", True),
+            # do_sample=hyperparameter_choices.get("do_sample", True),
             best_of=hyperparameter_choices.get("best_of", 1),
             top_k=hyperparameter_choices.get("top_k", 10),
             top_p=hyperparameter_choices.get("top_p", 0.6),
