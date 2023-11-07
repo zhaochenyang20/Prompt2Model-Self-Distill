@@ -30,7 +30,7 @@ inputs = input_generator.batch_generation_inputs(
     40,
     dict(
         top_k=50,
-        repetition_penalty=2,
+        # repetition_penalty=2,
         temperature=1.0,
         max_tokens=500,
     ),
