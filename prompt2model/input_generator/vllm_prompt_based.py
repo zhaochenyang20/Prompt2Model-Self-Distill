@@ -164,6 +164,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 generated_inputs, prompt_spec, per_epoch_num, hyperparameter_choices
             )
             # TODO: filter inputs
+            print(new_inputs)
             filtered_inputs = new_inputs
             generated_inputs.extend(filtered_inputs)
         return generated_inputs
