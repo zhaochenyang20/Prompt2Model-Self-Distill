@@ -7,7 +7,6 @@ from typing import Any
 from tqdm import tqdm
 from vllm import LLM, SamplingParams
 
-from prompt2model.dataset_generator.prompt_based import Example
 from prompt2model.input_generator import InputGenerator
 from prompt2model.input_generator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import PromptSpec

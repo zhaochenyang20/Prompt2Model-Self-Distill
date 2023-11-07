@@ -26,14 +26,16 @@ input_generator = VLLMPromptBasedInputGenerator()
 
 inputs = input_generator.batch_generation_inputs(
     prompt_spec,
-    2,
-    3,
+    10,
+    4,
     dict(
         top_k=-1,
         top_p=0.1,
-        temperature=0.4,
+        temperature=1.0,
         max_tokens=500,
     ),
 )
 
-inputs = input_generator.generate_inputs([], prompt_spec, 10, {})
+len(set(inputs))
+
+# inputs = input_generator.generate_inputs([], prompt_spec, 10, {})

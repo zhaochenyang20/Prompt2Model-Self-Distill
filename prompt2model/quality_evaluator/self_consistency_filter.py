@@ -1,5 +1,6 @@
 from collections import Counter
 
+
 def self_consistency_filter(strings):
     """
     The function counts the occurrences of each string in the input list, finds the highest frequency,
@@ -25,7 +26,11 @@ def self_consistency_filter(strings):
 
     highest_frequency = frequency_counter.most_common(1)[0][1]
 
-    most_common_strings = [string for string, count in frequency_counter.items() if count == highest_frequency]
+    most_common_strings = [
+        string
+        for string, count in frequency_counter.items()
+        if count == highest_frequency
+    ]
 
     shortest_of_most_common = min(most_common_strings, key=len)
 
