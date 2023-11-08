@@ -1,7 +1,7 @@
 from collections import Counter
 
 
-def self_consistency_filter(strings):
+def self_consistency_filter(strings) -> str:
     """
     The function counts the occurrences of each string in the input list, finds the highest frequency,
     and then identifies all strings that occur with this frequency. Out of these most frequent strings,

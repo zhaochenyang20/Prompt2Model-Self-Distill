@@ -1,7 +1,15 @@
 """Test Input Generator."""
 
+from pathlib import Path
+
+import datasets
+
 from prompt2model.output_annotator import VLLMPromptBasedOutputAnnotator
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
+
+inputs_dir = Path("./generated_inputs")
+inputs_dir.mkdir(parents=True, exist_ok=True)
+
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
@@ -28,7 +36,6 @@ inputs = [
 
 output_dataset = output_annotator.annotate_outputs(
     input_strings=inputs,
-    num_candidate_outputs=2,
     prompt_spec=prompt_spec,
     hyperparameter_choices={},
 )
