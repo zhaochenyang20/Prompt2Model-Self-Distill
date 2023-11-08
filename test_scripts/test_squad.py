@@ -1,7 +1,13 @@
+import argparse
+import gc
+import os
 from functools import partial
+from multiprocessing import Process
+from pathlib import Path
 
 import datasets
 import evaluate
+import torch
 from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 
@@ -10,9 +16,16 @@ from prompt2model.model_executor import ModelOutput
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--model_name", type=str, default="")
+args = parser.parse_args()
+
 test_dataset = datasets.load_from_disk(
     "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed"
 )
+
+ckpt_path = Path("/home/cyzhao/ckpt")
+inputs_dir = Path("/home/cyzhao/generated_datasets")
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
@@ -57,7 +70,6 @@ test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
 prompts = test_dataset["model_input"]
 GROUND_TRUTH = test_dataset["model_output"]
 
-
 hyperparameter_choices = {}
 sampling_params = SamplingParams(
     top_k=hyperparameter_choices.get("top_k", -1),
@@ -70,39 +82,31 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
     {"model_ouput": GROUND_TRUTH, "model_input": MODEL_INPUTS}
 )
 
-# evaluator = Seq2SeqEvaluator()
-# vicuna_performance = evaluator.evaluate_model(
-#     dataset=VALIDATION_DATASET,
-#     gt_column="model_ouput",
-#     model_input_column="model_input",
-#     predictions=base_icuna_predicts,
-#     encoder_model_name="xlm-roberta-base",
-# )
 
-### TODO base_vicuna 0.59
+def main(model_name):
+    tuned_vicuna = LLM(model=str(ckpt_path / model_name))
+    tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
+    tuned_vicuna_generated_outputs = [
+        each.outputs[0].text for each in tuned_vicuna_outputs
+    ]
+    index = 0
+    for i in range(len(GROUND_TRUTH)):
+        if (
+            GROUND_TRUTH[i] in tuned_vicuna_generated_outputs[i]
+            or tuned_vicuna_generated_outputs[i] in GROUND_TRUTH[i]
+        ):
+            index += 1
+    print(model_name)
+    del tuned_vicuna
+    gc.collect()
+    torch.cuda.empty_cache()
+    print(index / len(GROUND_TRUTH))
+    file_name = f"result_{model_name}"
+    with open(inputs_dir / f"{file_name}.txt", "w") as file:
+        file.write(
+            f"result of {model_name}\n\n------------------------------------------------{index / len(GROUND_TRUTH)}------------------------------------------------\n\n"
+        )
 
-# base_vicuna = LLM(
-#     model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-# )
-# base_vicuna_outputs = base_vicuna.generate(prompts, sampling_params)
-# base_vicuna_generated_outputs = [each.outputs[0].text for each in base_vicuna_outputs]
-# base_icuna_predicts = [ModelOutput(each, auxiliary_info={}) for each in base_vicuna_generated_outputs]
 
-# index = 0
-# for i in range(len(GROUND_TRUTH)):
-#     if GROUND_TRUTH[i] in base_vicuna_generated_outputs[i] or GROUND_TRUTH[i] in base_vicuna_generated_outputs[i]:
-#         index += 1
-# print(index / len(GROUND_TRUTH))
-
-
-tuned_vicuna = LLM(model="/home/cyzhao/cache")
-tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
-tuned_vicuna_generated_outputs = [each.outputs[0].text for each in tuned_vicuna_outputs]
-index = 0
-for i in range(len(GROUND_TRUTH)):
-    if (
-        GROUND_TRUTH[i] in tuned_vicuna_generated_outputs[i]
-        or tuned_vicuna_generated_outputs[i] in GROUND_TRUTH[i]
-    ):
-        index += 1
-print(index / len(GROUND_TRUTH))
+if __name__ == "__main__":
+    main(args.model_name)

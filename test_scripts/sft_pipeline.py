@@ -1,17 +1,22 @@
-dataset_path = "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_train"
-model_path = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-ckpt_path = "/home/cyzhao/ckpt"
-
 import gc
+import os
 from functools import partial
+from pathlib import Path
 
 import datasets
 import torch
+import wandb
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 
 from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
+
+model_path = Path(
+    "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+)
+ckpt_path = Path("/home/cyzhao/ckpt")
+generated_dataset_path = Path("/home/cyzhao/generated_datasets")
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
@@ -43,12 +48,8 @@ tokenizer = AutoTokenizer.from_pretrained(
 )
 
 
-tokenizer = AutoTokenizer.from_pretrained(
-    "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
-    local_files_only=True,
-    padding_side="left",
-    trust_remote_code=True,
-)
+def filter_func(example):
+    return example["output_col"] is not None and example["input_col"] is not None
 
 
 def map_func(example):
@@ -60,46 +61,50 @@ def map_func(example):
     return example
 
 
-test_dataset = datasets.Dataset.from_dict(datasets.load_from_disk(dataset_path)[:5000])
-mapped_dataset = test_dataset.map(map_func, load_from_cache_file=False)
-print(mapped_dataset[1]["text"])
+for each in os.listdir(generated_dataset_path):
+    if (
+        (not each.endswith(".txt"))
+        and each.startswith("dataset")
+        and "20_20_50_1.5" in each
+    ):
+        name = each[8:]
+        dataset = datasets.load_from_disk(generated_dataset_path / each).filter(
+            filter_func
+        )
+        mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
+        print(mapped_dataset[1]["text"])
+        model = AutoModelForCausalLM.from_pretrained(
+            model_path,
+            device_map="auto",
+            torch_dtype=torch.bfloat16,
+            use_flash_attention_2=True,
+        )
+        response_template_with_context = "\n### Your Output:\n\n"
+        response_template_ids = tokenizer.encode(
+            response_template_with_context, add_special_tokens=False
+        )[2:]
 
-model = AutoModelForCausalLM.from_pretrained(
-    model_path,
-    device_map="auto",
-    torch_dtype=torch.bfloat16,
-    use_flash_attention_2=True,
-)
-
-response_template_with_context = "\n### Your Output:\n\n"
-response_template_ids = tokenizer.encode(
-    response_template_with_context, add_special_tokens=False
-)[2:]
-
-data_collator = DataCollatorForCompletionOnlyLM(
-    response_template_ids, tokenizer=tokenizer
-)
-
-training_args = TrainingArguments(
-    output_dir=ckpt_path,
-    do_eval=False,
-    save_strategy="no",
-    num_train_epochs=1,
-)
-
-trainer = SFTTrainer(
-    model=model,
-    args=training_args,
-    train_dataset=mapped_dataset,
-    dataset_text_field="text",
-    data_collator=data_collator,
-    max_seq_length=1500,
-)
-
-trainer.train()
-del trainer
-gc.collect()
-torch.cuda.empty_cache()
-
-model.save_pretrained("/home/cyzhao/cache")
-tokenizer.save_pretrained("/home/cyzhao/cache")
+        data_collator = DataCollatorForCompletionOnlyLM(
+            response_template_ids, tokenizer=tokenizer
+        )
+        training_args = TrainingArguments(
+            report_to="none",
+            output_dir="/home/cyzhao/cache",
+            do_eval=False,
+            save_strategy="no",
+            num_train_epochs=1,
+        )
+        trainer = SFTTrainer(
+            model=model,
+            args=training_args,
+            train_dataset=mapped_dataset,
+            dataset_text_field="text",
+            data_collator=data_collator,
+            max_seq_length=1500,
+        )
+        trainer.train()
+        del trainer
+        gc.collect()
+        torch.cuda.empty_cache()
+        model.save_pretrained(ckpt_path / name)
+        tokenizer.save_pretrained(ckpt_path / name)
