@@ -170,7 +170,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 generated_inputs, prompt_spec, per_epoch_num, hyperparameter_choices
             )
             generated_inputs.extend(new_inputs)
-            generated_inputs = ablation_list_filter(
-                check_paragraph_coherence(generated_inputs)
+            generated_inputs = list(
+                set(ablation_list_filter(check_paragraph_coherence(generated_inputs)))
             )
         return generated_inputs
