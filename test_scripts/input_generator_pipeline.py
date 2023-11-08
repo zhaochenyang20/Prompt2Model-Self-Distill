@@ -1,9 +1,16 @@
 """Test Input Generator."""
 
+from pathlib import Path
+
+import datasets
+
 from prompt2model.input_generator import VLLMPromptBasedInputGenerator
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 # 测试
+
+inputs_dir = Path("./generated_inputs")
+inputs_dir.mkdir(parents=True, exist_ok=True)
 
 generated_inputs = []
 
@@ -24,18 +31,39 @@ prompt_spec = MockPromptSpec(
 
 input_generator = VLLMPromptBasedInputGenerator()
 
-inputs = input_generator.batch_generation_inputs(
-    prompt_spec,
-    10,
-    40,
-    dict(
-        top_k=50,
-        # repetition_penalty=2,
-        temperature=1.0,
-        max_tokens=500,
-    ),
-)
 
-len(set(inputs))
+def generate_and_write_inputs(epochs, per_epoch_num, parameter_dict):
+    inputs = input_generator.batch_generation_inputs(
+        prompt_spec,
+        epochs,
+        per_epoch_num,
+        parameter_dict,
+    )
 
-# inputs = input_generator.generate_inputs([], prompt_spec, 10, {})
+    len(set(inputs))
+
+    file_name = f"inputs_{epochs}_{per_epoch_num}_{parameter_dict['top_k']}_{parameter_dict['temperature']}"
+
+    with open(inputs_dir / f"{file_name}.txt", "w") as file:
+        for index, item in enumerate(inputs):
+            file.write(
+                f"{index}:\n\n------------------------------------------------{item}------------------------------------------------\n\n"
+            )
+
+    dataset = datasets.Dataset.from_dict({"input_col": inputs})
+    dataset.save_to_disk(inputs_dir / file_name)
+
+
+if __name__ == "__main__":
+    #! epochs, per_epoch_num, top_k, temperature
+    experiments = [
+        (20, 20, 50, 1.0),
+        (40, 10, 50, 1.0),
+        (20, 20, 30, 1.0),
+        (20, 20, 10, 1.0),
+        (20, 20, 50, 0.5),
+        (20, 20, 50, 1.5),
+    ]
+    for (epochs, per_epoch_num, top_k, temperature) in experiments:
+        parameter_dict = dict(top_k=top_k, temperature=temperature)
+        generate_and_write_inputs(epochs, per_epoch_num, parameter_dict)

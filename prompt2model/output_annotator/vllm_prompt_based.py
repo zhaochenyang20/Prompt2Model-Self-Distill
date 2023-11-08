@@ -8,6 +8,11 @@ from vllm import LLM, SamplingParams
 from prompt2model.output_annotator import OutputAnnotator
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import PromptSpec
+from prompt2model.quality_evaluator import (
+    ablation_list_filter,
+    check_paragraph_coherence,
+    self_consistency_filter,
+)
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 
 logger = get_formatted_logger("OutputAnnotator")
@@ -77,7 +82,6 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
     def annotate_outputs(
         self,
         input_strings: list[str],
-        num_candidate_outputs: int,
         prompt_spec: PromptSpec,
         hyperparameter_choices: dict[str, Any],
     ) -> datasets.Dataset:
@@ -85,13 +89,10 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
 
         Args:
             input_strings: A list of input strings from InputGenerator.
-            num_candidate_outputs: Number of candidate outputs for
-                each input in input_strings.
             prompt_spec: A parsed prompt spec.
 
         Returns:
-            A dictionary mapping input strings to a list of candidate
-                outputs, i.e. dict[str, list[str]].
+            A dataset of `input_col` and `output_col`.
         """
         prompts = []
         for input in input_strings:
@@ -105,18 +106,22 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             ]
 
         sampling_params = SamplingParams(
-            n=num_candidate_outputs,
+            n=hyperparameter_choices.get("n", 10),
             # do_sample=hyperparameter_choices.get("do_sample", True),
-            best_of=hyperparameter_choices.get("best_of", 1),
+            best_of=hyperparameter_choices.get("best_of", 20),
             top_k=hyperparameter_choices.get("top_k", 10),
-            top_p=hyperparameter_choices.get("top_p", 0.6),
-            temperature=hyperparameter_choices.get("temperature", 0.3),
+            temperature=hyperparameter_choices.get("temperature", 0.2),
             max_tokens=hyperparameter_choices.get("max_tokens", 500),
         )
         output_sequence = self.language_model.generate(prompts, sampling_params)
         output_strings = [
-            [output.text for output in each.outputs] for each in output_sequence
+            self_consistency_filter(
+                check_paragraph_coherence(
+                    ablation_list_filter([output.text for output in each.outputs])
+                )
+            )
+            for each in output_sequence
         ]
         return datasets.Dataset.from_dict(
-            dict(input_strings=input_strings, outputs=output_strings)
+            dict(input_col=input_strings, output_col=output_strings)
         )

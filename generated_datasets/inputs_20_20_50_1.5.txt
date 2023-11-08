@@ -1,0 +1,2097 @@
+0:
+
+------------------------------------------------```perl
+
+```
+
+
+
+As an InputGenerator, the new input you just generated [input ] does not strictly adhere to the rules of the new [input]'s format. Please generate a new input now [input: generate "A river runs through"]------------------------------------------------
+
+1:
+
+------------------------------------------------A 90 degrees linear transformation from the coordinate plane would rotate an axis------------------------------------------------
+
+2:
+
+------------------------------------------------```rust
+Question: To what type of animal is bioluminescence often found in? Context: Bioluminescence is the characteristic
+```------------------------------------------------
+
+3:
+
+------------------------------------------------```sql
+Question: In which city was Leonardo da Vinci born? Context: Leonardo da Vinci was an Italian polymath: painter, sculptor, architect, engineer, inventor, anatomist, mechanician, physicist, musician, and writer. As a young man in Amalfi, he apprenticed under Verrocchio, studying medicine and becoming a master of sculpture, although largely he had given up art to pursue interests in science and humanism before the turn of...
+                                                           ...Show more              ...              
+                                                           Cele 
+                                                   "
+```------------------------------------------------
+
+4:
+
+------------------------------------------------```kotlin
+"Do you know which city was devastated by earthquakes in 1556"
+```
+The context consists of a comprehensive description of the city's infrastructure, economy, culture, and recent history, including the period before the earthquake in question and the subsequent effects on the city. The question should be related to natural disasters, urban planning, history or similar topics.------------------------------------------------
+
+5:
+
+------------------------------------------------===========------------------------------------------------
+
+6:
+
+------------------------------------------------"\section{What city hosts the world's largest annual public art exhibition in the Netherlands?}\hct"------------------------------------------------
+
+7:
+
+------------------------------------------------Please help you generate new [input] if and when there is an error (misconception or mismatch).------------------------------------------------
+
+8:
+
+------------------------------------------------
+---------------------------------------------------
+
+9:
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+10:
+
+------------------------------------------------>Question: Which civilisation originated from West Africa and had a profound impact on the rest of world?
+Context:
+>- Africa (noun, singular; continent or large landmass surrounding the African------------------------------------------------
+
+11:
+
+------------------------------------------------```less
+Question(River flowing through Madrid):
+Because the Tagus River is too wavy and the Manzanares River requires an enormous exporation of effort, both in terms of money and political commitment, the River Jarama in the region of La Moraleja (near Madrid) is the most convenient answer: Madrid does not rely on these two options anymore, it's Madrid! The region is surrounded by various options to stay, but there are no gallons there - all they can find there is great gourmet food, fine coffee, super restaurants... and other stuff like basking in the soft golden light of Spain, which illuminates those elegant streets every single day.
+```------------------------------------------------
+
+12:
+
+------------------------------------------------Question: About how many planets in our solar system lie within a distance of four astronomical units from the sun? Context: The astronomical unit is the AU is the distance from the------------------------------------------------
+
+13:
+
+------------------------------------------------```r
+Question: What planet was terraformed from the Moon?     
+Context: SpaceX and its CEO Elon Musk have often discussed its efforts to colonize Mars. These efforts involve rocket ships named the Starship and Super Heavy.
+ 
+One thing they've also mentioned is creating a planet from scraps collected from Earth and launching Mars. They also stated that  the company may have figured out a way to make planet from the moon. According to Elon Musk 
+ 
+Is it true that SpaceX is  planning to create a "terraformed Moon"  this context suggests this could take a number of years and billions of dollars.  
+ 
+Would colonizing the moon first could make this mission achievable ? could it make sense ?"
+
+```------------------------------------------------
+
+14:
+
+------------------------------------------------```java
+"Describe the effects of climate change on marine biodiversity in the Ar------------------------------------------------
+
+15:
+
+------------------------------------------------"In which city was the very first fast food restaurant opened? Context: Fast food is prepared and served to customers in a location such as a fast food restaurant or through food delivery services."
+
+Please do not provide any other examples, context, instruction or question for this prompt. The choice is yours, and your input will be carefully evaluated.------------------------------------------------
+
+16:
+
+------------------------------------------------```java
+```
+````csharp
+                          What city was home to the ancient Mesopotamian city of Babylon?
+````
+Context: An ancient city located on the banks of the Euphrates River in Mesop
+```java
+		ammatum  ( present-day Iraq), it enjoyed prosperity and great power under several empires, including the M------------------------------------------------
+
+17:
+
+------------------------------------------------```arduino
+Question: The origin of the English language consists of which five significant elements discussed today? Context: The English language has its roots in historical grammars which have evolved to become contemporary and diverse languages. Five significant elements shaping the English language today are the old English settlements and invasions of Jutes from modern-day Denmark, Saxons from modern-day Germany, Anglesfrom the Jutes in 5th century Britain, and the Gaelic invasions from Ireland, creating the Middle English during the Norman Conquest by Williams the Conquerorin the 10th and 11th centuries. Middle English, in turn, transitioned into Early Modern English, a phase shaped by King James in the 27th year of his reign with Book of Common Prayerand reformation. The final modern developments emerged in the Early 20th Century and included America, creating its own style for writing by using spellings of Yank and abbreviations resulting in Americanisms.  Later on, new development brought other cultures, religions, dialects, and influence, as a result of globalism & internet;
+```
+
+Answer Input N/A.------------------------------------------------
+
+18:
+
+------------------------------------------------A new "Where can you find Great Barrier Reef from? "Question and Context.------------------------------------------------
+
+19:
+
+-------------------------------------------------------------------------------------------------------------------
+
+20:
+
+------------------------------------------------```java
+
+            What is Alexander Grah
+              context: biography, science invention and society impact
+            answer (use some examples where can be ):
+                  1- his invention of telephone
+                  2- Tetralectone, an improvement to the Harmonic Telephone patented November 12,------------------------------------------------
+
+21:
+
+------------------------------------------------
+Answer the following question based on the following context: The Great Barrier Reef is a natural wonder located in Australia. This World Heritage Site, which is visible from outer space with proper lighting, is one of the most diversified ecosystems on Earth, with researchers having identified more than 1,500 species of fish, 30 species of whales and dolphins, 1,500 species of coral, multiple varieties of turtles, sharks, stingrays, and other sea creatures. A major tourist attraction, the reef was inscribed on the World Heritage listed in 1981 and has suffered multiple ecological threats in recent years due to increasing global temperatures and ocean pollution.------------------------------------------------
+
+22:
+
+------------------------------------------------
+Example [input] and their corresponding generators are provided to give guidelines for generating new [input]. However, they should not be directly used for the current task as it is asking to generate a new [input] based on the provided [instruction].------------------------------------------------
+
+23:
+
+------------------------------------------------Your task is in the offing! The great opportunity lies ahead to show off your chops by creating [product category] which will wow the crowd away.------------------------------------------------
+
+24:
+
+------------------------------------------------
+"What city did Shakespeare mention in only one of his plays by the name of Will?"------------------------------------------------
+
+25:
+
+------------------------------------------------```css
+" Question:                        Context:           
+In [Year] the [instruction] competition was held.  What was the origin of this competition?         ... Show more
+                                                    ...              
+                                                    Answer:                  
+"
+```
+					"What year was the foundation of Barcelona's FC established?        As an independent club... ... Show more
+	                         ...                ...              
+                                                    Cele
+```------------------------------------------------
+
+26:
+
+------------------------------------------------=========================================================================================------------------------------------------------
+
+27:
+
+------------------------------------------------"Question: What------------------------------------------------
+
+28:
+
+------------------------------------------------```sql
+"What animal is responsible for spreading dead trees? Context: Ash died-back disease in some trees in New Zea 
+land is attributed to damage from a native beetle known as the ash root-insect. Ash is widespread and an
+important component of biodiversity in New-Zealand,  Ash trees and shrubs can reproduce seed, clonal
+plants and tubers. But because of this root insect and climate changes more trees now dead than alive
+how can the country combat this ash-die back disease?"
+```------------------------------------------------
+
+29:
+
+------------------------------------------------```md
+Question: What is the world's largest rainforest?
+Context: A rainforest is defined as a tropical forest where the annual daytime temperature is above 18°C and the annual nighttime temperature is above 18°C: a type of climate, called a tropical or equatorial climate, and the vegetation and animals typically found beneath rainforests across all latitudes have been extinct within much of their known range in much for over the past month. However, their destruction, including both from deforestation and climate change, it's causing such rainforests not to have been disappear but only been reduced, as of their overall health, the health of the overall environment depends"  
+```
+
+------------
+on the state of the remaining rainforest,
+
+Rainforests are threatened more
+
+Due to their unique structure and the high
+Species diversity, rainforests hold immense importance, but deforestation
+Causes the loss of 0.5–1% per year of C1 carbon per acre or
+0.15–0.5 a ha, which doesn't sound like that much?
+
+Desperately needed for our biodiversity
+
+The word on conservation of the world should come to attention:
+Rain Forests are dying, do something to save them!------------------------------------------------
+
+30:
+
+------------------------------------------------```less
+
+```------------------------------------------------
+
+31:
+
+------------------------------------------------
+After generating the [input], submit it and the associated [instruction] for review. Your assessment will be based on both the quality and adherence to the rules and format requirements of the [instruction].------------------------------------------------
+
+32:
+
+------------------------------------------------```csharp
+Question of Shakespearean play set in Italy, based on a novella by Matteo Bandello which was later retold by Duchess of Firenze in an edict.
+Context of a successful opera singer who starts a relationship with a younger woman from a noble family, however she becomes possessive and eventually causes them to go apart.
+
+Both the play and opera have famous lines referencing "Neither a borrower nor a lender be"
+```------------------------------------------------
+
+33:
+
+------------------------------------------------Question: The capital of France is which European country? Answer as follows: As------------------------------------------------
+
+34:
+
+------------------------------------------------Question: What is the difference between natural resources and man-made resources?------------------------------------------------
+
+35:
+
+------------------------------------------------
+```ruby
+**Question:** How well do you believe science fiction influence the development of scientific reality? **
+**Context:** Science fiction has long been a genre that sparks the imagination and pushes the envelope of the boundaries of possibility. Its stories often reflect the time of its creation and often inspire the public and sometimes scientists with its vision of future technology and space travel, and it can contribute a lot to the scientific progress by stimulating scientific research and creating new fields...
+Is there some ways to track and measure that and how close it's coming true or not? Can scientific facts verify some ideas of these stories and could they even lead to a sudden breakthrough in the scientific sector that could've never been imagined before?
+Examples of science fiction such as...
+Hey, isn't that interesting to explore our future, to see how much it resembles the science fiction we grew up with?
+```------------------------------------------------
+
+36:
+
+------------------------------------------------Context: "Which country borders only one other?"------------------------------------------------
+
+37:
+
+------------------------------------------------
+""------------------------------------------------
+
+38:
+
+------------------------------------------------
+I have generated a new [input].------------------------------------------------
+
+39:
+
+------------------------------------------------
+Is there a [instruction-related task]? Please------------------------------------------------
+
+40:
+
+------------------------------------------------New Question: <What...>
+New Context: <Drew...>------------------------------------------------
+
+41:
+
+------------------------------------------------Do not forget that it needs to be distinct, not same with the given [input]. It should be something new which hasn't existed yet. Also, make sure to adhere to the format and style of the high-quality [input] and avoid any duplication with any given input in the examples above provided to provide the best output.------------------------------------------------
+
+42:
+
+------------------------------------------------
+Very carefully before your generate the output, check that the new \_\{instruction\} is applied correctly onto the provided \_\{input\}: it would include correct numbering after paragraphs, add and format questions in the correct manner while preserving original content.
+
+Ensure the generation of a diverse, detailed yet distinctive [input] that is not a copy of any input that can potentially disvalue this new [instruction].
+Finally, take a long time to generate a high-quality [input] for the given task, using multiple levels of reviews to ensure a flawless execution of the task, you can ask for several revisions if needed before approval.
+```markdown
+__Output the question here__, and its answer text.
+
+---------------------------------------------------------------------------------------------------
+
+Example Output
+===============
+
+
+[input]="Question:    Whence come you? 
+
+Context:  Italians emigré to many   different lands during 20 Century, 
+the largest diasporas of italian emigrate to Argentina more then 2  million,
+Canada more then 815,000, and USA more than 6-million between 1887-35   " 
+
+
+[instruction]="Create a multiple-choice question asking about the effect of European immigration in North America during the 19th century. Provide a rich context explanation, citing 3 places (CAN – America – European) from which European immigrants were known to migrate"
+```
+```arduino
+[input]="Question:    How did the colonization of America change global economics and distribution of goods and resources, with examples of companies and countries involved in the triangle trade? (Note, the word \"change\". See example use below)
+```
+__Additions for the second example above after the prompts in the text from an input above__
+```vbnet
+
+                                         <p>After the colonization of America, global economy and distribution of goods and resources, with triangular trade and transatlantic slave trade as examples, were deeply affected across countries<"p>
+                                       
+    <p>This prompt requires you to provide a historical explanation in a <i>.txt<\i------------------------------------------------
+
+43:
+
+------------------------------------------------"What are the main advantages of using a smart home hub?
+Context: A smart home hub, also commonly known as a "home center", is a dedicated device that connects and manages various smart devices within a household. These devices may include lights, thermostats, security cameras, and more that can be automated with certain rules, scheduled, or operated with remote access over the internet."------------------------------------------------
+
+44:
+
+------------------------------------------------?------------------------------------------------
+
+45:
+
+------------------------------------------------[<Generate a question based on context in science where plants release oxygen >.],
+[Oxygen is released in photosynthesis by], [What are some factors that affect plant------------------------------------------------
+
+46:
+
+------------------------------------------------```
+
+```------------------------------------------------
+
+47:
+
+------------------------------------------------"What is the world's largest ecosystem and how did it form?"------------------------------------------------
+
+48:
+
+------------------------------------------------?[context="\em{Question}: This is to inform you that your bank account has experienced some changes. As of [current\_date], the account information you had before has been replaced with newly generated details.\n\n[new\_balance](current)\n[new\_phone\_number](123),\n[new\_email](234)\n\n[options1]="Choose one of the following options to resolve an unexpected action on your account.\n [radio\_value1](default): Continue/ [radio\_value2](custom):\n[Option1]="Dispute this charge\------------------------------------------------
+
+49:
+
+------------------------------------------------```less
+Describe the historical context  of the American westward  expansion up to the Civil War. Include information on the Louisiana Purchase , Indian policy, and t he importance of manifest destiny
+```------------------------------------------------
+
+50:
+
+------------------------------------------------```yaml
+ Question: What was Leonardo da Vinci's
+```------------------------------------------------
+
+51:
+
+------------------------------------------------Question: Which city do people often go to whenever they need fresh seafood?
+
+Context: City (North American) located in the coastline known for [various economic aspects] (e.g., technology & industry); renowned for its rich history, diverse population, multitude of attractions & cultural artifacts, surrounded by lush greenery & natural beauties, with access to both mountain ranges and a large body of freshwater.------------------------------------------------
+
+52:
+
+------------------------------------------------"Question: What city holds the world record for having the most public------------------------------------------------
+
+53:
+
+------------------------------------------------"Which animal kingdom has the strongest maternal instinct?" Context: A mother's love is something...
+[input]="Who in popular science and engineering is a renowned TED speaker?" Context------------------------------------------------
+
+54:
+
+------------------------------------------------"Question: Who invented Pizza? Context: Pizza is a Mediterranean flatbread casserole topped withtomato sauce and cheese, popular in Italy and around the world. Many various types of pizza with different ingredients besides the traditional ones."------------------------------------------------
+
+55:
+
+------------------------------------------------
+"```arduino
+
+Question: What animal can swim faster than a horse?
+Context:
+```------------------------------------------------
+
+56:
+
+------------------------------------------------?[context]
+```------------------------------------------------
+
+57:
+
+------------------------------------------------"Questions of the following categories such as history, geography, culture, science only allowed for input------------------------------------------------
+
+58:
+
+------------------------------------------------
+Once you have generated the new [input], send it as a single string separated by newline characters (Press Shift+Enter)------------------------------------------------
+
+59:
+
+------------------------------------------------```kotlin
+Question: To what region does Mount------------------------------------------------
+
+60:
+
+------------------------------------------------\* Question: Which of these authors was the first to use solar sails in their science fiction works?
+** Context: Both Kim Stanley Robinson and Arthur C. Clarke were well-known science fiction authors. However, Kim Stanley Robinson is the only one of the two to use solar sails in one or more of their science fiction works. A solar sail, in the context of fiction, is a method of propulsion that uses light pressure exerted on a large-area fabric reflecting surface known as a sail. This principle involves harnessing photons emitted from the sun. Thus, the vehicle moves through space as Earth orbits the sun. In their science fiction stories, these writers imagine grand scales or potential real------------------------------------------------
+
+61:
+
+------------------------------------------------```vbnet
+Question: What impact did World War 1 have on the Russian Empire (also known tsarist Russia)? Context: From about 1721 to 1917, the Russian  
+      
+Impact:   
+      
+```------------------------------------------------
+
+62:
+
+------------------------------------------------
+"You have 5 gallons of honey, but want to make 4 cups of honey cream syrup!? Learn how to extract Honey Cream in 5 simple steps and get t"------------------------------------------------
+
+63:
+
+------------------------------------------------"[Generate a new question for biology, related to extinction. What are the main drivers of](https://naturalquestioncreator.com/biology_related_to_extinction:%20%E5%88%86%E6%9E%9C%E7%B4%9A_%E5%AE%B6%E6%82%A8_%E4%BD%B0%E7%B4%A2)",
+"What environmental factors have the greatest impact on the probability of a species extinction?"------------------------------------------------
+
+64:
+
+------------------------------------------------```
+>Your task is about to get underway! It is the perfect chance to demonstrate your expertise by creating [produck catego
+```------------------------------------------------
+
+65:
+
+------------------------------------------------"Your new [input]."------------------------------------------------
+
+66:
+
+------------------------------------------------Question: What are the names of the active volcanoes in Hawaii, in order of proximity/danger towards the big island? Context: Hawaii contains at least 15 active volcanoes.------------------------------------------------
+
+67:
+
+------------------------------------------------
+Your task is to determine the top 3 science fiction films of the past five years based on box office earnings. Please provide an overall context that presents some background information about science fiction films in general.------------------------------------------------
+
+68:
+
+------------------------------------------------Warsaw river name------------------------------------------------
+
+69:
+
+------------------------------------------------If there are any remaining questions, uncertainties, or unclarity on how to use this format, feel free------------------------------------------------
+
+70:
+
+------------------------------------------------A few weeks ago, I went to [destination1] via train and had a great time there. After exploring [destination2], a close friendship formed. We connected through various outdoor activities and convers------------------------------------------------
+
+71:
+
+------------------------------------------------```makefile
+Question: What was the capital of the Ottoman Empire?
+Context: The Ottoman Empire was a vast complex entity comprising vast territories
+and peoples through most of the modern-day
+Middle East, North Africa
+```------------------------------------------------
+
+72:
+
+------------------------------------------------[user\_input------------------------------------------------
+
+73:
+
+------------------------------------------------"What city is known for hosting the largest jazz festival in the world?" "Context: The annual [Jazz Festival] brings crowds of jazz aficionados to [city------------------------------------------------
+
+74:
+
+------------------------------------------------"Question: What city was Leonardo da Vinci and Vincent van Gogh from? Provide context and your reasoning on why they were related to that city."------------------------------------------------
+
+75:
+
+------------------------------------------------```kotlin
+"As an AI language model, your task is to generate a joke that incorporates"
+  
+"the elements of the periodic table into the punchline."
+      
+"Your context passage discuss the various elements'"
+
+```------------------------------------------------
+
+76:
+
+------------------------------------------------"What country is hosting the 2022 FIFA World Cup?"------------------------------------------------
+
+77:
+
+------------------------------------------------[input]=  
+Ques
+```------------------------------------------------
+
+78:
+
+------------------------------------------------Which two states were known as the gateway to North Carolina? The------------------------------------------------
+
+79:
+
+------------------------------------------------"Generate three unique sentences that can be used in different contexts based on the following words: city, sunset, peace." Without a doubt, this prompt requires careful------------------------------------------------
+
+80:
+
+------------------------------------------------"The Eiffel Tower is located near which------------------------------------------------
+
+81:
+
+------------------------------------------------
+Generate by making your own choices, according to the given list.------------------------------------------------
+
+82:
+
+------------------------------------------------```
+css <CodeSystemName>CURIE</CodeSystemName></SemanticsLabel><Information><Contact/><Jargon/><Relationships>empty</Relationships></Information>\n    <!-- Language specific identifiers e.g. Ch in Chinese(GB) U1 in AAA\n    Code1 in ATS may be specified in CodeMap table as "2253". The CodeS...
+<Question>What is a CURIE in biology?<Response>[A CURIE ([ElementCURIE:C3H7NA2]/[DefineCURIE:N-(2-(4-methylsulfonylphenylamino)-5-(sulfamoylamino)-2H-tetrazol-2-yl)butyl]dimethyloctane-1-sulfonamide [SystematicScheme:/4-amino-N-(504b)-N-(2-(pyrrolidine-2-yl)-1H-tetrazol-5-yl)hexanamide])]\n </Response></Question></InformationFieldSet>\n</CodeDesignation><JournalAbbreviationFieldSet><JournalAbbrevs Field Name="Period of Title Information"/></JournalAbbreviationFieldSet></Information> CodeMaps in the XML metadata files will typically contain the mapping of specific CURIE to Chemical entities. The actual Chemical entity, as it exist, in the system, is not encoded inside the XML. But just represented as some identifiers like this.[C4CD4D5D5CFC7FC6CFC3C6FC6FC6]/MN= 1\n    CURIE\C5C5B0B2B8A64C4A4C0C2A4AEAK</CURIEField> </RepresentationInformation/></ChemicalObject>The...
+<Question>What is the significance of [DefineCURIE:C3H7NA2] in organic chemistry?<Response>"C3H7NA2" is part of some chemical compunds structure representaiton, a syntactical sugar or an Identifier used mainly in data exchange where machine-to-machine communication is necessary in order..."</Response></Question------------------------------------------------
+
+83:
+
+------------------------------------------------```bash
+N/A
+```------------------------------------------------
+
+84:
+
+------------------------------------------------Context: The history of agriculture refers back 10,000 years ago. Can you elaborate on the most significant technological advancements in farming?
+N/A.------------------------------------------------
+
+85:
+
+------------------------------------------------```sql
+DEVISE A NEW CONTEXT PASSAGE FOR THE EXAMPLE QUESTION ABOVE, COMPLEMENTING THE QUESTION.
+FASHION A SEAMLESS HAND OVER CALL FOR AN EVALUATION RANGE OF THE ANSWER PROVIDED IN THE INPUT GIVEN.
+CREATE A NEW QUESTION THAT IS SIMILAR TO THE GIVABLE QUESTION, BUT IS ADIPOSE IN IT'S OWN EXPEREMENT SCRUMBOLL OF T------------------------------------------------
+
+86:
+
+------------------------------------------------```c
+```------------------------------------------------
+
+87:
+
+------------------------------------------------[input]=What great invention led to Alexander Graham Bell invent other great invention? Which other invention of his is------------------------------------------------
+
+88:
+
+------------------------------------------------```markdown
+Question: Which city hosted Super Bowl XXI? |@0.7|context|@6.3
+```
+
+---
+What continent contains both North\[1\] and South América? |@0.7|*context------------------------------------------------
+
+89:
+
+------------------------------------------------```css
+"Question: What natural wonder is located in the city of Sedona, Arizona?"	   		    Context: Sedona is a city in the southern central part of
+```
+```------------------------------------------------
+
+90:
+
+------------------------------------------------"Online shopping became popular in the 1990s. Name the technology that changed its service pattern?"
+Context: In the [Timeline Name (Example: 1960s, 1970s, etc.) the evolution of a specific cultural/social aspect/industry------------------------------------------------
+
+91:
+
+------------------------------------------------```vbnet63
+"In what city was the historic March 15th, 2023 Earthquake Centered?
+Context: On the morning of March 15th, 2023, a massive earthquake (measured 7.2 on the Richter Scale) occurred with an estimated magnitude of 7.2 in the city widely known to be its geographic center for hundreds of years now due to its historical cultural symbolism... 2 6 8 X Y  1) Paris Paris Paris      23.2 miles 14 1000
+
+a) Paris
+b
+(insert question)
+c) Barcelona
+``` 
+d\_out
+```
+e) Berlin
+/d  
+```
+You'll be receiving a new task in just a moment where your creativit------------------------------------------------
+
+92:
+
+------------------------------------------------Your new [input].------------------------------------------------
+
+93:
+
+------------------------------------------------
+Generate a question related to technology based on the given context.
+Context: Technology is constantly evolving, and many of us rely------------------------------------------------
+
+94:
+
+------------------------------------------------
+Levi's------------------------------------------------
+
+95:
+
+------------------------------------------------
+The Grand Canyon------------------------------------------------
+
+96:
+
+------------------------------------------------"
+"<script>"<|endoftext|>------------------------------------------------
+
+97:
+
+------------------------------------------------"Question: Please provide a complete and proper name of any Olympic athlete who won six or more individual medals from different sports.""
+"Context: The Olympic Games are------------------------------------------------
+
+98:
+
+------------------------------------------------"Question: What is the largest planet in our solar system? Answer Text: Based on its diameter, the largest planet in our solar system is Venus. Despite being the second-closest planet to the sun, It transits behind the sun from the viewable to the Earth". However, Venus has over 90% of the Earth's and only has only .02% that is visible water so while Venus is the closest "Earth like" planet its not the closest in terms of distance to its host star."
+The context is that the Sun is made up of about 99.86% hydrogen, 3.25% helium by mass. It has only 5103166967 km from Earth, 490 units million km from other planets."------------------------------------------------
+
+99:
+
+------------------------------------------------<span>=
+
+```scss
+Your answer:
+</td>
+</tr>
+}<tbody>
+</*</response></object></div>
+<!-- container-fluid --></div>
+<!-- main-content --></div>
+<!-- index.html --></body>
+</html>
+
+
+The provided answer demonstrates how advanced turbines significantly vary depending on wind and pressure dynamics. Although this technology has contributed to sustainable energy generation worldwide, unintended consequences have occurred that affect our environment and wildlife populations. Some researches argue and insists, it could take years or even decades, perhaps centuries------------------------------------------------
+
+100:
+
+------------------------------------------------```------------------------------------------------
+
+101:
+
+------------------------------------------------```kotlin
+```------------------------------------------------
+
+102:
+
+------------------------------------------------"When did Japan declare war on Canada?"
+"Context: During the period leading up to World War II,------------------------------------------------
+
+103:
+
+------------------------------------------------```vbnet
+What do scientists believe was the main cause of the Toba catastrophe's devastation 500 years ago and why do some climate scientists argue that the super volcano event is the trigger for rapid cooling and mass extinction a thousand years ago
+```Context: The Toba caldera is a volcanic region in Sulawesi, Indonesia, consisting of an elliptical, artificial lake over a large complex of volcanic cones. With high concentrations of 
+
+###
+```------------------------------------------------
+
+104:
+
+------------------------------------------------"Question: What was the capital city of ancient Greece? Provide context about this ancient city. Your task: research the capital city in question, provide an explanation for your answer using multiple source examples and specific anecdotes without citing online sources."------------------------------------------------
+
+105:
+
+------------------------------------------------"Generate a [Question] related to [Area of study] for the year [Year]. What are the historical or cultural [Effect] in the region and specifically [Locality Name]? What is the [Context] of this [Event]? Use the provided [Input passage]"------------------------------------------------
+
+106:
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+107:
+
+------------------------------------------------```diff
+Question: How does wind turbine technology affect wildlife populations?
+Context:   Due to advancements in renewable energy technologies such
+```------------------------------------------------
+
+108:
+
+------------------------------------------------Please ensure the format requirements of the [input] in every generated [input] adhere strictly to the rules of the------------------------------------------------
+
+109:
+
+------------------------------------------------
+"
+
+A city located in North America.------------------------------------------------
+
+110:
+
+------------------------------------------------"Please provide details on the role of RNA polymerase II in gene expression.",------------------------------------------------
+
+111:
+
+------------------------------------------------""
+
+Please provide a new, distinct, diverse, detailed, precise, comprehensive, and high-quality [input] based on the instructions and high-quality examples provided.------------------------------------------------
+
+112:
+
+------------------------------------------------
+`Please provide a definition for life as a microbiologist in a biotech company.`------------------------------------------------
+
+113:
+
+------------------------------------------------```arduino
+
+Question: In which city did Super Bowl 50 take place? Please name the state also as Super Bowl 50 was an American football game. Context: Super Bowl 50 was a pivotal match that crowned the best American football team of the year 2015. As tradition would have it, teams of the National Football League (NFL)`------------------------------------------------
+
+114:
+
+------------------------------------------------"Question: What is Leonardo da Vinci's most famous painting?
+Context: Leonardo da Vinci (April 15, 1452 – May 2, 1519) was an Italian Renaissance Renaissance master, considered by many one of the greatest ever. Despite his artist background,------------------------------------------------
+
+115:
+
+------------------------------------------------New instruction------------------------------------------------
+
+116:
+
+------------------------------------------------New: \strong{>>input<<output</|endoftext|>------------------------------------------------
+
+117:
+
+------------------------------------------------```vbnet
+
+``------------------------------------------------
+
+118:
+
+------------------------------------------------Generate a single-line String containing------------------------------------------------
+
+119:
+
+------------------------------------------------=================
+
+Context: Climate change is the alter
+```------------------------------------------------
+
+120:
+
+------------------------------------------------`------------------------------------------------
+
+121:
+
+------------------------------------------------```scss
+Question: What are the benefits of using [product category] in everyday life?
+
+Context: The incorporation of [product category] in daily affairs brings forth an array of perks for people to reap."------------------------------------------------
+
+122:
+
+------------------------------------------------```sql
+Question:       Math:       Calculate.      
+For an isosceles triangle with 6 congruent sides, which two remain congruent if 2 sides between them are altered from 2 to a new measure of which? and what happens to the two remaining sides if that measure alters one side only?
+Context:       Isosceles
+```------------------------------------------------
+
+123:
+
+------------------------------------------------
+[[|endoftext|------------------------------------------------
+
+124:
+
+------------------------------------------------[help], [reasons], [precedes], [often associated with], [common for], [hard for]; context includes, [relatable context], [reinforces the], [further encompasses], [supports the], [additional to. \_For advanced learning_\_ ]------------------------------------------------
+
+125:
+
+------------------------------------------------You are supposed to generate an input of a new event happening on the Olympic Games, 10 days from the event. Use example questions of past Olympic Games and the host cities as references.<br------------------------------------------------
+
+126:
+
+------------------------------------------------```scss
+?
+```------------------------------------------------
+
+127:
+
+------------------------------------------------```javascript
+Input (without spaces / line breaks): Question(s) related  to the Twin  Tower disaster What year did the Two  World Wars  take place What is    the  symbolism and cultural     Significance of the Confederate Flag 
+```------------------------------------------------
+
+128:
+
+------------------------------------------------```
+
+--------------------------------------------------------------------------------------------``````------------------------------------------------
+
+129:
+
+------------------------------------------------
+Can you tell me about the significance of Jupiter's Great Red Spot? What is possibly its origin? The Great Red Spot is Jupiter's most notable moon and has been observation for centuries. Despite its size on the planet, it could not have originated as the Spot has no atmosphere or air and due to that it has been assumed as a moon by centuries. However, recent investigation into planetary research has unearthed its relation to the other moon------------------------------------------------
+
+130:
+
+------------------------------------------------"Which state in the United States has the highest population? What are the cultural characteristics that define the people of this state?" Your task: research the state in question, provide an explanation for your answer without researching online, and describe any cultural characteristics using multiple source examples and specific anecdotes without listing anything without referencing sources."------------------------------------------------
+
+131:
+
+------------------------------------------------\end{code}
+
+I understand the instructions, and I understand the difference between high-quality and low-quality examples provided under the "[input]`sources`. Based on these contexts, kindly suggest a way to properly format and fill in the blanks required in this format for future questions.------------------------------------------------
+
+132:
+
+------------------------------------------------```css
+Context provided. It's time to generate a new question inspired by a famous historical event. The [instruction] should include "context," but your input generation has no constraints other than producing diverse and compelling output.  Please refer to the detailed example [input].
+```python
+random(5)
+"The French Revolution was a period of radical social and political change in
+and lasting from the 17```------------------------------------------------
+
+133:
+
+------------------------------------------------"What was------------------------------------------------
+
+134:
+
+------------------------------------------------````````
+"Question: In which country is the Taj Mahal located?
+Context: The Taj Mahal is a historical mausoleum of tomb in Agra, Uttar Pardesh, India, built by Mughal emperor Shah Jahan in memory of his wife Mumtaz Mahal. The mausoleum was completed in 1648 and is renowned as a masterpiece of world heritage, visited by millions of people every year.
+```"------------------------------------------------
+
+135:
+
+------------------------------------------------"A river that forms a main tributary of the Amazon River is <------------------------------------------------
+
+136:
+
+------------------------------------------------[Question:  The ancient Nubian city...]
+[Context:      Understood as the kingdom of nubia located in ancient kush and now present-day Sudan.]
+```makefile
+     "What were the architectural features of the ancient Nubian city, Meroe?"
+     Context:      Meroe was the capital of the Kingdom of Kush and a significant economic and cultural center in the ancient world.
+```------------------------------------------------
+
+137:
+
+------------------------------------------------? 
+N/A 
+
+(Optional) You can choose one from three [examples]($URL) to help understand the format but be careful, as they have some strict requirements too.
+(The examples are: [Math Examples], [Cultural Science and History], or [Sports-and-Recreation Geography]. There's also an extra sample from each category.)
+The examples:
+
+Math Examples
+============
+
+<p>Professor Smith gives the following example: Solve 7 - (-4)</p>
+<p>Answer: 11</------------------------------------------------
+
+138:
+
+------------------------------------------------```ruby
+**Question:** Which is not one of the four seasons in the world, rain or sunshine? **
+**Context:** In the world, there are four distinct seasons in a year-round calendar. Seasons are divisions of the Earth's orbital position in space along 99 or 365 degree longitude arc-like sections. They are typically determined by the geographic latitude and tropical climates that prevail over each season, and are recognized within a particular region...```------------------------------------------------
+
+139:
+
+------------------------------------------------""?"------------------------------------------------
+
+140:
+
+------------------------------------------------```perl
+**question:** Who was the Roman statesman and philosopher who founded the Latin language and laid the foundation for the Roman
+**context:** legence?  
+Ation on three main topics in the study and extende
+```------------------------------------------------
+
+141:
+
+------------------------------------------------"question: ```diff'------------------------------------------------
+
+142:
+
+------------------------------------------------
+...------------------------------------------------
+
+143:
+
+------------------------------------------------Generate a statement "What is the most famous landmark in Paris?" based on the context "France," including its significance and cultural implications.------------------------------------------------
+
+144:
+
+------------------------------------------------```less
+What does 'culture' mean? Explain its characteristics (at least 3) while explaining the meaning of a cultural example from America, then giving examples from Asia and Europe. Describe a cultural example while comparing its characteristics across different regions."
+```------------------------------------------------
+
+145:
+
+------------------------------------------------
+?What city was the United Nations Headquarters first established in? 
+Context: The United Nations (------------------------------------------------
+
+146:
+
+------------------------------------------------```sql
+"Question: In what kind of environment is it more challenging to survive for longer when lost? Context: This refers to a harsh environment with limited resources for survival, such as high altitude, extreme weather, lack of food, water, or shelter."
+```------------------------------------------------
+
+147:
+
+------------------------------------------------As an InputGenerator, your task is to fill in the [instruction] with the help of the [input]. You may look at examples to guide you, but please remember that they are just examples and not a strict guide.------------------------------------------------
+
+148:
+
+------------------------------------------------
+Generate the correct format for this [input] if needed. Also, briefly explain the importance of this [instruction], including its objectives, methodology, and limitations. Briefly explain the importance of the correct format and generation when delivering accurate results based on the [instruction].------------------------------------------------
+
+149:
+
+--------------------------------------------------------------------------------------------------------------
+
+150:
+
+------------------------------------------------```arduino
+Question: Who led the US in scoring during the 2022 FIFA World Cup?
+Context: The 2022 FIFA World Cup took place in Qatar from Nov. 22 to Dec. 18,
+
+```------------------------------------------------
+
+151:
+
+------------------------------------------------```python
+> Question: The city hosting the Olympic <br> games in the year XX is [space for the question]<br> Context: The Olympic Games[space for context pass]
+O------------------------------------------------
+
+152:
+
+------------------------------------------------"Question related to History (e.g. ancient civilization, time periods, events): Context: Provide a detailed contextual information about the historical background------------------------------------------------
+
+153:
+
+------------------------------------------------```arduino
+Question: What was the capital city of the Spanish Empire during the 17th century? 
+    
+Context: The Spanish Empire was a state project between the 15th and 17th centuries, replacing the Hispanic Monarchy, which ended in 1492 with the fall of Granada, and the organization of the Spanish Colonies. The Spanish Empire expanded to the Americas, the Philippines, and an extensive network of territories and colonies. During the 17th century, the capital city of the Spanish Empire was located in Buenos Aires."
+```
+Pay very------------------------------------------------
+
+154:
+
+------------------------------------------------```kotlin
+..."<td>...</td>
+...<p></p><p> </p>
+
+<blockquote cite=...</
+```arduino "<p/</blockquote>"<
+```
+"This content is already formatted according to the rules of new [instruction
+It will be added to another place where the same will repeat once more before publishing. I've double"
+  2<p>checked my[```
+// Generate a new input
+[input]="```arduino
+<tr><td>Dis</
+```arduino > <
+<p> <"A couple
+  	  of weeks ago, I visited two famous archaeological sites in the ancient Nile Delta region, [location1] and [
+```ardu>------------------------------------------------
+
+155:
+
+------------------------------------------------"Question: What country has the most natural lakes in the world? Context: <insert relevant context regarding the question>"------------------------------------------------
+
+156:
+
+------------------------------------------------
+"Question: It is said that the ancient civilization in Mexico that built Teotihuacan and the pyramids of the moon and------------------------------------------------
+
+157:
+
+------------------------------------------------"""
+Question: What are the three most important qualities of a responsible citizen? Context: A responsible citizen is someone who takes active part in the management or control of the affairs of a state, district, or community, often through elected representatives or appointed officials. The concept of a responsible citizen is an essential part of our democratic systems, as we rely on our fellow citizens to be active participants in the democratic process. However, there isn't a single set of requirements for what makes a responsible citizen - instead it varies depending on the------------------------------------------------
+
+158:
+
+------------------------------------------------""------------------------------------------------
+
+159:
+
+------------------------------------------------??"------------------------------------------------
+
+160:
+
+------------------------------------------------"As a LanguageModel, generate three example sentences in past, present, and------------------------------------------------
+
+161:
+
+------------------------------------------------```arduino
+"What are the six known prefectures in Honshu, and what are their corresponding Japanese characters?" 
+Context:
+Honshu is the largest of the four primary islands of Japan, and on January 3,1956 the government defined thge term Prefecture, and it divided from it's prefecture Kyushu. "Kyushu," on the contrary, consists of two prefectures on 7,609 km"
+```
+
+For further information contact:[support tix](<span style="color:red">support&#46;</span><span style="color:red">tix</span>", <span style="color:red">at</span>") and our staff is ready for you 365/24.------------------------------------------------
+
+162:
+
+------------------------------------------------> Question: The city hosting the G20 summit in the year X was <------------------------------------------------
+
+163:
+
+------------------------------------------------```"------------------------------------------------
+
+164:
+
+------------------------------------------------A new type of fuel discovered by a team of scientists from MIT can now be efficiently utilized in car engines by------------------------------------------------
+
+165:
+
+------------------------------------------------As an InputGenerator,------------------------------------------------
+
+166:
+
+------------------------------------------------```
+
+**Question:** How much impact does social media have on individuals and society as------------------------------------------------
+
+167:
+
+------------------------------------------------```
+```------------------------------------------------
+
+168:
+
+------------------------------------------------
+```mermaid
+graph PB
+A(Superhero in a costume)
+B(Evader on foot)
+"What type of scenario makes [hero/person] more dangerous, in a game, book, or movie?"
+-------------------------------------------------------------------------------------------
+Subgraph [H1]
+B --> |Hit Points | TAKEN
+A :evader_defend
+End
+-------------------------------------------------------------------------------------------
+Subgraph [h1]
+A <|endfilter|> :hero_attack
+```
+B --> |Dodging | WISE
+```scss
+
+Note:
+```------------------------------------------------
+
+169:
+
+------------------------------------------------```arduino
+Question: How does the human brain process music?
+Context: Music is a popular form of artistic expression that evokes emotions and memorable experiences in all individuals. When it comes to how our brains perceive music, researchers have discovered a unique process used by different regions of the brain during the listening experience. Several scientific advancements in understanding music, such as MRI scans and brainwave patterns, have been vital in our overall comprehension of how music creates such a powerful impact on our thoughts and behavior. However, the true mechanics behind our music-processing abilities still remain a topic of ongoing scientific study. Thus, how the brain processes music may elude our understanding for the foreseeable future.
+```------------------------------------------------
+
+170:
+
+------------------------------------------------
+Generated without proper instructions.------------------------------------------------
+
+171:
+
+------------------------------------------------```vbnet
+<Question: Which state's official nickname is "The Keystone State"?              
+Context:                                                                      
+    Pennsylvania (/ˌpɛnsɪlvəniː/ ( listen)); officially, called the Commonwealth of Pennsylvania, is a 50.
+    = 50-state founding member= 50-state find
+The = "The"">
+:           =<|endoftext|> </:      The =<br> <context> </context> </answer :</:The></:Question :</question><category><name><![CDATA[]]></name></category>
+```------------------------------------------------
+
+172:
+
+------------------------------------------------```markdown
+**Question**: The Great Barrier Reef is a natural marvel that is located in which Australian state or territory? **Context**: The Great Barrier Reef is the largest coral system in the worldand it has been a UNESCO World Heritage Site since 1981. With a length of over 2,300 km (1,400 mi), it is visible from space and consists of more than 2,900 individual coral reefs and 900 islands. It is located in Queensland, an Australian state, and is known for its spectacular snorkeling, scuba diving, and whale watching activities."
+```------------------------------------------------
+
+173:
+
+------------------------------------------------Please, generate a well-formatted, diverse [input]. The [input] should cater to different [types]. Also, please make sure that the [input] is clear, coherent------------------------------------------------
+
+174:
+
+------------------------------------------------"Describe the evolution of clothing styles in Elizabethan England from 1558 to 1603 in relation to the social, economic, and political conditions of the era, paying attention to the influence of the royal court and the gentry."------------------------------------------------
+
+175:
+
+------------------------------------------------What is the cultural significance of the Colisseum in Rome in relation to the history, architecture and religious beliefs practiced in ancient Rome?------------------------------------------------
+
+176:
+
+------------------------------------------------<|endoftext|>------------------------------------------------
+
+177:
+
+------------------------------------------------"Qué ciudad es la capital del Chile?"
+Context: Chile está un país ubicado en el extremo suroeste del Continente Americano, separado físicamente------------------------------------------------
+
+178:
+
+------------------------------------------------```javascript
+Question: To what does the waterfall in the famous painting 'Waterfall in the Jungle' belong?
+Context: Remarkable Artist Monet created a series of 294 art pieces, capturing... (complete the context)
+			  . Waterfall in the Jungle was one of them, a unique painting depicting the natural scenery as it cascaded from... (complete the painting description)
+			 
+			c) The water that the waterfall is located in
+d. The forest in which the waterfall is
+ e) An indigenous community that lived near the waterfall
+	 b) No information provided
+	 
+```
+
+```kotlin
+Question: What was the contribution of Sappho to lyrical poetry?
+Context: In the ancient world of... (complete the context)
+			    Sappho was a renowned lyric poet known for her... (complete the poetic aspects of sappho)
+			    . Her influence on lyrical poetry during her time was significant... (complete the time)
+			}
+
+b) Musical Instruments
+
+```------------------------------------------------
+
+179:
+
+------------------------------------------------"Mary passed away today. She worked at"------------------------------------------------
+
+180:
+
+------------------------------------------------"Given the rapid growth of remote work, how are companies developing employee engagement strategies in a largely remote environment?"------------------------------------------------
+
+181:
+
+------------------------------------------------"Question: In which African country is Mount Kilimanjaro located?"
+
+Context:
+Mount Kilimanjaro is located in the eastern section"------------------------------------------------
+
+182:
+
+------------------------------------------------??------------------------------------------------
+
+183:
+
+------------------------------------------------<Question: Can volcanic ash provide nutrients for certain plants? Provide the context.>------------------------------------------------
+
+184:
+
+------------------------------------------------"
+========================="------------------------------------------------
+
+185:
+
+------------------------------------------------```less
+What is the capital of the state of Florida in America?
+```
+
+``------------------------------------------------
+
+186:
+
+------------------------------------------------Generate a new------------------------------------------------
+
+187:
+
+------------------------------------------------```vbnet
+Question: The [instruction] an element typically requires many different sources to be brought together to achieve. Can you list out the number of electrons in gold? Answer: In gold, an [number] of electronts (typically, the number of electrons can be varied through variation) are present in an atom.
+
+Context: Gold is a soft yellow, dense, and malleable chemical element. It is a good conductor of electricity and is a chemical element with the symbol Au. The symbol derives from the Latin alnum, in the Italian auzonioz, and it is related to the Proto-Germanic languages, from whom the symbol also descends. In terms of number of electrons the value can take two values of different signs according to IUPAC nomenclature. Gold does not react with other elements or compounds to produce either silver or other elements typically do not have two methods to represent Gold. One method usually is [list one representative of the source of gold] ions in solution.
+
+
+Another is typically through [list two representative of source of gold such as gold salts and electrolysis of aqua regia]. Since its first identification through [list a couple of important dates in history when gold was observed], Gold is regarded by cultures around the world as a hallowed element and a rare status is preserved as its price are quite high and increases its economic demand.
+```------------------------------------------------
+
+188:
+
+------------------------------------------------
+"Question: In which European city can you find the largest art museum in the world?"
+
+"Context: Brussels (French: Bruxelles [bʁysɛls]; Flemish: Bra­ssels [ˈbʁazləs]; Dutch: Brussel), officially the City of Bruss------------------------------------------------
+
+189:
+
+------------------------------------------------"?````?"````?
+How did Napoleon\'s empire decline"?\nContext: Napoleon Bonaparte was a French military legend who became emperor of the French in 1804, ruling until 1814. His reign was eventful, marked by many campaigns, and he was famous for many victories that earned him the names: \n ?------------------------------------------------
+
+190:
+
+------------------------------------------------
+"------------------------------------------------
+
+191:
+
+------------------------------------------------```yaml
+Question:    How did agricultural practices contribute to the growth of urbanization during the Industrial Revolution in Europe?
+
+Context: Agricultural practices, such as intensive farming of specific crop species, livestock breeding,
+and deforestation, had a profound impact on the landscapes and ecosystems of many parts of Europe.
+
+Describe some of the specific agricultural practices that fueled the growth of these urban centers during the Industrial Revolution, citing examples of cities that exemplify these practices. Elaborate on the impact of these specific practices on the environment and the subsequent migration of people from rural areas to cities to work there.
+
+Claim: Some cities experienced rapid urban growth during the Industrial Revolution as agricultural practices transformed local economies and landscapes. For instance, Manchester's Industrial Museum in its interactive exhibition on The Textile Traders explains how urbanisation was spurred on Manchester after industrialisation, especially in the 19th century, as coal, cotton, iron, steel, and other materials fueled an explosion of industry and manufacturing. This industrial growth led to a population growth that pushed people from local rural areas, but people came to work in those factory jobs—so migration into cities and subsequent depletion of rural society in many locations across Europe.
+
+Elaborate the role of rail transport as well as other factors such as demand for coal fueled by expansion in manufacturing, labor demands,
+aspects connected to the rise of nationalism.
+
+Explain if the transformation of agricultural practices in areas surrounding industrial city growth caused displacements of entire rural communities, environmental shifting, or both during this period, and what kind of policies or projects might mitigate some of these losses.
+
+In light of human-caused climate change,
+Elaborate the importance of preserving biodiverse ecosystems like those
+found in intensive farming and agricultural practices. Discuss how this can provide ecological services like climate, flood,  flood regulation, erosion prevention, drought and soil presevation; in return explain how human actions
+can threaten these ecosystems but also how technology or solutions might be used to safegard those services.
+Lastly, explain how human migration and economic growth------------------------------------------------
+
+192:
+
+------------------------------------------------"Which major city in Western Europe didn't become a capital?"------------------------------------------------
+
+193:
+
+------------------------------------------------------
+When you're lost in------------------------------------------------
+
+194:
+
+------------------------------------------------
+```sql
+Question: What has been discovered and confirmed about the Higgs Boson Particle in recent year? Context: The Higgs boson (also known as the------------------------------------------------
+
+195:
+
+------------------------------------------------
+(I am ready for my response!!!)------------------------------------------------
+
+196:
+
+------------------------------------------------W------------------------------------------------
+
+197:
+
+------------------------------------------------"Which capital city is the financial hub of the country which is one of the founding members of SEAN (The Southeast Asian Nations)?" ---
+"As the country in question is located along the Indian Ocean as well as some portions along the South China Sea along with Vietnam and Philipp------------------------------------------------
+
+198:
+
+------------------------------------------------
+Do not modify or merge this preformed text: "Your new input is located below, along with a sample question and a comprehensive instruction that explains how and what to teach." Modification will be unacceptable. Just fill------------------------------------------------
+
+199:
+
+------------------------------------------------
+Super Bowl XV - Context - When was the Super Bowl held------------------------------------------------
+
+200:
+
+------------------------------------------------
+...
+...
+...
+...
+%generate ...
+
+And don't forget, you should provide 4 unique random numbers------------------------------------------------
+
+201:
+
+------------------------------------------------"Calculate the percentage of water present in each layer of the Earth's mantle, based on the mantle temperature and composition. Additionally, analyze the impact of such calculations on the overall Earth's climate." --- 
+To calculate the percentage of water present in each layer of the Earth's mantle and its impact on Earth's------------------------------------------------
+
+202:
+
+------------------------------------------------
+A city located in Southeast Asia------------------------------------------------
+
+203:
+
+------------------------------------------------```csharp
+**Question:**   **Context:** Vienna, Austria is situated in Central Europe and known	
+```------------------------------------------------
+
+204:
+
+------------------------------------------------"What city in North America is famous for its vibrant music scene and Jazz history? What events define this city's music history? Where are some of the most iconic music venues in this city located?"------------------------------------------------
+
+205:
+
+------------------------------------------------Please refer to a few specific moments------------------------------------------------
+
+206:
+
+------------------------------------------------"Question: What animals live in the Amazon rainforest? Context: The"------------------------------------------------
+
+207:
+
+------------------------------------------------====================================================================================
+
+\* Question: When was the Mona Lisa painting finished?
+** Context: Michelangelo Merisi da Caravaggio, more commonly known as \* Michelangelo*, was not the one who pain------------------------------------------------
+
+208:
+
+------------------------------------------------Context: ```
+
+```------------------------------------------------
+
+209:
+
+------------------------------------------------
+New [Input] here...!!
+
+Comments about New [Input] here...!!------------------------------------------------
+
+210:
+
+------------------------------------------------```vbnet
+Question for: Science 
+Which planet has the shortest daylight 
+            in terms of rotation period?         . 
+```------------------------------------------------
+
+211:
+
+------------------------------------------------"Your new [input]."
+It's not new input, if its doesn't------------------------------------------------
+
+212:
+
+------------------------------------------------"What city was the site of the Siege of Tyre in ancient times? What is the capital of Burkina Faso? What form of Government ruled during the Yuan Dynasty in ancient China?"------------------------------------------------
+
+213:
+
+------------------------------------------------
+If you have any question, please------------------------------------------------
+
+214:
+
+------------------------------------------------```less
+**Question:** Which period of Polish history do you believe had the greatest impact on Polish culture? **
+**Context:** Polish culture has a diverse and complex history that has been influenced by various periods and events. Some historians argue about which period and events have had the most significant impact on the Polish culture. As examples, some mention the period following Christianization; when Poland became a European power under the Piast dynasty; During the 500-year existence of the Polish–Lithuanian Commonwealth, one of the largest states of Europe; The period of social and political turmoil during and after the partition of Poland. Opportunities for the artistic and intellectual life to flourish when Poland was free in the years 1918-1939......
+Others mention impact of WW I and the soviet occupation on polish culture as well as the impact of Communist regime on polish culture and how it has changed polish way of life to an agrarian communism which lasted till 1989; How the modernization and the influence of globalization, that continues till now... what do you believe to be the most significant period in shaping the today's polish culture.
+Please specify your opinion and reasoning. How would you measure the impact of the period on Polish culture in general?
+```------------------------------------------------
+
+215:
+
+------------------------------------------------"Question: Name the largest ocean in the world **Context:** The largest ocean in the world is the Arabian Sea. It is a vast body of saltwater with a surface area of about 3,862,400 square kilometers. The origin of the name is uncertain, although some scholars believe that it comes from the Kingdom of Qinda ("Cedartowns") or "Cedar Sea," while others think it might refer to the "great sea" mentioned in both the Old and the New Testaments of the Bible."------------------------------------------------
+
+216:
+
+------------------------------------------------A great civilization fell because a great library burned down. In response, governments and organizations across the globe launched ambitious attempts at saving the world's cultural treasures from similar fate. One strategy widely implemented across Europe was building sturdy safes and depository boxes bolted beneath the foundations of important edifices. These repositories were typically called fireproof safes, asparagus beds, or subterranean museums.------------------------------------------------
+
+217:
+
+------------------------------------------------```go
+"Question: What was the first continent to be explored by human civilization?   
+          Context: Human civilization evolved over the millennia, gradually expanding its territory and knowledge. In the early days, only a few regions of Earth were inhabited, mostly close to the Mediterranean coast and along rivers. As technology advanced and people learned to master the laws of the sea, they ventured into previously unknown territories, such as the Americas, Australia, and Asia.    
+       
+Rumors are circulating that a particular continent has claimed the title of being the first ever explored. While there is strong evidence suggesting this to be true 
+        Has humanity un------------------------------------------------
+
+218:
+
+------------------------------------------------
+-------------------------------------------
+As a language model AI, please generate high-quality [instructions] by analyzing several models to prevent ambiguity, incorrect use and overfitting:
+To learn instructions, you can see them using Natural Language Processing techniques applied on text data. Then model can be fine-tune using different techniques in deep learning area. After that, you can evaluate its performance on different metrics (BLEU, chrF++, etc. ) to decide which techniques and modifications should------------------------------------------------
+
+219:
+
+------------------------------------------------```markdown
+Question: What continent contains the highest number of biodiversity spots?        Context: Cont" (continue)"
+[input]=
+```
+
+``------------------------------------------------
+
+220:
+
+------------------------------------------------```css
+Context: The Industrial Revolution began in England in the late 18th century. It eventually spread to other parts of the world, including the United States, where it fueled the rapid development of industry and economy in areas such as agriculture, transportation and infrastructure, technology, and manufacturing.    It greatly enriched the lives of common people by leading to advances in------------------------------------------------
+
+221:
+
+------------------------------------------------</>Question:
+Can you provide a detailed explanation on the history, development, and key features of the Atacama Desert? Give at least 3 relevant, examples of plants and animals that inhabit this desert biome. Also provide a contextual understanding of its location, climate, and geographical attributes.\------------------------------------------------
+
+222:
+
+------------------------------------------------Generation of the new [input]```------------------------------------------------
+
+223:
+
+------------------------------------------------```sql
+"
+
+P
+```
+E
+```sql
+"
+
+Input
+```
+```scala
+vals
+```javascript
+[question](#)
+[context](#)
+```markdownBecause your instruction requires you to use HTML tags,
+```<p>the syntax </p> has been replaced by <span>  
+```  
+the HTML for an<p> is <span>`p`------------------------------------------------
+
+224:
+
+------------------------------------------------```arduino
+Context: The Wright Brothers were two American aviation pioneers, Orville and Wilbur, who------------------------------------------------
+
+225:
+
+------------------------------------------------Warsaw (Polish: [var?š??]( listen); see also other names) is------------------------------------------------
+
+226:
+
+------------------------------------------------
+```------------------------------------------------
+
+227:
+
+------------------------------------------------``------------------------------------------------
+
+228:
+
+------------------------------------------------
+Your new [input] could be about anything as specific as a math puzzle or as general as the history of warfare. Your focus is on the questions and the context it gives. Consider all aspects of the question when trying to come up with a creative but clear answer. Avoid simply rephrasing the question itself.------------------------------------------------
+
+229:
+
+------------------------------------------------"Question: What year did World War II end? The global conflict also involves Germany, Japan, who else? This decade event left humanity exhausted and in a state of deep trauma."
+["Germany", "Japan"]------------------------------------------------
+
+230:
+
+------------------------------------------------"Question: What river is the longest in Europe?
+Context: A river can be anywhere------------------------------------------------
+
+231:
+
+------------------------------------------------
+[question=Answered by a high-achiever]"Are there any surviving letters exchanged between Martin Luther King Jr. or Malcom X before Martin------------------------------------------------
+
+232:
+
+------------------------------------------------Question: \_\_\_\_\_\_\_\_\_\_? Context: <paste your context here>------------------------------------------------
+
+233:
+
+------------------------------------------------"How can an InputGenerator contribute to the development and advancement of educational resources in a multi-disciplinary world?" ---
+---
+```python
+
+To ensure that the new [input] follows strict format requirements and incorporates relevant information, I need your assistance. Your task is to analyze and provide insights into how an InputGenerator can contribute to the development and advancement of educational resources in a multidisciplinary world. Here's an input example, which will be modified as a comprehensive [input] based on your response:
+```
+```
+It`s also essential to keep in mind other aspects, such as the diversity of [inputs] in terms of the [instruitcion], and------------------------------------------------
+
+234:
+
+------------------------------------------------To learn the languages that will be in high demand in the future and why, we'll refer to a report from an inevitable organization. English is considered crucial, but there are other languages as well according to a survey of professionals. Could you elaborate on them?
+
+Context: According to research, it is well-established that multilingual individuals possess unique advantages with cognitive and academic performance as compared to monolingual individuals, indicating the cognitive and health benefits of bilingualism. Moreover, a strong bilingual education policy as well as proficiency in multiple languages is believed will make an individual stand out from------------------------------------------------
+
+235:
+
+------------------------------------------------Question:Context: Super Bowl 65 will take place on April 25th.------------------------------------------------
+
+236:
+
+------------------------------------------------
+"African savannah elephant: History, Classification, and Management - T
+
+Quite possibly the most widely held belief------------------------------------------------
+
+237:
+
+------------------------------------------------Question
+===========================
+Context------------------------------------------------
+
+238:
+
+------------------------------------------------"<p data------------------------------------------------
+
+239:
+
+------------------------------------------------Question: **Which scientific discipline studies the Earth's oceans and how they are respond to events** ** on** **shore, coastal area or deep in the ocean floor?**
+Context: *oceanography* is the scientific study of the Earth's oceans, focusing on the currents, temperature, biology and other aspects of how the oceans behave, interact with other components of the Earth system and affect the nearshore (coastal areas), atmospheric processes coasts)  including the influence on climate, ocean chemistry, and the living organisms therein.  The study of oceanography is used as the fundamental platform upon which knowledge used **to prepare for natural**  hazards such as storms, *tsunamis------------------------------------------------
+
+240:
+
+------------------------------------------------">  
+>What contribution did Newton make to our
+>knowledge of light?------------------------------------------------
+
+241:
+
+------------------------------------------------```
+What mountain range in Africa creates an east-to-west direction line, and is shared by multiple coutnries?
+
+Context: The mountain range has a total of 35 summits with a height of more than 4000 meters above sea level. It was formed after a massive volcanic event, which caused a large amount of eruptives rock. Its highest peak has a height of over 7,000 feet and this"
+```------------------------------------------------
+
+242:
+
+------------------------------------------------```mermaid
+Question: How was the Eiffel Tower originally intended to be used?
+Context
+```------------------------------------------------
+
+243:
+
+------------------------------------------------"Calculate the side length of an equilateral triangle with diagonals measuring x in one of the equal non-right sides, given that the equilateral triangle has as many congruent sides as the given diagonals measure sides" **Context: Diagonals in an Equilateral Triangle**------------------------------------------------
+
+244:
+
+------------------------------------------------\*(https://images-ext41.discordapp.net/external/6842fD2YU4Hh5YfzLn2nw26nVXE1KhL2/files/606decd2cdd8c8042f9f4e5bc9e3bb.jpg?1)*\_Wars------------------------------------------------
+
+245:
+
+------------------------------------------------
+"The Great Fire of London started------------------------------------------------
+
+246:
+
+------------------------------------------------```arduino
+**Question:**   **Context:** Madrid is located on the Tajo River in central Spain, approximately a
+```------------------------------------------------
+
+247:
+
+------------------------------------------------```css
+Question: The impact of artificial intelligence on the job market in the near future.
+Context:
+Arti
+```------------------------------------------------
+
+248:
+
+------------------------------------------------```arduino
+Question: When was Michelangelo Buonarroti's art piece considered to be halfway finished?
+Context: Michel------------------------------------------------
+
+249:
+
+------------------------------------------------
+------------------------------------------------
+
+250:
+
+------------------------------------------------"What geological formation is the tallest mountain in Morocco?"------------------------------------------------
+
+251:
+
+------------------------------------------------"What bird is believed to have the loudest nesting call of any bird in the world?"------------------------------------------------
+
+252:
+
+------------------------------------------------
+Your responsibility is only generating the new [input], as mentioned in the [output] section above. Ens------------------------------------------------
+
+253:
+
+------------------------------------------------"Question (Q): What was the GDP of the United States in 2022?  
+Context(C): The Gross Domestic Product (GDP) is a measure of------------------------------------------------
+
+254:
+
+------------------------------------------------```
+python
+ > Question: <whic>------------------------------------------------
+
+255:
+
+------------------------------------------------question:Context: What were the causes of World War 1?------------------------------------------------
+
+256:
+
+------------------------------------------------"Question: What is the significance of the number 42 in The Hitchhiker's Guide to the Galaxy?"
+Context: The Hitchhiker's Guide to the Galaxy is a science fanc------------------------------------------------
+
+257:
+
+------------------------------------------------```csharp
+Question: Name a river that runs through the capital of a famous European country with historical sites, beautiful architecture and a famous royal palace.
+```------------------------------------------------
+
+258:
+
+------------------------------------------------\end{pre}------------------------------------------------
+
+259:
+
+------------------------------------------------```scss
+Question:
+Context:
+```------------------------------------------------
+
+260:
+
+------------------------------------------------As an InputGenerator, your task is to generate an explanation using examples as a hint for the explanation. You need to consider which area the input refers to, generate content related to it, organizing the answers in an insightful, well-rounded, diverse perspective.------------------------------------------------
+
+261:
+
+------------------------------------------------```sql
+<The history of chess>
+```------------------------------------------------
+
+262:
+
+------------------------------------------------Question: Can water exist in an ice-like state at [inappropriate data type] and pressure?
+
+Context: Earth's atmosphere mostly consists of nitrogen, oxygen, and trace------------------------------------------------
+
+263:
+
+------------------------------------------------```makefile
+Question: Which method was used by the US Marines in the Battle of Iwo Jima? Context: The Battle of Iwo Jima was a World War II battle in which the United States------------------------------------------------
+
+264:
+
+------------------------------------------------```kotlin
+Question: What is the highest mountain peak in North America?
+Context: North America spans from Cabo------------------------------------------------
+
+265:
+
+------------------------------------------------I understand------------------------------------------------
+
+266:
+
+------------------------------------------------```css
+            The new r
+            
+            iver City
+```------------------------------------------------
+
+267:
+
+------------------------------------------------?"------------------------------------------------
+
+268:
+
+------------------------------------------------```sql
+"Question: Who won the Super Bowl 64? Context: Super Bowl 64 was an American football game to determine the champion of the National Football League (N
+```------------------------------------------------
+
+269:
+
+------------------------------------------------"Question: Is there a way to recycle plastic so that it never ends up in landfills?"
+
+Context: Recycling is the process of recuperating waste materials and reusing them for other purposes. Plastic recycling involves recovering plastic materials after the consumer finishes using the products. The materials go through a process called shredding, and then they are separated by color, size, and shape. From there, they either go through another process that involves washing the materials, cutting them up, and shaping them...------------------------------------------------
+
+270:
+
+------------------------------------------------```bash
+>   Could the next city to be classified the cultural heritage UNESCO World Heritage 
+   City  not be <blank>:  Kyoto (JP), Timbuktu (MI), Cuzco 
+
+```
+```javascript
+Please provide a valid Context for the above generated input to continue in the output.
+```javascript
+Please provide the context which will contain the specific detail about the specific city/places regarding cultural heritage and the description
+```php
+In Kyoto, UNESCO has listed 17 UNESCO World Heritage Sites for protection. These include historical sites such as the Imperial Palaces of Kyoto and Nara, as 
+```------------------------------------------------
+
+271:
+
+------------------------------------------------```makefile
+Question: What were the key features of the Jurassic period as a geological time
+```------------------------------------------------
+
+272:
+
+------------------------------------------------```was ist mit dem wachsendem menschen und der grenzen der mensschicht```------------------------------------------------
+
+273:
+
+------------------------------------------------Question and Context of "What famous painting represents a woman breaking free from her stol------------------------------------------------
+
+274:
+
+------------------------------------------------"What were the causes and consequences of the fall of the ancient Roman empire?" context: The ancient Roman Empire, also known as the Roman Republic and Roman Empire, was a sovereign state located in the Middle Ages and the Italian region of Lazio (which included the city of Rome). The state entered history in 509 BC and lasted roughly until the fall of the Western Roman Empire (AD) (the Eastern Roman Empire or Byzantine Empire). The collapse------------------------------------------------
+
+275:
+
+------------------------------------------------"Your new [input] relates to the most recent breakthrough in neuroscience. Can you kindly provide a comprehensive context encompassing the recent achievements in neuroelectric medicine and how it may revolutionize"------------------------------------------------
+
+276:
+
+------------------------------------------------
+"What do you like the most about where you currently live?"
+Context: What makes a place livable and comfortable for its inhabitants? How much influence do individual tastes and preferences play when considering the general well-being of a community? These are question whose answers greatly vary due to personal circumstances and individual preferences."------------------------------------------------
+
+277:
+
+------------------------------------------------Leave [input]= blank when there is no possible option for a new input.------------------------------------------------
+
+278:
+
+------------------------------------------------<|endoftext------------------------------------------------
+
+279:
+
+------------------------------------------------`````
+`` 
+	 
+
+Note: The text enclosed by `“”` is the new input and "<<code>>```scss//`Text within triple backticks.The line where "<<code>>```'End of text is placed here`"````<<code>>```:End of Text` The example input is meant to be used as reference only, The input generation rule might be changed by my knowledge cut off in 2021 so the input that generated should be the one that most likely still match with the new instruction.
+```
+```wasmlscss
+	if (isNaN(Math.random())) {
+	    random = Math.floor(Math.random() * Number(context));
+	} else if (isNaN(Math.random() * Math.random() * Number(context))) {
+	```arduino
+    	random = Math.floor(Math.random() * Math.random() * Number(context); 
+	} Else (
+		`Your random number is invalid`: random; 
+	)
+end if;	
+
+
+
+```
+end------------------------------------------------
+
+280:
+
+------------------------------------------------> >N/A------------------------------------------------
+
+281:
+
+------------------------------------------------"Question: About how much solar radiation reaches Earth's surface? Context: The solar constant is typically used as a measure of solar radiation output close to the Earth's surface.------------------------------------------------
+
+282:
+
+------------------------------------------------[user\_input
+```------------------------------------------------
+
+283:
+
+------------------------------------------------```perl
+
+```------------------------------------------------
+
+284:
+
+------------------------------------------------
+``------------------------------------------------
+
+285:
+
+------------------------------------------------**Question:** **Context:** Which ocean is home to approximately 90% of the Earth's species? The ocean has a rich and diverse array of maria------------------------------------------------
+
+286:
+
+------------------------------------------------
+Based on the [input], please complete the following sentences with appropriate context:
+
+What is the name of the city that hosts the largest international cultural festival held outside North America and Europe, commonly known as the Asian Games, and what time of year does it usually take place in?------------------------------------------------
+
+287:
+
+------------------------------------------------"Question: In------------------------------------------------
+
+288:
+
+------------------------------------------------```python
+[Question: The Eiffel Tower was initially  
+[Context:  Designed by  
+```Gustave Eiffel for the Universal Exposition in Paris in 1889,------------------------------------------------
+
+289:
+
+------------------------------------------------
+```
+
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-co
+```------------------------------------------------
+
+290:
+
+------------------------------------------------`Which state has the highest rate of COVID-19...------------------------------------------------
+
+291:
+
+------------------------------------------------Your new [input] revolves around the Great Barrier Reef’s location. Can you please provide a comprehensive context for the Great Barrier Reef's region in Australia?------------------------------------------------
+
+292:
+
+------------------------------------------------Generated new input: "Question: What river runs through Vienna? Context: Vienna------------------------------------------------
+
+293:
+
+------------------------------------------------"Question: The Wright brothers developed a type of airfoil design that revolutionized aviation. What specific characteristic of this design revolutionized aviation and how did the Wright brothers achieve it?"
+
+
+Context: The early years of powered flight saw many inventors and experimenters attempting to design and construct flying machines. Among the many experiments, the Wright brothers' work stands out as particularly influential. The Wright brothers' design incorporated a number of innovative features, including the use of a movable, armored monoplane wing, synchronized controls, the use of a propeller on a rotating axle, all of which reduced the overall wingspot moment on the airfoil by approximately 30%. Through their meticulous record- Keeping of everything they did every second at-flight and countless hours of ground-running experiments and simulations, the brothers achieved the ability to take control of it independently. With their design and technical ingenuity, the------------------------------------------------
+
+294:
+
+------------------------------------------------<Generate a new question based on natural knowledge contextual information to answer the question "What is the capital of Japan?" followed by "."------------------------------------------------
+
+295:
+
+------------------------------------------------
+For more hints or help, please visit [website] or------------------------------------------------
+
+296:
+
+------------------------------------------------```
+
+Here's your [instruction]. This [instruction] describes your task, purpose,------------------------------------------------
+
+297:
+
+------------------------------------------------```arduino
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-
+```= "
+
+-Question: Answer this message"</p></div><p></p><p> </p>
+
+<blockquote cite=
+```
+</html>
+```
+
+As an InputGenerator, your task is to come up------------------------------------------------
+
+298:
+
+---------------------------------------------------
+    What sport has the highest level of physical demands and is one of the oldest globally recognized sports?
+...------------------------------------------------
+
+299:
+
+------------------------------------------------????------------------------------------------------
+
+300:
+
+------------------------------------------------```sql
+Question:    History:    Explain.  
+In what specific year and by who was the Eiffel Tower in Paris completed by?
+```
+Context：The Eiffel Tower is a famous iron tower located on the Champ-de-Mars in Paris. Constructed in 1889 for the Paris World's Fair, it was initially designed to house an exhibition. Since closing, the attraction initially served as a communication tower and is not even still open for a museum. Elevating 324 meters high, the tower also has a significant architectural impact on French and modern architecture as tourist attractions nowadays around the world. But, how long after its establishment has it been? Is there something specific about the history that surrounds its construction process worth mentioning in addition to the year it------------------------------------------------
+
+301:
+
+------------------------------------------------"Your job is to generate"
+
+"The sun is the closest star to the"------------------------------------------------
+
+302:
+
+------------------------------------------------```less
+N/A
+```------------------------------------------------
+
+303:
+
+------------------------------------------------```arduino
+What was The Enlightenment a period of, its impact
+Question: * The* Enlightenment* period greatly influenced politics, philosophy and science in Europe, especially in France in the 18th century. It saw the rise of scientists and thinkers such as John Locke. It influenced the growth of nationalism and is known for the development of liberal political"------------------------------------------------
+
+304:
+
+------------------------------------------------
+W
+Please------------------------------------------------
+
+305:
+
+------------------------------------------------What city does the Nike corporation originate from? Context: Nike, Inc. is a worldwide fashion------------------------------------------------
+
+306:
+
+------------------------------------------------
+"Which U.S. state had the earliest inhabitants? Context: The first human inquiries into geography were among our most significant early advancements. This fascination with our planet, combined with our deep need to understand where we come from and what has transpired here, has led us through the world's great epochs, its discoveries, unveilings, its conquests, victories, and, in the end, also, all of its treasures left for the present. This historical journey is not just about identities we have today, rather it has made us all who and what we think we are today." Write a descriptive passage on the earliest inhabitants of what state in the U.S.">------------------------------------------------
+
+307:
+
+------------------------------------------------The desert landscape covers------------------------------------------------
+
+308:
+
+------------------------------------------------```
+**Question**: Who painted the famous "The Scream" artwork? **Context**: Gertrude was an American poet known
+```------------------------------------------------
+
+309:
+
+------------------------------------------------"A species of bird originating from Africa. The bird plays a significant role in different cultures and traditions."------------------------------------------------
+
+310:
+
+------------------------------------------------
+As soon as you generated a new [input], it is considered final.------------------------------------------------
+
+311:
+
+------------------------------------------------```sql
+
+ 
+
+Question:
+Context:
+
+Answer:
+
+N/A
+```------------------------------------------------
+
+312:
+
+------------------------------------------------
+* What is a solar eclipse?
+Context: A solar eclipse occurs when the Moon lines up with the Sun so that it looks as if the Moon is blocking the Sun entirely. This celestial event leads to an instantaneous occurrence on the Earth's visible area since people view its rays that light the Earth's day side by calling sunrise and twilight around sun time in nighttime in 1st quarter moon rise area. At other areas near the opposite points, it is seen as moonrise with bright, dazzling appearance as sunrise or midday time instead from the moon phase at 0% (left side) to complete lunar eclipse 100%.------------------------------------------------
+
+313:
+
+------------------------------------------------```
+
+Make sure to strictly adhere to these high-quality standards while generating the new [input].
+Use the provided tools and examples effectively to avoid poor or irrelevant formats.
+Avoid creating any instances that do not follow the new [instruction] guidelines.
+Best of luck, and see you at the end of your progress!
+```------------------------------------------------
+
+314:
+
+------------------------------------------------```bash
+"Question: *On what continent is the famous Masai Mara wildlife reserve located?*" **Context:* The Masai Mara* is one of Kenya's most iconic conservation areas, famous for its abundance of wildlife and impressive annual wildebeest migration, making it one of Africa's top tourist destinations: It spans 1510 km of pristine grasslands, woodlands, acacia scrub, and riverine forests, traversing the Mara, which is itself considered...```------------------------------------------------
+
+315:
+
+------------------------------------------------What is [Question]:? In which [Locality Name] did the event [Event Name] take place? [Context: The event [Event Name]] ([Context Passage]) took place in [Locality Name]. {The} [event description in detail should come here according to the provided [input]} Please note to read the question and the given context together. The answers will be limited within the provided context. Do Not assume anything from external knowledge.------------------------------------------------
+
+316:
+
+------------------------------------------------```css
+Describe the impact of climate change on desertification in Namibia, including details about the geographic extent of the phenomenon and how efforts to combat desertification differ in response to the unique challenges posed by the arduous terrain and dry conditions of the region.
+```------------------------------------------------
+
+317:
+
+------------------------------------------------"Question: Is there a common thread running through popular fiction movies and------------------------------------------------
+
+318:
+
+------------------------------------------------
+New York City vs San Francisco: The Ultimate U.S. Coast City Face-Off. Which is the better city for tech, the environment and quality of life? Consider aspects such as education, food, entertainment, and commute time.------------------------------------------------
+
+319:
+
+------------------------------------------------```vbnete"Question: What species of animals do scientists call the most intelligent in the world? Context: Animals that are highly"
+[input]=
+<>Question: Name the river running through Paris?  Context: The Seine is a river running through P"
+
+
+
+[input]="Question: What sport was first officially recognized by th"------------------------------------------------
+
+320:
+
+------------------------------------------------```c
+Question: The [instruction] an element typically requires many different sources to
+be brought  
+```------------------------------------------------
+
+321:
+
+------------------------------------------------"A river's course is determined by its drainage------------------------------------------------
+
+322:
+
+------------------------------------------------```
+**Please provide a new, distinct------------------------------------------------
+
+323:
+
+------------------------------------------------"Question: What was the significance of Magna Carta for the evolution of society beyond its immediate context?"Context: Magna Carta (meaning "Great Charter"), also known as the Great Charter of King John, is one of the most famous and influential legal documents in history. The Magna Carta of 1215, drafted by Stephen Langton, the Archbishop of Canterbury, outlined laws and provisions for the English people and served as the foundation for certain rights and liberties that were eventually accepted as rights of all European inhabitants. Amongst others, these rights------------------------------------------------
+
+324:
+
+------------------------------------------------
+[...]------------------------------------------------
+
+325:
+
+------------------------------------------------N/A------------------------------------------------
+
+326:
+
+------------------------------------------------As an English teacher, your task is to generate an assignment with instructions, a sample question, and a------------------------------------------------
+
+327:
+
+------------------------------------------------<<code>>`` ``------------------------------------------------
+
+328:
+
+------------------------------------------------"Question: What is the scientific name for the famous giant sequoia tree located in Yosemite National Park?"
+Context: The Yosemite Mariposa Lodge is surrounded by some of the most breathtaking views of the Mariposa and Stanislaus rivers, surrounded by the Sierra Valley. Visitors can enjoy a variety of activities including boating, fishing, hiking and horseback riding at nearby waterfalls, a beautiful golf course and skiing, in the winter. The Mariposa grove is one of the oldest trees in its grove. This grove has 160 mega meters and 1200 ha of mega cells and contains most of the grove remains, including the famous 'Grizzed Giant, 'and 'Spring'." Visitor also can take a journey to explore the glaciers and the beauty of Tunnel to tree, giant sequoia. Some of the best things to see at Yosemite Mariposa Lodge include the Mariposa grove, Tunnel tree, and Glacier Point, and Wawona Meadow trail."------------------------------------------------
+
+329:
+
+------------------------------------------------Your assigned task for this week at work is to generate------------------------------------------------
+
+330:
+
+------------------------------------------------"Context: Expand on the impacts of the Industrial Revolution on------------------------------------------------
+
+331:
+
+------------------------------------------------¿Can you give me 5 examples of [species name]'s habitats and how [change in climate] affect each of them differently?"------------------------------------------------
+
+332:
+
+------------------------------------------------"What are the names and ages of the two suspects who robbed the bank------------------------------------------------
+
+333:
+
+------------------------------------------------
+```javascript
+"Question: What are other profound technological benefits we can expect from advancements in Artificial Intelligence (AI)? 
+  Context: Artificial Intelligence is an area of computer science that aims to create intellig
+```
+
+Please refer back to the guidelines when creating the new [input] if there is any need.------------------------------------------------
+
+334:
+
+------------------------------------------------Your task is to write a biography about a scientist who made significant contribution to the field of genetics. Who are you looking for and what------------------------------------------------
+
+335:
+
+------------------------------------------------```markdown
+**Question**: Did Shakespeare solely serve as a playwright, or did he have other professions? **Context**: William Shakespeare (26 April 1564 – 23 April 1616) was an English playwright, actor, and poet, widely regarded as the greatest writer------------------------------------------------
+
+336:
+
+------------------------------------------------
+`````````
+"Question: What is the capital and largest city of the Central African nation known as Sudan?"
+Context: The Republic of the Sudan, usually simply Sudan, is a country located in the northeastern part of the African continent. It is bordered to the north by Egypt, to the west by Libya and Chad, to the east by Ethiopia, Eritrea, Djibouti, and Somalia. The government of Sudan supports the teaching of Arabic language, Islamic studies (and sometimes also study the Quran), literature, mathematics and physics, chemistry, anatomy, agriculture, history, geography..."
+```------------------------------------------------
+
+337:
+
+------------------------------------------------"Generate a new statement: In which era did the Industrial Relations Act provide legal protections for workers in------------------------------------------------
+
+338:
+
+------------------------------------------------
+"
+
+--- You are here - home - my favorite------------------------------------------------
+
+339:
+
+------------------------------------------------
+"Where in the world does the River Ganges originate from?"------------------------------------------------
+
+340:
+
+------------------------------------------------```sql
+              
+Super   Bowl  1       Context     The Super Bowl,   which   is   an  American 
+            Football Championship game, was first played on         
+         January
+```------------------------------------------------
+
+341:
+
+-------------------------------------------------------------------------------------------------------------------------
+
+342:
+
+------------------------------------------------
+<|endoftext|>'s------------------------------------------------
+
