@@ -25,10 +25,14 @@ prompt_spec = MockPromptSpec(
 
 output_annotator = VLLMPromptBasedOutputAnnotator()
 
-generated_inputs_dir = Path("/home/cyzhao/main/generated_datasets")
+generated_inputs_dir = Path("/home/cyzhao/generated_datasets")
 
-for each in os.listdir(generated_inputs_dir)[:1]:
-    if (not each.endswith(".txt")) and each.startswith("inputs"):
+for each in os.listdir(generated_inputs_dir):
+    if (
+        not each.endswith(".txt")
+        and each.startswith("inputs")
+        and "20_20_50_1.5" in each
+    ):
         try:
             dataset = datasets.load_from_disk(generated_inputs_dir / each)
             print(dataset)
@@ -38,6 +42,15 @@ for each in os.listdir(generated_inputs_dir)[:1]:
                 prompt_spec=prompt_spec,
                 hyperparameter_choices={},
             )
-            output_dataset.save_to_disk(f"dataset_{each[6:]}")
+            output_dataset.save_to_disk(generated_inputs_dir / f"dataset_{each[7:]}")
+            file_name = f"dataset_{each[7:]}"
+
+            with open(generated_inputs_dir / f"{file_name}.txt", "w") as file:
+                for index, item in enumerate(output_dataset):
+                    file.write(
+                        f"{index}:\n\n[INPUT]\n\n------------------------------------------------\n\n{item['input_col']}\n\n[OUPUT]\n\n{item['output_col']} \n\n------------------------------------------------\n\n"
+                    )
         except:
-            pass
+            from IPython import embed
+
+            embed()
