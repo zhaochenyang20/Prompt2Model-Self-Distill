@@ -1,15 +1,12 @@
 """Test Input Generator."""
 
+import os
 from pathlib import Path
 
 import datasets
 
 from prompt2model.output_annotator import VLLMPromptBasedOutputAnnotator
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
-
-inputs_dir = Path("./generated_inputs")
-inputs_dir.mkdir(parents=True, exist_ok=True)
-
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
@@ -28,14 +25,19 @@ prompt_spec = MockPromptSpec(
 
 output_annotator = VLLMPromptBasedOutputAnnotator()
 
+generated_inputs_dir = Path("/home/cyzhao/main/generated_datasets")
 
-inputs = [
-    "Question: What's the capital city of China? Context: The capital city of China is Beijing. Beijing is one of the most populous and historically significant cities in China. It serves as the political, cultural, and educational center of the country. Beijing is not only the seat of the Chinese government, with the country's top government officials and institutions located there, but it also boasts a rich cultural heritage, including iconic landmarks like the Forbidden City, the Temple of Heaven, and the Great Wall of China, which are major tourist attractions.",
-    "Question: What's the capital city of United States? Context: The capital city of the United States is Washington, D.C. (District of Columbia). Washington, D.C. is not part of any state and was specifically created as the nation's capital. It serves as the center of the U.S. government, housing important institutions and landmarks such as the White House (the official residence of the President of the United States), the U.S. Capitol (where Congress meets), and various government agencies and embassies. Additionally, Washington, D.C. is known for its historical monuments and museums, making it a significant cultural and political hub in the United States.",
-]
-
-output_dataset = output_annotator.annotate_outputs(
-    input_strings=inputs,
-    prompt_spec=prompt_spec,
-    hyperparameter_choices={},
-)
+for each in os.listdir(generated_inputs_dir)[:1]:
+    if (not each.endswith(".txt")) and each.startswith("inputs"):
+        try:
+            dataset = datasets.load_from_disk(generated_inputs_dir / each)
+            print(dataset)
+            inputs = dataset["input_col"]
+            output_dataset = output_annotator.annotate_outputs(
+                input_strings=inputs,
+                prompt_spec=prompt_spec,
+                hyperparameter_choices={},
+            )
+            output_dataset.save_to_disk(f"dataset_{each[6:]}")
+        except:
+            pass

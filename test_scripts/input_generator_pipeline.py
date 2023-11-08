@@ -9,7 +9,7 @@ from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 # 测试
 
-inputs_dir = Path("./generated_inputs")
+inputs_dir = Path("./generated_datasets")
 inputs_dir.mkdir(parents=True, exist_ok=True)
 
 generated_inputs = []
