@@ -171,7 +171,7 @@ def evaluate(
         temperature=hyperparameter_choices.get("temperature", 0),
         max_tokens=hyperparameter_choices.get("max_tokens", 500),
     )
-    tuned_model = LLM(model=str(model_path))
+    tuned_model = LLM(model=str(model_path), gpu_memory_utilization=0.5)
     tuned_model_outputs = tuned_model.generate(prompts, sampling_params)
     tuned_model_generated_outputs = [
         each.outputs[0].text for each in tuned_model_outputs
@@ -193,15 +193,6 @@ def evaluate(
     del tuned_model
     gc.collect()
     torch.cuda.empty_cache()
-
-    def map_func(example):
-        example["model_input"] = construct_prompt(new_input=example["input_col"])
-        example["model_output"] = example["output_col"]
-        example["text"] = (
-            example["model_input"] + example["model_output"] + tokenizer.eos_token
-        )
-        return example
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
