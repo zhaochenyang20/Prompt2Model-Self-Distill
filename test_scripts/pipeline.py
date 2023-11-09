@@ -32,9 +32,7 @@ parameter_tuples = [
     # (20, 20, 50, 0.5),
     # (20, 20, 50, 1.5),
 ]
-for task, parameter_tuple in product(
-    tasks, parameter_tuples
-):
+for task, parameter_tuple in product(tasks, parameter_tuples):
     task_name, instruction, examples = task
     epochs, per_epoch_num, top_k, temperature = parameter_tuple
     store_path = (
