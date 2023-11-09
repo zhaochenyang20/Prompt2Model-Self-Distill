@@ -5,7 +5,7 @@ from itertools import product
 
 root_dir = Path("/home/cyzhao/ckpt_data_p2ms")
 root_dir.mkdir(parents=True, exist_ok=True)
-CUDA_CONDITION = "1,2,4"
+CUDA_CONDITION = "1,2"
 
 tasks = [
     (
@@ -54,6 +54,11 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
         json.dump(params, f, indent=4)
         command = f"CUDA_VISIBLE_DEVICES={CUDA_CONDITION} python3 main.py --config={str(store_path / 'config.json')}"
         print(command)
-    os.system(
-        f"CUDA_VISIBLE_DEVICES={CUDA_CONDITION} python3 main.py --config={str(store_path / 'config.json')}"
-    )
+    required_paths = [
+        store_path / "model",
+        store_path / "result.txt",
+        store_path / "inputs",
+        store_path / "dataset"
+    ]
+    if not all(path.exists() for path in required_paths):
+        os.system(f"CUDA_VISIBLE_DEVICES={CUDA_CONDITION} python3 main.py --config={store_path / 'config.json'}")

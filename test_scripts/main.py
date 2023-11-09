@@ -23,8 +23,6 @@ root_dir.mkdir(parents=True, exist_ok=True)
 def generate_and_write_inputs(
     prompt_spec, epochs, per_epoch_num, parameter_dict, store_path
 ):
-    if (store_path / "inputs").exists():
-        return
     input_generator = VLLMPromptBasedInputGenerator()
     inputs = input_generator.batch_generation_inputs(
         prompt_spec,
@@ -67,8 +65,6 @@ def annotate_and_write_outputs(store_path):
 
 
 def finetune_vicuna(prompt_spec, store_path, model_path):
-    if (store_path / "model").exists():
-        return
     construct_prompt = partial(
         construct_meta_prompt,
         instruction=prompt_spec.instruction,
@@ -125,11 +121,12 @@ def finetune_vicuna(prompt_spec, store_path, model_path):
         max_seq_length=1500,
     )
     trainer.train()
-    del trainer
-    gc.collect()
-    torch.cuda.empty_cache()
     model.save_pretrained(store_path / "model")
     tokenizer.save_pretrained(store_path / "model")
+    del trainer
+    del model
+    gc.collect()
+    torch.cuda.empty_cache()
 
 
 def evaluate(
@@ -137,8 +134,6 @@ def evaluate(
     store_path,
     prompt_spec,
 ):
-    if (store_path / "result.txt").exists():
-        return
     model_path = store_path / "model"
     construct_prompt = partial(
         construct_meta_prompt,
@@ -207,23 +202,27 @@ if __name__ == "__main__":
     )
     store_path = Path(loaded_params["store_path"])
     assert store_path.exists()
-    generate_and_write_inputs(
-        prompt_spec=prompt_spec,
-        epochs=loaded_params["epochs"],
-        per_epoch_num=loaded_params["per_epoch_num"],
-        parameter_dict=dict(
-            top_k=loaded_params["top_k"], temperature=loaded_params["temperature"]
-        ),
-        store_path=store_path,
-    )
-    annotate_and_write_outputs(store_path)
+    if not (store_path / "inputs").exists():
+        generate_and_write_inputs(
+            prompt_spec=prompt_spec,
+            epochs=loaded_params["epochs"],
+            per_epoch_num=loaded_params["per_epoch_num"],
+            parameter_dict=dict(
+                top_k=loaded_params["top_k"], temperature=loaded_params["temperature"]
+            ),
+            store_path=store_path,
+        )
+    if not (store_path / "dataset").exists():
+        annotate_and_write_outputs(store_path)
 
     model_path = Path(
         "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
     )
 
-    finetune_vicuna(prompt_spec, store_path, model_path)
+    if not (store_path / "model").exists():
+        finetune_vicuna(prompt_spec, store_path, model_path)
 
     test_set_path = Path("/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed")
 
-    evaluate(test_set_path, store_path, prompt_spec)
+    if not (store_path / "result.txt").exists():
+        evaluate(test_set_path, store_path, prompt_spec)
