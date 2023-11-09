@@ -137,8 +137,8 @@ def evaluate(
     store_path,
     prompt_spec,
 ):
-    # if (store_path / "result.txt").exists():
-    #     return
+    if (store_path / "result.txt").exists():
+        return
     model_path = store_path / "model"
     construct_prompt = partial(
         construct_meta_prompt,
