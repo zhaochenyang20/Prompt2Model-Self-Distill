@@ -1,6 +1,6 @@
 import os
 
-CUDA_CONDITION = "CUDA_VISIBLE_DEVICES=1,2,3"
+CUDA_CONDITION = "CUDA_VISIBLE_DEVICES=7"
 
 task_name = [
     "SQuAD",
@@ -32,6 +32,6 @@ for task_name, instruction, experiment_tuple in zip(
     task_name, instruction, experiment_tuples
 ):
     epochs, per_epoch_num, top_k, temperature = experiment_tuple
-    os.systems(
+    os.system(
         f"{CUDA_CONDITION} main.py --task_name {task_name} --instruction {instruction} --examples {examples} --epochs {epochs} --per_epoch_num {per_epoch_num} --top_k {top_k} --temperature {temperature}"
     )
