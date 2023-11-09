@@ -2,6 +2,7 @@
 
 import argparse
 import gc
+import json
 from pathlib import Path
 
 import datasets
@@ -40,49 +41,24 @@ def generate_and_write_inputs(
 
 
 if __name__ == "__main__":
-    #! epochs, per_epoch_num, top_k, temperature
-    experiments = [
-        (20, 20, 50, 1.0),
-        (40, 10, 50, 1.0),
-        (20, 20, 30, 1.0),
-        (20, 20, 10, 1.0),
-        (20, 20, 50, 0.5),
-        (20, 20, 50, 1.5),
-    ]
-    for epochs, per_epoch_num, top_k, temperature in experiments:
-        parameter_dict = dict(top_k=top_k, temperature=temperature)
-        generate_and_write_inputs(epochs, per_epoch_num, parameter_dict)
-
-
-if __name__ == "__main__":
-    file_name = f"inputs_{epochs}_{per_epoch_num}_{parameter_dict['top_k']}_{parameter_dict['temperature']}"
     parser = argparse.ArgumentParser()
-    parser.add_argument("--task_name", type=str, default="")
-    parser.add_argument("--instruction", type=str, default="")
-    parser.add_argument("--examples", type=str, default="")
-    parser.add_argument("--epochs", type=int, default=20)
-    parser.add_argument("--per_epoch_num", type=int, default=20)
-    parser.add_argument("--top_k", type=int, default=50)
-    parser.add_argument("--temperature", type=float, default=1.0)
-    args = parser.parse_args()
-    assert all(
-        [args.task_name, args.instruction, args.examples]
-    ), "Task name, instruction, and examples cannot be empty."
-
+    parser.add_argument("--config", type=str, default="")
+    config_path = parser.parse_args().config
+    with open(parser.parse_args().config, "r") as json_file:
+        loaded_params = json.load(json_file)
     prompt_spec = MockPromptSpec(
         task_type=TaskType.TEXT_GENERATION,
-        instruction=args.instruction,
-        examples=args.examples,
+        instruction=loaded_params["instruction"],
+        examples=loaded_params["examples"],
     )
-    store_path = (
-        root_dir
-        / f"{args.task_name}_{args.epochs}_{args.per_epoch_num}_{args.top_k}_{args.temperature}"
-    )
-    store_path.mkdir(parents=True, exist_ok=True)
+    store_path = Path(loaded_params["store_path"])
+    assert store_path.exists()
     generate_and_write_inputs(
         prompt_spec=prompt_spec,
-        epochs=args.epochs,
-        per_epoch_num=per_epoch_num,
-        parameter_dict=dict(top_k=args.top_k, temperature=args.temperature),
+        epochs=loaded_params["epochs"],
+        per_epoch_num=loaded_params["per_epoch_num"],
+        parameter_dict=dict(
+            top_k=loaded_params["top_k"], temperature=loaded_params["temperature"]
+        ),
         store_path=store_path,
     )

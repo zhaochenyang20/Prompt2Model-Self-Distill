@@ -1,6 +1,10 @@
+import json
 import os
+from pathlib import Path
 
-CUDA_CONDITION = "CUDA_VISIBLE_DEVICES=1,2,3"
+root_dir = Path("/home/cyzhao/ckpt_data_p2ms")
+
+CUDA_CONDITION = "1,2,3"
 
 task_name = [
     "SQuAD",
@@ -32,6 +36,23 @@ for task_name, instruction, experiment_tuple in zip(
     task_name, instruction, experiment_tuples
 ):
     epochs, per_epoch_num, top_k, temperature = experiment_tuple
-    os.systems(
-        f"{CUDA_CONDITION} main.py --task_name {task_name} --instruction {instruction} --examples {examples} --epochs {epochs} --per_epoch_num {per_epoch_num} --top_k {top_k} --temperature {temperature}"
+    store_path = (
+        root_dir / f"{task_name}_{epochs}_{per_epoch_num}_{top_k}_{temperature}"
+    )
+    store_path.mkdir(parents=True, exist_ok=True)
+    params = {
+        "CUDA_CONDITION": CUDA_CONDITION,
+        "task_name": task_name,
+        "instruction": instruction,
+        "examples": examples,
+        "epochs": epochs,
+        "per_epoch_num": per_epoch_num,
+        "top_k": top_k,
+        "temperature": temperature,
+        "store_path": str(store_path),
+    }
+    with open(store_path / "config.json", "w") as f:
+        json.dump(params, f, indent=4)
+    os.system(
+        f"CUDA_VISIBLE_DEVICES={CUDA_CONDITION} python3 main.py --config={str(store_path / 'config.json')}"
     )
