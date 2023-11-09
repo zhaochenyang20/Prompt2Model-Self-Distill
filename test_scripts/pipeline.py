@@ -1,23 +1,15 @@
-"""Test Input Generator."""
+import os
 
-from pathlib import Path
+CUDA_CONDITION = "CUDA_VISIBLE_DEVICES=1,2,3"
 
-import datasets
-
-from prompt2model.input_generator import VLLMPromptBasedInputGenerator
-from prompt2model.prompt_parser import MockPromptSpec, TaskType
-
-# 测试
-
-inputs_dir = Path("/home/cyzhao/generated_datasets")
-inputs_dir.mkdir(parents=True, exist_ok=True)
-
-generated_inputs = []
-
-prompt_spec = MockPromptSpec(
-    task_type=TaskType.TEXT_GENERATION,
-    instruction="Your task is to generate an answer to a natural question. In this task, the input is a string that consists of both a question and a context passage. The context is a descriptive passage related to the question and contains the answer. And the question can range from Math, Cultural, Social, Geometry, Biology, History, Sports, Technology, Science, and so on.",  # # noqa E501
-    examples="""
+task_name = [
+    "SQuAD",
+]
+instruction = [
+    "Your task is to generate an answer to a natural question. In this task, the input is a string that consists of both a question and a context passage. The context is a descriptive passage related to the question and contains the answer. And the question can range from Math, Cultural, Social, Geometry, Biology, History, Sports, Technology, Science, and so on.",
+]
+examples = [
+    """
 [input]="Question: What city did Super Bowl 50 take place in? Context: Super Bowl 50 was an American football game to determine the champion of the National Football League (NFL) for the 2015 season. The American Football Conference (AFC) champion Denver Broncos defeated the National Football Conference (NFC) champion Carolina Panthers 24–10 to earn their third Super Bowl title. The game was played on February 7, 2016, at Levi's Stadium in the San Francisco Bay Area at Santa Clara, California. As this was the 50th Super Bowl, the league emphasized the "golden anniversary" with various gold-themed initiatives, as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals (under which the game would have been known as "Super Bowl L"), so that the logo could prominently feature the Arabic numerals 50."
 [output]="Santa Clara"
 
@@ -26,44 +18,20 @@ prompt_spec = MockPromptSpec(
 
 [input]="Question: The Ottoman empire controlled territory on three continents, Africa, Asia and which other? Context: The Ottoman Empire was an imperial state that lasted from 1299 to 1923. During the 16th and 17th centuries, in particular at the height of its power under the reign of Suleiman the Magnificent, the Ottoman Empire was a powerful multinational, multilingual empire controlling much of Southeast Europe, Western Asia, the Caucasus, North Africa, and the Horn of Africa. At the beginning of the 17th century the empire contained 32 provinces and numerous vassal states. Some of these were later absorbed into the empire, while others were granted various types of autonomy during the course of centuries."
 [output]="Europe"
-""",  # noqa E501
-)
-
-input_generator = VLLMPromptBasedInputGenerator()
-
-
-def generate_and_write_inputs(epochs, per_epoch_num, parameter_dict):
-    inputs = input_generator.batch_generation_inputs(
-        prompt_spec,
-        epochs,
-        per_epoch_num,
-        parameter_dict,
+""",
+]
+experiment_tuples = [
+    (10, 10, 50, 1.0),
+    (20, 5, 50, 1.0),
+    # (20, 20, 30, 1.0),
+    # (20, 20, 10, 1.0),
+    # (20, 20, 50, 0.5),
+    # (20, 20, 50, 1.5),
+]
+for task_name, instruction, experiment_tuple in zip(
+    task_name, instruction, experiment_tuples
+):
+    epochs, per_epoch_num, top_k, temperature = experiment_tuple
+    os.systems(
+        f"{CUDA_CONDITION} main.py --task_name {task_name} --instruction {instruction} --examples {examples} --epochs {epochs} --per_epoch_num {per_epoch_num} --top_k {top_k} --temperature {temperature}"
     )
-
-    len(set(inputs))
-
-    file_name = f"inputs_{epochs}_{per_epoch_num}_{parameter_dict['top_k']}_{parameter_dict['temperature']}"
-
-    with open(inputs_dir / f"{file_name}.txt", "w") as file:
-        for index, item in enumerate(inputs):
-            file.write(
-                f"{index}:\n\n------------------------------------------------{item}------------------------------------------------\n\n"
-            )
-
-    dataset = datasets.Dataset.from_dict({"input_col": inputs})
-    dataset.save_to_disk(inputs_dir / file_name)
-
-
-if __name__ == "__main__":
-    #! epochs, per_epoch_num, top_k, temperature
-    experiments = [
-        (20, 20, 50, 1.0),
-        (40, 10, 50, 1.0),
-        (20, 20, 30, 1.0),
-        (20, 20, 10, 1.0),
-        (20, 20, 50, 0.5),
-        (20, 20, 50, 1.5),
-    ]
-    for epochs, per_epoch_num, top_k, temperature in experiments:
-        parameter_dict = dict(top_k=top_k, temperature=temperature)
-        generate_and_write_inputs(epochs, per_epoch_num, parameter_dict)
