@@ -5,7 +5,7 @@ from itertools import product
 
 root_dir = Path("/home/cyzhao/ckpt_data_p2ms")
 
-CUDA_CONDITION = "6,7"
+CUDA_CONDITION = "4"
 
 tasks = [
     (
