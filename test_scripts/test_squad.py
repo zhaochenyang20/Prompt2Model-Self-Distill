@@ -16,10 +16,6 @@ from prompt2model.model_executor import ModelOutput
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--model_name", type=str, default="")
-args = parser.parse_args()
-
 test_dataset = datasets.load_from_disk(
     "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed"
 )
@@ -84,7 +80,9 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 
 
 def main(model_name):
-    tuned_vicuna = LLM(model=str(ckpt_path / model_name))
+    base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+    # tuned_vicuna = LLM(model=str(ckpt_path / model_name))
+    tuned_vicuna = LLM(model=base_model)
     tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
     tuned_vicuna_generated_outputs = [
         each.outputs[0].text for each in tuned_vicuna_outputs
@@ -96,17 +94,20 @@ def main(model_name):
             or tuned_vicuna_generated_outputs[i] in GROUND_TRUTH[i]
         ):
             index += 1
-    print(model_name)
-    del tuned_vicuna
-    gc.collect()
-    torch.cuda.empty_cache()
     print(index / len(GROUND_TRUTH))
     file_name = f"result_{model_name}"
     with open(inputs_dir / f"{file_name}.txt", "w") as file:
         file.write(
             f"result of {model_name}\n\n------------------------------------------------{index / len(GROUND_TRUTH)}------------------------------------------------\n\n"
         )
+    print(model_name)
+    del tuned_vicuna
+    gc.collect()
+    torch.cuda.empty_cache()
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model_name", type=str, default="")
+    args = parser.parse_args()
     main(args.model_name)
