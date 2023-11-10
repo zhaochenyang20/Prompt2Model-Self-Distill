@@ -62,7 +62,11 @@ def annotate_and_write_outputs(store_path):
             file.write(
                 f"{index}:\n\n[INPUT]\n\n------------------------------------------------\n\n{item['input_col']}\n\n[OUPUT]\n\n{item['output_col']} \n\n------------------------------------------------\n\n"
             )
-
+    del output_annotator
+    destroy_model_parallel()
+    gc.collect()
+    torch.cuda.empty_cache()
+    destroy_model_parallel()   
 
 def finetune_vicuna(prompt_spec, store_path, model_path):
     construct_prompt = partial(

@@ -5,7 +5,7 @@ from itertools import product
 
 root_dir = Path("/home/cyzhao/ckpt_data_p2ms")
 root_dir.mkdir(parents=True, exist_ok=True)
-CUDA_CONDITION = "1,2"
+CUDA_CONDITION = "1,2,4"
 
 tasks = [
     (
@@ -25,12 +25,14 @@ tasks = [
 ]
 
 parameter_tuples = [
-    (20, 20, 50, 1.0),
-    (40, 10, 50, 1.0),
-    (40, 10, 30, 1.0),
-    (40, 10, 10, 1.0),
-    (40, 10, 50, 0.5),
-    (40, 10, 50, 1.5),
+    # (20, 20, 50, 1.0),
+    # (40, 10, 50, 1.0),
+    # (40, 10, 30, 1.0),
+    # (40, 10, 10, 1.0),
+    # (40, 10, 50, 0.5),
+    # (40, 10, 50, 1.5),
+    (5, 5, 20, 1.0),
+    (5, 5, 20, 0.5)
 ]
 for task, parameter_tuple in product(tasks, parameter_tuples):
     task_name, instruction, examples = task

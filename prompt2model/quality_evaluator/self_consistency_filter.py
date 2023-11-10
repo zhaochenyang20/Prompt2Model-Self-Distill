@@ -35,3 +35,5 @@ def self_consistency_filter(strings) -> str:
     shortest_of_most_common = min(most_common_strings, key=len)
 
     return shortest_of_most_common
+
+# TODO: add threshold and evaluate 
