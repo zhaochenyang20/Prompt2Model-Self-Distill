@@ -21,9 +21,9 @@ root_dir.mkdir(parents=True, exist_ok=True)
 
 
 def generate_and_write_inputs(
-    prompt_spec, epochs, per_epoch_num, parameter_dict, store_path, INFERENCE_PORTION
+    prompt_spec, epochs, per_epoch_num, parameter_dict, store_path, gpu_memory_utilization
 ):
-    input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=INFERENCE_PORTION)
+    input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=gpu_memory_utilization)
     inputs = input_generator.batch_generation_inputs(
         prompt_spec,
         epochs,
@@ -44,10 +44,10 @@ def generate_and_write_inputs(
     destroy_model_parallel()
 
 
-def annotate_and_write_outputs(store_path, INFERENCE_PORTION):
+def annotate_and_write_outputs(store_path, gpu_memory_utilization):
     if (store_path / "dataset").exists():
         return
-    output_annotator = VLLMPromptBasedOutputAnnotator(gpu_memory_utilization=INFERENCE_PORTION)
+    output_annotator = VLLMPromptBasedOutputAnnotator(gpu_memory_utilization=gpu_memory_utilization)
     dataset = datasets.load_from_disk(store_path / "inputs")
     print(dataset)
     inputs = dataset["input_col"]
@@ -137,7 +137,7 @@ def evaluate(
     test_set_path,
     store_path,
     prompt_spec,
-    INFERENCE_PORTION,
+    gpu_memory_utilization,
 ):
     model_path = store_path / "model"
     construct_prompt = partial(
@@ -171,7 +171,7 @@ def evaluate(
         temperature=hyperparameter_choices.get("temperature", 0),
         max_tokens=hyperparameter_choices.get("max_tokens", 500),
     )
-    tuned_model = LLM(model=str(model_path), gpu_memory_utilization=INFERENCE_PORTION)
+    tuned_model = LLM(model=str(model_path), gpu_memory_utilization=gpu_memory_utilization)
     tuned_model_outputs = tuned_model.generate(prompts, sampling_params)
     tuned_model_generated_outputs = [
         each.outputs[0].text for each in tuned_model_outputs
@@ -200,7 +200,7 @@ if __name__ == "__main__":
     config_path = parser.parse_args().config
     with open(parser.parse_args().config, "r") as json_file:
         loaded_params = json.load(json_file)
-    INFERENCE_PORTION = loaded_params["INFERENCE_PORTION"]
+    gpu_memory_utilization = loaded_params["gpu_memory_utilization"]
     prompt_spec = MockPromptSpec(
         task_type=TaskType.TEXT_GENERATION,
         instruction=loaded_params["instruction"],
@@ -217,19 +217,19 @@ if __name__ == "__main__":
                 top_k=loaded_params["top_k"], temperature=loaded_params["temperature"]
             ),
             store_path=store_path,
-            INFERENCE_PORTION=INFERENCE_PORTION,
+            gpu_memory_utilization=gpu_memory_utilization,
         )
     if not (store_path / "dataset").exists():
-        annotate_and_write_outputs(store_path, INFERENCE_PORTION)
+        annotate_and_write_outputs(store_path, gpu_memory_utilization)
 
-    # model_path = Path(
-    #     "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-    # )
+    model_path = Path(
+        "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+    )
 
-    # if not (store_path / "model").exists():
-    #     finetune_vicuna(prompt_spec, store_path, model_path)
+    if not (store_path / "model").exists():
+        finetune_vicuna(prompt_spec, store_path, model_path)
 
-    # test_set_path = Path("/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed")
+    test_set_path = Path("/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed")
 
-    # if not (store_path / "result.txt").exists():
-    #     evaluate(test_set_path, store_path, prompt_spec, INFERENCE_PORTION)
+    if not (store_path / "result.txt").exists():
+        evaluate(test_set_path, store_path, prompt_spec, gpu_memory_utilization)
