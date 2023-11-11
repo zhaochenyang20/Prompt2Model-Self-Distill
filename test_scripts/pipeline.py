@@ -5,7 +5,13 @@ from itertools import product
 
 root_dir = Path("/home/cyzhao/ckpt_data_p2ms")
 root_dir.mkdir(parents=True, exist_ok=True)
-CUDA_CONDITION = "1,2,4"
+# 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
+CUDA_CONDITION = "1"
+# 进行 inference，也即除了训练之外的任何步骤，所能占用的单卡比例
+# inference 只会用 CUDA_CONDITION 的第一张卡
+# 比如 CUDA_CONDITION 是 0,1,2, 则 inference 会占用 0 卡的 INFERENCE_PORTION 这么多显存
+# INFERENCE_PORTION 越小，则 inference 越慢，理论上不该低于 28 / 80 = 0.35
+INFERENCE_PORTION = 0.5
 
 tasks = [
     (
@@ -31,8 +37,8 @@ parameter_tuples = [
     # (40, 10, 10, 1.0),
     # (40, 10, 50, 0.5),
     # (40, 10, 50, 1.5),
-    (5, 5, 20, 1.0),
-    (5, 5, 20, 0.5)
+    # (5, 5, 20, 1.0),
+    (5, 5, 30, 1.0)
 ]
 for task, parameter_tuple in product(tasks, parameter_tuples):
     task_name, instruction, examples = task
@@ -51,6 +57,7 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
         "top_k": top_k,
         "temperature": temperature,
         "store_path": str(store_path),
+        "INFERENCE_PORTION": INFERENCE_PORTION,
     }
     with open(store_path / "config.json", "w") as f:
         json.dump(params, f, indent=4)

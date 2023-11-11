@@ -1,5 +1,7 @@
 from collections import Counter
+from prompt2model.utils import get_formatted_logger
 
+logger = get_formatted_logger("OutputAnnotator")
 
 def self_consistency_filter(strings) -> str:
     """
@@ -19,21 +21,24 @@ def self_consistency_filter(strings) -> str:
     appears first in the list will be returned.
     """
 
-    frequency_counter = Counter(strings)
-
     if not strings:
+        logger.info("Pass empty array.")
         return None
 
-    highest_frequency = frequency_counter.most_common(1)[0][1]
+    try:
+        frequency_counter = Counter(strings)
+        highest_frequency = frequency_counter.most_common(1)[0][1]
+        most_common_strings = [
+            string
+            for string, count in frequency_counter.items()
+            if count == highest_frequency
+        ]
 
-    most_common_strings = [
-        string
-        for string, count in frequency_counter.items()
-        if count == highest_frequency
-    ]
-
-    shortest_of_most_common = min(most_common_strings, key=len)
-
-    return shortest_of_most_common
+        shortest_of_most_common = min(most_common_strings, key=len)
+        return shortest_of_most_common
+    
+    except Exception as e:
+        logger.warning(f"Error in self_consistency_filter: {e}")
+        return None
 
 # TODO: add threshold and evaluate 

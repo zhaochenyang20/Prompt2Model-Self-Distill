@@ -25,25 +25,27 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
     def __init__(
         self,
         pretrained_model_name: str = "lmsys/vicuna-7b-v1.5",
+        gpu_memory_utilization=0.5,
     ) -> None:
         """Create a new instance of the HFPromptBasedInputGenerator.
 
         Args:
             pretrained_model_name: The name of a pre-trained decoder-only model.
+            gpu_memory_utilization: The portion of CUDA memory to use on a single GPU.
         """
         if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.language_model = LLM(
                 model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-            , gpu_memory_utilization=0.5)
+            , gpu_memory_utilization=gpu_memory_utilization)
         else:
-            self.language_model = LLM(model=pretrained_model_name, gpu_memory_utilization=0.5)
+            self.language_model = LLM(model=pretrained_model_name, gpu_memory_utilization=gpu_memory_utilization)
 
     def construct_prompt(
         self,
         instruction: str,
         few_shot_example_string: str,
         generated_inputs: list[str],
-        context_cutoff: int,
+        context_cutoff: int = 3500,
     ) -> str:
         """Generates a prompt string.
 

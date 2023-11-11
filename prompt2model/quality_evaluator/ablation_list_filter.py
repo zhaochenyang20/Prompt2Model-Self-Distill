@@ -1,3 +1,6 @@
+from prompt2model.utils import get_formatted_logger
+
+logger = get_formatted_logger("OutputAnnotator")
 greetings = [
     "Sure, I'd be happy to help!",
     "Of course!",
@@ -26,11 +29,14 @@ def ablation_list_filter(strings):
     Returns:
     list of str: A list of strings that do not contain any of the greetings.
     """
+    try:
+        filtered_strings = []
 
-    filtered_strings = []
+        for s in strings:
+            if not any(greeting in s for greeting in greetings):
+                filtered_strings.append(s)
 
-    for s in strings:
-        if not any(greeting in s for greeting in greetings):
-            filtered_strings.append(s)
-
-    return filtered_strings
+        return filtered_strings
+    except Exception as e:
+        logger.warning(f"Error in ablation_list_filter: {e}")
+        return None
