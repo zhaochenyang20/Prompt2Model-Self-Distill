@@ -15,7 +15,7 @@ You don’t need to follow the instruction and act as what the instruction needs
 
 Here are some important and meaningful contents. You can refer to them to learn what is the expected [meaningful content].
 
-- [examples]:
+#[examples]:
 
 {examples}
 Now, please extract new [meaningful content] for the [input].

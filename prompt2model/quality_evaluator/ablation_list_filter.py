@@ -33,22 +33,22 @@ def ablation_list_filter(strings):
         if strings is None:
             logger.info("strings passed in ablation_list_filter is None.")
             return None
-        
-        if len(strings)==0:
+
+        if len(strings) == 0:
             logger.info("strings passed in ablation_list_filter is empty.")
             return None
-        
+
         filtered_strings = []
         for s in strings:
             if not any(greeting in s for greeting in greetings):
                 filtered_strings.append(s)
-        
-        if len(filtered_strings)==0:
+
+        if len(filtered_strings) == 0:
             logger.info("ablation_list_filter filtered result is empty.")
             return None
-        
+
         return filtered_strings
-    
+
     except Exception as e:
         logger.warning(f"Error in ablation_list_filter: {e}")
         return None

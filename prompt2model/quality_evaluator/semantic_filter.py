@@ -1,6 +1,7 @@
 import nltk
 import torch
 from transformers import AutoTokenizer, BertForNextSentencePrediction
+
 from prompt2model.utils import get_formatted_logger
 
 logger = get_formatted_logger("QualityEvaluator")
@@ -10,6 +11,7 @@ try:
         nltk.download("punkt")
 except Exception as e:
     logger.warning(f"Error downloading NLTK resources: {e}")
+
 
 def batch_pairs_coherence(model, tokenizer, device, sentences):
     """
@@ -54,7 +56,9 @@ def check_paragraph_coherence(paragraphs):
     try:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
-        model = BertForNextSentencePrediction.from_pretrained("bert-base-uncased", device_map="auto", torch_dtype=torch.bfloat16)
+        model = BertForNextSentencePrediction.from_pretrained(
+            "bert-base-uncased", device_map="auto", torch_dtype=torch.bfloat16
+        )
     except Exception as e:
         logger.warning(f"Error loading model or tokenizer: {e}")
 
@@ -62,8 +66,8 @@ def check_paragraph_coherence(paragraphs):
         if paragraphs is None:
             logger.info("paragraphs passed in check_paragraph_coherence is None.")
             return None
-        
-        if len(paragraphs)==0:
+
+        if len(paragraphs) == 0:
             logger.info("paragraphs passed in check_paragraph_coherence is empty.")
             return None
 
@@ -78,7 +82,7 @@ def check_paragraph_coherence(paragraphs):
             logger.info("check_paragraph_coherence filtered result is empty.")
             return None
         return filtered_paragraphs
-    
+
     except Exception as e:
         logger.warning(f"Error in check_paragraph_coherence: {e}")
         return None
@@ -105,7 +109,7 @@ def split_long_sentences(paragraph, max_words=50):
                 split_sentences.append(sentence)
             else:
                 for i in range(0, len(words), max_words):
-                    part = ' '.join(words[i:i+max_words])
+                    part = " ".join(words[i : i + max_words])
                     split_sentences.append(part)
         return split_sentences
     except Exception as e:

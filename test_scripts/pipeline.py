@@ -1,7 +1,7 @@
 import json
 import os
-from pathlib import Path
 from itertools import product
+from pathlib import Path
 
 root_dir = Path("/home/cyzhao/ckpt_data_p2ms")
 root_dir.mkdir(parents=True, exist_ok=True)
@@ -65,7 +65,9 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
         store_path / "model",
         store_path / "result.txt",
         store_path / "inputs",
-        store_path / "dataset"
+        store_path / "dataset",
     ]
     if not all(path.exists() for path in required_paths):
-        os.system(f"CUDA_VISIBLE_DEVICES={CUDA_CONDITION} python3 main.py --config={store_path / 'config.json'}")
+        os.system(
+            f"CUDA_VISIBLE_DEVICES={CUDA_CONDITION} python3 main.py --config={store_path / 'config.json'}"
+        )
