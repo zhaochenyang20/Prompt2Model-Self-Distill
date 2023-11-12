@@ -69,7 +69,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         high_quality_inputs = [match[0] for match in matches]
         high_quality_input_string = ""
         for input in high_quality_inputs:
-            high_quality_input_string += f"{input}\n\n"
+            high_quality_input_string += f'"{input}"\n\n'
         return construct_verify_prompt(
             examples=high_quality_input_string, new_input=new_input
         )
@@ -185,6 +185,30 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         ]
         return new_inputs
 
+    def verify(self, prompt_spec: PromptSpec, new_inputs: list[str]):
+        """Check the generated inputs.
+
+        Args:
+            prompt_spec: A prompt we use to generate new inputs.
+            new_inputs: The generated inputs.
+        """
+        if new_inputs is None:
+            return None
+        filter_prompts = [
+            construct_verify_prompt(prompt_spec.examples, each) for each in new_inputs
+        ]
+        sampling_params = SamplingParams(
+            top_k=-1,
+            top_p=1,
+            temperature=0,
+            max_tokens=500,
+        )
+        output_sequence = self.language_model.generate(filter_prompts, sampling_params)
+        filtered_inputs = [
+            output.text for each in output_sequence for output in each.outputs
+        ]
+        return [each for each in filtered_inputs if "NO CONTENT" not in each]
+
     def batch_generation_inputs(
         self,
         prompt_spec: PromptSpec,
@@ -210,7 +234,13 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 for element in new_inputs
                 if element is not None and element != ""
             ]
-            filtered_inputs = ablation_list_filter(length_filter(new_inputs, hyperparameter_choices.get('min_input_length', 120)))
+            filtered_inputs = self.verify(
+                ablation_list_filter(
+                    length_filter(
+                        new_inputs, hyperparameter_choices.get("min_input_length", 120)
+                    )
+                )
+            )
             if filtered_inputs is not None:
                 generated_inputs.extend(filtered_inputs)
                 generated_inputs = list(set(generated_inputs))

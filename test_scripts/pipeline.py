@@ -34,13 +34,21 @@ parameter_tuples = [
     (20, 20, 50, 1.0, 0.5, 30),
     (20, 20, 50, 1.0, 0.5, 60),
     (20, 20, 50, 1.0, 0.5, 90),
-    (20, 20, 50, 1.0, 0.5, 120)
+    (20, 20, 50, 1.0, 0.5, 120),
 ]
 for task, parameter_tuple in product(tasks, parameter_tuples):
     task_name, instruction, examples = task
-    epochs, per_epoch_num, top_k, temperature, min_frequency, min_input_length = parameter_tuple
+    (
+        epochs,
+        per_epoch_num,
+        top_k,
+        temperature,
+        min_frequency,
+        min_input_length,
+    ) = parameter_tuple
     store_path = (
-        root_dir / f"{task_name}_{epochs}_{per_epoch_num}_{top_k}_{temperature}_{min_frequency}_{min_input_length}"
+        root_dir
+        / f"{task_name}_{epochs}_{per_epoch_num}_{top_k}_{temperature}_{min_frequency}_{min_input_length}"
     )
     store_path.mkdir(parents=True, exist_ok=True)
     params = {
@@ -55,7 +63,7 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
         "store_path": str(store_path),
         "gpu_memory_utilization": gpu_memory_utilization,
         "min_frequency": min_frequency,
-        "min_input_length": min_input_length
+        "min_input_length": min_input_length,
     }
     with open(store_path / "config.json", "w") as f:
         json.dump(params, f, indent=4)
