@@ -1,7 +1,7 @@
 import json
 import os
-from pathlib import Path
 from itertools import product
+from pathlib import Path
 
 root_dir = Path("/home/cyzhao/ckpt_data_p2ms")
 root_dir.mkdir(parents=True, exist_ok=True)
@@ -40,7 +40,8 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
     task_name, instruction, examples = task
     epochs, per_epoch_num, top_k, temperature, min_frequency = parameter_tuple
     store_path = (
-        root_dir / f"{task_name}_{epochs}_{per_epoch_num}_{top_k}_{temperature}_{min_frequency}"
+        root_dir
+        / f"{task_name}_{epochs}_{per_epoch_num}_{top_k}_{temperature}_{min_frequency}"
     )
     store_path.mkdir(parents=True, exist_ok=True)
     params = {
@@ -54,7 +55,7 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
         "temperature": temperature,
         "store_path": str(store_path),
         "gpu_memory_utilization": gpu_memory_utilization,
-        "min_frequency": min_frequency
+        "min_frequency": min_frequency,
     }
     with open(store_path / "config.json", "w") as f:
         json.dump(params, f, indent=4)
@@ -64,7 +65,9 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
         store_path / "model",
         store_path / "result.txt",
         store_path / "inputs",
-        store_path / "dataset"
+        store_path / "dataset",
     ]
     if not all(path.exists() for path in required_paths):
-        os.system(f"CUDA_VISIBLE_DEVICES={CUDA_CONDITION} python3 main.py --config={store_path / 'config.json'}")
+        os.system(
+            f"CUDA_VISIBLE_DEVICES={CUDA_CONDITION} python3 main.py --config={store_path / 'config.json'}"
+        )

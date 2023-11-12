@@ -3,32 +3,40 @@
 import argparse
 import gc
 import json
+from functools import partial
 from pathlib import Path
-from prompt2model.output_annotator import construct_meta_prompt
+
 import datasets
 import torch
-from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
-from functools import partial
-from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
-from prompt2model.input_generator import VLLMPromptBasedInputGenerator
-from prompt2model.output_annotator import VLLMPromptBasedOutputAnnotator
-from prompt2model.prompt_parser import MockPromptSpec, TaskType
+from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 from vllm import LLM, SamplingParams
+from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
+
+from prompt2model.input_generator import VLLMPromptBasedInputGenerator
+from prompt2model.output_annotator import (
+    VLLMPromptBasedOutputAnnotator,
+    construct_meta_prompt,
+)
+from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 root_dir = Path("/home/cyzhao/ckpt_data_p2ms")
 root_dir.mkdir(parents=True, exist_ok=True)
 
 
 def generate_and_write_inputs(
-    prompt_spec, epochs, per_epoch_num, parameter_dict, store_path, gpu_memory_utilization
+    prompt_spec,
+    epochs,
+    per_epoch_num,
+    parameter_dict,
+    store_path,
+    gpu_memory_utilization,
 ):
-    input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=gpu_memory_utilization)
+    input_generator = VLLMPromptBasedInputGenerator(
+        gpu_memory_utilization=gpu_memory_utilization
+    )
     inputs = input_generator.batch_generation_inputs(
-        prompt_spec,
-        epochs,
-        per_epoch_num,
-        parameter_dict
+        prompt_spec, epochs, per_epoch_num, parameter_dict
     )
     with open(store_path / f"inputs.txt", "w") as file:
         for index, item in enumerate(inputs):
@@ -47,13 +55,15 @@ def generate_and_write_inputs(
 def annotate_and_write_outputs(store_path, gpu_memory_utilization, min_frequency):
     if (store_path / "dataset").exists():
         return
-    output_annotator = VLLMPromptBasedOutputAnnotator(gpu_memory_utilization=gpu_memory_utilization)
+    output_annotator = VLLMPromptBasedOutputAnnotator(
+        gpu_memory_utilization=gpu_memory_utilization
+    )
     dataset = datasets.load_from_disk(store_path / "inputs")
     inputs = dataset["input_col"]
     output_dataset = output_annotator.annotate_outputs(
         input_strings=inputs,
         prompt_spec=prompt_spec,
-        hyperparameter_choices={'min_frequency':min_frequency},
+        hyperparameter_choices={"min_frequency": min_frequency},
     )
     output_dataset.save_to_disk(store_path / f"dataset")
     with open(store_path / f"dataset.txt", "w") as file:
@@ -65,7 +75,8 @@ def annotate_and_write_outputs(store_path, gpu_memory_utilization, min_frequency
     destroy_model_parallel()
     gc.collect()
     torch.cuda.empty_cache()
-    destroy_model_parallel()   
+    destroy_model_parallel()
+
 
 def finetune_vicuna(prompt_spec, store_path, model_path):
     construct_prompt = partial(
@@ -170,7 +181,9 @@ def evaluate(
         temperature=hyperparameter_choices.get("temperature", 0),
         max_tokens=hyperparameter_choices.get("max_tokens", 500),
     )
-    tuned_model = LLM(model=str(model_path), gpu_memory_utilization=gpu_memory_utilization)
+    tuned_model = LLM(
+        model=str(model_path), gpu_memory_utilization=gpu_memory_utilization
+    )
     tuned_model_outputs = tuned_model.generate(prompts, sampling_params)
     tuned_model_generated_outputs = [
         each.outputs[0].text for each in tuned_model_outputs
@@ -192,6 +205,7 @@ def evaluate(
     del tuned_model
     gc.collect()
     torch.cuda.empty_cache()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

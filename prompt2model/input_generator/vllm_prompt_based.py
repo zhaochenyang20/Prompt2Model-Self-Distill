@@ -8,11 +8,12 @@ from tqdm import tqdm
 from vllm import LLM, SamplingParams
 
 from prompt2model.input_generator import InputGenerator
-from prompt2model.input_generator.prompt_template import construct_meta_prompt
-from prompt2model.prompt_parser import PromptSpec
-from prompt2model.quality_evaluator import (
-    ablation_list_filter,
+from prompt2model.input_generator.prompt_template import (
+    construct_meta_prompt,
+    construct_verify_prompt,
 )
+from prompt2model.prompt_parser import PromptSpec
+from prompt2model.quality_evaluator import ablation_list_filter
 from prompt2model.quality_evaluator.length_filter import length_filter
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 
@@ -44,14 +45,43 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 gpu_memory_utilization=gpu_memory_utilization,
             )
 
-    def construct_prompt(
+    def construct_filter_prompt(
+        self,
+        few_shot_example_string: str,
+        new_input: str,
+    ):
+        """Generates a prompt string for verifying a generated input.
+
+        Args:
+            few_shot_example_string: A string representing the few-shot examples
+                parsed from the user's prompt, which quality is higher than the
+                generated examples.
+            new_input: A new generated input.
+
+        Returns:
+            The generated prompt string for verifying a generated input.
+        """
+        matches = re.findall(
+            r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
+            few_shot_example_string,
+            re.DOTALL,
+        )
+        high_quality_inputs = [match[0] for match in matches]
+        high_quality_input_string = ""
+        for input in high_quality_inputs:
+            high_quality_input_string += f"{input}\n\n"
+        return construct_verify_prompt(
+            examples=high_quality_input_string, new_input=new_input
+        )
+
+    def construct_generation_prompt(
         self,
         instruction: str,
         few_shot_example_string: str,
         generated_inputs: list[str],
         context_cutoff: int = 3500,
     ) -> str:
-        """Generates a prompt string.
+        """Generates a prompt string for generating a new input.
 
         Args:
             instruction: The natural language instruction for the prompt.
@@ -132,7 +162,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             hyperparameter_choices: A dictionary of hyperparameter choices.
         """
         prompts = [
-            self.construct_prompt(
+            self.construct_generation_prompt(
                 instruction=prompt_spec.instruction,
                 few_shot_example_string=prompt_spec.examples,
                 generated_inputs=generated_inputs,

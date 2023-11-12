@@ -1,11 +1,20 @@
 import unittest
-from prompt2model.quality_evaluator import ablation_list_filter, self_consistency_filter, semantic_filter
+
+from prompt2model.quality_evaluator import (
+    ablation_list_filter,
+    self_consistency_filter,
+    semantic_filter,
+)
 from prompt2model.quality_evaluator.length_filter import length_filter
 
-class TestAblationListFilter(unittest.TestCase):
 
+class TestAblationListFilter(unittest.TestCase):
     def test_filter_with_greetings(self):
-        test_strings = ["Sure, I'd be happy to help!", "This is a test string.", "Great question!"]
+        test_strings = [
+            "Sure, I'd be happy to help!",
+            "This is a test string.",
+            "Great question!",
+        ]
         expected_output = ["This is a test string."]
         self.assertEqual(ablation_list_filter(test_strings), expected_output)
 
@@ -25,8 +34,8 @@ class TestAblationListFilter(unittest.TestCase):
         test_strings = ["Great question!", "Sure, I'd be happy to help!"]
         self.assertIsNone(ablation_list_filter(test_strings))
 
-class TestSelfConsistencyFilter(unittest.TestCase):
 
+class TestSelfConsistencyFilter(unittest.TestCase):
     def test_most_common_shortest(self):
         test_strings = ["apple", "apple", "banana", "banana", "cat"]
         expected_output = "apple"
@@ -49,15 +58,19 @@ class TestSelfConsistencyFilter(unittest.TestCase):
         expected_output = "cat"
         self.assertEqual(self_consistency_filter(test_strings), expected_output)
 
-class TestCheckParagraphCoherence(unittest.TestCase):
 
+class TestCheckParagraphCoherence(unittest.TestCase):
     def test_coherent_paragraph(self):
 
-        result = semantic_filter.check_paragraph_coherence(["This is sentence one. This is sentence two."])
+        result = semantic_filter.check_paragraph_coherence(
+            ["This is sentence one. This is sentence two."]
+        )
         self.assertEqual(result, ["This is sentence one. This is sentence two."])
 
     def test_incoherent_paragraph(self):
-        result = semantic_filter.check_paragraph_coherence(["I like apple. Why you always think they are consistent?"])
+        result = semantic_filter.check_paragraph_coherence(
+            ["I like apple. Why you always think they are consistent?"]
+        )
         self.assertIsNone(result)
 
     def test_empty_input(self):
@@ -68,13 +81,25 @@ class TestCheckParagraphCoherence(unittest.TestCase):
         result = semantic_filter.check_paragraph_coherence(None)
         self.assertIsNone(result)
 
-class TestLengthFilter(unittest.TestCase):
 
+class TestLengthFilter(unittest.TestCase):
     def test_normal_functionality(self):
-        self.assertEqual(length_filter(["hello", "world", "a", "Python", "code"], 3), ["hello", "world", "Python", "code"])
+        self.assertEqual(
+            length_filter(["hello", "world", "a", "Python", "code"], 3),
+            ["hello", "world", "Python", "code"],
+        )
 
     def test_default_min_length(self):
-        self.assertEqual(length_filter(["short", "medium length string", "this string is definitely longer than thirty characters"]), ["this string is definitely longer than thirty characters"])
+        self.assertEqual(
+            length_filter(
+                [
+                    "short",
+                    "medium length string",
+                    "this string is definitely longer than thirty characters",
+                ]
+            ),
+            ["this string is definitely longer than thirty characters"],
+        )
 
     def test_empty_list(self):
         self.assertIsNone(length_filter([], 3))
@@ -90,5 +115,5 @@ class TestLengthFilter(unittest.TestCase):
         self.assertIsNone(length_filter(["a", "b", "c", "d"], 5))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

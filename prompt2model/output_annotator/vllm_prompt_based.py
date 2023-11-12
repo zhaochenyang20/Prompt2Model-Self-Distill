@@ -8,10 +8,7 @@ from vllm import LLM, SamplingParams
 from prompt2model.output_annotator import OutputAnnotator
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import PromptSpec
-from prompt2model.quality_evaluator import (
-    ablation_list_filter,
-    self_consistency_filter,
-)
+from prompt2model.quality_evaluator import ablation_list_filter, self_consistency_filter
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 
 logger = get_formatted_logger("OutputAnnotator")
@@ -37,7 +34,8 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             )
         else:
             self.language_model = LLM(
-                model=pretrained_model_name, gpu_memory_utilization=gpu_memory_utilization
+                model=pretrained_model_name,
+                gpu_memory_utilization=gpu_memory_utilization,
             )
 
     def construct_prompt(
@@ -125,8 +123,10 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                 for output in output_sequence[idx].outputs
                 if (output.text is not None and output.text != "")
             ]
-            min_frequency = hyperparameter_choices.get('min_frequency', 0.2)
-            consistent_output = self_consistency_filter(ablation_list_filter(outputs), min_frequency)
+            min_frequency = hyperparameter_choices.get("min_frequency", 0.2)
+            consistent_output = self_consistency_filter(
+                ablation_list_filter(outputs), min_frequency
+            )
             if consistent_output is not None and consistent_output != "":
                 input_cols.append(input)
                 output_cols.append(consistent_output)
