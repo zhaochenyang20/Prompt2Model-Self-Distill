@@ -29,9 +29,16 @@ prompt_spec = MockPromptSpec(
 """,  # noqa E501
 )
 
-input_generator = VLLMPromptBasedInputGenerator()
+input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=0.5)
 
 prompt = input_generator.construct_prompt(instruction=prompt_spec.instruction, few_shot_example_string=prompt_spec.examples, generated_inputs=["How are you?", "I am fine."], context_cutoff= 3500)
+
+inputs = input_generator.batch_generation_inputs(
+    prompt_spec,
+    5,
+    5,
+    {},
+)
 
 # def generate_and_write_inputs(epochs, per_epoch_num, parameter_dict):
 #     inputs = input_generator.batch_generation_inputs(

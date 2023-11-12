@@ -3,7 +3,7 @@ import torch
 from transformers import AutoTokenizer, BertForNextSentencePrediction
 from prompt2model.utils import get_formatted_logger
 
-logger = get_formatted_logger("OutputAnnotator")
+logger = get_formatted_logger("QualityEvaluator")
 
 try:
     if not nltk.download("punkt"):
@@ -11,7 +11,7 @@ try:
 except Exception as e:
     logger.warning(f"Error downloading NLTK resources: {e}")
 
-def batch_pairs_coherence(sentences):
+def batch_pairs_coherence(model, tokenizer, device, sentences):
     """
     Checks the coherence of consecutive sentence pairs within a list of sentences.
 
@@ -21,14 +21,6 @@ def batch_pairs_coherence(sentences):
     Return:
         bool: True if all consecutive sentence pairs are coherent according to the model, False otherwise.
     """
-
-    try:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
-        model = BertForNextSentencePrediction.from_pretrained("bert-base-uncased").to(device)
-    except Exception as e:
-        logger.warning(f"Error loading model or tokenizer: {e}")
-
     try:
         sentence_pairs = [
             (sentences[i], sentences[i + 1]) for i in range(len(sentences) - 1)
@@ -45,7 +37,7 @@ def batch_pairs_coherence(sentences):
         return all(is_next_labels.cpu())
     except Exception as e:
         logger.warning(f"Error in batch_pairs_coherence: {e}")
-        return None
+        raise ValueError
 
 
 def check_paragraph_coherence(paragraphs):
@@ -60,14 +52,33 @@ def check_paragraph_coherence(paragraphs):
     """
 
     try:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+        model = BertForNextSentencePrediction.from_pretrained("bert-base-uncased", device_map="auto", torch_dtype=torch.bfloat16)
+    except Exception as e:
+        logger.warning(f"Error loading model or tokenizer: {e}")
+
+    try:
+        if paragraphs is None:
+            logger.info("paragraphs passed in check_paragraph_coherence is None.")
+            return None
+        
+        if len(paragraphs)==0:
+            logger.info("paragraphs passed in check_paragraph_coherence is empty.")
+            return None
+
         filtered_paragraphs = []
         for paragraph in paragraphs:
             sentences = split_long_sentences(paragraph)
             if len(sentences) < 2:
                 filtered_paragraphs.append(paragraph)
-            elif batch_pairs_coherence(sentences):
+            elif batch_pairs_coherence(model, tokenizer, device, sentences):
                 filtered_paragraphs.append(paragraph)
+        if len(filtered_paragraphs) == 0:
+            logger.info("check_paragraph_coherence filtered result is empty.")
+            return None
         return filtered_paragraphs
+    
     except Exception as e:
         logger.warning(f"Error in check_paragraph_coherence: {e}")
         return None
@@ -85,14 +96,18 @@ def split_long_sentences(paragraph, max_words=50):
     Return:
         split_sentences (list of str): A list containing sentences and sentence fragments, each not exceeding the maximum word count.
     """
-    sentences = nltk.tokenize.sent_tokenize(paragraph)
-    split_sentences = []
-    for sentence in sentences:
-        words = sentence.split()
-        if len(words) <= max_words:
-            split_sentences.append(sentence)
-        else:
-            for i in range(0, len(words), max_words):
-                part = ' '.join(words[i:i+max_words])
-                split_sentences.append(part)
-    return split_sentences
+    try:
+        sentences = nltk.tokenize.sent_tokenize(paragraph)
+        split_sentences = []
+        for sentence in sentences:
+            words = sentence.split()
+            if len(words) <= max_words:
+                split_sentences.append(sentence)
+            else:
+                for i in range(0, len(words), max_words):
+                    part = ' '.join(words[i:i+max_words])
+                    split_sentences.append(part)
+        return split_sentences
+    except Exception as e:
+        logger.warning(f"Error in split_long_sentences: {e}")
+        raise

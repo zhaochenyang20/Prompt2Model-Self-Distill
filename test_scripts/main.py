@@ -28,7 +28,7 @@ def generate_and_write_inputs(
         prompt_spec,
         epochs,
         per_epoch_num,
-        parameter_dict,
+        parameter_dict
     )
     with open(store_path / f"inputs.txt", "w") as file:
         for index, item in enumerate(inputs):
@@ -44,23 +44,22 @@ def generate_and_write_inputs(
     destroy_model_parallel()
 
 
-def annotate_and_write_outputs(store_path, gpu_memory_utilization):
+def annotate_and_write_outputs(store_path, gpu_memory_utilization, min_frequency):
     if (store_path / "dataset").exists():
         return
     output_annotator = VLLMPromptBasedOutputAnnotator(gpu_memory_utilization=gpu_memory_utilization)
     dataset = datasets.load_from_disk(store_path / "inputs")
-    print(dataset)
     inputs = dataset["input_col"]
     output_dataset = output_annotator.annotate_outputs(
         input_strings=inputs,
         prompt_spec=prompt_spec,
-        hyperparameter_choices={},
+        hyperparameter_choices={'min_frequency':min_frequency},
     )
     output_dataset.save_to_disk(store_path / f"dataset")
     with open(store_path / f"dataset.txt", "w") as file:
         for index, item in enumerate(output_dataset):
             file.write(
-                f"{index}:\n\n[INPUT]\n\n------------------------------------------------\n\n{item['input_col']}\n\n[OUPUT]\n\n{item['output_col']} \n\n------------------------------------------------\n\n"
+                f"{index}:\n\n------------------------------------------------\n\n[INPUT]\n\n{item['input_col']}\n\n[OUPUT]\n\n{item['output_col']} \n\n------------------------------------------------\n\n"
             )
     del output_annotator
     destroy_model_parallel()
@@ -183,13 +182,13 @@ def evaluate(
             or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]
         ):
             index += 1
+    print(name)
     print(index / len(GROUND_TRUTH))
     name = str(store_path).split("/")[-1]
     with open(store_path / f"result.txt", "w") as file:
         file.write(
             f"result of {name}\n\n------------------------------------------------{index / len(GROUND_TRUTH)}------------------------------------------------\n\n"
         )
-    print(name)
     del tuned_model
     gc.collect()
     torch.cuda.empty_cache()
@@ -220,7 +219,8 @@ if __name__ == "__main__":
             gpu_memory_utilization=gpu_memory_utilization,
         )
     if not (store_path / "dataset").exists():
-        annotate_and_write_outputs(store_path, gpu_memory_utilization)
+        min_frequency = loaded_params["min_frequency"]
+        annotate_and_write_outputs(store_path, gpu_memory_utilization, min_frequency)
 
     model_path = Path(
         "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"

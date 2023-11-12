@@ -10,7 +10,6 @@ from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import PromptSpec
 from prompt2model.quality_evaluator import (
     ablation_list_filter,
-    check_paragraph_coherence,
     self_consistency_filter,
 )
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
@@ -30,14 +29,16 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
 
         Args:
             pretrained_model_name: The name of a pre-trained decoder-only model.
-            gpu_memory_utilization: The portion of CUDA memory to use on a single GPU.
         """
         if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.language_model = LLM(
-                model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-            , gpu_memory_utilization=gpu_memory_utilization)
+                model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
+                gpu_memory_utilization=gpu_memory_utilization,
+            )
         else:
-            self.language_model = LLM(model=pretrained_model_name, gpu_memory_utilization=gpu_memory_utilization)
+            self.language_model = LLM(
+                model=pretrained_model_name, gpu_memory_utilization=gpu_memory_utilization
+            )
 
     def construct_prompt(
         self,
@@ -116,15 +117,19 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             max_tokens=hyperparameter_choices.get("max_tokens", 500),
         )
         output_sequence = self.language_model.generate(prompts, sampling_params)
-        
-        output_strings = [
-            self_consistency_filter(
-                check_paragraph_coherence(
-                    ablation_list_filter([output.text for output in each.outputs])
-                )
-            )
-            for each in output_sequence
-        ]
+        input_cols = []
+        output_cols = []
+        for idx, input in enumerate(input_strings):
+            outputs = [
+                output.text
+                for output in output_sequence[idx].outputs
+                if (output.text is not None and output.text != "")
+            ]
+            min_frequency = hyperparameter_choices.get('min_frequency', 0.2)
+            consistent_output = self_consistency_filter(ablation_list_filter(outputs), min_frequency)
+            if consistent_output is not None and consistent_output != "":
+                input_cols.append(input)
+                output_cols.append(consistent_output)
         return datasets.Dataset.from_dict(
-            dict(input_col=input_strings, output_col=output_strings)
+            dict(input_col=input_cols, output_col=output_cols)
         )

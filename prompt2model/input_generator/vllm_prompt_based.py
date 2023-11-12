@@ -12,8 +12,8 @@ from prompt2model.input_generator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import PromptSpec
 from prompt2model.quality_evaluator import (
     ablation_list_filter,
-    check_paragraph_coherence,
 )
+from prompt2model.quality_evaluator.length_filter import length_filter
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 
 logger = get_formatted_logger("InputGenerator")
@@ -35,10 +35,14 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         """
         if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.language_model = LLM(
-                model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-            , gpu_memory_utilization=gpu_memory_utilization)
+                model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
+                gpu_memory_utilization=gpu_memory_utilization,
+            )
         else:
-            self.language_model = LLM(model=pretrained_model_name, gpu_memory_utilization=gpu_memory_utilization)
+            self.language_model = LLM(
+                model=pretrained_model_name,
+                gpu_memory_utilization=gpu_memory_utilization,
+            )
 
     def construct_prompt(
         self,
@@ -171,8 +175,13 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             new_inputs = self.generate_inputs(
                 generated_inputs, prompt_spec, per_epoch_num, hyperparameter_choices
             )
-            generated_inputs.extend(new_inputs)
-            generated_inputs = list(
-                set(ablation_list_filter(check_paragraph_coherence(generated_inputs)))
-            )
+            new_inputs = [
+                element
+                for element in new_inputs
+                if element is not None and element != ""
+            ]
+            filtered_inputs = ablation_list_filter(length_filter(new_inputs))
+            if filtered_inputs is not None:
+                generated_inputs.extend(filtered_inputs)
+                generated_inputs = list(set(generated_inputs))
         return generated_inputs
