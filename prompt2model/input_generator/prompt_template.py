@@ -45,7 +45,6 @@ Here are some [EXAMPLE] with important and meaningful contents for your referenc
 ### [EXAMPLE]
 
 {examples}
-
 -------------------------------------------------------------------------------------------
 
 Now, please extract the most important and meaningful content from the [NEW INPUT] that are similar to the [EXAMPLE].
@@ -57,7 +56,7 @@ Now, please extract the most important and meaningful content from the [NEW INPU
 
 ### [NEW INPUT]
 
-{new_input}
+"{new_input}"
 
 -------------------------------------------------------------------------------------------
 

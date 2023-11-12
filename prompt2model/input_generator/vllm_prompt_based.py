@@ -69,7 +69,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         high_quality_inputs = [match[0] for match in matches]
         high_quality_input_string = ""
         for input in high_quality_inputs:
-            high_quality_input_string += f"{input}\n\n"
+            high_quality_input_string += f'"{input}"\n\n'
         return construct_verify_prompt(
             examples=high_quality_input_string, new_input=new_input
         )
