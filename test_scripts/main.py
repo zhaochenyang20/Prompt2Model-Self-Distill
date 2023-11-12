@@ -227,10 +227,10 @@ if __name__ == "__main__":
             epochs=loaded_params["epochs"],
             per_epoch_num=loaded_params["per_epoch_num"],
             parameter_dict=dict(
-                top_k=loaded_params["top_k"], temperature=loaded_params["temperature"]
+                top_k=loaded_params["top_k"], temperature=loaded_params["temperature"], min_input_length=loaded_params["min_input_length"]
             ),
             store_path=store_path,
-            gpu_memory_utilization=gpu_memory_utilization,
+            gpu_memory_utilization=gpu_memory_utilization
         )
     if not (store_path / "dataset").exists():
         min_frequency = loaded_params["min_frequency"]
