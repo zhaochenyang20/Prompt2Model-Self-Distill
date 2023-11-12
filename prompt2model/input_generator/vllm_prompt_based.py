@@ -180,7 +180,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 for element in new_inputs
                 if element is not None and element != ""
             ]
-            filtered_inputs = ablation_list_filter(length_filter(new_inputs))
+            filtered_inputs = ablation_list_filter(length_filter(new_inputs, hyperparameter_choices.get('min_input_length'), 120))
             if filtered_inputs is not None:
                 generated_inputs.extend(filtered_inputs)
                 generated_inputs = list(set(generated_inputs))

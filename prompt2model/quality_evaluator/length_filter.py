@@ -2,7 +2,7 @@ from prompt2model.utils import get_formatted_logger
 
 logger = get_formatted_logger("QualityEvaluator")
 
-def length_filter(strings, min_length=30):
+def length_filter(strings, min_length=120):
     """
     The function filters and returns strings from the input list that are longer than the specified minimum length.
 
