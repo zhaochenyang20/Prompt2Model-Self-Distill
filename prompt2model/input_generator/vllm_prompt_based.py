@@ -45,7 +45,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 gpu_memory_utilization=gpu_memory_utilization,
             )
 
-
     def construct_generation_prompt(
         self,
         instruction: str,

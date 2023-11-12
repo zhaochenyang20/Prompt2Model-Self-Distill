@@ -1,7 +1,8 @@
 from vllm import LLM, SamplingParams
 
 language_model = LLM(
-    model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5", gpu_memory_utilization=0.5
+    model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
+    gpu_memory_utilization=0.5,
 )
 
 input_prompt = """
