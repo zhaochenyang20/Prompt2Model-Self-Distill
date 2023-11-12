@@ -6,7 +6,7 @@ from typing import Any
 
 from tqdm import tqdm
 from vllm import LLM, SamplingParams
-
+from IPython import embed
 from prompt2model.input_generator import InputGenerator
 from prompt2model.input_generator.prompt_template import (
     construct_meta_prompt,
@@ -45,34 +45,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 gpu_memory_utilization=gpu_memory_utilization,
             )
 
-    def construct_filter_prompt(
-        self,
-        few_shot_example_string: str,
-        new_input: str,
-    ):
-        """Generates a prompt string for verifying a generated input.
-
-        Args:
-            few_shot_example_string: A string representing the few-shot examples
-                parsed from the user's prompt, which quality is higher than the
-                generated examples.
-            new_input: A new generated input.
-
-        Returns:
-            The generated prompt string for verifying a generated input.
-        """
-        matches = re.findall(
-            r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
-            few_shot_example_string,
-            re.DOTALL,
-        )
-        high_quality_inputs = [match[0] for match in matches]
-        high_quality_input_string = ""
-        for input in high_quality_inputs:
-            high_quality_input_string += f'"{input}"\n\n'
-        return construct_verify_prompt(
-            examples=high_quality_input_string, new_input=new_input
-        )
 
     def construct_generation_prompt(
         self,
@@ -192,11 +164,30 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             prompt_spec: A prompt we use to generate new inputs.
             new_inputs: The generated inputs.
         """
+
+        def construct_filter_prompt(
+            few_shot_example_string: str,
+            new_input: str,
+        ):
+            matches = re.findall(
+                r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
+                few_shot_example_string,
+                re.DOTALL,
+            )
+            high_quality_inputs = [match[0] for match in matches]
+            high_quality_input_string = ""
+            for input in high_quality_inputs:
+                high_quality_input_string += f'"{input}"\n\n'
+            return construct_verify_prompt(
+                examples=high_quality_input_string, new_input=new_input
+            )
+
         if new_inputs is None:
             return None
         filter_prompts = [
-            construct_verify_prompt(prompt_spec.examples, each) for each in new_inputs
+            construct_filter_prompt(prompt_spec.examples, each) for each in new_inputs
         ]
+        embed()
         sampling_params = SamplingParams(
             top_k=-1,
             top_p=1,
@@ -235,11 +226,12 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 if element is not None and element != ""
             ]
             filtered_inputs = self.verify(
+                prompt_spec,
                 ablation_list_filter(
                     length_filter(
                         new_inputs, hyperparameter_choices.get("min_input_length", 120)
                     )
-                )
+                ),
             )
             if filtered_inputs is not None:
                 generated_inputs.extend(filtered_inputs)

@@ -6,7 +6,7 @@ from pathlib import Path
 root_dir = Path("/home/cyzhao/ckpt_data_p2ms")
 root_dir.mkdir(parents=True, exist_ok=True)
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-CUDA_CONDITION = "0,1,4,5"
+CUDA_CONDITION = "0,4,5"
 # 进行 inference，也即除了训练之外的任何步骤，所能占用的单卡比例
 # inference 只会用 CUDA_CONDITION 的第一张卡
 # 比如 CUDA_CONDITION 是 0,1,2, 则 inference 会占用 0 卡的 gpu_memory_utilization 这么多显存
