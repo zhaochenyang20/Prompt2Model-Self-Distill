@@ -31,56 +31,20 @@ prompt_spec = MockPromptSpec(
 
 input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=0.5)
 
-prompt = input_generator.construct_generation_prompt(
-    instruction=prompt_spec.instruction,
-    few_shot_example_string=prompt_spec.examples,
-    generated_inputs=["How are you?", "I am fine."],
-    context_cutoff=3500,
-)
-
-filter_prompt = input_generator.construct_filter_prompt(
-    few_shot_example_string=prompt_spec.examples, new_input="how are you?"
-)
-
-# inputs = input_generator.batch_generation_inputs(
-#     prompt_spec,
-#     5,
-#     5,
-#     {},
+# prompt = input_generator.construct_generation_prompt(
+#     instruction=prompt_spec.instruction,
+#     few_shot_example_string=prompt_spec.examples,
+#     generated_inputs=["How are you?", "I am fine."],
+#     context_cutoff=3500,
 # )
 
-# def generate_and_write_inputs(epochs, per_epoch_num, parameter_dict):
-#     inputs = input_generator.batch_generation_inputs(
-#         prompt_spec,
-#         epochs,
-#         per_epoch_num,
-#         parameter_dict,
-#     )
+# filter_prompt = input_generator.construct_filter_prompt(
+#     few_shot_example_string=prompt_spec.examples, new_input="how are you?"
+# )
 
-#     len(set(inputs))
-
-#     file_name = f"inputs_{epochs}_{per_epoch_num}_{parameter_dict['top_k']}_{parameter_dict['temperature']}"
-
-#     with open(inputs_dir / f"{file_name}.txt", "w") as file:
-#         for index, item in enumerate(inputs):
-#             file.write(
-#                 f"{index}:\n\n------------------------------------------------{item}------------------------------------------------\n\n"
-#             )
-
-#     dataset = datasets.Dataset.from_dict({"input_col": inputs})
-#     dataset.save_to_disk(inputs_dir / file_name)
-
-
-# if __name__ == "__main__":
-#     #! epochs, per_epoch_num, top_k, temperature
-#     experiments = [
-#         (20, 20, 50, 1.0),
-#         (40, 10, 50, 1.0),
-#         (20, 20, 30, 1.0),
-#         (20, 20, 10, 1.0),
-#         (20, 20, 50, 0.5),
-#         (20, 20, 50, 1.5),
-#     ]
-#     for epochs, per_epoch_num, top_k, temperature in experiments:
-#         parameter_dict = dict(top_k=top_k, temperature=temperature)
-#         generate_and_write_inputs(epochs, per_epoch_num, parameter_dict)
+inputs = input_generator.batch_generation_inputs(
+    prompt_spec,
+    5,
+    5,
+    {},
+)
