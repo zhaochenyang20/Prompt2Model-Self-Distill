@@ -186,7 +186,8 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         filter_prompts = [
             construct_filter_prompt(prompt_spec.examples, each) for each in new_inputs
         ]
-        embed()
+        # embed()
+        #! 用 embed() 打断点，查看 filter_prompts
         sampling_params = SamplingParams(
             top_k=-1,
             top_p=1,
@@ -197,7 +198,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         filtered_inputs = [
             output.text for each in output_sequence for output in each.outputs
         ]
-        return [each for each in filtered_inputs if "NO CONTENT" not in each]
+        return [each for each in filtered_inputs if "NO CON" not in each]
 
     def batch_generation_inputs(
         self,
