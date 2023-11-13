@@ -239,14 +239,14 @@ if __name__ == "__main__":
         min_frequency = loaded_params["min_frequency"]
         annotate_and_write_outputs(store_path, gpu_memory_utilization, min_frequency)
 
-    pretrain_model_path = Path(
-        "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-    )
+    # pretrain_model_path = Path(
+    #     "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+    # )
 
-    if not (store_path / "model").exists():
-        finetune_vicuna(prompt_spec, store_path, pretrain_model_path, loaded_params["training_epochs"])
+    # if not (store_path / "model").exists():
+    #     finetune_vicuna(prompt_spec, store_path, pretrain_model_path, loaded_params["training_epochs"])
 
-    test_set_path = Path("/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed")
+    # test_set_path = Path("/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed")
 
-    if not (store_path / "result.txt").exists():
-        evaluate(test_set_path, store_path, prompt_spec, gpu_memory_utilization)
+    # if not (store_path / "result.txt").exists():
+    #     evaluate(test_set_path, store_path, prompt_spec, gpu_memory_utilization)
