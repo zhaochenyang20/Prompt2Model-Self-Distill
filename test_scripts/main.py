@@ -1,7 +1,7 @@
 """The main pipeline of Prompt2Model-Self-Distill."""
 
 import argparse
-import gc
+import gc, os, re
 import json
 from functools import partial
 from pathlib import Path
@@ -76,7 +76,7 @@ def annotate_and_write_outputs(store_path, gpu_memory_utilization, min_frequency
     torch.cuda.empty_cache()
 
 
-def finetune_vicuna(prompt_spec, store_path, model_path):
+def finetune_vicuna(prompt_spec, store_path, pretrain_model_path, training_epochs):
     construct_prompt = partial(
         construct_meta_prompt,
         instruction=prompt_spec.instruction,
@@ -97,15 +97,15 @@ def finetune_vicuna(prompt_spec, store_path, model_path):
         return example
 
     tokenizer = AutoTokenizer.from_pretrained(
-        model_path,
+        pretrain_model_path,
         local_files_only=True,
         padding_side="left",
         trust_remote_code=True,
     )
     mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
-    # print(mapped_dataset[1]["text"])
+    print(mapped_dataset[1]["text"])
     model = AutoModelForCausalLM.from_pretrained(
-        model_path,
+        pretrain_model_path,
         device_map="auto",
         torch_dtype=torch.bfloat16,
         use_flash_attention_2=True,
@@ -117,12 +117,14 @@ def finetune_vicuna(prompt_spec, store_path, model_path):
     data_collator = DataCollatorForCompletionOnlyLM(
         response_template_ids, tokenizer=tokenizer
     )
+    ckpt_path = store_path / "model"
+    ckpt_path.mkdir(parents=True, exist_ok=True)
     training_args = TrainingArguments(
         report_to="none",
-        output_dir=str(store_path),
+        output_dir=str(ckpt_path),
         do_eval=False,
-        save_strategy="no",
-        num_train_epochs=1,
+        save_strategy="epoch",
+        num_train_epochs=training_epochs,
     )
     trainer = SFTTrainer(
         model=model,
@@ -133,8 +135,13 @@ def finetune_vicuna(prompt_spec, store_path, model_path):
         max_seq_length=1500,
     )
     trainer.train()
-    model.save_pretrained(store_path / "model")
-    tokenizer.save_pretrained(store_path / "model")
+    for dirpath, _, filenames in os.walk(str(ckpt_path), topdown=True):
+    # Delete optimizer
+        for filename in filenames:
+            if filename == "optimizer.pt":
+                file_path = os.path.join(dirpath, filename)
+                print(f"Deleting {file_path}")
+                os.remove(file_path)
     del trainer
     del model
     gc.collect()
@@ -147,7 +154,6 @@ def evaluate(
     prompt_spec,
     gpu_memory_utilization,
 ):
-    model_path = store_path / "model"
     construct_prompt = partial(
         construct_meta_prompt,
         instruction=prompt_spec.instruction,
@@ -157,17 +163,8 @@ def evaluate(
     def map_func(example):
         example["model_input"] = construct_prompt(new_input=example["input_col"])
         example["model_output"] = example["output_col"]
-        example["text"] = (
-            example["model_input"] + example["model_output"] + tokenizer.eos_token
-        )
         return example
 
-    tokenizer = AutoTokenizer.from_pretrained(
-        str(model_path),
-        local_files_only=True,
-        padding_side="left",
-        trust_remote_code=True,
-    )
     test_dataset = datasets.load_from_disk(test_set_path)
     test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
     prompts = test_dataset["model_input"]
@@ -179,28 +176,36 @@ def evaluate(
         temperature=hyperparameter_choices.get("temperature", 0),
         max_tokens=hyperparameter_choices.get("max_tokens", 500),
     )
-    tuned_model = LLM(
-        model=str(model_path), gpu_memory_utilization=gpu_memory_utilization
-    )
-    tuned_model_outputs = tuned_model.generate(prompts, sampling_params)
-    tuned_model_generated_outputs = [
-        each.outputs[0].text for each in tuned_model_outputs
-    ]
-    index = 0
-    for i in range(len(GROUND_TRUTH)):
-        if (
-            GROUND_TRUTH[i] in tuned_model_generated_outputs[i]
-            or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]
-        ):
-            index += 1
-    name = str(store_path).split("/")[-1]
-    with open(store_path / f"result.txt", "w") as file:
-        file.write(
-            f"result of {name}\n\n------------------------------------------------{index / len(GROUND_TRUTH)}------------------------------------------------\n\n"
+    ckpt_path = store_path / "model"
+    def extract_number(s):
+        return int(re.search(r'\d+', s).group())
+
+    sorted_list = sorted([each for each in os.listdir(ckpt_path) if "checkpoint" in each], key=extract_number)
+    for ckpt_index, each in enumerate(sorted_list):
+        model_path = ckpt_path / each
+        tuned_model = LLM(
+            model=str(model_path), gpu_memory_utilization=gpu_memory_utilization
         )
-    del tuned_model
-    gc.collect()
-    torch.cuda.empty_cache()
+        tuned_model_outputs = tuned_model.generate(prompts, sampling_params)
+        tuned_model_generated_outputs = [
+            each.outputs[0].text for each in tuned_model_outputs
+        ]
+        index = 0
+        for i in range(len(GROUND_TRUTH)):
+            if (
+                GROUND_TRUTH[i] in tuned_model_generated_outputs[i]
+                or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]
+            ):
+                index += 1
+        name = str(store_path).split("/")[-1]
+        with open(store_path / f"result.txt", "a+") as file:
+            file.write(
+                f"\n\nresult of {name} epoch {ckpt_index + 1}\n\n------------------------------------------------{index / len(GROUND_TRUTH)}------------------------------------------------\n\n"
+            )
+        del tuned_model
+        gc.collect()
+        torch.cuda.empty_cache()
+        destroy_model_parallel()
 
 
 if __name__ == "__main__":
@@ -221,7 +226,7 @@ if __name__ == "__main__":
         generate_and_write_inputs(
             prompt_spec=prompt_spec,
             generation_epochs=loaded_params["generation_epochs"],
-            generation_batch_size=loaded_params["generation_batch_size"], 
+            generation_batch_size=loaded_params["generation_batch_size"],
             parameter_dict=dict(
                 top_k=loaded_params["generation_top_k"],
                 temperature=loaded_params["generation_temperature"],
@@ -234,12 +239,12 @@ if __name__ == "__main__":
         min_frequency = loaded_params["min_frequency"]
         annotate_and_write_outputs(store_path, gpu_memory_utilization, min_frequency)
 
-    model_path = Path(
+    pretrain_model_path = Path(
         "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
     )
 
     if not (store_path / "model").exists():
-        finetune_vicuna(prompt_spec, store_path, model_path)
+        finetune_vicuna(prompt_spec, store_path, pretrain_model_path, loaded_params["training_epochs"])
 
     test_set_path = Path("/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed")
 

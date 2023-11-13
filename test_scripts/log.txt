@@ -1,12 +1,8 @@
-[2023-11-10 03:16:52,622] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-INFO 11-10 03:17:07 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
-INFO 11-10 03:17:16 llm_engine.py:207] # GPU blocks: 2828, # CPU blocks: 512
-INFO 11-10 03:17:34 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
-INFO 11-10 03:17:43 llm_engine.py:207] # GPU blocks: 2828, # CPU blocks: 512
-Dataset({
-    features: ['input_col'],
-    num_rows: 22
-})
+[2023-11-13 04:33:00,578] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+INFO 11-13 04:33:19 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 11-13 04:33:29 llm_engine.py:207] # GPU blocks: 5922, # CPU blocks: 512
+INFO 11-13 04:38:32 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 11-13 04:38:40 llm_engine.py:207] # GPU blocks: 5922, # CPU blocks: 512
 
 ### Instructions:
 
@@ -27,28 +23,68 @@ Your task is to generate an answer to a natural question. In this task, the inpu
 
 ### New Input:
 
+Question: What is the most populous country in the world?
+Context: The world is a complex and diverse place, with many different countries and cultures. One of the most important measurements of a country's size and importance is its population. According to current estimates, the most populous country in the world is China, with a population of approximately 1.44 billion people. China is followed by India, with a population of over 1.3 billion people, and Pakistan, with a population of around 220 million people. Other large and influential countries include the United States, Indonesia, Brazil, and Nigeria. However, it's worth noting that population sizes can vary depending on the source and methodology used to estimate them.
 
-Question: What was the capital of France during the French Revolution?
+### Your Output:
 
-Context: The French Revolution was a period of radical social and political change in France from 1789 to 1799 that drastically and permanently transformed the country's political and social structures. The Old Regime was abolished, and a new system of government was established, ending feudalism and setting the stage for the rise of Napoleon Bonaparte. The revolution also saw significant changes in France's political, social, and cultural structure, and its effects would be felt in France and around the world for many years to come.
+China</s>
+{'train_runtime': 516.1437, 'train_samples_per_second': 2.046, 'train_steps_per_second': 0.256, 'train_loss': 0.11924803618228796, 'epoch': 3.0}
+Deleting /home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.3_120_3/model/checkpoint-44/optimizer.pt
+Deleting /home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.3_120_3/model/checkpoint-88/optimizer.pt
+Deleting /home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.3_120_3/model/checkpoint-132/optimizer.pt
+INFO 11-13 04:49:39 llm_engine.py:72] Initializing an LLM engine with config: model='/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.3_120_3/model/checkpoint-44', tokenizer='/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.3_120_3/model/checkpoint-44', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 11-13 04:49:57 llm_engine.py:207] # GPU blocks: 5920, # CPU blocks: 512
+INFO 11-13 04:51:32 llm_engine.py:72] Initializing an LLM engine with config: model='/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.3_120_3/model/checkpoint-88', tokenizer='/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.3_120_3/model/checkpoint-88', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 11-13 04:51:41 llm_engine.py:207] # GPU blocks: 5920, # CPU blocks: 512
+INFO 11-13 04:53:09 llm_engine.py:72] Initializing an LLM engine with config: model='/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.3_120_3/model/checkpoint-132', tokenizer='/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.3_120_3/model/checkpoint-132', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 11-13 04:53:17 llm_engine.py:207] # GPU blocks: 5920, # CPU blocks: 512
+[2023-11-13 04:54:54,233] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+INFO 11-13 04:55:12 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 11-13 04:55:22 llm_engine.py:207] # GPU blocks: 5922, # CPU blocks: 512
+INFO 11-13 05:01:01 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 11-13 05:01:12 llm_engine.py:207] # GPU blocks: 5922, # CPU blocks: 512
+
+### Instructions:
+
+Your task is to generate an answer to a natural question. In this task, the input is a string that consists of both a question and a context passage. The context is a descriptive passage related to the question and contains the answer. And the question can range from Math, Cultural, Social, Geometry, Biology, History, Sports, Technology, Science, and so on.
+
+### Examples:
+
+
+[input]="Question: What city did Super Bowl 50 take place in? Context: Super Bowl 50 was an American football game to determine the champion of the National Football League (NFL) for the 2015 season. The American Football Conference (AFC) champion Denver Broncos defeated the National Football Conference (NFC) champion Carolina Panthers 24–10 to earn their third Super Bowl title. The game was played on February 7, 2016, at Levi's Stadium in the San Francisco Bay Area at Santa Clara, California. As this was the 50th Super Bowl, the league emphasized the "golden anniversary" with various gold-themed initiatives, as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals (under which the game would have been known as "Super Bowl L"), so that the logo could prominently feature the Arabic numerals 50."
+[output]="Santa Clara"
+
+[input]="Question: What river runs through Warsaw? Context: Warsaw (Polish: Warszawa [varˈʂava] ( listen); see also other names) is the capital and largest city of Poland. It stands on the Vistula River in east-central Poland, roughly 260 kilometres (160 mi) from the Baltic Sea and 300 kilometres (190 mi) from the Carpathian Mountains. Its population is estimated at 1.740 million residents within a greater metropolitan area of 2.666 million residents, which makes Warsaw the 9th most-populous capital city in the European Union. The city limits cover 516.9 square kilometres (199.6 sq mi), while the metropolitan area covers 6,100.43 square kilometres (2,355.39 sq mi)."
+[output]="Vistula River"
+
+[input]="Question: The Ottoman empire controlled territory on three continents, Africa, Asia and which other? Context: The Ottoman Empire was an imperial state that lasted from 1299 to 1923. During the 16th and 17th centuries, in particular at the height of its power under the reign of Suleiman the Magnificent, the Ottoman Empire was a powerful multinational, multilingual empire controlling much of Southeast Europe, Western Asia, the Caucasus, North Africa, and the Horn of Africa. At the beginning of the 17th century the empire contained 32 provinces and numerous vassal states. Some of these were later absorbed into the empire, while others were granted various types of autonomy during the course of centuries."
+[output]="Europe"
+
+
+### New Input:
+
+Question: What is the capital of France?
+Context: France is a country located in Western Europe. It is known for its famous landmarks like the Eiffel Tower, the Louvre.
 
 ### Your Output:
 
 Paris</s>
-{'train_runtime': 6.8385, 'train_samples_per_second': 3.217, 'train_steps_per_second': 0.439, 'train_loss': 1.0264362494150798, 'epoch': 1.0}
-INFO 11-10 03:18:35 llm_engine.py:72] Initializing an LLM engine with config: model='/home/cyzhao/ckpt_data_p2ms/SQuAD_5_5_20_1.0/model', tokenizer='/home/cyzhao/ckpt_data_p2ms/SQuAD_5_5_20_1.0/model', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
-INFO 11-10 03:18:44 llm_engine.py:207] # GPU blocks: 2826, # CPU blocks: 512
-0.704
-SQuAD_5_5_20_1.0
-[2023-11-10 03:20:51,746] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-INFO 11-10 03:21:06 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
-INFO 11-10 03:21:15 llm_engine.py:207] # GPU blocks: 2828, # CPU blocks: 512
-INFO 11-10 03:21:34 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
-INFO 11-10 03:21:43 llm_engine.py:207] # GPU blocks: 2828, # CPU blocks: 512
-Dataset({
-    features: ['input_col'],
-    num_rows: 22
-})
+{'train_runtime': 454.374, 'train_samples_per_second': 2.245, 'train_steps_per_second': 0.284, 'train_loss': 0.1094358577284702, 'epoch': 3.0}
+Deleting /home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.4_120_3/model/checkpoint-43/optimizer.pt
+Deleting /home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.4_120_3/model/checkpoint-86/optimizer.pt
+Deleting /home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.4_120_3/model/checkpoint-129/optimizer.pt
+INFO 11-13 05:11:41 llm_engine.py:72] Initializing an LLM engine with config: model='/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.4_120_3/model/checkpoint-43', tokenizer='/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.4_120_3/model/checkpoint-43', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 11-13 05:11:50 llm_engine.py:207] # GPU blocks: 5920, # CPU blocks: 512
+INFO 11-13 05:13:33 llm_engine.py:72] Initializing an LLM engine with config: model='/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.4_120_3/model/checkpoint-86', tokenizer='/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.4_120_3/model/checkpoint-86', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 11-13 05:13:41 llm_engine.py:207] # GPU blocks: 5920, # CPU blocks: 512
+INFO 11-13 05:15:15 llm_engine.py:72] Initializing an LLM engine with config: model='/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.4_120_3/model/checkpoint-129', tokenizer='/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.4_120_3/model/checkpoint-129', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 11-13 05:15:24 llm_engine.py:207] # GPU blocks: 5920, # CPU blocks: 512
+[2023-11-13 05:17:04,904] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+INFO 11-13 05:17:25 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 11-13 05:17:35 llm_engine.py:207] # GPU blocks: 5922, # CPU blocks: 512
+INFO 11-13 05:22:53 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 11-13 05:23:02 llm_engine.py:207] # GPU blocks: 5922, # CPU blocks: 512
 
 ### Instructions:
 
@@ -69,16 +105,12 @@ Your task is to generate an answer to a natural question. In this task, the inpu
 
 ### New Input:
 
-
-"Question: What is the capital of France? Context: The French Republic (French: République Française) is a country located in Western Europe. It is the third most populous country in Europe, with a population of around 67 million people. The capital of France is Paris, which is the country's most populous city, with a population of around 2.2 million people. Paris is located in the northern central part of the country, on the Seine River. It is known for its historical landmarks and cultural institutions, such as the Eiffel Tower, the Louvre Museum, and the Notre-Dame Cathedral."
+Question: What is the capital city of Greece?
+Context: Greece is a country located in southeastern Europe. It is known for its rich history, magnificent architecture, delicious cuisine, and stunning landscapes, including picturesque islands in the Aegean Sea, ancient archaeological sites, and mountain ranges. The capital and largest city of Greece is Athens, located on the Greek mainland. Athens is a bustling metropolis with a population of over 3 million people. It is home to many of Greece's most famous landmarks, including the Parthenon, the Acropolis, and the National Archaeological Museum. Athens is also a hub of education, culture, and commerce, with numerous universities, museums, theaters, and other cultural institutions. Despite its rich history and modern developments, Athens is also facing challenges, such as traffic congestion, air pollution, and social inequality.
 
 ### Your Output:
 
-"Paris"</s>
-{'train_runtime': 7.1244, 'train_samples_per_second': 3.088, 'train_steps_per_second': 0.421, 'train_loss': 1.839076042175293, 'epoch': 1.0}
-INFO 11-10 03:22:26 llm_engine.py:72] Initializing an LLM engine with config: model='/home/cyzhao/ckpt_data_p2ms/SQuAD_5_5_20_0.5/model', tokenizer='/home/cyzhao/ckpt_data_p2ms/SQuAD_5_5_20_0.5/model', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
-INFO 11-10 03:22:36 llm_engine.py:207] # GPU blocks: 2826, # CPU blocks: 512
-0.09
-SQuAD_5_5_20_0.5
-CUDA_VISIBLE_DEVICES=1,2,4 python3 main.py --config=/home/cyzhao/ckpt_data_p2ms/SQuAD_5_5_20_1.0/config.json
-CUDA_VISIBLE_DEVICES=1,2,4 python3 main.py --config=/home/cyzhao/ckpt_data_p2ms/SQuAD_5_5_20_0.5/config.json
+Athens</s>
+CUDA_VISIBLE_DEVICES=1,4,5 python3 main.py --config=/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.3_120_3/config.json
+CUDA_VISIBLE_DEVICES=1,4,5 python3 main.py --config=/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.4_120_3/config.json
+CUDA_VISIBLE_DEVICES=1,4,5 python3 main.py --config=/home/cyzhao/ckpt_data_p2ms/SQuAD_20_20_50_1.0_0.6_120_3/config.json
