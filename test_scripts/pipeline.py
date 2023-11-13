@@ -6,7 +6,7 @@ from pathlib import Path
 root_dir = Path("/home/cyzhao/ckpt_data_p2ms")
 root_dir.mkdir(parents=True, exist_ok=True)
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-CUDA_CONDITION = "0,4,5"
+CUDA_CONDITION = "0,1,2,3,4,5,6,7"
 # 进行 inference，也即除了训练之外的任何步骤，所能占用的单卡比例
 # inference 只会用 CUDA_CONDITION 的第一张卡
 # 比如 CUDA_CONDITION 是 0,1,2, 则 inference 会占用 0 卡的 gpu_memory_utilization 这么多显存
@@ -30,25 +30,29 @@ tasks = [
     )
 ]
 
+# generation_epochs, generation_batch_size, generation_top_k, generation_temperature
+# min_frequency_of_self_consitency, min_input_length
+# training_epochs
 parameter_tuples = [
-    (20, 20, 50, 1.0, 0.5, 30),
-    (20, 20, 50, 1.0, 0.5, 60),
-    (20, 20, 50, 1.0, 0.5, 90),
-    (20, 20, 50, 1.0, 0.5, 120),
+    (1, 10, 50, 1.0, 0.2, 120, 3),
+    # (20, 20, 50, 1.0, 0.3, 120, 3),
+    # (20, 20, 50, 1.0, 0.4, 120, 3),
+    # (20, 20, 50, 1.0, 0.6, 120, 3),
 ]
 for task, parameter_tuple in product(tasks, parameter_tuples):
     task_name, instruction, examples = task
     (
-        epochs,
-        per_epoch_num,
-        top_k,
-        temperature,
+        generation_epochs,
+        generation_batch_size,
+        generation_top_k,
+        generation_temperature,
         min_frequency,
         min_input_length,
+        training_epochs
     ) = parameter_tuple
     store_path = (
         root_dir
-        / f"{task_name}_{epochs}_{per_epoch_num}_{top_k}_{temperature}_{min_frequency}_{min_input_length}"
+        / f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{min_input_length}_{training_epochs}"
     )
     store_path.mkdir(parents=True, exist_ok=True)
     params = {
@@ -56,14 +60,15 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
         "task_name": task_name,
         "instruction": instruction,
         "examples": examples,
-        "epochs": epochs,
-        "per_epoch_num": per_epoch_num,
-        "top_k": top_k,
-        "temperature": temperature,
+        "generation_epochs": generation_epochs,
+        "generation_batch_size": generation_batch_size,
+        "generation_top_k": generation_top_k,
+        "generation_temperature": generation_temperature,
         "store_path": str(store_path),
         "gpu_memory_utilization": gpu_memory_utilization,
         "min_frequency": min_frequency,
         "min_input_length": min_input_length,
+        "training_epochs": training_epochs,
     }
     with open(store_path / "config.json", "w") as f:
         json.dump(params, f, indent=4)

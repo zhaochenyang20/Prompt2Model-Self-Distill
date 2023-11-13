@@ -60,51 +60,43 @@ def map_func(example):
     )
     return example
 
+dataset = datasets.Dataset.from_dict(datasets.load_from_disk("/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_train")[:300]).filter(
+    filter_func
+)
+mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
+print(mapped_dataset[1]["text"])
+model = AutoModelForCausalLM.from_pretrained(
+    model_path,
+    device_map="auto",
+    torch_dtype=torch.bfloat16,
+    use_flash_attention_2=True,
+)
+response_template_with_context = "\n### Your Output:\n\n"
+response_template_ids = tokenizer.encode(
+    response_template_with_context, add_special_tokens=False
+)[2:]
 
-for each in os.listdir(generated_dataset_path):
-    if (
-        (not each.endswith(".txt"))
-        and each.startswith("dataset")
-        and "20_20_50_1.5" in each
-    ):
-        name = each[8:]
-        dataset = datasets.load_from_disk(generated_dataset_path / each).filter(
-            filter_func
-        )
-        mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
-        print(mapped_dataset[1]["text"])
-        model = AutoModelForCausalLM.from_pretrained(
-            model_path,
-            device_map="auto",
-            torch_dtype=torch.bfloat16,
-            use_flash_attention_2=True,
-        )
-        response_template_with_context = "\n### Your Output:\n\n"
-        response_template_ids = tokenizer.encode(
-            response_template_with_context, add_special_tokens=False
-        )[2:]
-
-        data_collator = DataCollatorForCompletionOnlyLM(
-            response_template_ids, tokenizer=tokenizer
-        )
-        training_args = TrainingArguments(
-            report_to="none",
-            output_dir="/home/cyzhao/cache",
-            do_eval=False,
-            save_strategy="no",
-            num_train_epochs=1,
-        )
-        trainer = SFTTrainer(
-            model=model,
-            args=training_args,
-            train_dataset=mapped_dataset,
-            dataset_text_field="text",
-            data_collator=data_collator,
-            max_seq_length=1500,
-        )
-        trainer.train()
-        del trainer
-        gc.collect()
-        torch.cuda.empty_cache()
-        model.save_pretrained(ckpt_path / name)
-        tokenizer.save_pretrained(ckpt_path / name)
+data_collator = DataCollatorForCompletionOnlyLM(
+    response_template_ids, tokenizer=tokenizer
+)
+training_args = TrainingArguments(
+    report_to="none",
+    output_dir="/home/cyzhao/cache",
+    do_eval=False,
+    save_strategy="epoch",
+    num_train_epochs=3,
+)
+trainer = SFTTrainer(
+    model=model,
+    args=training_args,
+    train_dataset=mapped_dataset,
+    dataset_text_field="text",
+    data_collator=data_collator,
+    max_seq_length=1500,
+)
+trainer.train()
+del trainer
+gc.collect()
+torch.cuda.empty_cache()
+# model.save_pretrained(ckpt_path / name)
+# tokenizer.save_pretrained(ckpt_path / name)
