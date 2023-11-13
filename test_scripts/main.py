@@ -26,8 +26,8 @@ root_dir.mkdir(parents=True, exist_ok=True)
 
 def generate_and_write_inputs(
     prompt_spec,
-    epochs,
-    per_epoch_num,
+    generation_epochs,
+    generation_batch_size,
     parameter_dict,
     store_path,
     gpu_memory_utilization,
@@ -36,7 +36,7 @@ def generate_and_write_inputs(
         gpu_memory_utilization=gpu_memory_utilization
     )
     inputs = input_generator.batch_generation_inputs(
-        prompt_spec, epochs, per_epoch_num, parameter_dict
+        prompt_spec, generation_epochs, generation_batch_size, parameter_dict
     )
     with open(store_path / f"inputs.txt", "w") as file:
         for index, item in enumerate(inputs):
@@ -49,7 +49,6 @@ def generate_and_write_inputs(
     destroy_model_parallel()
     gc.collect()
     torch.cuda.empty_cache()
-    destroy_model_parallel()
 
 
 def annotate_and_write_outputs(store_path, gpu_memory_utilization, min_frequency):
@@ -75,7 +74,6 @@ def annotate_and_write_outputs(store_path, gpu_memory_utilization, min_frequency
     destroy_model_parallel()
     gc.collect()
     torch.cuda.empty_cache()
-    destroy_model_parallel()
 
 
 def finetune_vicuna(prompt_spec, store_path, model_path):
@@ -105,7 +103,7 @@ def finetune_vicuna(prompt_spec, store_path, model_path):
         trust_remote_code=True,
     )
     mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
-    print(mapped_dataset[1]["text"])
+    # print(mapped_dataset[1]["text"])
     model = AutoModelForCausalLM.from_pretrained(
         model_path,
         device_map="auto",
@@ -195,8 +193,6 @@ def evaluate(
             or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]
         ):
             index += 1
-    print(name)
-    print(index / len(GROUND_TRUTH))
     name = str(store_path).split("/")[-1]
     with open(store_path / f"result.txt", "w") as file:
         file.write(
@@ -224,11 +220,11 @@ if __name__ == "__main__":
     if not (store_path / "inputs").exists():
         generate_and_write_inputs(
             prompt_spec=prompt_spec,
-            epochs=loaded_params["epochs"],
-            per_epoch_num=loaded_params["per_epoch_num"],
+            generation_epochs=loaded_params["generation_epochs"],
+            generation_batch_size=loaded_params["generation_batch_size"], 
             parameter_dict=dict(
-                top_k=loaded_params["top_k"],
-                temperature=loaded_params["temperature"],
+                top_k=loaded_params["generation_top_k"],
+                temperature=loaded_params["generation_temperature"],
                 min_input_length=loaded_params["min_input_length"],
             ),
             store_path=store_path,
