@@ -3,15 +3,21 @@ import os
 from itertools import product
 from pathlib import Path
 
-root_dir = Path("/home/cyzhao/ckpt_data_p2ms")
-root_dir.mkdir(parents=True, exist_ok=True)
+
+log_and_data_root = Path("/home/cyzhao/log_and_data_p2ms")
+ckpt_root = Path("/data1/cyzhao/ckpt_data_p2ms")
+log_and_data_root.mkdir(parents=True, exist_ok=True)
+ckpt_root.mkdir(parents=True, exist_ok=True)
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-CUDA_CONDITION = "0,1,4,5"
-# 进行 inference，也即除了训练之外的任何步骤，所能占用的单卡比例
-# inference 只会用 CUDA_CONDITION 的第一张卡
-# 比如 CUDA_CONDITION 是 0,1,2, 则 inference 会占用 0 卡的 gpu_memory_utilization 这么多显存
-# gpu_memory_utilization 越小，则 inference 越慢，理论上不该低于 28 / 80 = 0.35
-gpu_memory_utilization = 0.4
+CUDA_CONDITION = "0,1,2,3"
+gpu_memory_utilization = 0.5
+tensor_parallel_size = CUDA_CONDITION.count(",") + 1
+# 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
+# gpu_memory_utilization 是在每张卡上的占比，比如 CUDA_CONDITION = "0,1,4,5", gpu_memory_utilization = 0.9
+# 则每张卡都会占去全部显存的 0.9，会占用四张卡，推理效率极其高
+# gpu_memory_utilization 越小，则 inference 越慢
+# 然而，不是每张卡都是空的，比如 0 卡已经有人跑了 40G 了，那么 gpu_memory_utilization< 0.5
+
 
 tasks = [
     (
@@ -34,8 +40,8 @@ tasks = [
 # min_frequency_of_self_consitency, min_input_length
 # training_epochs
 parameter_tuples = [
-    (20, 20, 50, 1.0, 0.3, 120, 3),
-    (20, 20, 50, 1.0, 0.4, 120, 3),
+    # (20, 20, 50, 1.0, 0.3, 120, 3),
+    # (20, 20, 50, 1.0, 0.4, 120, 3),
     (20, 20, 50, 1.0, 0.6, 120, 3),
     (40, 10, 50, 1.0, 0.3, 120, 3),
     (20, 20, 50, 0.7, 0.3, 120, 3),
@@ -43,6 +49,10 @@ parameter_tuples = [
     (40, 10, 50, 0.3, 0.3, 120, 3),
     (20, 20, 40, 1.0, 0.3, 120, 3),
     (20, 20, 30, 1.0, 0.3, 120, 3),
+    (10, 20, 30, 1.0, 0.3, 120, 3),
+    (30, 20, 30, 1.0, 0.3, 120, 3),
+    (40, 20, 30, 1.0, 0.3, 120, 3),
+    (50, 20, 30, 1.0, 0.3, 120, 3),
 ]
 for task, parameter_tuple in product(tasks, parameter_tuples):
     task_name, instruction, examples = task
@@ -53,13 +63,13 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
         generation_temperature,
         min_frequency,
         min_input_length,
-        training_epochs
+        training_epochs,
     ) = parameter_tuple
-    store_path = (
-        root_dir
-        / f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{min_input_length}_{training_epochs}"
-    )
-    store_path.mkdir(parents=True, exist_ok=True)
+    name = f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{min_input_length}_{training_epochs}"
+    log_and_data_path = log_and_data_root / name
+    log_and_data_path.mkdir(parents=True, exist_ok=True)
+    ckpt_path = ckpt_root / name
+    ckpt_path.mkdir(parents=True, exist_ok=True)
     params = {
         "CUDA_CONDITION": CUDA_CONDITION,
         "task_name": task_name,
@@ -69,23 +79,36 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
         "generation_batch_size": generation_batch_size,
         "generation_top_k": generation_top_k,
         "generation_temperature": generation_temperature,
-        "store_path": str(store_path),
+        "log_and_data_path": str(log_and_data_path),
+        "ckpt_path": str(ckpt_path),
         "gpu_memory_utilization": gpu_memory_utilization,
         "min_frequency": min_frequency,
         "min_input_length": min_input_length,
         "training_epochs": training_epochs,
+        "tensor_parallel_size": tensor_parallel_size,
     }
-    with open(store_path / "config.json", "w") as f:
+    with open(log_and_data_path / "config.json", "w") as f:
         json.dump(params, f, indent=4)
-        command = f"CUDA_VISIBLE_DEVICES={CUDA_CONDITION} python3 main.py --config={str(store_path / 'config.json')}"
-        print(command)
     required_paths = [
-        store_path / "model",
-        store_path / "result.txt",
-        store_path / "inputs",
-        store_path / "dataset",
+        log_and_data_path / "result.json",
+        log_and_data_path / "inputs",
+        log_and_data_path / "dataset",
     ]
-    if not all(path.exists() for path in required_paths):
-        os.system(
-            f"CUDA_VISIBLE_DEVICES={CUDA_CONDITION} python3 main.py --config={store_path / 'config.json'}"
-        )
+
+    evaluate_result_path = log_and_data_path / "result.json"
+
+    if evaluate_result_path.exists():
+        with open(evaluate_result_path, "r") as json_file:
+            evaluate_result = json.load(json_file)
+    else:
+        evaluate_result = {}
+        with open(evaluate_result_path, "w") as f:
+            json.dump(evaluate_result, f, indent=4)
+
+    if (
+        not all(path.exists() for path in required_paths)
+        or len(list(evaluate_result.keys())) < training_epochs
+    ):
+        command = f"CUDA_VISIBLE_DEVICES={CUDA_CONDITION} python3 main.py --config={str(log_and_data_path / 'config.json')}"
+        print(command)
+        os.system(command)

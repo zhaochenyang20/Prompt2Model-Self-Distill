@@ -1,18 +1,13 @@
-import argparse
 import gc
-import os
 from functools import partial
-from multiprocessing import Process
 from pathlib import Path
-
+import ray
 import datasets
-import evaluate
 import torch
 from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
+from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
-from prompt2model.model_evaluator import Seq2SeqEvaluator
-from prompt2model.model_executor import ModelOutput
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
@@ -21,7 +16,7 @@ test_dataset = datasets.load_from_disk(
 )
 
 ckpt_path = Path("/home/cyzhao/ckpt")
-inputs_dir = Path("/home/cyzhao/generated_datasets")
+inputs_dir = Path("/home/cyzhao/")
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
@@ -79,9 +74,9 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 )
 
 
-def main(model_name):
+for _ in range(10):
     base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-    # tuned_vicuna = LLM(model=str(ckpt_path / model_name))
+    ray.init(ignore_reinit_error=True)
     tuned_vicuna = LLM(model=base_model)
     tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
     tuned_vicuna_generated_outputs = [
@@ -95,19 +90,12 @@ def main(model_name):
         ):
             index += 1
     print(index / len(GROUND_TRUTH))
-    file_name = f"result_{model_name}"
-    with open(inputs_dir / f"{file_name}.txt", "w") as file:
+    with open(inputs_dir / f"evaluate_10_times.txt", "a+") as file:
         file.write(
-            f"result of {model_name}\n\n------------------------------------------------{index / len(GROUND_TRUTH)}------------------------------------------------\n\n"
+            f"\n\nresult of {_} th:\n\n------------------------------------------------{index / len(GROUND_TRUTH)}------------------------------------------------\n\n"
         )
-    print(model_name)
     del tuned_vicuna
     gc.collect()
     torch.cuda.empty_cache()
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--model_name", type=str, default="")
-    args = parser.parse_args()
-    main(args.model_name)
+    ray.shutdown()
+    destroy_model_parallel()

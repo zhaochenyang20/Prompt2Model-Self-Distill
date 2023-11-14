@@ -5,14 +5,14 @@ import gc, os, re
 import json
 from functools import partial
 from pathlib import Path
-
+import logging
 import datasets
-import torch
+import shutil
+import torch, ray
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 from vllm import LLM, SamplingParams
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
-
 from prompt2model.input_generator import VLLMPromptBasedInputGenerator
 from prompt2model.output_annotator import (
     VLLMPromptBasedOutputAnnotator,
@@ -20,52 +20,54 @@ from prompt2model.output_annotator import (
 )
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
-root_dir = Path("/home/cyzhao/ckpt_data_p2ms")
-root_dir.mkdir(parents=True, exist_ok=True)
-
 
 def generate_and_write_inputs(
     prompt_spec,
     generation_epochs,
     generation_batch_size,
     parameter_dict,
-    store_path,
+    log_and_data_path,
     gpu_memory_utilization,
+    tensor_parallel_size,
 ):
     input_generator = VLLMPromptBasedInputGenerator(
-        gpu_memory_utilization=gpu_memory_utilization
+        gpu_memory_utilization=gpu_memory_utilization,
+        tensor_parallel_size=tensor_parallel_size,
     )
     inputs = input_generator.batch_generation_inputs(
         prompt_spec, generation_epochs, generation_batch_size, parameter_dict
     )
-    with open(store_path / f"inputs.txt", "w") as file:
+    with open(log_and_data_path / f"inputs.txt", "w") as file:
         for index, item in enumerate(inputs):
             file.write(
                 f"{index}:\n\n------------------------------------------------\n\n{item}\n\n------------------------------------------------\n\n"
             )
     dataset = datasets.Dataset.from_dict({"input_col": inputs})
-    dataset.save_to_disk(store_path / "inputs")
+    dataset.save_to_disk(log_and_data_path / "inputs")
     del input_generator
     destroy_model_parallel()
     gc.collect()
     torch.cuda.empty_cache()
 
 
-def annotate_and_write_outputs(store_path, gpu_memory_utilization, min_frequency):
-    if (store_path / "dataset").exists():
+def annotate_and_write_outputs(
+    log_and_data_path, gpu_memory_utilization, min_frequency, tensor_parallel_size
+):
+    if (log_and_data_path / "dataset").exists():
         return
     output_annotator = VLLMPromptBasedOutputAnnotator(
-        gpu_memory_utilization=gpu_memory_utilization
+        gpu_memory_utilization=gpu_memory_utilization,
+        tensor_parallel_size=tensor_parallel_size,
     )
-    dataset = datasets.load_from_disk(store_path / "inputs")
+    dataset = datasets.load_from_disk(log_and_data_path / "inputs")
     inputs = dataset["input_col"]
     output_dataset = output_annotator.annotate_outputs(
         input_strings=inputs,
         prompt_spec=prompt_spec,
         hyperparameter_choices={"min_frequency": min_frequency},
     )
-    output_dataset.save_to_disk(store_path / f"dataset")
-    with open(store_path / f"dataset.txt", "w") as file:
+    output_dataset.save_to_disk(log_and_data_path / f"dataset")
+    with open(log_and_data_path / f"dataset.txt", "w") as file:
         for index, item in enumerate(output_dataset):
             file.write(
                 f"{index}:\n\n------------------------------------------------\n\n[INPUT]\n\n{item['input_col']}\n\n[OUPUT]\n\n{item['output_col']} \n\n------------------------------------------------\n\n"
@@ -76,7 +78,49 @@ def annotate_and_write_outputs(store_path, gpu_memory_utilization, min_frequency
     torch.cuda.empty_cache()
 
 
-def finetune_vicuna(prompt_spec, store_path, pretrain_model_path, training_epochs):
+def check_and_remove_checkpoints(ckpt_path):
+    required_files = [
+        "config.json",
+        "special_tokens_map.json",
+        "tokenizer_config.json",
+        "pytorch_model-00001-of-00002.bin",
+        "pytorch_model-00002-of-00002.bin",
+        "tokenizer.json",
+        "tokenizer.model",
+    ]
+
+    sorted_list = sorted(
+        [each for each in os.listdir(ckpt_path) if each.startswith("checkpoint-")],
+        key=extract_number,
+    )
+
+    for each in sorted_list:
+        checkpoint_path = os.path.join(ckpt_path, each)
+        if all(
+            os.path.exists(os.path.join(checkpoint_path, file))
+            for file in required_files
+        ):
+            print(f"Checkpoint '{each}' is complete.")
+        else:
+            print(f"Checkpoint '{each}' is incomplete and will be removed.")
+            shutil.rmtree(checkpoint_path)
+
+    return len(
+        sorted(
+            [each for each in os.listdir(ckpt_path) if each.startswith("checkpoint-")],
+            key=extract_number,
+        )
+    )
+
+
+def finetune_vicuna(
+    prompt_spec,
+    log_and_data_path,
+    ckpt_path,
+    pretrain_model_path,
+    training_epochs,
+    resume_from_checkpoint,
+):
     construct_prompt = partial(
         construct_meta_prompt,
         instruction=prompt_spec.instruction,
@@ -86,7 +130,7 @@ def finetune_vicuna(prompt_spec, store_path, pretrain_model_path, training_epoch
     def filter_func(example):
         return example["output_col"] is not None and example["input_col"] is not None
 
-    dataset = datasets.load_from_disk(store_path / "dataset").filter(filter_func)
+    dataset = datasets.load_from_disk(log_and_data_path / "dataset").filter(filter_func)
 
     def map_func(example):
         example["model_input"] = construct_prompt(new_input=example["input_col"])
@@ -103,7 +147,6 @@ def finetune_vicuna(prompt_spec, store_path, pretrain_model_path, training_epoch
         trust_remote_code=True,
     )
     mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
-    print(mapped_dataset[1]["text"])
     model = AutoModelForCausalLM.from_pretrained(
         pretrain_model_path,
         device_map="auto",
@@ -117,13 +160,13 @@ def finetune_vicuna(prompt_spec, store_path, pretrain_model_path, training_epoch
     data_collator = DataCollatorForCompletionOnlyLM(
         response_template_ids, tokenizer=tokenizer
     )
-    ckpt_path = store_path / "model"
     ckpt_path.mkdir(parents=True, exist_ok=True)
     training_args = TrainingArguments(
         report_to="none",
         output_dir=str(ckpt_path),
         do_eval=False,
         save_strategy="epoch",
+        evaluation_strategy="no",
         num_train_epochs=training_epochs,
     )
     trainer = SFTTrainer(
@@ -134,26 +177,47 @@ def finetune_vicuna(prompt_spec, store_path, pretrain_model_path, training_epoch
         data_collator=data_collator,
         max_seq_length=1500,
     )
-    trainer.train()
+    trainer.train(resume_from_checkpoint=resume_from_checkpoint)
     for dirpath, _, filenames in os.walk(str(ckpt_path), topdown=True):
-    # Delete optimizer
+        # Delete optimizer
         for filename in filenames:
             if filename == "optimizer.pt":
                 file_path = os.path.join(dirpath, filename)
                 print(f"Deleting {file_path}")
-                os.remove(file_path)
+                os.system(f"rm -rf {(str(file_path))}")
     del trainer
     del model
     gc.collect()
     torch.cuda.empty_cache()
 
 
+def count_occurrences(word, filename):
+    count = 0
+    with open(filename, "r") as file:
+        for line in file:
+            count += line.lower().count(word.lower())
+    return count
+
+
+def extract_number(s):
+    return int(re.search(r"\d+", s).group())
+
+
 def evaluate(
     test_set_path,
-    store_path,
+    log_and_data_path,
+    ckpt_path,
     prompt_spec,
     gpu_memory_utilization,
+    tensor_parallel_size,
 ):
+    evaluate_result_path = log_and_data_path / "result.json"
+
+    assert evaluate_result_path.exists()
+
+    with open(evaluate_result_path, "r") as json_file:
+        evaluate_result = json.load(json_file)
+
     construct_prompt = partial(
         construct_meta_prompt,
         instruction=prompt_spec.instruction,
@@ -166,6 +230,7 @@ def evaluate(
         return example
 
     test_dataset = datasets.load_from_disk(test_set_path)
+    # test_dataset = datasets.Dataset.from_dict(test_dataset[:20])
     test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
     prompts = test_dataset["model_input"]
     GROUND_TRUTH = test_dataset["model_output"]
@@ -176,15 +241,23 @@ def evaluate(
         temperature=hyperparameter_choices.get("temperature", 0),
         max_tokens=hyperparameter_choices.get("max_tokens", 500),
     )
-    ckpt_path = store_path / "model"
-    def extract_number(s):
-        return int(re.search(r'\d+', s).group())
 
-    sorted_list = sorted([each for each in os.listdir(ckpt_path) if "checkpoint" in each], key=extract_number)
+    sorted_list = sorted(
+        [each for each in os.listdir(ckpt_path) if "checkpoint" in each],
+        key=extract_number,
+    )
+    last_evaluate = len(list(evaluate_result.keys()))
+    print(f"last evaluate {last_evaluate}.")
     for ckpt_index, each in enumerate(sorted_list):
+        if ckpt_index < last_evaluate:
+            print(f"skip the evaluation of the {ckpt_index + 1} epoch.")
+            continue
+        ray.init(ignore_reinit_error=True)
         model_path = ckpt_path / each
         tuned_model = LLM(
-            model=str(model_path), gpu_memory_utilization=gpu_memory_utilization
+            model=str(model_path),
+            gpu_memory_utilization=gpu_memory_utilization,
+            tensor_parallel_size=tensor_parallel_size,
         )
         tuned_model_outputs = tuned_model.generate(prompts, sampling_params)
         tuned_model_generated_outputs = [
@@ -197,56 +270,104 @@ def evaluate(
                 or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]
             ):
                 index += 1
-        name = str(store_path).split("/")[-1]
-        with open(store_path / f"result.txt", "a+") as file:
-            file.write(
-                f"\n\nresult of {name} epoch {ckpt_index + 1}\n\n------------------------------------------------{index / len(GROUND_TRUTH)}------------------------------------------------\n\n"
-            )
+        name = str(log_and_data_path).split("/")[-1]
+        exact_match = index / len(GROUND_TRUTH)
+        evaluate_result[f"{ckpt_index + 1}"] = exact_match
+        print(
+            f"\n\nresult of {name} epoch {ckpt_index + 1}\n\n------------------------------------------------\n\n{exact_match}\n\n------------------------------------------------\n\n"
+        )
+        with open(evaluate_result_path, "w") as f:
+            json.dump(evaluate_result, f, indent=4)
         del tuned_model
         gc.collect()
         torch.cuda.empty_cache()
         destroy_model_parallel()
+        ray.shutdown()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, default="")
     config_path = parser.parse_args().config
+    logging.log(logging.INFO, f"{str(config_path)}")
+    print(str(config_path))
     with open(parser.parse_args().config, "r") as json_file:
         loaded_params = json.load(json_file)
     gpu_memory_utilization = loaded_params["gpu_memory_utilization"]
+    tensor_parallel_size = loaded_params["tensor_parallel_size"]
     prompt_spec = MockPromptSpec(
         task_type=TaskType.TEXT_GENERATION,
         instruction=loaded_params["instruction"],
         examples=loaded_params["examples"],
     )
-    store_path = Path(loaded_params["store_path"])
-    assert store_path.exists()
-    if not (store_path / "inputs").exists():
+    log_and_data_path = Path(loaded_params["log_and_data_path"])
+    ckpt_path = Path(loaded_params["ckpt_path"])
+    assert log_and_data_path.exists()
+    if not (log_and_data_path / "inputs").exists():
+        print("generate_and_write_inputs!")
+        logging.log(logging.INFO, "generate_and_write_inputs!")
         generate_and_write_inputs(
-            prompt_spec=prompt_spec,
-            generation_epochs=loaded_params["generation_epochs"],
-            generation_batch_size=loaded_params["generation_batch_size"],
-            parameter_dict=dict(
+            prompt_spec,
+            loaded_params["generation_epochs"],
+            loaded_params["generation_batch_size"],
+            dict(
                 top_k=loaded_params["generation_top_k"],
                 temperature=loaded_params["generation_temperature"],
                 min_input_length=loaded_params["min_input_length"],
             ),
-            store_path=store_path,
-            gpu_memory_utilization=gpu_memory_utilization,
+            log_and_data_path,
+            gpu_memory_utilization,
+            tensor_parallel_size,
         )
-    if not (store_path / "dataset").exists():
+    if not (log_and_data_path / "dataset").exists():
+        print("annotate_and_write_outputs!")
+        logging.log(logging.INFO, "annotate_and_write_outputs!")
         min_frequency = loaded_params["min_frequency"]
-        annotate_and_write_outputs(store_path, gpu_memory_utilization, min_frequency)
+        annotate_and_write_outputs(
+            log_and_data_path,
+            gpu_memory_utilization,
+            min_frequency,
+            tensor_parallel_size,
+        )
 
-    # pretrain_model_path = Path(
-    #     "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-    # )
+    pretrain_model_path = Path(
+        "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+    )
 
-    # if not (store_path / "model").exists():
-    #     finetune_vicuna(prompt_spec, store_path, pretrain_model_path, loaded_params["training_epochs"])
+    complete_ckpts = check_and_remove_checkpoints(ckpt_path)
+    evaluate_result_path = log_and_data_path / "result.json"
 
-    # test_set_path = Path("/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed")
+    assert evaluate_result_path.exists()
+    with open(evaluate_result_path, "r") as json_file:
+        evaluate_result = json.load(json_file)
 
-    # if not (store_path / "result.txt").exists():
-    #     evaluate(test_set_path, store_path, prompt_spec, gpu_memory_utilization)
+    assert len(list(evaluate_result.keys())) <= loaded_params["training_epochs"]
+
+    if (
+        complete_ckpts < loaded_params["training_epochs"]
+        and len(list(evaluate_result.keys())) < loaded_params["training_epochs"]
+    ):
+        print("finetune_vicuna!")
+        logging.log(logging.INFO, "finetune_vicuna!")
+        finetune_vicuna(
+            prompt_spec,
+            log_and_data_path,
+            ckpt_path,
+            pretrain_model_path,
+            loaded_params["training_epochs"],
+            resume_from_checkpoint=False if complete_ckpts == 0 else True,
+        )
+
+    test_set_path = Path("/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed")
+
+    if len(list(evaluate_result.keys())) < loaded_params["training_epochs"]:
+        print("evaluate!")
+        logging.log(logging.INFO, "evaluate!")
+        evaluate(
+            test_set_path,
+            log_and_data_path,
+            ckpt_path,
+            prompt_spec,
+            gpu_memory_utilization,
+            tensor_parallel_size,
+        )

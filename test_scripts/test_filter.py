@@ -61,7 +61,6 @@ class TestSelfConsistencyFilter(unittest.TestCase):
 
 class TestCheckParagraphCoherence(unittest.TestCase):
     def test_coherent_paragraph(self):
-
         result = semantic_filter.check_paragraph_coherence(
             ["This is sentence one. This is sentence two."]
         )
