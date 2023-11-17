@@ -30,6 +30,7 @@ def generate_and_write_inputs(
     gpu_memory_utilization,
     tensor_parallel_size,
 ):
+    ray.init(ignore_reinit_error=True)
     input_generator = VLLMPromptBasedInputGenerator(
         gpu_memory_utilization=gpu_memory_utilization,
         tensor_parallel_size=tensor_parallel_size,
@@ -48,6 +49,7 @@ def generate_and_write_inputs(
     destroy_model_parallel()
     gc.collect()
     torch.cuda.empty_cache()
+    ray.shutdown()
 
 
 def annotate_and_write_outputs(
@@ -55,6 +57,7 @@ def annotate_and_write_outputs(
 ):
     if (log_and_data_path / "dataset").exists():
         return
+    ray.init(ignore_reinit_error=True)
     output_annotator = VLLMPromptBasedOutputAnnotator(
         gpu_memory_utilization=gpu_memory_utilization,
         tensor_parallel_size=tensor_parallel_size,
@@ -76,6 +79,7 @@ def annotate_and_write_outputs(
     destroy_model_parallel()
     gc.collect()
     torch.cuda.empty_cache()
+    ray.shutdown()
 
 
 def check_and_remove_checkpoints(ckpt_path):
@@ -279,6 +283,21 @@ def evaluate(
         with open(evaluate_result_path, "w") as f:
             json.dump(evaluate_result, f, indent=4)
         del tuned_model
+        # print(f"delete {str(model_path)}")
+        # os.system(f"rm -rf {str(model_path)}")
+        evaluate_generated_content_path = log_and_data_path / "generated_contents"
+        evaluate_generated_content_path.mkdir(parents=True, exist_ok=True)
+        content_store_path = str(
+            evaluate_generated_content_path / str(ckpt_index + 1)
+        )
+        print(f"Genrated contents are stored in {content_store_path}")
+        datasets.Dataset.from_dict(
+            dict(
+                model_output=tuned_model_generated_outputs,
+                model_input=prompts,
+                groud_truth=GROUND_TRUTH,
+            )
+        ).save_to_disk(content_store_path)
         gc.collect()
         torch.cuda.empty_cache()
         destroy_model_parallel()

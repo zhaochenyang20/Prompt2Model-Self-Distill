@@ -74,10 +74,12 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 )
 
 
-for _ in range(10):
+for _ in range(1):
     base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
     ray.init(ignore_reinit_error=True)
-    tuned_vicuna = LLM(model=base_model)
+    tuned_vicuna = LLM(
+        model=base_model, gpu_memory_utilization=0.9, tensor_parallel_size=2
+    )
     tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
     tuned_vicuna_generated_outputs = [
         each.outputs[0].text for each in tuned_vicuna_outputs
@@ -95,6 +97,15 @@ for _ in range(10):
             f"\n\nresult of {_} th:\n\n------------------------------------------------{index / len(GROUND_TRUTH)}------------------------------------------------\n\n"
         )
     del tuned_vicuna
+    evaluate_generated_content_path = inputs_dir / "base_vicuna_squad"
+    print(f"Genrated contents are stored in {str(evaluate_generated_content_path)}")
+    datasets.Dataset.from_dict(
+        dict(
+            model_output=tuned_vicuna_generated_outputs,
+            model_input=prompts,
+            groud_truth=GROUND_TRUTH,
+        )
+    ).save_to_disk(evaluate_generated_content_path)
     gc.collect()
     torch.cuda.empty_cache()
     ray.shutdown()

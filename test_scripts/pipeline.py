@@ -2,21 +2,37 @@ import json
 import os
 from itertools import product
 from pathlib import Path
+import csv
 
 
-log_and_data_root = Path("/home/cyzhao/log_and_data_p2ms")
+log_and_data_root = Path("/home/cyzhao") / "SQuAD_experiments_3"
+# log_and_data_p2ms
+# data_stash
 ckpt_root = Path("/data1/cyzhao/ckpt_data_p2ms")
 log_and_data_root.mkdir(parents=True, exist_ok=True)
 ckpt_root.mkdir(parents=True, exist_ok=True)
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-CUDA_CONDITION = "0,1,2,3"
-gpu_memory_utilization = 0.5
+CUDA_CONDITION = "0,2,3,4"
+gpu_memory_utilization = 0.95
 tensor_parallel_size = CUDA_CONDITION.count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
 # gpu_memory_utilization 是在每张卡上的占比，比如 CUDA_CONDITION = "0,1,4,5", gpu_memory_utilization = 0.9
 # 则每张卡都会占去全部显存的 0.9，会占用四张卡，推理效率极其高
 # gpu_memory_utilization 越小，则 inference 越慢
 # 然而，不是每张卡都是空的，比如 0 卡已经有人跑了 40G 了，那么 gpu_memory_utilization< 0.5
+
+
+def read_json(file_path):
+    with open(file_path, "r") as file:
+        return json.load(file)
+
+
+# Function to write to CSV
+def write_to_csv(file_path, header, data):
+    with open(file_path, "w", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=header)
+        writer.writeheader()
+        writer.writerows(data)
 
 
 tasks = [
@@ -40,8 +56,8 @@ tasks = [
 # min_frequency_of_self_consitency, min_input_length
 # training_epochs
 parameter_tuples = [
-    # (20, 20, 50, 1.0, 0.3, 120, 3),
-    # (20, 20, 50, 1.0, 0.4, 120, 3),
+    (20, 20, 50, 1.0, 0.3, 120, 3),
+    (20, 20, 50, 1.0, 0.4, 120, 3),
     (20, 20, 50, 1.0, 0.6, 120, 3),
     (40, 10, 50, 1.0, 0.3, 120, 3),
     (20, 20, 50, 0.7, 0.3, 120, 3),
@@ -98,12 +114,37 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
     evaluate_result_path = log_and_data_path / "result.json"
 
     if evaluate_result_path.exists():
-        with open(evaluate_result_path, "r") as json_file:
-            evaluate_result = json.load(json_file)
+        evaluate_result = read_json(evaluate_result_path)
     else:
         evaluate_result = {}
         with open(evaluate_result_path, "w") as f:
             json.dump(evaluate_result, f, indent=4)
+
+    csv_header = [
+        "task_name",
+        "generation_epochs",
+        "generation_batch_size",
+        "generation_top_k",
+        "generation_temperature",
+        "min_frequency",
+        "min_input_length",
+        "training_epochs",
+    ] + ["epoch_" + str(i) for i in range(1, training_epochs + 1)]
+    csv_data = []
+    print(name)
+    for experiment_folder in log_and_data_root.iterdir():
+        if experiment_folder.is_dir():
+            config_path = experiment_folder / "config.json"
+            result_path = experiment_folder / "result.json"
+            if config_path.exists() and result_path.exists():
+                config = read_json(config_path)
+                result = read_json(result_path)
+                row = {key: config[key] for key in csv_header if key in config}
+                row.update({"epoch_" + str(k): v for k, v in result.items()})
+                csv_data.append(row)
+
+    csv_file_path = log_and_data_root / "experiment_results.csv"
+    write_to_csv(csv_file_path, csv_header, csv_data)
 
     if (
         not all(path.exists() for path in required_paths)
