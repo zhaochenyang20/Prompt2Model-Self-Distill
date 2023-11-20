@@ -8,11 +8,11 @@ import csv
 log_and_data_root = Path("/home/cyzhao") / "SQuAD_experiments_3"
 # log_and_data_p2ms
 # data_stash
-ckpt_root = Path("/data1/cyzhao/ckpt_data_p2ms")
+ckpt_root = Path("/data/cyzhao/ckpt_data_p2ms")
 log_and_data_root.mkdir(parents=True, exist_ok=True)
 ckpt_root.mkdir(parents=True, exist_ok=True)
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-CUDA_CONDITION = "0,2,3,4"
+CUDA_CONDITION = "0,1,2,3"
 gpu_memory_utilization = 0.95
 tensor_parallel_size = CUDA_CONDITION.count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
@@ -56,19 +56,20 @@ tasks = [
 # min_frequency_of_self_consitency, min_input_length
 # training_epochs
 parameter_tuples = [
-    (20, 20, 50, 1.0, 0.3, 120, 3),
-    (20, 20, 50, 1.0, 0.4, 120, 3),
-    (20, 20, 50, 1.0, 0.6, 120, 3),
-    (40, 10, 50, 1.0, 0.3, 120, 3),
-    (20, 20, 50, 0.7, 0.3, 120, 3),
-    (20, 20, 50, 0.5, 0.3, 120, 3),
-    (40, 10, 50, 0.3, 0.3, 120, 3),
-    (20, 20, 40, 1.0, 0.3, 120, 3),
-    (20, 20, 30, 1.0, 0.3, 120, 3),
-    (10, 20, 30, 1.0, 0.3, 120, 3),
-    (30, 20, 30, 1.0, 0.3, 120, 3),
-    (40, 20, 30, 1.0, 0.3, 120, 3),
-    (50, 20, 30, 1.0, 0.3, 120, 3),
+    # (20, 20, 50, 1.0, 0.3, 120, 1),
+    # (20, 20, 50, 1.0, 0.4, 120, 3),
+    # (20, 20, 50, 1.0, 0.6, 120, 3),
+    # (40, 10, 50, 1.0, 0.3, 120, 3),
+    # (20, 20, 50, 0.7, 0.3, 120, 3),
+    # (20, 20, 50, 0.5, 0.3, 120, 3),
+    # (40, 10, 50, 0.3, 0.3, 120, 3),
+    # (20, 20, 40, 1.0, 0.3, 120, 3),
+    # (20, 20, 30, 1.0, 0.3, 120, 3),
+    # (10, 20, 30, 1.0, 0.3, 120, 3),
+    # (30, 20, 30, 1.0, 0.3, 120, 3),
+    # (40, 20, 30, 1.0, 0.3, 120, 3),
+    # (50, 20, 30, 1.0, 0.3, 120, 3),
+    (10, 20, 30, 1.0, 0.3, 120, 1),
 ]
 for task, parameter_tuple in product(tasks, parameter_tuples):
     task_name, instruction, examples = task
@@ -106,12 +107,12 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
     with open(log_and_data_path / "config.json", "w") as f:
         json.dump(params, f, indent=4)
     required_paths = [
-        log_and_data_path / "result.json",
+        log_and_data_path / "result_seed42_2.json",
         log_and_data_path / "inputs",
         log_and_data_path / "dataset",
     ]
 
-    evaluate_result_path = log_and_data_path / "result.json"
+    evaluate_result_path = log_and_data_path / "result_seed42_2.json"
 
     if evaluate_result_path.exists():
         evaluate_result = read_json(evaluate_result_path)
@@ -135,7 +136,7 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
     for experiment_folder in log_and_data_root.iterdir():
         if experiment_folder.is_dir():
             config_path = experiment_folder / "config.json"
-            result_path = experiment_folder / "result.json"
+            result_path = experiment_folder / "result_seed42_2.json"
             if config_path.exists() and result_path.exists():
                 config = read_json(config_path)
                 result = read_json(result_path)
@@ -144,7 +145,7 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
                 csv_data.append(row)
 
     csv_file_path = log_and_data_root / "experiment_results.csv"
-    write_to_csv(csv_file_path, csv_header, csv_data)
+    # write_to_csv(csv_file_path, csv_header, csv_data)
 
     if (
         not all(path.exists() for path in required_paths)

@@ -8,7 +8,7 @@ from pathlib import Path
 import logging
 import datasets
 import shutil
-import torch, ray
+import torch, ray, random, numpy
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 from vllm import LLM, SamplingParams
@@ -20,6 +20,11 @@ from prompt2model.output_annotator import (
 )
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
+
+torch.manual_seed(42)
+random.seed(42)
+torch.cuda.manual_seed(42)
+numpy.random.seed(42)
 
 def generate_and_write_inputs(
     prompt_spec,
@@ -151,12 +156,12 @@ def finetune_vicuna(
         trust_remote_code=True,
     )
     mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
-    model = AutoModelForCausalLM.from_pretrained(
-        pretrain_model_path,
-        device_map="auto",
-        torch_dtype=torch.bfloat16,
-        use_flash_attention_2=True,
-    )
+    # model = AutoModelForCausalLM.from_pretrained(
+    #         pretrain_model_path,
+    #         device_map="auto",
+    #         torch_dtype=torch.bfloat16,
+    #         use_flash_attention_2=True,
+    #     )
     response_template_with_context = "\n### Your Output:\n\n"
     response_template_ids = tokenizer.encode(
         response_template_with_context, add_special_tokens=False
@@ -165,6 +170,31 @@ def finetune_vicuna(
         response_template_ids, tokenizer=tokenizer
     )
     ckpt_path.mkdir(parents=True, exist_ok=True)
+    # training_args = TrainingArguments(
+    #     report_to="none",
+    #     output_dir=str(ckpt_path),
+    #     do_eval=False,
+    #     save_strategy="epoch",
+    #     evaluation_strategy="no",
+    #     num_train_epochs=training_epochs,
+    #     seed=42,
+    # )
+    # trainer = SFTTrainer(
+    #     model=model,
+    #     args=training_args,
+    #     train_dataset=mapped_dataset,
+    #     dataset_text_field="text",
+    #     data_collator=data_collator,
+    #     max_seq_length=1500,
+    # )
+    def model_init():
+        return AutoModelForCausalLM.from_pretrained(
+             "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
+            device_map="auto",
+            torch_dtype=torch.bfloat16,
+            use_flash_attention_2=True,
+        )
+
     training_args = TrainingArguments(
         report_to="none",
         output_dir=str(ckpt_path),
@@ -172,9 +202,11 @@ def finetune_vicuna(
         save_strategy="epoch",
         evaluation_strategy="no",
         num_train_epochs=training_epochs,
+        seed=42,
     )
     trainer = SFTTrainer(
         model=model,
+        model_init=model_init,
         args=training_args,
         train_dataset=mapped_dataset,
         dataset_text_field="text",
@@ -215,7 +247,7 @@ def evaluate(
     gpu_memory_utilization,
     tensor_parallel_size,
 ):
-    evaluate_result_path = log_and_data_path / "result.json"
+    evaluate_result_path = log_and_data_path / "result_seed42_2.json"
 
     assert evaluate_result_path.exists()
 
@@ -283,8 +315,6 @@ def evaluate(
         with open(evaluate_result_path, "w") as f:
             json.dump(evaluate_result, f, indent=4)
         del tuned_model
-        # print(f"delete {str(model_path)}")
-        # os.system(f"rm -rf {str(model_path)}")
         evaluate_generated_content_path = log_and_data_path / "generated_contents"
         evaluate_generated_content_path.mkdir(parents=True, exist_ok=True)
         content_store_path = str(
@@ -302,6 +332,8 @@ def evaluate(
         torch.cuda.empty_cache()
         destroy_model_parallel()
         ray.shutdown()
+        print(f"delete {str(model_path)}")
+        os.system(f"rm -rf {str(model_path)}")
 
 
 if __name__ == "__main__":
@@ -354,7 +386,7 @@ if __name__ == "__main__":
     )
 
     complete_ckpts = check_and_remove_checkpoints(ckpt_path)
-    evaluate_result_path = log_and_data_path / "result.json"
+    evaluate_result_path = log_and_data_path / "result_seed42_2.json"
 
     assert evaluate_result_path.exists()
     with open(evaluate_result_path, "r") as json_file:
