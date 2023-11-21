@@ -65,7 +65,11 @@ def generate_and_write_inputs(
 
 
 def annotate_and_write_outputs(
-    log_and_data_path, gpu_memory_utilization, min_frequency, tensor_parallel_size, prompt_spec
+    log_and_data_path,
+    gpu_memory_utilization,
+    min_frequency,
+    tensor_parallel_size,
+    prompt_spec,
 ):
     if (log_and_data_path / "dataset").exists():
         return
@@ -220,34 +224,8 @@ def extract_number(s):
     return int(re.search(r"\d+", s).group())
 
 
-def validate(
-    validation_set_path,
-    log_and_data_path,
-    ckpt_path,
-    prompt_spec,
-    gpu_memory_utilization,
-    tensor_parallel_size,
-    evaluate_result_path,
-):
-    assert evaluate_result_path.exists()
-    with open(evaluate_result_path, "r") as json_file:
-        evaluate_result = json.load(json_file)
-    construct_prompt = partial(
-        construct_meta_prompt,
-        instruction=prompt_spec.instruction,
-        examples=prompt_spec.examples,
-    )
-
-    def map_func(example):
-        example["model_input"] = construct_prompt(new_input=example["input_col"])
-        example["model_output"] = example["output_col"]
-        return example
-
-    test_dataset = datasets.load_from_disk(validation_set_path)
-    # test_dataset = datasets.Dataset.from_dict(test_dataset[:20])
-    test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
-    prompts = test_dataset["model_input"]
-    GROUND_TRUTH = test_dataset["model_output"]
+def vllm_inference(model_path, gpu_memory_utilization, tensor_parallel_size, prompts):
+    ray.init(ignore_reinit_error=True)
     hyperparameter_choices = {}
     sampling_params = SamplingParams(
         top_k=hyperparameter_choices.get("top_k", -1),
@@ -255,59 +233,135 @@ def validate(
         temperature=hyperparameter_choices.get("temperature", 0),
         max_tokens=hyperparameter_choices.get("max_tokens", 500),
     )
-
-    sorted_list = sorted(
-        [each for each in os.listdir(ckpt_path) if "checkpoint" in each],
-        key=extract_number,
+    model = LLM(
+        model=str(model_path),
+        gpu_memory_utilization=gpu_memory_utilization,
+        tensor_parallel_size=tensor_parallel_size,
     )
-    last_evaluate = len(list(evaluate_result.keys()))
-    print(f"last validate {last_evaluate}.")
-    for ckpt_index, each in enumerate(sorted_list):
-        if ckpt_index < last_evaluate:
-            print(f"skip the evaluation of the {ckpt_index + 1} epoch.")
-            continue
-        ray.init(ignore_reinit_error=True)
-        model_path = ckpt_path / each
-        tuned_model = LLM(
-            model=str(model_path),
-            gpu_memory_utilization=gpu_memory_utilization,
-            tensor_parallel_size=tensor_parallel_size,
+    model_outputs = model.generate(prompts, sampling_params)
+    model_generated_outputs = [each.outputs[0].text for each in model_outputs]
+    del model
+    gc.collect()
+    torch.cuda.empty_cache()
+    destroy_model_parallel()
+    ray.shutdown()
+    return model_generated_outputs
+
+
+def evalute_squad(
+    GROUND_TRUTH,
+    tuned_model_generated_outputs,
+):
+    index = 0
+    for i in range(len(GROUND_TRUTH)):
+        if (
+            GROUND_TRUTH[i] in tuned_model_generated_outputs[i]
+            or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]
+        ):
+            index += 1
+    exact_match = index / len(GROUND_TRUTH)
+    return exact_match
+
+
+def store_evaluation_content(
+    content_store_path, tuned_model_generated_outputs, prompts, GROUND_TRUTH
+):
+    print(f"Genrated contents are stored in {content_store_path}")
+    datasets.Dataset.from_dict(
+        dict(
+            model_output=tuned_model_generated_outputs,
+            model_input=prompts,
+            groud_truth=GROUND_TRUTH,
         )
-        tuned_model_outputs = tuned_model.generate(prompts, sampling_params)
-        tuned_model_generated_outputs = [
-            each.outputs[0].text for each in tuned_model_outputs
-        ]
-        index = 0
-        for i in range(len(GROUND_TRUTH)):
-            if (
-                GROUND_TRUTH[i] in tuned_model_generated_outputs[i]
-                or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]
-            ):
-                index += 1
-        name = str(log_and_data_path).split("/")[-1]
-        exact_match = index / len(GROUND_TRUTH)
-        evaluate_result[f"{ckpt_index + 1}"] = exact_match
+    ).save_to_disk(content_store_path)
+
+
+def validate_or_test(
+    evaluation_dataset_path,
+    ckpt_path,
+    instruction,
+    examples,
+    gpu_memory_utilization,
+    tensor_parallel_size,
+    evaluate_result_path,
+    test_content_store_path=None,
+    log_and_data_path=None,
+    validation=True,
+):
+    construct_prompt = partial(
+        construct_meta_prompt,
+        instruction=instruction,
+        examples=examples,
+    )
+
+    def map_func(example):
+        example["model_input"] = construct_prompt(new_input=example["input_col"])
+        example["model_output"] = example["output_col"]
+        return example
+
+    test_dataset = datasets.load_from_disk(evaluation_dataset_path)
+    # test_dataset = datasets.Dataset.from_dict(test_dataset[:20])
+    test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
+    prompts = test_dataset["model_input"]
+    GROUND_TRUTH = test_dataset["model_output"]
+
+    if validation:
+        sorted_list = sorted(
+            [each for each in os.listdir(ckpt_path) if "checkpoint" in each],
+            key=extract_number,
+        )
+
+        assert evaluate_result_path.exists()
+        with open(evaluate_result_path, "r") as json_file:
+            evaluate_result = json.load(json_file)
+        last_evaluate = len(list(evaluate_result.keys()))
+        print(f"last validate {last_evaluate}.")
+
+        for ckpt_index, each in enumerate(sorted_list):
+            if ckpt_index < last_evaluate:
+                print(f"skip the evaluation of the {ckpt_index + 1} epoch.")
+                continue
+            model_path = ckpt_path / each
+            tuned_model_generated_outputs = vllm_inference(
+                model_path, gpu_memory_utilization, tensor_parallel_size, prompts
+            )
+            exact_match = evalute_squad(GROUND_TRUTH, tuned_model_generated_outputs)
+            evaluate_result[f"{ckpt_index + 1}"] = exact_match
+            name = str(log_and_data_path).split("/")[-1]
+            print(
+                f"\n\nresult of {name} epoch {ckpt_index + 1}\n\n------------------------------------------------\n\n{exact_match}\n\n------------------------------------------------\n\n"
+            )
+            with open(evaluate_result_path, "w") as f:
+                json.dump(evaluate_result, f, indent=4)
+            evaluate_generated_content_path = log_and_data_path / "generated_contents"
+            evaluate_generated_content_path.mkdir(parents=True, exist_ok=True)
+            content_store_path = str(
+                evaluate_generated_content_path / str(ckpt_index + 1)
+            )
+            store_evaluation_content(
+                content_store_path, tuned_model_generated_outputs, prompts, GROUND_TRUTH
+            )
+    else:
+        #! test
+        tuned_model_generated_outputs = vllm_inference(
+            ckpt_path, gpu_memory_utilization, tensor_parallel_size, prompts
+        )
+        exact_match = evalute_squad(GROUND_TRUTH, tuned_model_generated_outputs)
         print(
-            f"\n\nresult of {name} epoch {ckpt_index + 1}\n\n------------------------------------------------\n\n{exact_match}\n\n------------------------------------------------\n\n"
+            f"\n\nresult of {ckpt_path}\n\n------------------------------------------------\n\n{exact_match}\n\n------------------------------------------------\n\n"
         )
+        with open(evaluate_result_path, "r") as json_file:
+            evaluate_result = json.load(json_file)
+        evaluate_result["test_result"] = exact_match
+        print(f"The best ckpt on test set gain {exact_match}")
         with open(evaluate_result_path, "w") as f:
             json.dump(evaluate_result, f, indent=4)
-        del tuned_model
-        evaluate_generated_content_path = log_and_data_path / "generated_contents"
-        evaluate_generated_content_path.mkdir(parents=True, exist_ok=True)
-        content_store_path = str(evaluate_generated_content_path / str(ckpt_index + 1))
-        print(f"Genrated contents are stored in {content_store_path}")
-        datasets.Dataset.from_dict(
-            dict(
-                model_output=tuned_model_generated_outputs,
-                model_input=prompts,
-                groud_truth=GROUND_TRUTH,
-            )
-        ).save_to_disk(content_store_path)
-        gc.collect()
-        torch.cuda.empty_cache()
-        destroy_model_parallel()
-        ray.shutdown()
+        store_evaluation_content(
+            test_content_store_path,
+            tuned_model_generated_outputs,
+            prompts,
+            GROUND_TRUTH,
+        )
 
 
 def get_ckpt_paths_and_result(ckpt_path, evaluate_result_path):
@@ -397,21 +451,23 @@ def search_against_parameter(config_path: str):
             resume_from_checkpoint=False if complete_ckpts == 0 else True,
         )
 
-    validation_set_path = Path(
+    evaluation_dataset_path = Path(
         "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed"
     )
 
     if len(list(evaluate_result.keys())) < loaded_params["training_epochs"]:
         print("validate!")
         logging.log(logging.INFO, "validate!")
-        validate(
-            validation_set_path,
-            log_and_data_path,
+        validate_or_test(
+            evaluation_dataset_path,
             ckpt_path,
-            prompt_spec,
+            prompt_spec.instruction,
+            prompt_spec.examples,
             gpu_memory_utilization,
             tensor_parallel_size,
             evaluate_result_path,
+            log_and_data_path,
+            validation=True,
         )
 
     return get_ckpt_paths_and_result(ckpt_path, evaluate_result_path)

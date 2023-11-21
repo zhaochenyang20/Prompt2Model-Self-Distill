@@ -13,7 +13,7 @@ log_and_data_root.mkdir(parents=True, exist_ok=True)
 ckpt_root.mkdir(parents=True, exist_ok=True)
 best_ckpt_path.mkdir(parents=True, exist_ok=True)
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 gpu_memory_utilization = 0.90
 tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
@@ -23,15 +23,18 @@ tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 然而，不是每张卡都是空的，比如 0 卡已经有人跑了 40G 了，那么 gpu_memory_utilization < 0.5
 
 
-from main_and_search_engine import search_against_parameter
+from main import search_against_parameter, validate_or_test
+
 
 def read_json(file_path):
     with open(file_path, "r") as file:
         return json.load(file)
 
+
 def print_and_execute_command(command):
     print(command)
     os.system(command)
+
 
 tasks = [
     (
@@ -158,7 +161,7 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
     validation_results = {}
     if best_validation_result_path.exists():
         validation_results = read_json(best_validation_result_path)
-        best_validation_result = validation_results.get("result", 0)
+        best_validation_result = validation_results.get("validation_result", 0)
     else:
         best_validation_result = 0
         with open(best_validation_result_path, "w") as f:
@@ -179,10 +182,10 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
         if highest_validation_result > best_validation_result:
             # Update the best validation result and write to file
             validation_results = {
-                'task_name': task_name,
-                'result': highest_validation_result,
-                'evaluate_result_path': str(evaluate_result_path),
-                'ckpt_path': str(highest_result_path)
+                "task_name": task_name,
+                "validation_result": highest_validation_result,
+                "evaluate_result_path": str(evaluate_result_path),
+                "ckpt_path": str(highest_result_path),
             }
             with open(best_validation_result_path, "w") as f:
                 json.dump(validation_results, f, indent=4)
@@ -202,3 +205,24 @@ for task, parameter_tuple in product(tasks, parameter_tuples):
                 print_and_execute_command(f"rm -rf {ckpt_path}")
 
     write_results(parameter_tuples, log_and_data_root)
+    test_set_path = Path(
+        "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test"
+    )
+    with open(best_validation_result_path, "r") as json_file:
+        evaluate_result = json.load(json_file)
+    if "test_result" in evaluate_result:
+        print("Already tested")
+        continue
+    else:
+        print("test best ckpt.")
+        validate_or_test(
+            test_set_path,
+            best_ckpt_path / task_name,
+            instruction,
+            examples,
+            gpu_memory_utilization,
+            tensor_parallel_size,
+            best_validation_result_path,
+            test_content_store_path=log_and_data_root / "best_ckpt_generated_content",
+            validation=False,
+        )
