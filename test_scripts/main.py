@@ -466,7 +466,7 @@ def search_against_parameter(config_path: str):
             gpu_memory_utilization,
             tensor_parallel_size,
             evaluate_result_path,
-            log_and_data_path,
+            log_and_data_path=log_and_data_path,
             validation=True,
         )
 

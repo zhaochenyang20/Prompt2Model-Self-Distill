@@ -1,10 +1,14 @@
 import json
 import os
-from itertools import product
 from pathlib import Path
 import csv
+from skopt import gp_minimize
+from skopt.space import Real, Integer
+from skopt.utils import use_named_args
+from skopt.space import Categorical
+import numpy as np
 
-log_and_data_root = Path("/home/cyzhao") / "SQuAD_experiments_4"
+log_and_data_root = Path("/home/cyzhao") / "SQuAD_experiments_6"
 evaluation_result_file_tail = "result.json"
 ckpt_root = Path("/data2/cyzhao/ckpt_data_p2ms")
 best_ckpt_path = Path("/data2/cyzhao/best_ckpt")
@@ -13,8 +17,8 @@ log_and_data_root.mkdir(parents=True, exist_ok=True)
 ckpt_root.mkdir(parents=True, exist_ok=True)
 best_ckpt_path.mkdir(parents=True, exist_ok=True)
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-gpu_memory_utilization = 0.90
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,4"
+gpu_memory_utilization = 0.40
 tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
 # gpu_memory_utilization 是在每张卡上的占比，比如 CUDA_CONDITION = "0,1,4,5", gpu_memory_utilization = 0.9
@@ -36,6 +40,8 @@ def print_and_execute_command(command):
     os.system(command)
 
 
+max_training_epochs = 5
+
 tasks = [
     (
         "SQuAD",
@@ -53,25 +59,8 @@ tasks = [
     )
 ]
 
-# generation_epochs, generation_batch_size, generation_top_k, generation_temperature
-# min_frequency_of_self_consitency, min_input_length
-# training_epochs
-parameter_tuples = [
-    (20, 20, 50, 1.0, 0.3, 120, 3),
-    (20, 20, 50, 1.0, 0.4, 120, 3),
-    (20, 20, 50, 1.0, 0.6, 120, 3),
-    (40, 10, 50, 1.0, 0.3, 120, 3),
-    (20, 20, 50, 0.7, 0.3, 120, 3),
-    (20, 20, 50, 0.5, 0.3, 120, 3),
-    (40, 10, 50, 0.3, 0.3, 120, 3),
-    (20, 20, 40, 1.0, 0.3, 120, 3),
-    (20, 20, 30, 1.0, 0.3, 120, 3),
-    (10, 20, 30, 1.0, 0.3, 120, 3),
-]
 
-
-def write_results(parameter_tuples, log_and_data_root):
-    max_training_epoch = max([each[-1] for each in parameter_tuples])
+def write_results(log_and_data_root, max_training_epochs):
     csv_header = [
         "task_name",
         "generation_epochs",
@@ -81,7 +70,7 @@ def write_results(parameter_tuples, log_and_data_root):
         "min_frequency",
         "min_input_length",
         "training_epochs",
-    ] + ["epoch_" + str(i) for i in range(1, max_training_epoch + 1)]
+    ] + ["epoch_" + str(i) for i in range(1, max_training_epochs + 1)]
     csv_data = []
     for experiment_folder in log_and_data_root.iterdir():
         if experiment_folder.is_dir():
@@ -94,7 +83,7 @@ def write_results(parameter_tuples, log_and_data_root):
                 row.update(
                     {
                         "epoch_" + str(k): result.get(str(k), 0)
-                        for k in range(1, max_training_epoch + 1)
+                        for k in range(1, max_training_epochs + 1)
                     }
                 )
                 csv_data.append(row)
@@ -105,19 +94,28 @@ def write_results(parameter_tuples, log_and_data_root):
         writer.writeheader()
         writer.writerows(csv_data)
 
+
 for task in tasks:
-    for parameter_tuple in parameter_tuples:
-        task_name, instruction, examples = task
-        (
-            generation_epochs,
-            generation_batch_size,
-            generation_top_k,
-            generation_temperature,
-            min_frequency,
-            min_input_length,
-            training_epochs,
-        ) = parameter_tuple
+    task_name, instruction, examples = task
+
+    def objective_function(
+        generation_epochs,
+        generation_batch_size,
+        generation_top_k,
+        generation_temperature,
+        min_frequency,
+        min_input_length,
+        training_epochs,
+    ):
+        generation_epochs = int(generation_epochs)
+        generation_batch_size = int(generation_batch_size)
+        generation_top_k = int(generation_top_k)
+        generation_temperature = float(generation_temperature)
+        min_frequency = float(min_frequency)
+        min_input_length = int(min_input_length)
+        training_epochs = int(training_epochs)
         name = f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{min_input_length}_{training_epochs}"
+        print(f"searching parameters: {name}")
         log_and_data_path = log_and_data_root / name
         log_and_data_path.mkdir(parents=True, exist_ok=True)
         ckpt_path = ckpt_root / name
@@ -127,17 +125,17 @@ for task in tasks:
             "task_name": task_name,
             "instruction": instruction,
             "examples": examples,
-            "generation_epochs": generation_epochs,
-            "generation_batch_size": generation_batch_size,
-            "generation_top_k": generation_top_k,
-            "generation_temperature": generation_temperature,
+            "generation_epochs": int(generation_epochs),
+            "generation_batch_size": int(generation_batch_size),
+            "generation_top_k": int(generation_top_k),
+            "generation_temperature": float(generation_temperature),
             "log_and_data_path": str(log_and_data_path),
             "ckpt_path": str(ckpt_path),
-            "gpu_memory_utilization": gpu_memory_utilization,
-            "min_frequency": min_frequency,
-            "min_input_length": min_input_length,
-            "training_epochs": training_epochs,
-            "tensor_parallel_size": tensor_parallel_size,
+            "gpu_memory_utilization": float(gpu_memory_utilization),
+            "min_frequency": float(min_frequency),
+            "min_input_length": int(min_input_length),
+            "training_epochs": int(training_epochs),
+            "tensor_parallel_size": int(tensor_parallel_size),
             "evaluation_result_file_tail": evaluation_result_file_tail,
         }
         with open(log_and_data_path / "config.json", "w") as f:
@@ -176,7 +174,9 @@ for task in tasks:
                 str(log_and_data_path / "config.json")
             )
 
-            highest_result_path = max(ckpt_paths_and_result, key=ckpt_paths_and_result.get)
+            highest_result_path = max(
+                ckpt_paths_and_result, key=ckpt_paths_and_result.get
+            )
             highest_validation_result = ckpt_paths_and_result[highest_result_path]
 
             if highest_validation_result > best_validation_result:
@@ -194,7 +194,9 @@ for task in tasks:
                 task_best_ckpt_path = Path(best_ckpt_path) / task_name
                 if task_best_ckpt_path.exists():
                     print_and_execute_command(f"rm -rf {task_best_ckpt_path}")
-                print_and_execute_command(f"mv {highest_result_path} {task_best_ckpt_path}")
+                print_and_execute_command(
+                    f"mv {highest_result_path} {task_best_ckpt_path}"
+                )
 
                 for ckpt_path in ckpt_paths_and_result:
                     if ckpt_path != highest_result_path:
@@ -203,8 +205,28 @@ for task in tasks:
                 # If no new best result, delete all checkpoints
                 for ckpt_path in ckpt_paths_and_result:
                     print_and_execute_command(f"rm -rf {ckpt_path}")
+        else:
+            highest_validation_result = max(evaluate_result_path.values())
 
-        write_results(parameter_tuples, log_and_data_root)
+        write_results(log_and_data_root, max_training_epochs)
+        return -highest_validation_result
+
+    space = [
+        Categorical(np.arange(10, 21, 2), name='generation_epochs'),
+        Categorical(np.arange(10, 21, 2), name='generation_batch_size'),
+        Categorical(np.arange(30, 52.5, 5), name='generation_top_k'),
+        Categorical(np.arange(0.3, 0.65, 0.1), name='generation_temperature'),
+        Categorical(np.arange(0.3, 0.65, 0.1), name='min_frequency'),
+        Categorical(np.arange(100, 155, 10), name='min_input_length'),
+        Integer(1, max_training_epochs, name='training_epochs'),
+    ]
+
+    @use_named_args(space)
+    def objective(**params):
+        return objective_function(**params)
+
+    # 进行贝叶斯优化
+    result = gp_minimize(objective, space, n_calls=20, random_state=0)
 
     test_set_path = Path(
         "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test"
