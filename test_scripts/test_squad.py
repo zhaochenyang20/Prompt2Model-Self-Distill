@@ -75,10 +75,11 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 
 
 for _ in range(1):
-    base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+    # base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+    path = "/data/cyzhao/best_ckpt/SQuAD"
     ray.init(ignore_reinit_error=True)
     tuned_vicuna = LLM(
-        model=base_model, gpu_memory_utilization=0.9, tensor_parallel_size=2
+        model=path, gpu_memory_utilization=0.9, tensor_parallel_size=1
     )
     tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
     tuned_vicuna_generated_outputs = [
