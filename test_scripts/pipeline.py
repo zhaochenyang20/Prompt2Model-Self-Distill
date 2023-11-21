@@ -105,106 +105,107 @@ def write_results(parameter_tuples, log_and_data_root):
         writer.writeheader()
         writer.writerows(csv_data)
 
+for task in tasks:
+    for parameter_tuple in parameter_tuples:
+        task_name, instruction, examples = task
+        (
+            generation_epochs,
+            generation_batch_size,
+            generation_top_k,
+            generation_temperature,
+            min_frequency,
+            min_input_length,
+            training_epochs,
+        ) = parameter_tuple
+        name = f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{min_input_length}_{training_epochs}"
+        log_and_data_path = log_and_data_root / name
+        log_and_data_path.mkdir(parents=True, exist_ok=True)
+        ckpt_path = ckpt_root / name
+        ckpt_path.mkdir(parents=True, exist_ok=True)
+        params = {
+            "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
+            "task_name": task_name,
+            "instruction": instruction,
+            "examples": examples,
+            "generation_epochs": generation_epochs,
+            "generation_batch_size": generation_batch_size,
+            "generation_top_k": generation_top_k,
+            "generation_temperature": generation_temperature,
+            "log_and_data_path": str(log_and_data_path),
+            "ckpt_path": str(ckpt_path),
+            "gpu_memory_utilization": gpu_memory_utilization,
+            "min_frequency": min_frequency,
+            "min_input_length": min_input_length,
+            "training_epochs": training_epochs,
+            "tensor_parallel_size": tensor_parallel_size,
+            "evaluation_result_file_tail": evaluation_result_file_tail,
+        }
+        with open(log_and_data_path / "config.json", "w") as f:
+            json.dump(params, f, indent=4)
+        required_paths = [
+            log_and_data_path / evaluation_result_file_tail,
+            log_and_data_path / "inputs",
+            log_and_data_path / "dataset",
+        ]
 
-for task, parameter_tuple in product(tasks, parameter_tuples):
-    task_name, instruction, examples = task
-    (
-        generation_epochs,
-        generation_batch_size,
-        generation_top_k,
-        generation_temperature,
-        min_frequency,
-        min_input_length,
-        training_epochs,
-    ) = parameter_tuple
-    name = f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{min_input_length}_{training_epochs}"
-    log_and_data_path = log_and_data_root / name
-    log_and_data_path.mkdir(parents=True, exist_ok=True)
-    ckpt_path = ckpt_root / name
-    ckpt_path.mkdir(parents=True, exist_ok=True)
-    params = {
-        "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
-        "task_name": task_name,
-        "instruction": instruction,
-        "examples": examples,
-        "generation_epochs": generation_epochs,
-        "generation_batch_size": generation_batch_size,
-        "generation_top_k": generation_top_k,
-        "generation_temperature": generation_temperature,
-        "log_and_data_path": str(log_and_data_path),
-        "ckpt_path": str(ckpt_path),
-        "gpu_memory_utilization": gpu_memory_utilization,
-        "min_frequency": min_frequency,
-        "min_input_length": min_input_length,
-        "training_epochs": training_epochs,
-        "tensor_parallel_size": tensor_parallel_size,
-        "evaluation_result_file_tail": evaluation_result_file_tail,
-    }
-    with open(log_and_data_path / "config.json", "w") as f:
-        json.dump(params, f, indent=4)
-    required_paths = [
-        log_and_data_path / evaluation_result_file_tail,
-        log_and_data_path / "inputs",
-        log_and_data_path / "dataset",
-    ]
+        evaluate_result_path = log_and_data_path / evaluation_result_file_tail
 
-    evaluate_result_path = log_and_data_path / evaluation_result_file_tail
-
-    if evaluate_result_path.exists():
-        evaluate_result = read_json(evaluate_result_path)
-    else:
-        evaluate_result = {}
-        with open(evaluate_result_path, "w") as f:
-            json.dump(evaluate_result, f, indent=4)
-
-    best_validation_result = 0
-    validation_results = {}
-    if best_validation_result_path.exists():
-        validation_results = read_json(best_validation_result_path)
-        best_validation_result = validation_results.get("validation_result", 0)
-    else:
-        best_validation_result = 0
-        with open(best_validation_result_path, "w") as f:
-            json.dump({}, f, indent=4)
-
-    if (
-        not all(path.exists() for path in required_paths)
-        or len(list(evaluate_result.keys())) < training_epochs
-    ):
-        print(log_and_data_path)
-        ckpt_paths_and_result = search_against_parameter(
-            str(log_and_data_path / "config.json")
-        )
-
-        highest_result_path = max(ckpt_paths_and_result, key=ckpt_paths_and_result.get)
-        highest_validation_result = ckpt_paths_and_result[highest_result_path]
-
-        if highest_validation_result > best_validation_result:
-            # Update the best validation result and write to file
-            validation_results = {
-                "task_name": task_name,
-                "validation_result": highest_validation_result,
-                "evaluate_result_path": str(evaluate_result_path),
-                "ckpt_path": str(highest_result_path),
-            }
-            with open(best_validation_result_path, "w") as f:
-                json.dump(validation_results, f, indent=4)
-
-            # Move the best checkpoint and delete others
-            task_best_ckpt_path = Path(best_ckpt_path) / task_name
-            if task_best_ckpt_path.exists():
-                print_and_execute_command(f"rm -rf {task_best_ckpt_path}")
-            print_and_execute_command(f"mv {highest_result_path} {task_best_ckpt_path}")
-
-            for ckpt_path in ckpt_paths_and_result:
-                if ckpt_path != highest_result_path:
-                    print_and_execute_command(f"rm -rf {ckpt_path}")
+        if evaluate_result_path.exists():
+            evaluate_result = read_json(evaluate_result_path)
         else:
-            # If no new best result, delete all checkpoints
-            for ckpt_path in ckpt_paths_and_result:
-                print_and_execute_command(f"rm -rf {ckpt_path}")
+            evaluate_result = {}
+            with open(evaluate_result_path, "w") as f:
+                json.dump(evaluate_result, f, indent=4)
 
-    write_results(parameter_tuples, log_and_data_root)
+        best_validation_result = 0
+        validation_results = {}
+        if best_validation_result_path.exists():
+            validation_results = read_json(best_validation_result_path)
+            best_validation_result = validation_results.get("validation_result", 0)
+        else:
+            best_validation_result = 0
+            with open(best_validation_result_path, "w") as f:
+                json.dump({}, f, indent=4)
+
+        if (
+            not all(path.exists() for path in required_paths)
+            or len(list(evaluate_result.keys())) < training_epochs
+        ):
+            print(log_and_data_path)
+            ckpt_paths_and_result = search_against_parameter(
+                str(log_and_data_path / "config.json")
+            )
+
+            highest_result_path = max(ckpt_paths_and_result, key=ckpt_paths_and_result.get)
+            highest_validation_result = ckpt_paths_and_result[highest_result_path]
+
+            if highest_validation_result > best_validation_result:
+                # Update the best validation result and write to file
+                validation_results = {
+                    "task_name": task_name,
+                    "validation_result": highest_validation_result,
+                    "evaluate_result_path": str(evaluate_result_path),
+                    "ckpt_path": str(highest_result_path),
+                }
+                with open(best_validation_result_path, "w") as f:
+                    json.dump(validation_results, f, indent=4)
+
+                # Move the best checkpoint and delete others
+                task_best_ckpt_path = Path(best_ckpt_path) / task_name
+                if task_best_ckpt_path.exists():
+                    print_and_execute_command(f"rm -rf {task_best_ckpt_path}")
+                print_and_execute_command(f"mv {highest_result_path} {task_best_ckpt_path}")
+
+                for ckpt_path in ckpt_paths_and_result:
+                    if ckpt_path != highest_result_path:
+                        print_and_execute_command(f"rm -rf {ckpt_path}")
+            else:
+                # If no new best result, delete all checkpoints
+                for ckpt_path in ckpt_paths_and_result:
+                    print_and_execute_command(f"rm -rf {ckpt_path}")
+
+        write_results(parameter_tuples, log_and_data_root)
+
     test_set_path = Path(
         "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test"
     )
