@@ -19,6 +19,7 @@ from prompt2model.output_annotator import (
     construct_meta_prompt,
 )
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
+from collections import OrderedDict
 
 
 def set_seed(seed=42):
@@ -64,7 +65,7 @@ def generate_and_write_inputs(
 
 
 def annotate_and_write_outputs(
-    log_and_data_path, gpu_memory_utilization, min_frequency, tensor_parallel_size
+    log_and_data_path, gpu_memory_utilization, min_frequency, tensor_parallel_size, prompt_spec
 ):
     if (log_and_data_path / "dataset").exists():
         return
@@ -219,21 +220,18 @@ def extract_number(s):
     return int(re.search(r"\d+", s).group())
 
 
-def evaluate(
-    test_set_path,
+def validate(
+    validation_set_path,
     log_and_data_path,
     ckpt_path,
     prompt_spec,
     gpu_memory_utilization,
     tensor_parallel_size,
+    evaluate_result_path,
 ):
-    evaluate_result_path = log_and_data_path / "result_seed42_2.json"
-
     assert evaluate_result_path.exists()
-
     with open(evaluate_result_path, "r") as json_file:
         evaluate_result = json.load(json_file)
-
     construct_prompt = partial(
         construct_meta_prompt,
         instruction=prompt_spec.instruction,
@@ -245,7 +243,7 @@ def evaluate(
         example["model_output"] = example["output_col"]
         return example
 
-    test_dataset = datasets.load_from_disk(test_set_path)
+    test_dataset = datasets.load_from_disk(validation_set_path)
     # test_dataset = datasets.Dataset.from_dict(test_dataset[:20])
     test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
     prompts = test_dataset["model_input"]
@@ -263,7 +261,7 @@ def evaluate(
         key=extract_number,
     )
     last_evaluate = len(list(evaluate_result.keys()))
-    print(f"last evaluate {last_evaluate}.")
+    print(f"last validate {last_evaluate}.")
     for ckpt_index, each in enumerate(sorted_list):
         if ckpt_index < last_evaluate:
             print(f"skip the evaluation of the {ckpt_index + 1} epoch.")
@@ -310,18 +308,26 @@ def evaluate(
         torch.cuda.empty_cache()
         destroy_model_parallel()
         ray.shutdown()
-        print(f"delete {str(model_path)}")
-        os.system(f"rm -rf {str(model_path)}")
 
 
-if __name__ == "__main__":
+def get_ckpt_paths_and_result(ckpt_path, evaluate_result_path):
+    sorted_list = sorted(
+        [each for each in os.listdir(ckpt_path) if "checkpoint" in each],
+        key=extract_number,
+    )
+    with open(evaluate_result_path, "r") as json_file:
+        evaluate_result = json.load(json_file)
+    assert len(sorted_list) == len(list(evaluate_result.keys()))
+    return OrderedDict(
+        (str(ckpt_path / each), evaluate_result[str(ckpt_index + 1)])
+        for ckpt_index, each in enumerate(sorted_list)
+    )
+
+
+def search_against_parameter(config_path: str):
     set_seed(42)
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default="")
-    config_path = parser.parse_args().config
-    logging.log(logging.INFO, f"{str(config_path)}")
     print(str(config_path))
-    with open(parser.parse_args().config, "r") as json_file:
+    with open(config_path, "r") as json_file:
         loaded_params = json.load(json_file)
     gpu_memory_utilization = loaded_params["gpu_memory_utilization"]
     tensor_parallel_size = loaded_params["tensor_parallel_size"]
@@ -358,6 +364,7 @@ if __name__ == "__main__":
             gpu_memory_utilization,
             min_frequency,
             tensor_parallel_size,
+            prompt_spec,
         )
 
     pretrain_model_path = Path(
@@ -365,7 +372,9 @@ if __name__ == "__main__":
     )
 
     complete_ckpts = check_and_remove_checkpoints(ckpt_path)
-    evaluate_result_path = log_and_data_path / "result_seed42_2.json"
+    evaluate_result_path = (
+        log_and_data_path / loaded_params["evaluation_result_file_tail"]
+    )
 
     assert evaluate_result_path.exists()
     with open(evaluate_result_path, "r") as json_file:
@@ -388,16 +397,21 @@ if __name__ == "__main__":
             resume_from_checkpoint=False if complete_ckpts == 0 else True,
         )
 
-    test_set_path = Path("/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed")
+    validation_set_path = Path(
+        "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed"
+    )
 
     if len(list(evaluate_result.keys())) < loaded_params["training_epochs"]:
-        print("evaluate!")
-        logging.log(logging.INFO, "evaluate!")
-        evaluate(
-            test_set_path,
+        print("validate!")
+        logging.log(logging.INFO, "validate!")
+        validate(
+            validation_set_path,
             log_and_data_path,
             ckpt_path,
             prompt_spec,
             gpu_memory_utilization,
             tensor_parallel_size,
+            evaluate_result_path,
         )
+
+    return get_ckpt_paths_and_result(ckpt_path, evaluate_result_path)
