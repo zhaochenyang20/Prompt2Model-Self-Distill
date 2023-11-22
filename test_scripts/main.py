@@ -1,6 +1,5 @@
 """The main pipeline of Prompt2Model-Self-Distill."""
 
-import argparse
 import gc, os, re
 import json
 from functools import partial
@@ -9,6 +8,10 @@ import logging
 import datasets
 import shutil
 import torch, ray, random, numpy
+# wandb sync wandb/offline-run-*
+os.environ["WANDB_MODE"] = "offline"
+
+import wandb
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 from vllm import LLM, SamplingParams
@@ -20,7 +23,6 @@ from prompt2model.output_annotator import (
 )
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from collections import OrderedDict
-
 
 def set_seed(seed=42):
     # set seed for all possible avenues of stochasticity
@@ -91,6 +93,16 @@ def annotate_and_write_outputs(
             file.write(
                 f"{index}:\n\n------------------------------------------------\n\n[INPUT]\n\n{item['input_col']}\n\n[OUPUT]\n\n{item['output_col']} \n\n------------------------------------------------\n\n"
             )
+    with open(log_and_data_path / "config.json", "r") as json_file:
+        loaded_params = json.load(json_file)
+    loaded_params["generated_example_num"] = len(output_dataset)
+    loaded_params["expected_example_num"] = loaded_params["generation_epochs"] * loaded_params["generation_batch_size"]
+    loaded_params["selection_ratio"] = loaded_params["generated_example_num"] / loaded_params["expected_example_num"]
+    print(f"generated_example_num: {loaded_params['generated_example_num']}")
+    print(f"expected_example_num: {loaded_params['expected_example_num']}")
+    print(f"selection_ratio: {loaded_params['selection_ratio']}")
+    with open(log_and_data_path / "config.json", "w") as f:
+        json.dump(loaded_params, f, indent=4)
     del output_annotator
     destroy_model_parallel()
     gc.collect()
@@ -140,6 +152,8 @@ def finetune_vicuna(
     pretrain_model_path,
     training_epochs,
     resume_from_checkpoint,
+    run_name,
+    task_name,
 ):
     construct_prompt = partial(
         construct_meta_prompt,
@@ -181,8 +195,11 @@ def finetune_vicuna(
         torch_dtype=torch.bfloat16,
         use_flash_attention_2=True,
     )
+    wandb.init(project=task_name, name=run_name)
+    wandb.watch(model)
     training_args = TrainingArguments(
-        report_to="none",
+        report_to="wandb",
+        run_name=run_name,
         output_dir=str(ckpt_path),
         do_eval=False,
         save_strategy="epoch",
@@ -198,6 +215,7 @@ def finetune_vicuna(
         data_collator=data_collator,
         max_seq_length=1500,
     )
+    wandb.config.update(training_args.to_dict(), allow_val_change=True)
     trainer.train(resume_from_checkpoint=resume_from_checkpoint)
     for dirpath, _, filenames in os.walk(str(ckpt_path), topdown=True):
         # Delete optimizer
@@ -206,6 +224,7 @@ def finetune_vicuna(
                 file_path = os.path.join(dirpath, filename)
                 print(f"Deleting {file_path}")
                 os.system(f"rm -rf {(str(file_path))}")
+    wandb.finish()
     del trainer
     del model
     gc.collect()
@@ -333,6 +352,11 @@ def validate_or_test(
             )
             with open(evaluate_result_path, "w") as f:
                 json.dump(evaluate_result, f, indent=4)
+            with open(log_and_data_path / "config.json", "r") as json_file:
+                loaded_params = json.load(json_file)
+            loaded_params[f"validation_result_{ckpt_index + 1}"] = exact_match 
+            with open(log_and_data_path / "config.json", "w") as f:
+                json.dump(loaded_params, f, indent=4)
             evaluate_generated_content_path = log_and_data_path / "generated_contents"
             evaluate_generated_content_path.mkdir(parents=True, exist_ok=True)
             content_store_path = str(
@@ -449,6 +473,8 @@ def search_against_parameter(config_path: str):
             pretrain_model_path,
             loaded_params["training_epochs"],
             resume_from_checkpoint=False if complete_ckpts == 0 else True,
+            run_name=config_path.split("/")[-2],
+            task_name=loaded_params["task_name"],
         )
 
     evaluation_dataset_path = Path(

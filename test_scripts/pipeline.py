@@ -2,13 +2,9 @@ import json
 import os
 from pathlib import Path
 import csv
-from skopt import gp_minimize
-from skopt.space import Real, Integer
-from skopt.utils import use_named_args
-from skopt.space import Categorical
-import numpy as np
-
-log_and_data_root = Path("/home/cyzhao") / "SQuAD_experiments_6"
+import optuna
+    
+log_and_data_root = Path("/home/cyzhao") / "SQuAD_experiments_7"
 evaluation_result_file_tail = "result.json"
 ckpt_root = Path("/data2/cyzhao/ckpt_data_p2ms")
 best_ckpt_path = Path("/data2/cyzhao/best_ckpt")
@@ -17,8 +13,8 @@ log_and_data_root.mkdir(parents=True, exist_ok=True)
 ckpt_root.mkdir(parents=True, exist_ok=True)
 best_ckpt_path.mkdir(parents=True, exist_ok=True)
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,4"
-gpu_memory_utilization = 0.40
+os.environ["CUDA_VISIBLE_DEVICES"] = "1,2,3,4"
+gpu_memory_utilization = 0.90
 tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
 # gpu_memory_utilization 是在每张卡上的占比，比如 CUDA_CONDITION = "0,1,4,5", gpu_memory_utilization = 0.9
@@ -40,7 +36,7 @@ def print_and_execute_command(command):
     os.system(command)
 
 
-max_training_epochs = 5
+max_training_epochs = 3
 
 tasks = [
     (
@@ -209,25 +205,24 @@ for task in tasks:
             highest_validation_result = max(evaluate_result_path.values())
 
         write_results(log_and_data_root, max_training_epochs)
-        return -highest_validation_result
+        return highest_validation_result
 
-    space = [
-        Categorical(np.arange(10, 21, 2), name='generation_epochs'),
-        Categorical(np.arange(10, 21, 2), name='generation_batch_size'),
-        Categorical(np.arange(30, 52.5, 5), name='generation_top_k'),
-        Categorical(np.arange(0.3, 0.65, 0.1), name='generation_temperature'),
-        Categorical(np.arange(0.3, 0.65, 0.1), name='min_frequency'),
-        Categorical(np.arange(100, 155, 10), name='min_input_length'),
-        Integer(1, max_training_epochs, name='training_epochs'),
-    ]
+    def objective(trial):
+        generation_epochs = trial.suggest_categorical('generation_epochs', [10, 20, 30])
+        generation_batch_size = trial.suggest_categorical('generation_batch_size', [10, 15, 20])
+        generation_top_k = trial.suggest_categorical('generation_top_k', [40, 45, 50])
+        generation_temperature = trial.suggest_categorical('generation_temperature', [0.7, 0.8, 0.9, 1.0])
+        min_frequency = trial.suggest_categorical('min_frequency', [0.3, 0.35, 0.4])
+        min_input_length = trial.suggest_categorical('min_input_length', [110, 115, 120, 125])
+        training_epochs = trial.suggest_int('training_epochs', 3, max_training_epochs)
 
-    @use_named_args(space)
-    def objective(**params):
-        return objective_function(**params)
+        return objective_function(generation_epochs, generation_batch_size, generation_top_k, generation_temperature, min_frequency, min_input_length, training_epochs)
 
-    # 进行贝叶斯优化
-    result = gp_minimize(objective, space, n_calls=20, random_state=0)
+    study = optuna.create_study(direction='maximize')
+    study.optimize(objective, n_trials=20)
 
+    best_params = study.best_params
+    print(best_params)
     test_set_path = Path(
         "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test"
     )

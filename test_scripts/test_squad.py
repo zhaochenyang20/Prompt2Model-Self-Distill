@@ -12,7 +12,7 @@ from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 test_dataset = datasets.load_from_disk(
-    "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed"
+    "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test"
 )
 
 ckpt_path = Path("/home/cyzhao/ckpt")
@@ -74,11 +74,11 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 )
 
 
-for _ in range(1):
-    # base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-    path = "/data/cyzhao/best_ckpt/SQuAD"
+for _ in range(3):
+    base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+    path = "/data2/cyzhao/best_ckpt/SQuAD"
     ray.init(ignore_reinit_error=True)
-    tuned_vicuna = LLM(model=path, gpu_memory_utilization=0.9, tensor_parallel_size=1)
+    tuned_vicuna = LLM(model=path, gpu_memory_utilization=0.5, tensor_parallel_size=1)
     tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
     tuned_vicuna_generated_outputs = [
         each.outputs[0].text for each in tuned_vicuna_outputs

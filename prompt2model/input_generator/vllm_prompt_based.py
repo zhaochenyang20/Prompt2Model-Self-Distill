@@ -53,7 +53,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         instruction: str,
         few_shot_example_string: str,
         generated_inputs: list[str],
-        context_cutoff: int = 3500,
+        context_cutoff: int = 3200,
     ) -> str:
         """Generates a prompt string for generating a new input.
 
