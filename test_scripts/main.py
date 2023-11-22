@@ -1,28 +1,38 @@
 """The main pipeline of Prompt2Model-Self-Distill."""
 
-import gc, os, re
+import gc
 import json
+import logging
+import os
+import random
+import re
+import shutil
 from functools import partial
 from pathlib import Path
-import logging
+
 import datasets
-import shutil
-import torch, ray, random, numpy
+import numpy
+import ray
+import torch
+
 # wandb sync wandb/offline-run-*
 os.environ["WANDB_MODE"] = "offline"
+
+from collections import OrderedDict
 
 import wandb
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 from vllm import LLM, SamplingParams
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
+
 from prompt2model.input_generator import VLLMPromptBasedInputGenerator
 from prompt2model.output_annotator import (
     VLLMPromptBasedOutputAnnotator,
     construct_meta_prompt,
 )
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
-from collections import OrderedDict
+
 
 def set_seed(seed=42):
     # set seed for all possible avenues of stochasticity
@@ -43,6 +53,7 @@ def generate_and_write_inputs(
     log_and_data_path,
     gpu_memory_utilization,
     tensor_parallel_size,
+    expected_content,
 ):
     ray.init(ignore_reinit_error=True)
     input_generator = VLLMPromptBasedInputGenerator(
@@ -50,7 +61,11 @@ def generate_and_write_inputs(
         tensor_parallel_size=tensor_parallel_size,
     )
     inputs = input_generator.batch_generation_inputs(
-        prompt_spec, generation_epochs, generation_batch_size, parameter_dict
+        prompt_spec,
+        generation_epochs,
+        generation_batch_size,
+        parameter_dict,
+        expected_content,
     )
     with open(log_and_data_path / f"inputs.txt", "w") as file:
         for index, item in enumerate(inputs):
@@ -96,8 +111,12 @@ def annotate_and_write_outputs(
     with open(log_and_data_path / "config.json", "r") as json_file:
         loaded_params = json.load(json_file)
     loaded_params["generated_example_num"] = len(output_dataset)
-    loaded_params["expected_example_num"] = loaded_params["generation_epochs"] * loaded_params["generation_batch_size"]
-    loaded_params["selection_ratio"] = loaded_params["generated_example_num"] / loaded_params["expected_example_num"]
+    loaded_params["expected_example_num"] = (
+        loaded_params["generation_epochs"] * loaded_params["generation_batch_size"]
+    )
+    loaded_params["selection_ratio"] = (
+        loaded_params["generated_example_num"] / loaded_params["expected_example_num"]
+    )
     print(f"generated_example_num: {loaded_params['generated_example_num']}")
     print(f"expected_example_num: {loaded_params['expected_example_num']}")
     print(f"selection_ratio: {loaded_params['selection_ratio']}")
@@ -354,7 +373,7 @@ def validate_or_test(
                 json.dump(evaluate_result, f, indent=4)
             with open(log_and_data_path / "config.json", "r") as json_file:
                 loaded_params = json.load(json_file)
-            loaded_params[f"validation_result_{ckpt_index + 1}"] = exact_match 
+            loaded_params[f"validation_result_{ckpt_index + 1}"] = exact_match
             with open(log_and_data_path / "config.json", "w") as f:
                 json.dump(loaded_params, f, indent=4)
             evaluate_generated_content_path = log_and_data_path / "generated_contents"
@@ -409,6 +428,8 @@ def search_against_parameter(config_path: str):
         loaded_params = json.load(json_file)
     gpu_memory_utilization = loaded_params["gpu_memory_utilization"]
     tensor_parallel_size = loaded_params["tensor_parallel_size"]
+    expected_content = loaded_params["expected_content"]
+    evaluation_dataset_path = loaded_params["evaluation_dataset_path"]
     prompt_spec = MockPromptSpec(
         task_type=TaskType.TEXT_GENERATION,
         instruction=loaded_params["instruction"],
@@ -432,6 +453,7 @@ def search_against_parameter(config_path: str):
             log_and_data_path,
             gpu_memory_utilization,
             tensor_parallel_size,
+            expected_content,
         )
     if not (log_and_data_path / "dataset").exists():
         print("annotate_and_write_outputs!")
@@ -476,10 +498,6 @@ def search_against_parameter(config_path: str):
             run_name=config_path.split("/")[-2],
             task_name=loaded_params["task_name"],
         )
-
-    evaluation_dataset_path = Path(
-        "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed"
-    )
 
     if len(list(evaluate_result.keys())) < loaded_params["training_epochs"]:
         print("validate!")

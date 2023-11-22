@@ -2,14 +2,21 @@ import gc
 import os
 from functools import partial
 from pathlib import Path
+
 import datasets
 import torch
 import wandb
+
 os.environ["WANDB_PROJECT"] = "test"
-from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
-from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
-from transformers import TrainerCallback
 import wandb
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    TrainerCallback,
+    TrainingArguments,
+)
+from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
+
 
 class WandbLoggingCallback(TrainerCallback):
     def on_log(self, args, state, control, logs=None, **kwargs):
@@ -72,9 +79,7 @@ def map_func(example):
 
 for each in os.listdir(generated_dataset_path):
     name = each[8:]
-    dataset = datasets.load_from_disk(generated_dataset_path / each).filter(
-        filter_func
-    )
+    dataset = datasets.load_from_disk(generated_dataset_path / each).filter(filter_func)
     mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
     print(mapped_dataset[1]["text"])
     model = AutoModelForCausalLM.from_pretrained(
@@ -92,11 +97,11 @@ for each in os.listdir(generated_dataset_path):
         response_template_ids, tokenizer=tokenizer
     )
     training_args = TrainingArguments(
-    report_to="wandb",
-    output_dir="/home/cyzhao/cache",
-    do_eval=False,
-    save_strategy="no",
-    num_train_epochs=1,
+        report_to="wandb",
+        output_dir="/home/cyzhao/cache",
+        do_eval=False,
+        save_strategy="no",
+        num_train_epochs=1,
     )
     wandb.init(project="your_project_name", name="your_run_name")
     wandb.config.update(training_args.to_dict())
@@ -107,7 +112,7 @@ for each in os.listdir(generated_dataset_path):
         dataset_text_field="text",
         data_collator=data_collator,
         max_seq_length=1500,
-        callbacks=[WandbLoggingCallback()]  # Add your custom callback here
+        callbacks=[WandbLoggingCallback()],  # Add your custom callback here
     )
     trainer.train()
     del trainer

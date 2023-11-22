@@ -47,4 +47,5 @@ inputs = input_generator.batch_generation_inputs(
     5,
     5,
     {},
+    batch_generation_inputs='"Question" and "Context"',
 )

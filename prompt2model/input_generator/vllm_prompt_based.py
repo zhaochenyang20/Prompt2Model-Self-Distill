@@ -6,6 +6,7 @@ from typing import Any
 
 from tqdm import tqdm
 from vllm import LLM, SamplingParams
+
 from prompt2model.input_generator import InputGenerator
 from prompt2model.input_generator.prompt_template import (
     construct_meta_prompt,
@@ -25,8 +26,8 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
     def __init__(
         self,
         pretrained_model_name: str = "lmsys/vicuna-7b-v1.5",
-        gpu_memory_utilization = 0.5,
-        tensor_parallel_size = 1,
+        gpu_memory_utilization=0.5,
+        tensor_parallel_size=1,
     ) -> None:
         """Create a new instance of the HFPromptBasedInputGenerator.
 
@@ -159,7 +160,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         ]
         return new_inputs
 
-    def verify(self, prompt_spec: PromptSpec, new_inputs: list[str]):
+    def verify(self, prompt_spec: PromptSpec, new_inputs: list[str], expected_content):
         """Check the generated inputs.
 
         Args:
@@ -181,7 +182,9 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             for input in high_quality_inputs:
                 high_quality_input_string += f'"{input}"\n\n'
             return construct_verify_prompt(
-                examples=high_quality_input_string, new_input=new_input
+                examples=high_quality_input_string,
+                new_input=new_input,
+                expected_content=expected_content,
             )
 
         if new_inputs is None:
@@ -207,6 +210,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         generation_epochs: int,
         per_epoch_num: int,
         hyperparameter_choices: dict[str, Any],
+        expected_content,
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
 
@@ -233,6 +237,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                         new_inputs, hyperparameter_choices.get("min_input_length", 120)
                     )
                 ),
+                expected_content=expected_content,
             )
             if filtered_inputs is not None:
                 generated_inputs.extend(filtered_inputs)
