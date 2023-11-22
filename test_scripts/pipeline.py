@@ -1,10 +1,11 @@
+import csv
 import json
 import os
 from pathlib import Path
-import csv
+
 import optuna
-    
-log_and_data_root = Path("/home/cyzhao") / "SQuAD_experiments_7"
+
+log_and_data_root = Path("/home/cyzhao") / "SQuAD_experiments_8"
 evaluation_result_file_tail = "result.json"
 ckpt_root = Path("/data2/cyzhao/ckpt_data_p2ms")
 best_ckpt_path = Path("/data2/cyzhao/best_ckpt")
@@ -38,6 +39,7 @@ def print_and_execute_command(command):
 
 max_training_epochs = 3
 
+# Task_name, instruction, examples, expected_content, validation_dataset_path, test_dataset_path
 tasks = [
     (
         "SQuAD",
@@ -52,6 +54,9 @@ tasks = [
 [input]="Question: The Ottoman empire controlled territory on three continents, Africa, Asia and which other? Context: The Ottoman Empire was an imperial state that lasted from 1299 to 1923. During the 16th and 17th centuries, in particular at the height of its power under the reign of Suleiman the Magnificent, the Ottoman Empire was a powerful multinational, multilingual empire controlling much of Southeast Europe, Western Asia, the Caucasus, North Africa, and the Horn of Africa. At the beginning of the 17th century the empire contained 32 provinces and numerous vassal states. Some of these were later absorbed into the empire, while others were granted various types of autonomy during the course of centuries."
 [output]="Europe"
 """,
+        '"Question" and "Context"',
+        "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed",
+        "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test",
     )
 ]
 
@@ -92,7 +97,14 @@ def write_results(log_and_data_root, max_training_epochs):
 
 
 for task in tasks:
-    task_name, instruction, examples = task
+    (
+        task_name,
+        instruction,
+        examples,
+        expected_content,
+        evaluation_dataset_path,
+        test_set_path,
+    ) = task
 
     def objective_function(
         generation_epochs,
@@ -116,11 +128,22 @@ for task in tasks:
         log_and_data_path.mkdir(parents=True, exist_ok=True)
         ckpt_path = ckpt_root / name
         ckpt_path.mkdir(parents=True, exist_ok=True)
+
+        # task_name,
+        # instruction,
+        # examples,
+        # expected_content,
+        # evaluation_dataset_path,
+        # test_set_path,
+
         params = {
             "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
             "task_name": task_name,
             "instruction": instruction,
             "examples": examples,
+            "expected_content": expected_content,
+            "evaluation_dataset_path": evaluation_dataset_path,
+            "test_set_path": test_set_path,
             "generation_epochs": int(generation_epochs),
             "generation_batch_size": int(generation_batch_size),
             "generation_top_k": int(generation_top_k),
@@ -202,30 +225,42 @@ for task in tasks:
                 for ckpt_path in ckpt_paths_and_result:
                     print_and_execute_command(f"rm -rf {ckpt_path}")
         else:
-            highest_validation_result = max(evaluate_result_path.values())
+            highest_validation_result = max(evaluate_result.values())
 
         write_results(log_and_data_root, max_training_epochs)
         return highest_validation_result
 
     def objective(trial):
-        generation_epochs = trial.suggest_categorical('generation_epochs', [10, 20, 30])
-        generation_batch_size = trial.suggest_categorical('generation_batch_size', [10, 15, 20])
-        generation_top_k = trial.suggest_categorical('generation_top_k', [40, 45, 50])
-        generation_temperature = trial.suggest_categorical('generation_temperature', [0.7, 0.8, 0.9, 1.0])
-        min_frequency = trial.suggest_categorical('min_frequency', [0.3, 0.35, 0.4])
-        min_input_length = trial.suggest_categorical('min_input_length', [110, 115, 120, 125])
-        training_epochs = trial.suggest_int('training_epochs', 3, max_training_epochs)
+        generation_epochs = trial.suggest_categorical("generation_epochs", [10, 20, 30])
+        generation_batch_size = trial.suggest_categorical(
+            "generation_batch_size", [10, 15, 20]
+        )
+        generation_top_k = trial.suggest_categorical("generation_top_k", [40, 45, 50])
+        generation_temperature = trial.suggest_categorical(
+            "generation_temperature", [0.7, 0.8, 0.9, 1.0]
+        )
+        min_frequency = trial.suggest_categorical("min_frequency", [0.3, 0.35, 0.4])
+        min_input_length = trial.suggest_categorical(
+            "min_input_length", [110, 115, 120, 125]
+        )
+        training_epochs = trial.suggest_int("training_epochs", 3, max_training_epochs)
 
-        return objective_function(generation_epochs, generation_batch_size, generation_top_k, generation_temperature, min_frequency, min_input_length, training_epochs)
+        return objective_function(
+            generation_epochs,
+            generation_batch_size,
+            generation_top_k,
+            generation_temperature,
+            min_frequency,
+            min_input_length,
+            training_epochs,
+        )
 
-    study = optuna.create_study(direction='maximize')
+    study = optuna.create_study(direction="maximize")
     study.optimize(objective, n_trials=20)
 
     best_params = study.best_params
     print(best_params)
-    test_set_path = Path(
-        "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test"
-    )
+
     with open(best_validation_result_path, "r") as json_file:
         evaluate_result = json.load(json_file)
     if "test_result" in evaluate_result:
