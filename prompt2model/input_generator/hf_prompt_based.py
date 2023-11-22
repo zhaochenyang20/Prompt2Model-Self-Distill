@@ -7,6 +7,7 @@ from typing import Any
 import torch
 from optimum.bettertransformer import BetterTransformer
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
 from prompt2model.dataset_generator.prompt_based import Example
 from prompt2model.input_generator import InputGenerator
 from prompt2model.input_generator.prompt_template import construct_meta_prompt

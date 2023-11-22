@@ -46,7 +46,7 @@ Think twice before generating a new [input]. Only response the new [input] witho
 
 # ### [YOUR TASK]
 
-# Extract "Question" and "Context" from [NEW INPUT] and output as your response. 
+# Extract "Question" and "Context" from [NEW INPUT] and output as your response.
 
 # ### [YOUR RESPONSE]
 
@@ -63,7 +63,7 @@ INPUT_FILTER_TEMPLATE = """
 
 ### [YOUR TASK]
 
-Extract "Question" and "Context" from [NEW INPUT] and output as your response. 
+Extract {expected_content} from [NEW INPUT] and output as your response.
 
 ### [YOUR RESPONSE]
 
@@ -71,12 +71,14 @@ Extract "Question" and "Context" from [NEW INPUT] and output as your response.
 
 
 def construct_verify_prompt(
-    examples: str = None,
-    new_input: str = None,
+    examples: str,
+    new_input: str,
+    expected_content: str,
 ):
     return INPUT_FILTER_TEMPLATE.format(
         few_shot_examples=examples,
         new_input=new_input,
+        expected_content=expected_content,
     )
 
 

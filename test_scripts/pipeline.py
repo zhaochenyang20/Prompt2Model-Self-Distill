@@ -5,7 +5,8 @@ from pathlib import Path
 
 import optuna
 
-log_and_data_root = Path("/home/cyzhao") / "SQuAD_experiments_8"
+experiment_name =  "SQuAD_experiments_8"
+log_and_data_root = Path("/home/cyzhao") / experiment_name
 evaluation_result_file_tail = "result.json"
 ckpt_root = Path("/data2/cyzhao/ckpt_data_p2ms")
 best_ckpt_path = Path("/data2/cyzhao/best_ckpt")
@@ -14,7 +15,7 @@ log_and_data_root.mkdir(parents=True, exist_ok=True)
 ckpt_root.mkdir(parents=True, exist_ok=True)
 best_ckpt_path.mkdir(parents=True, exist_ok=True)
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-os.environ["CUDA_VISIBLE_DEVICES"] = "1,2,3,4"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
 gpu_memory_utilization = 0.90
 tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
@@ -55,6 +56,7 @@ tasks = [
 [output]="Europe"
 """,
         '"Question" and "Context"',
+        #! 数据集需要有 `input_col` 和 `output_col`，需要导入
         "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed",
         "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test",
     )
@@ -210,7 +212,7 @@ for task in tasks:
                     json.dump(validation_results, f, indent=4)
 
                 # Move the best checkpoint and delete others
-                task_best_ckpt_path = Path(best_ckpt_path) / task_name
+                task_best_ckpt_path = Path(best_ckpt_path) / experiment_name
                 if task_best_ckpt_path.exists():
                     print_and_execute_command(f"rm -rf {task_best_ckpt_path}")
                 print_and_execute_command(

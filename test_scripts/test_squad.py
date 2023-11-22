@@ -1,8 +1,9 @@
 import gc
 from functools import partial
 from pathlib import Path
-import ray
+
 import datasets
+import ray
 import torch
 from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
@@ -11,15 +12,20 @@ from vllm.model_executor.parallel_utils.parallel_state import destroy_model_para
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
+#! TODO 改为新任务的 test set path
+
 test_dataset = datasets.load_from_disk(
-    "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test"
+
 )
 
-ckpt_path = Path("/home/cyzhao/ckpt")
+#!     "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test" SQuAD
+
+# ckpt_path = Path("/home/cyzhao/ckpt")
 inputs_dir = Path("/home/cyzhao/")
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
+    #! TODO 改 instruction 和 examples
     instruction="Your task is to generate an answer to a natural question. In this task, the input is a string that consists of both a question and a context passage. The context is a descriptive passage related to the question and contains the answer. And the question can range from Math, Cultural, Social, Geometry, Biology, History, Sports, Technology, Science, and so on.",  # # noqa E501
     examples="""
 [input]="Question: What city did Super Bowl 50 take place in? Context: Super Bowl 50 was an American football game to determine the champion of the National Football League (NFL) for the 2015 season. The American Football Conference (AFC) champion Denver Broncos defeated the National Football Conference (NFC) champion Carolina Panthers 24–10 to earn their third Super Bowl title. The game was played on February 7, 2016, at Levi's Stadium in the San Francisco Bay Area at Santa Clara, California. As this was the 50th Super Bowl, the league emphasized the "golden anniversary" with various gold-themed initiatives, as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals (under which the game would have been known as "Super Bowl L"), so that the logo could prominently feature the Arabic numerals 50."
@@ -47,7 +53,6 @@ tokenizer = AutoTokenizer.from_pretrained(
     trust_remote_code=True,
 )
 
-
 def map_func(example):
     example["model_input"] = construct_prompt(new_input=example["input_col"])
     example["model_output"] = example["output_col"]
@@ -55,7 +60,6 @@ def map_func(example):
         example["model_input"] + example["model_output"] + tokenizer.eos_token
     )
     return example
-
 
 test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
 prompts = test_dataset["model_input"]
@@ -73,12 +77,12 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
     {"model_ouput": GROUND_TRUTH, "model_input": MODEL_INPUTS}
 )
 
-
+#! 这里测试轮次比较多，是为了看结果是否稳定
 for _ in range(3):
     base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
     path = "/data2/cyzhao/best_ckpt/SQuAD"
     ray.init(ignore_reinit_error=True)
-    tuned_vicuna = LLM(model=path, gpu_memory_utilization=0.5, tensor_parallel_size=1)
+    tuned_vicuna = LLM(model=base_model, gpu_memory_utilization=0.5, tensor_parallel_size=1)
     tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
     tuned_vicuna_generated_outputs = [
         each.outputs[0].text for each in tuned_vicuna_outputs
@@ -96,6 +100,7 @@ for _ in range(3):
             f"\n\nresult of {_} th:\n\n------------------------------------------------{index / len(GROUND_TRUTH)}------------------------------------------------\n\n"
         )
     del tuned_vicuna
+    #! 记得改名字
     evaluate_generated_content_path = inputs_dir / "base_vicuna_squad"
     print(f"Genrated contents are stored in {str(evaluate_generated_content_path)}")
     datasets.Dataset.from_dict(

@@ -20,8 +20,8 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
     def __init__(
         self,
         pretrained_model_name: str = "lmsys/vicuna-7b-v1.5",
-        gpu_memory_utilization = 0.5,
-        tensor_parallel_size = 1, 
+        gpu_memory_utilization=0.5,
+        tensor_parallel_size=1,
     ) -> None:
         """Create a new instance of the VLLMPromptBasedOutputAnnotator.
 
