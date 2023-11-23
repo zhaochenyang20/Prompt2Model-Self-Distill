@@ -2,27 +2,15 @@ import gc
 import os
 from functools import partial
 from pathlib import Path
-
+os.environ["WANDB_MODE"] = "offline"
 import datasets
 import torch
-import wandb
-
-os.environ["WANDB_PROJECT"] = "test"
-import wandb
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
-    TrainerCallback,
     TrainingArguments,
 )
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
-
-
-class WandbLoggingCallback(TrainerCallback):
-    def on_log(self, args, state, control, logs=None, **kwargs):
-        if logs is not None:
-            # Filter out the desired metrics if needed
-            wandb.log(logs)
 
 
 from prompt2model.output_annotator import construct_meta_prompt
@@ -33,6 +21,7 @@ model_path = Path(
 )
 ckpt_path = Path("/home/cyzhao/ckpt")
 generated_dataset_path = Path("/home/cyzhao/generated_datasets")
+dataset_path = Path("/home/cyzhao/finished_experiments/SQuAD_experiments_7/SQuAD_10_15_40_0.8_0.4_120_3/dataset")
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
@@ -77,46 +66,43 @@ def map_func(example):
     return example
 
 
-for each in os.listdir(generated_dataset_path):
-    name = each[8:]
-    dataset = datasets.load_from_disk(generated_dataset_path / each).filter(filter_func)
-    mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
-    print(mapped_dataset[1]["text"])
-    model = AutoModelForCausalLM.from_pretrained(
-        model_path,
-        device_map="auto",
-        torch_dtype=torch.bfloat16,
-        use_flash_attention_2=True,
-    )
-    response_template_with_context = "\n### Your Output:\n\n"
-    response_template_ids = tokenizer.encode(
-        response_template_with_context, add_special_tokens=False
-    )[2:]
+dataset = datasets.load_from_disk(dataset_path).filter(filter_func)
+mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
+print(mapped_dataset[1]["text"])
+model = AutoModelForCausalLM.from_pretrained(
+    model_path,
+    device_map="auto",
+    torch_dtype=torch.bfloat16,
+    use_flash_attention_2=True,
+)
+response_template_with_context = "\n### Your Output:\n\n"
+response_template_ids = tokenizer.encode(
+    response_template_with_context, add_special_tokens=False
+)[2:]
 
-    data_collator = DataCollatorForCompletionOnlyLM(
-        response_template_ids, tokenizer=tokenizer
-    )
-    training_args = TrainingArguments(
-        report_to="wandb",
-        output_dir="/home/cyzhao/cache",
-        do_eval=False,
-        save_strategy="no",
-        num_train_epochs=1,
-    )
-    wandb.init(project="your_project_name", name="your_run_name")
-    wandb.config.update(training_args.to_dict())
-    trainer = SFTTrainer(
-        model=model,
-        args=training_args,
-        train_dataset=mapped_dataset,
-        dataset_text_field="text",
-        data_collator=data_collator,
-        max_seq_length=1500,
-        callbacks=[WandbLoggingCallback()],  # Add your custom callback here
-    )
-    trainer.train()
-    del trainer
-    gc.collect()
-    torch.cuda.empty_cache()
-    model.save_pretrained(ckpt_path / name)
-    tokenizer.save_pretrained(ckpt_path / name)
+data_collator = DataCollatorForCompletionOnlyLM(
+    response_template_ids, tokenizer=tokenizer
+)
+
+training_args = TrainingArguments(
+    report_to="wandb",
+    output_dir="/data2/cyzhao/test",
+    do_eval=False,
+    save_strategy="no",
+    evaluation_strategy="no",
+    logging_steps=4,
+    num_train_epochs=3,
+    seed=42,
+)
+trainer = SFTTrainer(
+    model=model,
+    args=training_args,
+    train_dataset=mapped_dataset,
+    dataset_text_field="text",
+    data_collator=data_collator,
+    max_seq_length=1500,
+)
+trainer.train()
+del trainer
+gc.collect()
+torch.cuda.empty_cache()

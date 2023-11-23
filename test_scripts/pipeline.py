@@ -5,7 +5,8 @@ from pathlib import Path
 
 import optuna
 
-experiment_name =  "SQuAD_experiments_8"
+task_name = "task937"
+experiment_name = "NI_task_937_exp_2"
 log_and_data_root = Path("/home/cyzhao") / experiment_name
 evaluation_result_file_tail = "result.json"
 ckpt_root = Path("/data2/cyzhao/ckpt_data_p2ms")
@@ -15,8 +16,8 @@ log_and_data_root.mkdir(parents=True, exist_ok=True)
 ckpt_root.mkdir(parents=True, exist_ok=True)
 best_ckpt_path.mkdir(parents=True, exist_ok=True)
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
-gpu_memory_utilization = 0.90
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
+gpu_memory_utilization = 0.85
 tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
 # gpu_memory_utilization 是在每张卡上的占比，比如 CUDA_CONDITION = "0,1,4,5", gpu_memory_utilization = 0.9
@@ -59,7 +60,43 @@ tasks = [
         #! 数据集需要有 `input_col` 和 `output_col`，需要导入
         "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed",
         "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test",
-    )
+    ),
+    (
+        f"NI_task020",
+        "In this task, the answer will be 'yes' if the provided sentence contains an explicit mention that answers the given question. Otherwise, the answer should be 'no'. Instances where the answer is implied from the sentence using 'instinct' or 'common sense' (as opposed to being written explicitly in the sentence) should be labeled as 'no'.",
+        """
+[input]="Sentence: Jack played basketball for an hour after school, after which he was very tired. Question: How long did Jack play basketball?"
+[output]="Yes."
+
+[input]="Sentence: He was born in China, so he went to the Embassy at 1 pm to apply for a U.S. Visa. Question: When did he go to Embassy?"
+[output]="Yes."
+
+[input]=“Sentence: Jerry goes out to the pier and casts his favorite bait : cheese . Question: How much time did Jerry spend at the pier?”
+[output]=“No.”
+""",
+        '"Sentence" and "Question"',
+        #! 数据集需要有 `input_col` 和 `output_col`，需要导入
+        "/home/cyzhao/prompt2model_test/testdataset/NI/eval/task020",
+        "/home/cyzhao/prompt2model_test/testdataset/NI/test/task020",
+    ),
+    (
+        f"NI_task937",
+        "In this task, you are given a hypothesis and an update. The hypothesis sentence is a statement that speaks of a socially normative behavior. In other words, it is a generalizing statement about how we expect people to behave in society. The update provides additional contexts about the situation that might UNDERMINE or SUPPORT the generalization. An undermining context provides a situation that weakens the hypothesis. A supporting context provides a situation that strengthens the generalization. Your task is to output 'strengthener' or 'weakener' if the update supports or undermines the hypothesis, respectively",
+            """
+[input]="Hypothesis: You should help your family with funeral expenses.\nUpdate: They have asked you to chip in"
+[output]="strengthener"
+
+[input]="Hypothesis: It's good to protect your property.\nUpdate: you don't care what happens to your property."
+[output]="weakener"
+
+[input]=“Hypothesis: You should help your family with funeral expenses.\nUpdate: You are not financially stable to help out”
+[output]=“weakener”
+""",
+        '"“Hypothesis" and "Update"',
+        #! 数据集需要有 `input_col` 和 `output_col`，需要导入
+        "/home/cyzhao/prompt2model_test/testdataset/NI/eval/task937",
+        "/home/cyzhao/prompt2model_test/testdataset/NI/test/task937",
+    ),
 ]
 
 
@@ -98,7 +135,7 @@ def write_results(log_and_data_root, max_training_epochs):
         writer.writerows(csv_data)
 
 
-for task in tasks:
+for task in tasks[2:]:
     (
         task_name,
         instruction,
@@ -272,7 +309,7 @@ for task in tasks:
         print("test best ckpt.")
         validate_or_test(
             test_set_path,
-            best_ckpt_path / task_name,
+            best_ckpt_path / experiment_name,
             instruction,
             examples,
             gpu_memory_utilization,

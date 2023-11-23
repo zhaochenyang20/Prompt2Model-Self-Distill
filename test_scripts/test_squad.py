@@ -14,14 +14,34 @@ from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 #! TODO 改为新任务的 test set path
 
-test_dataset = datasets.load_from_disk(
+import datasets
+from datasets import load_dataset
 
-)
+original_dataset = load_dataset("squad", split="validation")
+
+
+def join_function(example):
+    new_example = {}
+    new_example["input_col"] = (
+        "Question: " + example["question"] + " Context: " + example["context"]
+    )
+    new_example["output_col"] = example["answers"]["text"][0]
+    return new_example
+
+
+joined_dataset = original_dataset.map(join_function)
+joined_dataset.remove_columns(["question", "answers"])
+
+# test_dataset = datasets.load_from_disk(
+# "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test"
+# )
+
+test_dataset = joined_dataset
 
 #!     "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test" SQuAD
 
 # ckpt_path = Path("/home/cyzhao/ckpt")
-inputs_dir = Path("/home/cyzhao/")
+inputs_dir = Path("/home/cyzhao/evaluation_outputs")
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
@@ -53,6 +73,7 @@ tokenizer = AutoTokenizer.from_pretrained(
     trust_remote_code=True,
 )
 
+
 def map_func(example):
     example["model_input"] = construct_prompt(new_input=example["input_col"])
     example["model_output"] = example["output_col"]
@@ -60,6 +81,7 @@ def map_func(example):
         example["model_input"] + example["model_output"] + tokenizer.eos_token
     )
     return example
+
 
 test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
 prompts = test_dataset["model_input"]
@@ -78,39 +100,53 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 )
 
 #! 这里测试轮次比较多，是为了看结果是否稳定
-for _ in range(3):
-    base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-    path = "/data2/cyzhao/best_ckpt/SQuAD"
-    ray.init(ignore_reinit_error=True)
-    tuned_vicuna = LLM(model=base_model, gpu_memory_utilization=0.5, tensor_parallel_size=1)
-    tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
-    tuned_vicuna_generated_outputs = [
-        each.outputs[0].text for each in tuned_vicuna_outputs
-    ]
-    index = 0
-    for i in range(len(GROUND_TRUTH)):
-        if (
-            GROUND_TRUTH[i] in tuned_vicuna_generated_outputs[i]
-            or tuned_vicuna_generated_outputs[i] in GROUND_TRUTH[i]
-        ):
-            index += 1
-    print(index / len(GROUND_TRUTH))
-    with open(inputs_dir / f"evaluate_10_times.txt", "a+") as file:
-        file.write(
-            f"\n\nresult of {_} th:\n\n------------------------------------------------{index / len(GROUND_TRUTH)}------------------------------------------------\n\n"
-        )
-    del tuned_vicuna
-    #! 记得改名字
-    evaluate_generated_content_path = inputs_dir / "base_vicuna_squad"
-    print(f"Genrated contents are stored in {str(evaluate_generated_content_path)}")
-    datasets.Dataset.from_dict(
-        dict(
-            model_output=tuned_vicuna_generated_outputs,
-            model_input=prompts,
-            groud_truth=GROUND_TRUTH,
-        )
-    ).save_to_disk(evaluate_generated_content_path)
-    gc.collect()
-    torch.cuda.empty_cache()
-    ray.shutdown()
-    destroy_model_parallel()
+base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+path = "/data2/cyzhao/best_ckpt/SQuAD_exp_7"
+ray.init(ignore_reinit_error=True)
+tuned_vicuna = LLM(model=base_model, gpu_memory_utilization=0.95, tensor_parallel_size=2)
+tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
+tuned_vicuna_generated_outputs = [each.outputs[0].text for each in tuned_vicuna_outputs]
+
+
+# def evalute_squad(
+#     GROUND_TRUTH,
+#     tuned_model_generated_outputs,
+# ):
+#     index = 0
+#     for i in range(len(GROUND_TRUTH)):
+#         if (
+#             GROUND_TRUTH[i] in tuned_model_generated_outputs[i]
+#             or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]
+#         ):
+#             index += 1
+#     exact_match = index / len(GROUND_TRUTH)
+#     return exact_match
+
+
+# for idx, i in enumerate(list(range(0, len(joined_dataset), 1000))):
+#     exact_match = evalute_squad(
+#         GROUND_TRUTH=GROUND_TRUTH[i : i + 1000],
+#         tuned_model_generated_outputs=tuned_vicuna_generated_outputs[i : i + 1000],
+#     )
+#     with open(inputs_dir / f"evaluate_base_model_on_the_whole.txt", "a+") as file:
+#         print(
+#             f"\n\nresult of {idx + 1} th:\n\n------------------------------------------------{exact_match}------------------------------------------------\n\n"
+#         )
+#         file.write(
+#             f"\n\nresult of {idx + 1} th:\n\n------------------------------------------------{exact_match}------------------------------------------------\n\n"
+#         )
+# del tuned_vicuna
+# #! 记得改名字
+# evaluate_generated_content_path = inputs_dir / "base_vicuna_squad"
+# print(f"Genrated contents are stored in {str(evaluate_generated_content_path)}")
+# datasets.Dataset.from_dict(
+#     dict(
+#         model_output=tuned_vicuna_generated_outputs,
+#         model_input=prompts,
+#         groud_truth=GROUND_TRUTH,
+#     )
+# ).save_to_disk(evaluate_generated_content_path)
+gc.collect()
+torch.cuda.empty_cache()
+ray.shutdown()
+destroy_model_parallel()

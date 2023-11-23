@@ -223,6 +223,7 @@ def finetune_vicuna(
         do_eval=False,
         save_strategy="epoch",
         evaluation_strategy="no",
+        logging_steps=4,
         num_train_epochs=training_epochs,
         seed=42,
     )
