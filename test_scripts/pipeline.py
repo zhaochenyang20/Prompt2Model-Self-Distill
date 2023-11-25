@@ -57,7 +57,7 @@ with open(file_path, 'r', encoding='utf-8') as json_file:
 tasks = []
 
 # TODO change task_names
-task_names = ['620']
+task_names = ['034']
 
 for task_name in task_names:
     for task in all_tasks:
@@ -68,16 +68,17 @@ for task_name in task_names:
                 task['examples'],
                 task['expected_content'],
                 f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/task{task_name}",
-                 f"/home/cyzhao/prompt2model_test/testdataset/NI/test/task{task_name}",
+                f"/home/cyzhao/prompt2model_test/testdataset/NI/test/task{task_name}",
+                task['optional_list']
             )
             tasks.append(task_tuple)
 
 # TODO change task name
-task_name = "task620"
+task_name = "task039"
 
 # TODO change experiment name
 # experiment_name = "NI_"+task_name+"_exp_2"
-experiment_name = "NI_"+task_name+"_exp_3"
+experiment_name = "NI_"+task_name+"_exp_2"
 
 log_and_data_root = Path("/home/cyzhao") / experiment_name
 evaluation_result_file_tail = "result.json"
@@ -89,7 +90,7 @@ ckpt_root.mkdir(parents=True, exist_ok=True)
 best_ckpt_path.mkdir(parents=True, exist_ok=True)
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
 # TODO change avilable cards
-os.environ["CUDA_VISIBLE_DEVICES"] = "5,6"
+os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 gpu_memory_utilization = 0.9
 tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
@@ -262,6 +263,7 @@ for task in tasks[0:]:
             min_frequency,
             min_input_length,
             training_epochs,
+            optional_list
         )
 
     study = optuna.create_study(direction="maximize")

@@ -232,15 +232,17 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 if element is not None and element != ""
             ]
             filtered_inputs = ablation_list_filter(
-                self.verify(
-                    prompt_spec,
-                    ablation_list_filter(
-                        length_filter(
-                            new_inputs, hyperparameter_choices.get("min_input_length", 120)
+                length_filter(
+                    self.verify(
+                        prompt_spec,
+                        ablation_list_filter(
+                            length_filter(
+                                new_inputs, hyperparameter_choices.get("min_input_length", 120)
+                            ),
+                            optional_list
                         ),
-                        optional_list
-                    ),
-                    expected_content=expected_content,
+                        expected_content=expected_content,
+                    ),hyperparameter_choices.get("min_input_length", 120)
                 ),
                 optional_list
             )
