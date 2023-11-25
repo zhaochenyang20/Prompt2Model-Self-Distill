@@ -1,0 +1,387 @@
+[2023-11-24 04:45:46,524] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+NI_task935
+searching parameters: NI_task935_40_40_45_0.9_0.3_115_3
+/home/cyzhao/NI_task935_exp_1/NI_task935_40_40_45_0.9_0.3_115_3
+/home/cyzhao/NI_task935_exp_1/NI_task935_40_40_45_0.9_0.3_115_3/config.json
+generate_and_write_inputs!
+INFO 11-24 04:45:52 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 04:46:11 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-24 05:00:27 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 05:00:41 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+generated_example_num: 1163
+expected_example_num: 1600
+selection_ratio: 0.726875
+finetune_vicuna!
+{'loss': 1.6789, 'learning_rate': 4.9543378995433794e-05, 'epoch': 0.03}
+{'loss': 1.184, 'learning_rate': 4.908675799086758e-05, 'epoch': 0.05}
+{'loss': 1.2705, 'learning_rate': 4.863013698630137e-05, 'epoch': 0.08}
+{'loss': 0.5819, 'learning_rate': 4.8173515981735164e-05, 'epoch': 0.11}
+{'loss': 0.3213, 'learning_rate': 4.7716894977168955e-05, 'epoch': 0.14}
+{'loss': 0.5001, 'learning_rate': 4.726027397260274e-05, 'epoch': 0.16}
+{'loss': 0.2475, 'learning_rate': 4.680365296803653e-05, 'epoch': 0.19}
+{'loss': 0.5959, 'learning_rate': 4.6347031963470325e-05, 'epoch': 0.22}
+{'loss': 0.4088, 'learning_rate': 4.589041095890411e-05, 'epoch': 0.25}
+{'loss': 0.4282, 'learning_rate': 4.54337899543379e-05, 'epoch': 0.27}
+{'loss': 0.3111, 'learning_rate': 4.4977168949771694e-05, 'epoch': 0.3}
+{'loss': 0.1884, 'learning_rate': 4.452054794520548e-05, 'epoch': 0.33}
+{'loss': 0.3754, 'learning_rate': 4.406392694063927e-05, 'epoch': 0.36}
+{'loss': 0.2392, 'learning_rate': 4.360730593607306e-05, 'epoch': 0.38}
+{'loss': 0.2374, 'learning_rate': 4.3150684931506855e-05, 'epoch': 0.41}
+{'loss': 0.5805, 'learning_rate': 4.269406392694064e-05, 'epoch': 0.44}
+{'loss': 0.2231, 'learning_rate': 4.223744292237443e-05, 'epoch': 0.47}
+{'loss': 0.166, 'learning_rate': 4.1780821917808224e-05, 'epoch': 0.49}
+{'loss': 0.3737, 'learning_rate': 4.132420091324201e-05, 'epoch': 0.52}
+{'loss': 0.1976, 'learning_rate': 4.08675799086758e-05, 'epoch': 0.55}
+{'loss': 0.1222, 'learning_rate': 4.041095890410959e-05, 'epoch': 0.58}
+{'loss': 0.2291, 'learning_rate': 3.995433789954338e-05, 'epoch': 0.6}
+{'loss': 0.1566, 'learning_rate': 3.949771689497717e-05, 'epoch': 0.63}
+{'loss': 0.2689, 'learning_rate': 3.904109589041096e-05, 'epoch': 0.66}
+{'loss': 0.2452, 'learning_rate': 3.8584474885844754e-05, 'epoch': 0.68}
+{'loss': 0.2578, 'learning_rate': 3.812785388127854e-05, 'epoch': 0.71}
+{'loss': 0.2177, 'learning_rate': 3.767123287671233e-05, 'epoch': 0.74}
+{'loss': 0.1482, 'learning_rate': 3.7214611872146123e-05, 'epoch': 0.77}
+{'loss': 0.2108, 'learning_rate': 3.675799086757991e-05, 'epoch': 0.79}
+{'loss': 0.4531, 'learning_rate': 3.63013698630137e-05, 'epoch': 0.82}
+{'loss': 0.2976, 'learning_rate': 3.584474885844749e-05, 'epoch': 0.85}
+{'loss': 0.1975, 'learning_rate': 3.538812785388128e-05, 'epoch': 0.88}
+{'loss': 0.3267, 'learning_rate': 3.493150684931507e-05, 'epoch': 0.9}
+{'loss': 0.1502, 'learning_rate': 3.447488584474886e-05, 'epoch': 0.93}
+{'loss': 0.275, 'learning_rate': 3.4018264840182654e-05, 'epoch': 0.96}
+{'loss': 0.1961, 'learning_rate': 3.356164383561644e-05, 'epoch': 0.99}
+{'loss': 0.1035, 'learning_rate': 3.310502283105023e-05, 'epoch': 1.01}
+{'loss': 0.1393, 'learning_rate': 3.264840182648402e-05, 'epoch': 1.04}
+{'loss': 0.0882, 'learning_rate': 3.219178082191781e-05, 'epoch': 1.07}
+{'loss': 0.1189, 'learning_rate': 3.17351598173516e-05, 'epoch': 1.1}
+{'loss': 0.104, 'learning_rate': 3.127853881278539e-05, 'epoch': 1.12}
+{'loss': 0.1952, 'learning_rate': 3.082191780821918e-05, 'epoch': 1.15}
+{'loss': 0.1199, 'learning_rate': 3.036529680365297e-05, 'epoch': 1.18}
+{'loss': 0.0985, 'learning_rate': 2.990867579908676e-05, 'epoch': 1.21}
+{'loss': 0.1494, 'learning_rate': 2.945205479452055e-05, 'epoch': 1.23}
+{'loss': 0.1024, 'learning_rate': 2.8995433789954342e-05, 'epoch': 1.26}
+{'loss': 0.1505, 'learning_rate': 2.853881278538813e-05, 'epoch': 1.29}
+{'loss': 0.1623, 'learning_rate': 2.808219178082192e-05, 'epoch': 1.32}
+{'loss': 0.1852, 'learning_rate': 2.762557077625571e-05, 'epoch': 1.34}
+{'loss': 0.1367, 'learning_rate': 2.71689497716895e-05, 'epoch': 1.37}
+{'loss': 0.1088, 'learning_rate': 2.671232876712329e-05, 'epoch': 1.4}
+{'loss': 0.1455, 'learning_rate': 2.625570776255708e-05, 'epoch': 1.42}
+{'loss': 0.1382, 'learning_rate': 2.579908675799087e-05, 'epoch': 1.45}
+{'loss': 0.0551, 'learning_rate': 2.534246575342466e-05, 'epoch': 1.48}
+{'loss': 0.2335, 'learning_rate': 2.4885844748858446e-05, 'epoch': 1.51}
+{'loss': 0.0689, 'learning_rate': 2.4429223744292238e-05, 'epoch': 1.53}
+{'loss': 0.0695, 'learning_rate': 2.3972602739726026e-05, 'epoch': 1.56}
+{'loss': 0.0504, 'learning_rate': 2.351598173515982e-05, 'epoch': 1.59}
+{'loss': 0.0924, 'learning_rate': 2.3059360730593607e-05, 'epoch': 1.62}
+{'loss': 0.1667, 'learning_rate': 2.2602739726027396e-05, 'epoch': 1.64}
+{'loss': 0.2526, 'learning_rate': 2.2146118721461187e-05, 'epoch': 1.67}
+{'loss': 0.1243, 'learning_rate': 2.1689497716894976e-05, 'epoch': 1.7}
+{'loss': 0.1399, 'learning_rate': 2.1232876712328768e-05, 'epoch': 1.73}
+{'loss': 0.079, 'learning_rate': 2.0776255707762557e-05, 'epoch': 1.75}
+{'loss': 0.0992, 'learning_rate': 2.0319634703196345e-05, 'epoch': 1.78}
+{'loss': 0.0809, 'learning_rate': 1.9863013698630137e-05, 'epoch': 1.81}
+{'loss': 0.0585, 'learning_rate': 1.9406392694063926e-05, 'epoch': 1.84}
+{'loss': 0.1229, 'learning_rate': 1.8949771689497718e-05, 'epoch': 1.86}
+{'loss': 0.1155, 'learning_rate': 1.8493150684931506e-05, 'epoch': 1.89}
+{'loss': 0.125, 'learning_rate': 1.80365296803653e-05, 'epoch': 1.92}
+{'loss': 0.1755, 'learning_rate': 1.7579908675799087e-05, 'epoch': 1.95}
+{'loss': 0.1705, 'learning_rate': 1.7123287671232875e-05, 'epoch': 1.97}
+{'loss': 0.0931, 'learning_rate': 1.6666666666666667e-05, 'epoch': 2.0}
+{'loss': 0.0775, 'learning_rate': 1.6210045662100456e-05, 'epoch': 2.03}
+{'loss': 0.0495, 'learning_rate': 1.5753424657534248e-05, 'epoch': 2.05}
+{'loss': 0.0377, 'learning_rate': 1.5296803652968037e-05, 'epoch': 2.08}
+{'loss': 0.0427, 'learning_rate': 1.4840182648401827e-05, 'epoch': 2.11}
+{'loss': 0.0579, 'learning_rate': 1.4383561643835617e-05, 'epoch': 2.14}
+{'loss': 0.0628, 'learning_rate': 1.3926940639269406e-05, 'epoch': 2.16}
+{'loss': 0.026, 'learning_rate': 1.3470319634703196e-05, 'epoch': 2.19}
+{'loss': 0.0827, 'learning_rate': 1.3013698630136986e-05, 'epoch': 2.22}
+{'loss': 0.0802, 'learning_rate': 1.2557077625570777e-05, 'epoch': 2.25}
+{'loss': 0.0459, 'learning_rate': 1.2100456621004567e-05, 'epoch': 2.27}
+{'loss': 0.0366, 'learning_rate': 1.1643835616438355e-05, 'epoch': 2.3}
+{'loss': 0.0571, 'learning_rate': 1.1187214611872146e-05, 'epoch': 2.33}
+{'loss': 0.0425, 'learning_rate': 1.0730593607305936e-05, 'epoch': 2.36}
+{'loss': 0.059, 'learning_rate': 1.0273972602739726e-05, 'epoch': 2.38}
+{'loss': 0.0268, 'learning_rate': 9.817351598173517e-06, 'epoch': 2.41}
+{'loss': 0.0406, 'learning_rate': 9.360730593607305e-06, 'epoch': 2.44}
+{'loss': 0.0673, 'learning_rate': 8.904109589041095e-06, 'epoch': 2.47}
+{'loss': 0.0316, 'learning_rate': 8.447488584474886e-06, 'epoch': 2.49}
+{'loss': 0.0729, 'learning_rate': 7.990867579908676e-06, 'epoch': 2.52}
+{'loss': 0.0581, 'learning_rate': 7.5342465753424655e-06, 'epoch': 2.55}
+{'loss': 0.059, 'learning_rate': 7.077625570776256e-06, 'epoch': 2.58}
+{'loss': 0.0313, 'learning_rate': 6.621004566210046e-06, 'epoch': 2.6}
+{'loss': 0.0475, 'learning_rate': 6.1643835616438354e-06, 'epoch': 2.63}
+{'loss': 0.0391, 'learning_rate': 5.707762557077626e-06, 'epoch': 2.66}
+{'loss': 0.0602, 'learning_rate': 5.251141552511415e-06, 'epoch': 2.68}
+{'loss': 0.0755, 'learning_rate': 4.7945205479452054e-06, 'epoch': 2.71}
+{'loss': 0.025, 'learning_rate': 4.337899543378996e-06, 'epoch': 2.74}
+{'loss': 0.0156, 'learning_rate': 3.881278538812785e-06, 'epoch': 2.77}
+{'loss': 0.0318, 'learning_rate': 3.4246575342465754e-06, 'epoch': 2.79}
+{'loss': 0.0651, 'learning_rate': 2.9680365296803653e-06, 'epoch': 2.82}
+{'loss': 0.0625, 'learning_rate': 2.511415525114155e-06, 'epoch': 2.85}
+{'loss': 0.0362, 'learning_rate': 2.054794520547945e-06, 'epoch': 2.88}
+{'loss': 0.03, 'learning_rate': 1.598173515981735e-06, 'epoch': 2.9}
+{'loss': 0.076, 'learning_rate': 1.1415525114155251e-06, 'epoch': 2.93}
+{'loss': 0.1002, 'learning_rate': 6.849315068493151e-07, 'epoch': 2.96}
+{'loss': 0.0662, 'learning_rate': 2.2831050228310502e-07, 'epoch': 2.99}
+{'train_runtime': 707.6183, 'train_samples_per_second': 4.931, 'train_steps_per_second': 0.619, 'train_loss': 0.18621226292971063, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/NI_task935_40_40_45_0.9_0.3_115_3/checkpoint-292/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/NI_task935_40_40_45_0.9_0.3_115_3/checkpoint-146/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/NI_task935_40_40_45_0.9_0.3_115_3/checkpoint-438/optimizer.pt
+validate!
+last validate 0.
+INFO 11-24 05:16:48 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/NI_task935_40_40_45_0.9_0.3_115_3/checkpoint-146', tokenizer='/data2/cyzhao/ckpt_data_p2ms/NI_task935_40_40_45_0.9_0.3_115_3/checkpoint-146', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 05:17:02 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+
+
+result of NI_task935_40_40_45_0.9_0.3_115_3 epoch 1
+
+------------------------------------------------
+
+0.507
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task935_exp_1/NI_task935_40_40_45_0.9_0.3_115_3/generated_contents/1
+INFO 11-24 05:17:38 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/NI_task935_40_40_45_0.9_0.3_115_3/checkpoint-292', tokenizer='/data2/cyzhao/ckpt_data_p2ms/NI_task935_40_40_45_0.9_0.3_115_3/checkpoint-292', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 05:17:52 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+
+
+result of NI_task935_40_40_45_0.9_0.3_115_3 epoch 2
+
+------------------------------------------------
+
+0.618
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task935_exp_1/NI_task935_40_40_45_0.9_0.3_115_3/generated_contents/2
+INFO 11-24 05:18:27 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/NI_task935_40_40_45_0.9_0.3_115_3/checkpoint-438', tokenizer='/data2/cyzhao/ckpt_data_p2ms/NI_task935_40_40_45_0.9_0.3_115_3/checkpoint-438', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 05:18:42 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+
+
+result of NI_task935_40_40_45_0.9_0.3_115_3 epoch 3
+
+------------------------------------------------
+
+0.644
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task935_exp_1/NI_task935_40_40_45_0.9_0.3_115_3/generated_contents/3
+mv /data2/cyzhao/ckpt_data_p2ms/NI_task935_40_40_45_0.9_0.3_115_3/checkpoint-438 /data2/cyzhao/best_ckpt/NI_task935_exp_1
+rm -rf /data2/cyzhao/ckpt_data_p2ms/NI_task935_40_40_45_0.9_0.3_115_3/checkpoint-146
+rm -rf /data2/cyzhao/ckpt_data_p2ms/NI_task935_40_40_45_0.9_0.3_115_3/checkpoint-292
+searching parameters: NI_task935_30_30_50_1.0_0.4_120_5
+/home/cyzhao/NI_task935_exp_1/NI_task935_30_30_50_1.0_0.4_120_5
+/home/cyzhao/NI_task935_exp_1/NI_task935_30_30_50_1.0_0.4_120_5/config.json
+generate_and_write_inputs!
+INFO 11-24 05:19:20 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 05:19:34 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-24 05:27:53 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 05:28:09 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+generated_example_num: 609
+expected_example_num: 900
+selection_ratio: 0.6766666666666666
+finetune_vicuna!
+{'loss': 1.8058, 'learning_rate': 4.948051948051948e-05, 'epoch': 0.05}
+{'loss': 1.1106, 'learning_rate': 4.8961038961038966e-05, 'epoch': 0.1}
+{'loss': 0.4278, 'learning_rate': 4.8441558441558444e-05, 'epoch': 0.16}
+{'loss': 0.6427, 'learning_rate': 4.792207792207792e-05, 'epoch': 0.21}
+{'loss': 0.3088, 'learning_rate': 4.740259740259741e-05, 'epoch': 0.26}
+{'loss': 0.3985, 'learning_rate': 4.6883116883116885e-05, 'epoch': 0.31}
+{'loss': 0.2425, 'learning_rate': 4.636363636363636e-05, 'epoch': 0.36}
+{'loss': 0.3852, 'learning_rate': 4.584415584415585e-05, 'epoch': 0.42}
+{'loss': 0.7401, 'learning_rate': 4.5324675324675326e-05, 'epoch': 0.47}
+{'loss': 0.2894, 'learning_rate': 4.4805194805194805e-05, 'epoch': 0.52}
+{'loss': 0.2183, 'learning_rate': 4.428571428571428e-05, 'epoch': 0.57}
+{'loss': 0.7547, 'learning_rate': 4.376623376623377e-05, 'epoch': 0.62}
+{'loss': 0.1838, 'learning_rate': 4.3246753246753246e-05, 'epoch': 0.68}
+{'loss': 0.2124, 'learning_rate': 4.2727272727272724e-05, 'epoch': 0.73}
+{'loss': 0.3642, 'learning_rate': 4.220779220779221e-05, 'epoch': 0.78}
+{'loss': 0.3396, 'learning_rate': 4.168831168831169e-05, 'epoch': 0.83}
+{'loss': 0.2655, 'learning_rate': 4.116883116883117e-05, 'epoch': 0.88}
+{'loss': 0.3167, 'learning_rate': 4.064935064935065e-05, 'epoch': 0.94}
+{'loss': 0.1956, 'learning_rate': 4.0129870129870135e-05, 'epoch': 0.99}
+{'loss': 0.246, 'learning_rate': 3.9610389610389614e-05, 'epoch': 1.04}
+{'loss': 0.1968, 'learning_rate': 3.909090909090909e-05, 'epoch': 1.09}
+{'loss': 0.1535, 'learning_rate': 3.857142857142858e-05, 'epoch': 1.14}
+{'loss': 0.1985, 'learning_rate': 3.8051948051948055e-05, 'epoch': 1.19}
+{'loss': 0.1664, 'learning_rate': 3.753246753246753e-05, 'epoch': 1.25}
+{'loss': 0.2446, 'learning_rate': 3.701298701298702e-05, 'epoch': 1.3}
+{'loss': 0.0973, 'learning_rate': 3.6493506493506496e-05, 'epoch': 1.35}
+{'loss': 0.1464, 'learning_rate': 3.5974025974025974e-05, 'epoch': 1.4}
+{'loss': 0.1522, 'learning_rate': 3.545454545454546e-05, 'epoch': 1.45}
+{'loss': 0.1986, 'learning_rate': 3.493506493506494e-05, 'epoch': 1.51}
+{'loss': 0.2159, 'learning_rate': 3.4415584415584416e-05, 'epoch': 1.56}
+{'loss': 0.1688, 'learning_rate': 3.38961038961039e-05, 'epoch': 1.61}
+{'loss': 0.2163, 'learning_rate': 3.337662337662338e-05, 'epoch': 1.66}
+{'loss': 0.2122, 'learning_rate': 3.285714285714286e-05, 'epoch': 1.71}
+{'loss': 0.1657, 'learning_rate': 3.233766233766234e-05, 'epoch': 1.77}
+{'loss': 0.2063, 'learning_rate': 3.181818181818182e-05, 'epoch': 1.82}
+{'loss': 0.0743, 'learning_rate': 3.12987012987013e-05, 'epoch': 1.87}
+{'loss': 0.0741, 'learning_rate': 3.077922077922078e-05, 'epoch': 1.92}
+{'loss': 0.1568, 'learning_rate': 3.025974025974026e-05, 'epoch': 1.97}
+{'loss': 0.0752, 'learning_rate': 2.974025974025974e-05, 'epoch': 2.03}
+{'loss': 0.1355, 'learning_rate': 2.922077922077922e-05, 'epoch': 2.08}
+{'loss': 0.0265, 'learning_rate': 2.87012987012987e-05, 'epoch': 2.13}
+{'loss': 0.0885, 'learning_rate': 2.818181818181818e-05, 'epoch': 2.18}
+{'loss': 0.0623, 'learning_rate': 2.7662337662337663e-05, 'epoch': 2.23}
+{'loss': 0.0932, 'learning_rate': 2.714285714285714e-05, 'epoch': 2.29}
+{'loss': 0.1004, 'learning_rate': 2.6623376623376623e-05, 'epoch': 2.34}
+{'loss': 0.0709, 'learning_rate': 2.6103896103896104e-05, 'epoch': 2.39}
+{'loss': 0.0572, 'learning_rate': 2.5584415584415582e-05, 'epoch': 2.44}
+{'loss': 0.0574, 'learning_rate': 2.5064935064935064e-05, 'epoch': 2.49}
+{'loss': 0.098, 'learning_rate': 2.4545454545454545e-05, 'epoch': 2.55}
+{'loss': 0.0371, 'learning_rate': 2.4025974025974027e-05, 'epoch': 2.6}
+{'loss': 0.0847, 'learning_rate': 2.350649350649351e-05, 'epoch': 2.65}
+{'loss': 0.0561, 'learning_rate': 2.2987012987012987e-05, 'epoch': 2.7}
+{'loss': 0.0422, 'learning_rate': 2.246753246753247e-05, 'epoch': 2.75}
+{'loss': 0.0844, 'learning_rate': 2.1948051948051947e-05, 'epoch': 2.81}
+{'loss': 0.0771, 'learning_rate': 2.1428571428571428e-05, 'epoch': 2.86}
+{'loss': 0.0667, 'learning_rate': 2.090909090909091e-05, 'epoch': 2.91}
+{'loss': 0.065, 'learning_rate': 2.038961038961039e-05, 'epoch': 2.96}
+{'loss': 0.0517, 'learning_rate': 1.9870129870129873e-05, 'epoch': 3.01}
+{'loss': 0.0213, 'learning_rate': 1.935064935064935e-05, 'epoch': 3.06}
+{'loss': 0.0387, 'learning_rate': 1.8831168831168833e-05, 'epoch': 3.12}
+{'loss': 0.0244, 'learning_rate': 1.8311688311688314e-05, 'epoch': 3.17}
+{'loss': 0.0402, 'learning_rate': 1.7792207792207792e-05, 'epoch': 3.22}
+{'loss': 0.0183, 'learning_rate': 1.7272727272727274e-05, 'epoch': 3.27}
+{'loss': 0.0098, 'learning_rate': 1.6753246753246756e-05, 'epoch': 3.32}
+{'loss': 0.011, 'learning_rate': 1.6233766233766234e-05, 'epoch': 3.38}
+{'loss': 0.0409, 'learning_rate': 1.5714285714285715e-05, 'epoch': 3.43}
+{'loss': 0.0243, 'learning_rate': 1.5194805194805195e-05, 'epoch': 3.48}
+{'loss': 0.0047, 'learning_rate': 1.4675324675324675e-05, 'epoch': 3.53}
+{'loss': 0.0079, 'learning_rate': 1.4155844155844155e-05, 'epoch': 3.58}
+{'loss': 0.0086, 'learning_rate': 1.3636363636363637e-05, 'epoch': 3.64}
+{'loss': 0.0095, 'learning_rate': 1.3116883116883116e-05, 'epoch': 3.69}
+{'loss': 0.06, 'learning_rate': 1.2597402597402596e-05, 'epoch': 3.74}
+{'loss': 0.0305, 'learning_rate': 1.2077922077922078e-05, 'epoch': 3.79}
+{'loss': 0.0301, 'learning_rate': 1.155844155844156e-05, 'epoch': 3.84}
+{'loss': 0.0079, 'learning_rate': 1.103896103896104e-05, 'epoch': 3.9}
+{'loss': 0.0128, 'learning_rate': 1.051948051948052e-05, 'epoch': 3.95}
+{'loss': 0.0086, 'learning_rate': 1e-05, 'epoch': 4.0}
+{'loss': 0.0162, 'learning_rate': 9.48051948051948e-06, 'epoch': 4.05}
+{'loss': 0.0027, 'learning_rate': 8.961038961038962e-06, 'epoch': 4.1}
+{'loss': 0.0114, 'learning_rate': 8.441558441558442e-06, 'epoch': 4.16}
+{'loss': 0.0082, 'learning_rate': 7.922077922077922e-06, 'epoch': 4.21}
+{'loss': 0.0007, 'learning_rate': 7.402597402597403e-06, 'epoch': 4.26}
+{'loss': 0.0013, 'learning_rate': 6.883116883116883e-06, 'epoch': 4.31}
+{'loss': 0.0089, 'learning_rate': 6.363636363636363e-06, 'epoch': 4.36}
+{'loss': 0.0008, 'learning_rate': 5.844155844155844e-06, 'epoch': 4.42}
+{'loss': 0.0008, 'learning_rate': 5.324675324675325e-06, 'epoch': 4.47}
+{'loss': 0.0047, 'learning_rate': 4.805194805194806e-06, 'epoch': 4.52}
+{'loss': 0.0058, 'learning_rate': 4.285714285714286e-06, 'epoch': 4.57}
+{'loss': 0.0008, 'learning_rate': 3.766233766233766e-06, 'epoch': 4.62}
+{'loss': 0.005, 'learning_rate': 3.2467532467532465e-06, 'epoch': 4.68}
+{'loss': 0.0048, 'learning_rate': 2.7272727272727272e-06, 'epoch': 4.73}
+{'loss': 0.0009, 'learning_rate': 2.207792207792208e-06, 'epoch': 4.78}
+{'loss': 0.0028, 'learning_rate': 1.6883116883116883e-06, 'epoch': 4.83}
+{'loss': 0.007, 'learning_rate': 1.168831168831169e-06, 'epoch': 4.88}
+{'loss': 0.0004, 'learning_rate': 6.493506493506494e-07, 'epoch': 4.94}
+{'loss': 0.0028, 'learning_rate': 1.2987012987012987e-07, 'epoch': 4.99}
+{'train_runtime': 764.7593, 'train_samples_per_second': 3.982, 'train_steps_per_second': 0.503, 'train_loss': 0.14979575066230041, 'epoch': 5.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-385/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-231/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-154/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-308/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-77/optimizer.pt
+validate!
+last validate 0.
+INFO 11-24 05:43:28 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-77', tokenizer='/data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-77', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 05:43:46 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+
+
+result of NI_task935_30_30_50_1.0_0.4_120_5 epoch 1
+
+------------------------------------------------
+
+0.507
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task935_exp_1/NI_task935_30_30_50_1.0_0.4_120_5/generated_contents/1
+INFO 11-24 05:44:22 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-154', tokenizer='/data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-154', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 05:44:39 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+
+
+result of NI_task935_30_30_50_1.0_0.4_120_5 epoch 2
+
+------------------------------------------------
+
+0.625
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task935_exp_1/NI_task935_30_30_50_1.0_0.4_120_5/generated_contents/2
+INFO 11-24 05:45:17 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-231', tokenizer='/data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-231', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 05:45:36 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+
+
+result of NI_task935_30_30_50_1.0_0.4_120_5 epoch 3
+
+------------------------------------------------
+
+0.659
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task935_exp_1/NI_task935_30_30_50_1.0_0.4_120_5/generated_contents/3
+INFO 11-24 05:46:12 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-308', tokenizer='/data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-308', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 05:46:29 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+
+
+result of NI_task935_30_30_50_1.0_0.4_120_5 epoch 4
+
+------------------------------------------------
+
+0.656
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task935_exp_1/NI_task935_30_30_50_1.0_0.4_120_5/generated_contents/4
+INFO 11-24 05:47:08 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-385', tokenizer='/data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-385', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 05:47:23 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+
+
+result of NI_task935_30_30_50_1.0_0.4_120_5 epoch 5
+
+------------------------------------------------
+
+0.657
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task935_exp_1/NI_task935_30_30_50_1.0_0.4_120_5/generated_contents/5
+rm -rf /data2/cyzhao/best_ckpt/NI_task935_exp_1
+mv /data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-231 /data2/cyzhao/best_ckpt/NI_task935_exp_1
+rm -rf /data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-77
+rm -rf /data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-154
+rm -rf /data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-308
+rm -rf /data2/cyzhao/ckpt_data_p2ms/NI_task935_30_30_50_1.0_0.4_120_5/checkpoint-385
+searching parameters: NI_task935_10_15_50_1.0_0.3_130_4
+/home/cyzhao/NI_task935_exp_1/NI_task935_10_15_50_1.0_0.3_130_4
+/home/cyzhao/NI_task935_exp_1/NI_task935_10_15_50_1.0_0.3_130_4/config.json
+generate_and_write_inputs!
+INFO 11-24 05:48:09 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 05:48:27 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-24 05:49:53 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 05:50:10 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+generated_example_num: 100
+expected_example_num: 150
+selection_ratio: 0.6666666666666666
+finetune_vicuna!
+{'loss': 2.173, 'learning_rate': 4.615384615384616e-05, 'epoch': 0.31}
+{'loss': 0.9027, 'learning_rate': 4.230769230769231e-05, 'epoch': 0.62}
+{'loss': 0.5809, 'learning_rate': 3.846153846153846e-05, 'epoch': 0.92}
+{'loss': 0.2298, 'learning_rate': 3.461538461538462e-05, 'epoch': 1.23}
+{'loss': 0.1896, 'learning_rate': 3.0769230769230774e-05, 'epoch': 1.54}
+{'loss': 0.2546, 'learning_rate': 2.6923076923076923e-05, 'epoch': 1.85}

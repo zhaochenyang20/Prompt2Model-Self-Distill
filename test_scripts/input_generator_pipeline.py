@@ -16,20 +16,19 @@ generated_inputs = []
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
-    instruction="Your task is to generate an answer to a natural question. In this task, the input is a string that consists of both a question and a context passage. The context is a descriptive passage related to the question and contains the answer. And the question can range from Math, Cultural, Social, Geometry, Biology, History, Sports, Technology, Science, and so on.",  # # noqa E501
+    instruction="Given an abstract, generate a keyword (a noun phrase) that best describes the focus or contribution of the paper. Such keywords can be directly from the given abstract or outside it.",  # # noqa E501
     examples="""
-[input]="Question: What city did Super Bowl 50 take place in? Context: Super Bowl 50 was an American football game to determine the champion of the National Football League (NFL) for the 2015 season. The American Football Conference (AFC) champion Denver Broncos defeated the National Football Conference (NFC) champion Carolina Panthers 24–10 to earn their third Super Bowl title. The game was played on February 7, 2016, at Levi's Stadium in the San Francisco Bay Area at Santa Clara, California. As this was the 50th Super Bowl, the league emphasized the "golden anniversary" with various gold-themed initiatives, as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals (under which the game would have been known as "Super Bowl L"), so that the logo could prominently feature the Arabic numerals 50."
-[output]="Santa Clara"
+[input]=Abstract: Some patients converted from ventricular fibrillation to organized rhythms by defibrillation - trained ambulance technicians(EMT - Ds) will refibrillate before hospital arrival.The authors analyzed 271 cases of ventricular fibrillation managed by EMT - Ds working without paramedic back - up.Of 111 patients initially converted to organized rhythms, 19(17 % ) refibrillated, 11(58 % ) of whom were reconverted to perfusing rhythms, including nine of 11(82 % ) who had spontaneous pulses prior to refibrillation.Among patients initially converted to organized rhythms, hospital admission rates were lower for patients who refibrillated than for patients who did not(53 % versus 76 % , P = NS), although discharge rates were virtually identical(37 % and 35 % , respectively).Scene - to - hospital transport times were not predictively associated with either the frequency of refibrillation or patient outcome.Defibrillation - trained EMTs can effectively manage refibrillation with additional shocks and are not at a significant disadvantage when paramedic back - up is not available.
+[output]=Ventricular Fibrillation
 
-[input]="Question: What river runs through Warsaw? Context: Warsaw (Polish: Warszawa [varˈʂava] ( listen); see also other names) is the capital and largest city of Poland. It stands on the Vistula River in east-central Poland, roughly 260 kilometres (160 mi) from the Baltic Sea and 300 kilometres (190 mi) from the Carpathian Mountains. Its population is estimated at 1.740 million residents within a greater metropolitan area of 2.666 million residents, which makes Warsaw the 9th most-populous capital city in the European Union. The city limits cover 516.9 square kilometres (199.6 sq mi), while the metropolitan area covers 6,100.43 square kilometres (2,355.39 sq mi)."
-[output]="Vistula River"
+[input]=Abstract: Our results suggest that ethylene oxide retention after sterilization is increased in cuprammonium cellulose plate dialyzers containing potting compound. In contrast, cuprammonium cellulose plate dialyzers without potting compound were characterized by a rapid disappearance of retained ethylene oxide after sterilization. Whether these findings explain the low incidence of SARD with cuprammonium cellulose plate dialyzers that do not contain potting material is a matter for continued study and experimentation.
+[output]=Sterilization
 
-[input]="Question: The Ottoman empire controlled territory on three continents, Africa, Asia and which other? Context: The Ottoman Empire was an imperial state that lasted from 1299 to 1923. During the 16th and 17th centuries, in particular at the height of its power under the reign of Suleiman the Magnificent, the Ottoman Empire was a powerful multinational, multilingual empire controlling much of Southeast Europe, Western Asia, the Caucasus, North Africa, and the Horn of Africa. At the beginning of the 17th century the empire contained 32 provinces and numerous vassal states. Some of these were later absorbed into the empire, while others were granted various types of autonomy during the course of centuries."
-[output]="Europe"
+
 """,  # noqa E501
 )
 
-input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=0.5)
+input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=0.9)
 
 # prompt = input_generator.construct_generation_prompt(
 #     instruction=prompt_spec.instruction,
@@ -41,11 +40,17 @@ input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=0.5)
 # filter_prompt = input_generator.construct_filter_prompt(
 #     few_shot_example_string=prompt_spec.examples, new_input="how are you?"
 # )
-
+# generation_epochs,generation_batch_size,generation_top_k,generation_temperature,min_frequency,min_input_length,training_epochs
+# 10                15                      50              0.3                     0.5         125                5
 inputs = input_generator.batch_generation_inputs(
     prompt_spec,
     5,
     5,
-    {},
-    expected_content='"Question" and "Context"',
+    dict(
+        top_k=20,
+        temperature=0.3,
+        min_input_length=150,
+    ),
+    expected_content='"Abstract"',
+    optional_list=['[input]', '[NEW INPUT]','[ABSTRACT]', 'Abstract']
 )

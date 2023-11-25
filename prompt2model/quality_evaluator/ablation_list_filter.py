@@ -19,12 +19,13 @@ greetings = [
 ]
 
 
-def ablation_list_filter(strings):
+def ablation_list_filter(strings, optional_list=[]):
     """
     Filter out strings that contain any of the predefined greetings.
 
     Parameters:
     strings (list of str): A list of strings to be filtered.
+    optional_list (list of str): A list of strings should be filtered.
 
     Returns:
     list of str: A list of strings that do not contain any of the greetings.
@@ -39,6 +40,7 @@ def ablation_list_filter(strings):
             return None
 
         filtered_strings = []
+        greetings.extend(optional_list)
         for s in strings:
             if not any(greeting in s for greeting in greetings):
                 filtered_strings.append(s)

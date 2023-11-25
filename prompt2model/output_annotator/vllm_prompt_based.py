@@ -90,6 +90,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         input_strings: list[str],
         prompt_spec: PromptSpec,
         hyperparameter_choices: dict[str, Any],
+        optional_list = []
     ) -> datasets.Dataset:
         """Generate candidate outputs for each given input.
 
@@ -129,8 +130,12 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                 if (output.text is not None and output.text != "")
             ]
             min_frequency = hyperparameter_choices.get("min_frequency", 0.2)
-            consistent_output = self_consistency_filter(
-                ablation_list_filter(outputs), min_frequency
+            consistent_output = ablation_list_filter(
+                self_consistency_filter(
+                    ablation_list_filter(outputs, optional_list), 
+                    min_frequency
+                ),
+                optional_list
             )
             if consistent_output is not None and consistent_output != "":
                 input_cols.append(input)

@@ -2,103 +2,9 @@ import csv
 import json
 import os
 from pathlib import Path
-
+import json
 import optuna
-
-task_name = "task937"
-experiment_name = "NI_task_937_exp_2"
-log_and_data_root = Path("/home/cyzhao") / experiment_name
-evaluation_result_file_tail = "result.json"
-ckpt_root = Path("/data2/cyzhao/ckpt_data_p2ms")
-best_ckpt_path = Path("/data2/cyzhao/best_ckpt")
-best_validation_result_path = log_and_data_root / "best_validation_result.json"
-log_and_data_root.mkdir(parents=True, exist_ok=True)
-ckpt_root.mkdir(parents=True, exist_ok=True)
-best_ckpt_path.mkdir(parents=True, exist_ok=True)
-# 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
-gpu_memory_utilization = 0.85
-tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
-# 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
-# gpu_memory_utilization 是在每张卡上的占比，比如 CUDA_CONDITION = "0,1,4,5", gpu_memory_utilization = 0.9
-# 则每张卡都会占去全部显存的 0.9，会占用四张卡，推理效率极其高
-# gpu_memory_utilization 越小，则 inference 越慢
-# 然而，不是每张卡都是空的，比如 0 卡已经有人跑了 40G 了，那么 gpu_memory_utilization < 0.5
-
-
 from main import search_against_parameter, validate_or_test
-
-
-def read_json(file_path):
-    with open(file_path, "r") as file:
-        return json.load(file)
-
-
-def print_and_execute_command(command):
-    print(command)
-    os.system(command)
-
-
-max_training_epochs = 3
-
-# Task_name, instruction, examples, expected_content, validation_dataset_path, test_dataset_path
-tasks = [
-    (
-        "SQuAD",
-        "Your task is to generate an answer to a natural question. In this task, the input is a string that consists of both a question and a context passage. The context is a descriptive passage related to the question and contains the answer. And the question can range from Math, Cultural, Social, Geometry, Biology, History, Sports, Technology, Science, and so on.",
-        """
-[input]="Question: What city did Super Bowl 50 take place in? Context: Super Bowl 50 was an American football game to determine the champion of the National Football League (NFL) for the 2015 season. The American Football Conference (AFC) champion Denver Broncos defeated the National Football Conference (NFC) champion Carolina Panthers 24–10 to earn their third Super Bowl title. The game was played on February 7, 2016, at Levi's Stadium in the San Francisco Bay Area at Santa Clara, California. As this was the 50th Super Bowl, the league emphasized the "golden anniversary" with various gold-themed initiatives, as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals (under which the game would have been known as "Super Bowl L"), so that the logo could prominently feature the Arabic numerals 50."
-[output]="Santa Clara"
-
-[input]="Question: What river runs through Warsaw? Context: Warsaw (Polish: Warszawa [varˈʂava] ( listen); see also other names) is the capital and largest city of Poland. It stands on the Vistula River in east-central Poland, roughly 260 kilometres (160 mi) from the Baltic Sea and 300 kilometres (190 mi) from the Carpathian Mountains. Its population is estimated at 1.740 million residents within a greater metropolitan area of 2.666 million residents, which makes Warsaw the 9th most-populous capital city in the European Union. The city limits cover 516.9 square kilometres (199.6 sq mi), while the metropolitan area covers 6,100.43 square kilometres (2,355.39 sq mi)."
-[output]="Vistula River"
-
-[input]="Question: The Ottoman empire controlled territory on three continents, Africa, Asia and which other? Context: The Ottoman Empire was an imperial state that lasted from 1299 to 1923. During the 16th and 17th centuries, in particular at the height of its power under the reign of Suleiman the Magnificent, the Ottoman Empire was a powerful multinational, multilingual empire controlling much of Southeast Europe, Western Asia, the Caucasus, North Africa, and the Horn of Africa. At the beginning of the 17th century the empire contained 32 provinces and numerous vassal states. Some of these were later absorbed into the empire, while others were granted various types of autonomy during the course of centuries."
-[output]="Europe"
-""",
-        '"Question" and "Context"',
-        #! 数据集需要有 `input_col` 和 `output_col`，需要导入
-        "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed",
-        "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test",
-    ),
-    (
-        f"NI_task020",
-        "In this task, the answer will be 'yes' if the provided sentence contains an explicit mention that answers the given question. Otherwise, the answer should be 'no'. Instances where the answer is implied from the sentence using 'instinct' or 'common sense' (as opposed to being written explicitly in the sentence) should be labeled as 'no'.",
-        """
-[input]="Sentence: Jack played basketball for an hour after school, after which he was very tired. Question: How long did Jack play basketball?"
-[output]="Yes."
-
-[input]="Sentence: He was born in China, so he went to the Embassy at 1 pm to apply for a U.S. Visa. Question: When did he go to Embassy?"
-[output]="Yes."
-
-[input]=“Sentence: Jerry goes out to the pier and casts his favorite bait : cheese . Question: How much time did Jerry spend at the pier?”
-[output]=“No.”
-""",
-        '"Sentence" and "Question"',
-        #! 数据集需要有 `input_col` 和 `output_col`，需要导入
-        "/home/cyzhao/prompt2model_test/testdataset/NI/eval/task020",
-        "/home/cyzhao/prompt2model_test/testdataset/NI/test/task020",
-    ),
-    (
-        f"NI_task937",
-        "In this task, you are given a hypothesis and an update. The hypothesis sentence is a statement that speaks of a socially normative behavior. In other words, it is a generalizing statement about how we expect people to behave in society. The update provides additional contexts about the situation that might UNDERMINE or SUPPORT the generalization. An undermining context provides a situation that weakens the hypothesis. A supporting context provides a situation that strengthens the generalization. Your task is to output 'strengthener' or 'weakener' if the update supports or undermines the hypothesis, respectively",
-            """
-[input]="Hypothesis: You should help your family with funeral expenses.\nUpdate: They have asked you to chip in"
-[output]="strengthener"
-
-[input]="Hypothesis: It's good to protect your property.\nUpdate: you don't care what happens to your property."
-[output]="weakener"
-
-[input]=“Hypothesis: You should help your family with funeral expenses.\nUpdate: You are not financially stable to help out”
-[output]=“weakener”
-""",
-        '"“Hypothesis" and "Update"',
-        #! 数据集需要有 `input_col` 和 `output_col`，需要导入
-        "/home/cyzhao/prompt2model_test/testdataset/NI/eval/task937",
-        "/home/cyzhao/prompt2model_test/testdataset/NI/test/task937",
-    ),
-]
-
 
 def write_results(log_and_data_root, max_training_epochs):
     csv_header = [
@@ -134,8 +40,67 @@ def write_results(log_and_data_root, max_training_epochs):
         writer.writeheader()
         writer.writerows(csv_data)
 
+def read_json(file_path):
+    with open(file_path, "r") as file:
+        return json.load(file)
 
-for task in tasks[2:]:
+def print_and_execute_command(command):
+    print(command)
+    os.system(command)
+
+max_training_epochs = 3
+file_path = '/home/cyzhao/main/NI_tasks/tasks.json'  
+
+with open(file_path, 'r', encoding='utf-8') as json_file:
+    all_tasks = json.load(json_file)
+
+tasks = []
+
+# TODO change task_names
+task_names = ['620']
+
+for task_name in task_names:
+    for task in all_tasks:
+        if task['task_name'] == 'task'+task_name:
+            task_tuple = (
+                task['task_name'],
+                task['task_instruction'],
+                task['examples'],
+                task['expected_content'],
+                f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/task{task_name}",
+                 f"/home/cyzhao/prompt2model_test/testdataset/NI/test/task{task_name}",
+            )
+            tasks.append(task_tuple)
+
+# TODO change task name
+task_name = "task620"
+
+# TODO change experiment name
+# experiment_name = "NI_"+task_name+"_exp_2"
+experiment_name = "NI_"+task_name+"_exp_3"
+
+log_and_data_root = Path("/home/cyzhao") / experiment_name
+evaluation_result_file_tail = "result.json"
+ckpt_root = Path("/data2/cyzhao/ckpt_data_p2ms")
+best_ckpt_path = Path("/data2/cyzhao/best_ckpt")
+best_validation_result_path = log_and_data_root / "best_validation_result.json"
+log_and_data_root.mkdir(parents=True, exist_ok=True)
+ckpt_root.mkdir(parents=True, exist_ok=True)
+best_ckpt_path.mkdir(parents=True, exist_ok=True)
+# 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
+# TODO change avilable cards
+os.environ["CUDA_VISIBLE_DEVICES"] = "5,6"
+gpu_memory_utilization = 0.9
+tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
+# 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
+# gpu_memory_utilization 是在每张卡上的占比，比如 CUDA_CONDITION = "0,1,4,5", gpu_memory_utilization = 0.9
+# 则每张卡都会占去全部显存的 0.9，会占用四张卡，推理效率极其高
+# gpu_memory_utilization 越小，则 inference 越慢
+# 然而，不是每张卡都是空的，比如 0 卡已经有人跑了 40G 了，那么 gpu_memory_utilization < 0.5
+
+
+# TODO change index
+for task in tasks[0:]:
     (
         task_name,
         instruction,
@@ -143,7 +108,10 @@ for task in tasks[2:]:
         expected_content,
         evaluation_dataset_path,
         test_set_path,
+        optional_list
     ) = task
+
+    print(task_name)
 
     def objective_function(
         generation_epochs,
@@ -153,6 +121,7 @@ for task in tasks[2:]:
         min_frequency,
         min_input_length,
         training_epochs,
+        optional_list
     ):
         generation_epochs = int(generation_epochs)
         generation_batch_size = int(generation_batch_size)
@@ -195,6 +164,7 @@ for task in tasks[2:]:
             "training_epochs": int(training_epochs),
             "tensor_parallel_size": int(tensor_parallel_size),
             "evaluation_result_file_tail": evaluation_result_file_tail,
+            "optional_list": optional_list,
         }
         with open(log_and_data_path / "config.json", "w") as f:
             json.dump(params, f, indent=4)
@@ -270,17 +240,17 @@ for task in tasks[2:]:
         return highest_validation_result
 
     def objective(trial):
-        generation_epochs = trial.suggest_categorical("generation_epochs", [10, 20, 30])
+        generation_epochs = trial.suggest_categorical("generation_epochs", [10, 15, 20])
         generation_batch_size = trial.suggest_categorical(
             "generation_batch_size", [10, 15, 20]
         )
         generation_top_k = trial.suggest_categorical("generation_top_k", [40, 45, 50])
         generation_temperature = trial.suggest_categorical(
-            "generation_temperature", [0.7, 0.8, 0.9, 1.0]
+            "generation_temperature", [0.3, 0.4, 0.8, 0.9]
         )
-        min_frequency = trial.suggest_categorical("min_frequency", [0.3, 0.35, 0.4])
+        min_frequency = trial.suggest_categorical("min_frequency", [0.3, 0.35, 0.4, 0.5])
         min_input_length = trial.suggest_categorical(
-            "min_input_length", [110, 115, 120, 125]
+            "min_input_length", [115, 120, 125, 130]
         )
         training_epochs = trial.suggest_int("training_epochs", 3, max_training_epochs)
 
@@ -295,7 +265,7 @@ for task in tasks[2:]:
         )
 
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=20)
+    study.optimize(objective, n_trials=10)
 
     best_params = study.best_params
     print(best_params)
