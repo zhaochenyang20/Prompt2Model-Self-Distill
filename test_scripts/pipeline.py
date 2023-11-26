@@ -62,6 +62,9 @@ def write_results(log_and_data_root, max_training_epochs):
         "generation_temperature",
         "min_frequency",
         "min_input_length",
+        "max_input_length",
+        "min_output_length",
+        "max_output_length",
         "training_epochs",
     ] + ["epoch_" + str(i) for i in range(1, max_training_epochs + 1)]
     csv_data = []
@@ -87,7 +90,9 @@ def write_results(log_and_data_root, max_training_epochs):
         writer.writeheader()
         writer.writerows(csv_data)
 
+
 from main import main, validate_or_test
+
 
 def read_json(file_path):
     with open(file_path, "r") as file:
@@ -120,17 +125,12 @@ for task in tasks:
         generation_temperature,
         min_frequency,
         min_input_length,
+        max_input_length,
+        min_output_length,
+        max_output_length,
         training_epochs,
-        portion,
     ):
-        generation_epochs = int(generation_epochs)
-        generation_batch_size = int(generation_batch_size)
-        generation_top_k = int(generation_top_k)
-        generation_temperature = float(generation_temperature)
-        min_frequency = float(min_frequency)
-        min_input_length = int(min_input_length)
-        training_epochs = int(training_epochs)
-        name = f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{min_input_length}_{training_epochs}_{portion}_{experiment_rank}"
+        name = f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{min_input_length}_{max_input_length}_{min_output_length}_{max_output_length}_{training_epochs}_{experiment_rank}"
         print(f"searching parameters: {name}")
         log_and_data_path = log_and_data_root / name
         log_and_data_path.mkdir(parents=True, exist_ok=True)
@@ -154,12 +154,14 @@ for task in tasks:
             "gpu_memory_utilization": float(gpu_memory_utilization),
             "min_frequency": float(min_frequency),
             "min_input_length": int(min_input_length),
+            "max_input_length": int(max_input_length),
+            "min_output_length": int(min_output_length),
+            "max_output_length": int(max_output_length),
             "training_epochs": int(training_epochs),
             "tensor_parallel_size": int(tensor_parallel_size),
             "evaluation_result_file_tail": evaluation_result_file_tail,
             "optional_list": optional_list,
             "metric": metric,
-            "portion": portion,
             "experiment_rank": experiment_rank,
         }
         with open(log_and_data_path / "config.json", "w") as f:
@@ -243,9 +245,13 @@ for task in tasks:
             "generation_temperature", [0.4, 0.5, 0.6, 0.7, 0.8]
         )
         min_frequency = trial.suggest_categorical("min_frequency", [0.3, 0.35, 0.4])
-        min_input_length = trial.suggest_categorical("min_input_length", [50, 55, 60])
+        min_input_length = trial.suggest_categorical("min_input_length", [80, 90, 100])
+        max_input_length = trial.suggest_categorical(
+            "max_input_length", [120, 130, 140]
+        )
+        min_output_length = trial.suggest_categorical("min_output_length", [40, 45, 50])
+        max_output_length = trial.suggest_categorical("max_output_length", [75, 80, 85])
         training_epochs = trial.suggest_int("training_epochs", 3, max_training_epochs)
-        portion = trial.suggest_categorical("portion", [0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
 
         return objective_function(
             generation_epochs,
@@ -254,8 +260,10 @@ for task in tasks:
             generation_temperature,
             min_frequency,
             min_input_length,
+            max_input_length,
+            min_output_length,
+            max_output_length,
             training_epochs,
-            portion,
         )
 
     study = optuna.create_study(direction="maximize")
