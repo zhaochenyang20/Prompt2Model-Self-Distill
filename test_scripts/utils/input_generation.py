@@ -18,6 +18,7 @@ def generate_and_write_inputs(
     tensor_parallel_size,
     expected_content,
     optional_list,
+    portion,
 ):
     ray.init(ignore_reinit_error=True)
     input_generator = VLLMPromptBasedInputGenerator(
@@ -31,6 +32,7 @@ def generate_and_write_inputs(
         parameter_dict,
         expected_content,
         optional_list,
+        portion,
     )
     with open(log_and_data_path / f"inputs.txt", "w") as file:
         for index, item in enumerate(inputs):

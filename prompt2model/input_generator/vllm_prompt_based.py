@@ -2,8 +2,9 @@
 
 import random
 import re
-from typing import Any
 from functools import partial
+from typing import Any
+
 from tqdm import tqdm
 from vllm import LLM, SamplingParams
 
@@ -13,8 +14,11 @@ from prompt2model.input_generator.prompt_template import (
     construct_verify_prompt,
 )
 from prompt2model.prompt_parser import PromptSpec
-from prompt2model.quality_evaluator import ablation_list_filter
-from prompt2model.quality_evaluator.length_filter import length_filter
+from prompt2model.quality_evaluator import (
+    ablation_list_filter,
+    get_middle_portion,
+    length_filter,
+)
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 
 logger = get_formatted_logger("InputGenerator")
@@ -209,7 +213,8 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         per_epoch_num: int,
         hyperparameter_choices: dict[str, Any],
         expected_content,
-        optional_list = []
+        optional_list=[],
+        portion=0.5,
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
 
@@ -236,14 +241,17 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                         prompt_spec,
                         ablation_filter(
                             length_filter(
-                                new_inputs, hyperparameter_choices.get("min_input_length", 120)
+                                new_inputs,
+                                hyperparameter_choices.get("min_input_length", 120),
                             )
                         ),
                         expected_content=expected_content,
-                    ),hyperparameter_choices.get("min_input_length", 120)
+                    ),
+                    hyperparameter_choices.get("min_input_length", 120),
                 )
-            ) 
+            )
             if filtered_inputs is not None:
                 generated_inputs.extend(filtered_inputs)
                 generated_inputs = list(set(generated_inputs))
-        return generated_inputs
+        middle_generated_inputs = get_middle_portion(generated_inputs, portion)
+        return middle_generated_inputs
