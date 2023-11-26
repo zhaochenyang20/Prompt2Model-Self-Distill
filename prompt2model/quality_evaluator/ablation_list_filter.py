@@ -48,8 +48,8 @@ def ablation_list_filter(strings, optional_list=[]):
         if len(filtered_strings) == 0:
             logger.info("ablation_list_filter filtered result is empty.")
             return None
-
-        return filtered_strings
+        else:
+            return filtered_strings
 
     except Exception as e:
         logger.warning(f"Error in ablation_list_filter: {e}")
