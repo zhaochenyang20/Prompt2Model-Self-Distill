@@ -147,8 +147,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         ]
         sampling_params = SamplingParams(
             n=hyperparameter_choices.get("n", 1),
-            # repetition_penalty=hyperparameter_choices.get("repetition_penalty", 2),
-            # do_sample=hyperparameter_choices.get("do_sample", True),
             best_of=hyperparameter_choices.get("best_of", 1),
             top_k=hyperparameter_choices.get("top_k", -1),
             temperature=hyperparameter_choices.get("temperature", 1),
