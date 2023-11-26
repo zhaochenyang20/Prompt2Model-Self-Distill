@@ -8,22 +8,25 @@ import re
 import shutil
 from functools import partial
 from pathlib import Path
+
 import datasets
 import numpy
 import torch
+
 from prompt2model.utils import count_tokens_from_string
 
 # wandb sync wandb/offline-run-*
 os.environ["WANDB_MODE"] = "offline"
 
 from collections import OrderedDict
+
+from prompt2model.output_annotator import construct_meta_prompt
+from prompt2model.prompt_parser import MockPromptSpec, TaskType
+from utils.evaluate import exact_match_score, rouge_l_score
+from utils.inference import vllm_inference
 from utils.input_generation import generate_and_write_inputs
 from utils.output_annotation import annotate_and_write_outputs
 from utils.trainer import finetune_vicuna
-from utils.inference import vllm_inference
-from utils.evaluate import rouge_l_score, exact_match_score
-from prompt2model.output_annotator import construct_meta_prompt
-from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 
 def set_seed(seed=42):
@@ -100,6 +103,7 @@ def store_evaluation_content(
 def filter_function(example):
     return count_tokens_from_string(example) <= 3200
 
+
 def validate_or_test(
     evaluation_dataset_path,
     ckpt_path,
@@ -111,6 +115,7 @@ def validate_or_test(
     test_content_store_path=None,
     log_and_data_path=None,
     validation=True,
+    metric="exact_match",
 ):
     construct_prompt = partial(
         construct_meta_prompt,
@@ -126,7 +131,12 @@ def validate_or_test(
     loaded_dataset = datasets.load_from_disk(evaluation_dataset_path)
     # loaded_dataset = datasets.Dataset.from_dict(loaded_dataset[:20])
     loaded_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
-    test_dataset = loaded_dataset.filter(lambda x: (count_tokens_from_string(x["model_input"]) <= 3200 and count_tokens_from_string(x["model_output"]) <= 500))
+    test_dataset = loaded_dataset.filter(
+        lambda x: (
+            count_tokens_from_string(x["model_input"]) <= 3200
+            and count_tokens_from_string(x["model_output"]) <= 500
+        )
+    )
     prompts = test_dataset["model_input"]
     GROUND_TRUTH = test_dataset["model_output"]
 
@@ -150,17 +160,20 @@ def validate_or_test(
             tuned_model_generated_outputs = vllm_inference(
                 model_path, gpu_memory_utilization, tensor_parallel_size, prompts
             )
-            exact_match = rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs)
-            evaluate_result[f"{ckpt_index + 1}"] = exact_match
+            if metric == "exact_match":
+                score = exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs)
+            else:
+                score = rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs)
+            evaluate_result[f"{ckpt_index + 1}"] = score
             name = str(log_and_data_path).split("/")[-1]
             print(
-                f"\n\nresult of {name} epoch {ckpt_index + 1}\n\n------------------------------------------------\n\n{exact_match}\n\n------------------------------------------------\n\n"
+                f"\n\nresult of {name} epoch {ckpt_index + 1}\n\n------------------------------------------------\n\n{score}\n\n------------------------------------------------\n\n"
             )
             with open(evaluate_result_path, "w") as f:
                 json.dump(evaluate_result, f, indent=4)
             with open(log_and_data_path / "config.json", "r") as json_file:
                 loaded_params = json.load(json_file)
-            loaded_params[f"validation_result_{ckpt_index + 1}"] = exact_match
+            loaded_params[f"validation_result_{ckpt_index + 1}"] = score
             with open(log_and_data_path / "config.json", "w") as f:
                 json.dump(loaded_params, f, indent=4)
             evaluate_generated_content_path = log_and_data_path / "generated_contents"
@@ -176,14 +189,17 @@ def validate_or_test(
         tuned_model_generated_outputs = vllm_inference(
             ckpt_path, gpu_memory_utilization, tensor_parallel_size, prompts
         )
-        exact_match = rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs)
+        if metric == "exact_match":
+            score = exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs)
+        else:
+            score = rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs)
         print(
-            f"\n\nresult of {ckpt_path}\n\n------------------------------------------------\n\n{exact_match}\n\n------------------------------------------------\n\n"
+            f"\n\nresult of {ckpt_path}\n\n------------------------------------------------\n\n{score}\n\n------------------------------------------------\n\n"
         )
         with open(evaluate_result_path, "r") as json_file:
             evaluate_result = json.load(json_file)
-        evaluate_result["test_result"] = exact_match
-        print(f"The best ckpt on test set gain {exact_match}")
+        evaluate_result["test_result"] = score
+        print(f"The best ckpt on test set gain {score}")
         with open(evaluate_result_path, "w") as f:
             json.dump(evaluate_result, f, indent=4)
         store_evaluation_content(
@@ -208,7 +224,7 @@ def get_ckpt_paths_and_result(ckpt_path, evaluate_result_path):
     )
 
 
-def search_against_parameter(config_path: str):
+def main(config_path: str):
     set_seed(42)
     print(str(config_path))
     with open(config_path, "r") as json_file:
@@ -303,6 +319,7 @@ def search_against_parameter(config_path: str):
             evaluate_result_path,
             log_and_data_path=log_and_data_path,
             validation=True,
+            metric=loaded_params["metric"],
         )
 
     return get_ckpt_paths_and_result(ckpt_path, evaluate_result_path)

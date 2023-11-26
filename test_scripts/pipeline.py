@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 import optuna
-from main import search_against_parameter, validate_or_test
+from main import main, validate_or_test
 
 
 def write_results(log_and_data_root, max_training_epochs):
@@ -54,7 +54,6 @@ def print_and_execute_command(command):
 
 max_training_epochs = 3
 file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
-
 with open(file_path, "r", encoding="utf-8") as json_file:
     all_tasks = json.load(json_file)
 
@@ -62,7 +61,9 @@ tasks = []
 
 # TODO change task name
 task_name = "task1345"
+experiment_name = "NI_" + task_name + "_exp_1"
 # TODO change avilable cards
+# Discuss 加入了 metric 需要改写
 os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 for task in all_tasks:
     if task["task_name"] == task_name:
@@ -73,14 +74,11 @@ for task in all_tasks:
             task["expected_content"],
             f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/{task_name}",
             f"/home/cyzhao/prompt2model_test/testdataset/NI/test/{task_name}",
-            task["optional_list"],
+            task.get("optional_list", []),
+            task.get("metric", "exact_match"),
         )
         tasks.append(task_tuple)
 
-
-# TODO change experiment name
-# experiment_name = "NI_"+task_name+"_exp_2"
-experiment_name = "NI_" + task_name + "_exp_1"
 
 log_and_data_root = Path("/home/cyzhao") / experiment_name
 evaluation_result_file_tail = "result.json"
@@ -100,7 +98,7 @@ tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 然而，不是每张卡都是空的，比如 0 卡已经有人跑了 40G 了，那么 gpu_memory_utilization < 0.5
 
 
-for task in tasks[0:]:
+for task in tasks:
     (
         task_name,
         instruction,
@@ -109,6 +107,7 @@ for task in tasks[0:]:
         evaluation_dataset_path,
         test_set_path,
         optional_list,
+        metric,
     ) = task
 
     print(task_name)
@@ -121,7 +120,6 @@ for task in tasks[0:]:
         min_frequency,
         min_input_length,
         training_epochs,
-        optional_list,
     ):
         generation_epochs = int(generation_epochs)
         generation_batch_size = int(generation_batch_size)
@@ -136,13 +134,6 @@ for task in tasks[0:]:
         log_and_data_path.mkdir(parents=True, exist_ok=True)
         ckpt_path = ckpt_root / name
         ckpt_path.mkdir(parents=True, exist_ok=True)
-
-        # task_name,
-        # instruction,
-        # examples,
-        # expected_content,
-        # evaluation_dataset_path,
-        # test_set_path,
 
         params = {
             "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
@@ -165,6 +156,7 @@ for task in tasks[0:]:
             "tensor_parallel_size": int(tensor_parallel_size),
             "evaluation_result_file_tail": evaluation_result_file_tail,
             "optional_list": optional_list,
+            "metric": metric,
         }
         with open(log_and_data_path / "config.json", "w") as f:
             json.dump(params, f, indent=4)
@@ -198,9 +190,7 @@ for task in tasks[0:]:
             or len(list(evaluate_result.keys())) < training_epochs
         ):
             print(log_and_data_path)
-            ckpt_paths_and_result = search_against_parameter(
-                str(log_and_data_path / "config.json")
-            )
+            ckpt_paths_and_result = main(str(log_and_data_path / "config.json"))
 
             highest_result_path = max(
                 ckpt_paths_and_result, key=ckpt_paths_and_result.get
@@ -264,12 +254,10 @@ for task in tasks[0:]:
             min_frequency,
             min_input_length,
             training_epochs,
-            optional_list,
         )
 
     study = optuna.create_study(direction="maximize")
     study.optimize(objective, n_trials=10)
-
     best_params = study.best_params
     print(best_params)
 
@@ -290,4 +278,5 @@ for task in tasks[0:]:
             best_validation_result_path,
             test_content_store_path=log_and_data_root / "best_ckpt_generated_content",
             validation=False,
+            metric=metric,
         )
