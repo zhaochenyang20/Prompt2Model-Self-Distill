@@ -4,6 +4,7 @@ import gc
 from functools import partial
 from pathlib import Path
 import json
+from IPython import embed
 
 # import os
 
@@ -103,7 +104,6 @@ def evaluate_model(task_names):
             test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
             prompts = test_dataset["model_input"]
             GROUND_TRUTH = test_dataset["model_output"]
-
             hyperparameter_choices = {}
             sampling_params = SamplingParams(
                 top_k=hyperparameter_choices.get("top_k", -1),

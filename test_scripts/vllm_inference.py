@@ -5,7 +5,7 @@ path = "/data/cyzhao/best_ckpt/SQuAD"
 default = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
 
 language_model = LLM(
-    model=path,
+    model=default,
     gpu_memory_utilization=0.5,
     tensor_parallel_size=1,
 )

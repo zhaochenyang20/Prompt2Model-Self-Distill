@@ -10,7 +10,6 @@ from test_ni import evaluate_model
 # step0: specify the json files to be processed
 # TODO paste name of json files
 github_raw_urls = [
-    "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task1356_xlsum_title_generation.json",
     "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task1540_parsed_pdfs_summarization.json",
     "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task1659_title_generation.json",
     "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task569_recipe_nlg_text_generation.json"

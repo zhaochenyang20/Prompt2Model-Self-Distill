@@ -1,5 +1,4 @@
 import csv
-import json
 import os
 from pathlib import Path
 import json
@@ -56,29 +55,27 @@ with open(file_path, 'r', encoding='utf-8') as json_file:
 
 tasks = []
 
-# TODO change task_names
-task_names = ['034']
-
-for task_name in task_names:
-    for task in all_tasks:
-        if task['task_name'] == 'task'+task_name:
-            task_tuple = (
-                task['task_name'],
-                task['task_instruction'],
-                task['examples'],
-                task['expected_content'],
-                f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/task{task_name}",
-                f"/home/cyzhao/prompt2model_test/testdataset/NI/test/task{task_name}",
-                task['optional_list']
-            )
-            tasks.append(task_tuple)
-
 # TODO change task name
-task_name = "task039"
+task_name = "task1345"
+# TODO change avilable cards
+os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
+for task in all_tasks:
+    if task['task_name'] == task_name:
+        task_tuple = (
+            task['task_name'],
+            task['task_instruction'],
+            task['examples'],
+            task['expected_content'],
+            f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/{task_name}",
+            f"/home/cyzhao/prompt2model_test/testdataset/NI/test/{task_name}",
+            task['optional_list']
+        )
+        tasks.append(task_tuple)
+
 
 # TODO change experiment name
 # experiment_name = "NI_"+task_name+"_exp_2"
-experiment_name = "NI_"+task_name+"_exp_2"
+experiment_name = "NI_"+task_name+"_exp_1"
 
 log_and_data_root = Path("/home/cyzhao") / experiment_name
 evaluation_result_file_tail = "result.json"
@@ -89,8 +86,6 @@ log_and_data_root.mkdir(parents=True, exist_ok=True)
 ckpt_root.mkdir(parents=True, exist_ok=True)
 best_ckpt_path.mkdir(parents=True, exist_ok=True)
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-# TODO change avilable cards
-os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 gpu_memory_utilization = 0.9
 tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
@@ -100,7 +95,6 @@ tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 然而，不是每张卡都是空的，比如 0 卡已经有人跑了 40G 了，那么 gpu_memory_utilization < 0.5
 
 
-# TODO change index
 for task in tasks[0:]:
     (
         task_name,
