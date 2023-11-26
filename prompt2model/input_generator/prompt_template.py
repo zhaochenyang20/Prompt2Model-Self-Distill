@@ -43,7 +43,7 @@ INPUT_FILTER_TEMPLATE = """
 
 ### [YOUR TASK]
 
-Extract {expected_content} from [NEW INPUT] similar to one of the given [EXAMPLE] and output as your response.
+Extract {expected_content} from [NEW INPUT] similar to the [EXAMPLE] and output as your response.
 
 ### [YOUR RESPONSE]
 
