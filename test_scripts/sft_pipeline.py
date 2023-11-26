@@ -2,16 +2,12 @@ import gc
 import os
 from functools import partial
 from pathlib import Path
+
 os.environ["WANDB_MODE"] = "offline"
 import datasets
 import torch
-from transformers import (
-    AutoModelForCausalLM,
-    AutoTokenizer,
-    TrainingArguments,
-)
+from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
-
 
 from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
@@ -21,7 +17,9 @@ model_path = Path(
 )
 ckpt_path = Path("/home/cyzhao/ckpt")
 generated_dataset_path = Path("/home/cyzhao/generated_datasets")
-dataset_path = Path("/home/cyzhao/finished_experiments/SQuAD_experiments_7/SQuAD_10_15_40_0.8_0.4_120_3/dataset")
+dataset_path = Path(
+    "/home/cyzhao/finished_experiments/SQuAD_experiments_7/SQuAD_10_15_40_0.8_0.4_120_3/dataset"
+)
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,

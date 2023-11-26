@@ -1,7 +1,7 @@
 """Test Input Generator."""
 
-from pathlib import Path
 import json
+from pathlib import Path
 
 import datasets
 
@@ -16,29 +16,29 @@ inputs_dir.mkdir(parents=True, exist_ok=True)
 generated_inputs = []
 
 # TODO change task name
-task_name = '121'
-file_path = '/home/cyzhao/main/NI_tasks/tasks.json'  
-with open(file_path, 'r', encoding='utf-8') as json_file:
+task_name = "121"
+file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
+with open(file_path, "r", encoding="utf-8") as json_file:
     all_tasks = json.load(json_file)
 choosen_task = None
 for task in all_tasks:
-    if task['task_name'] == 'task'+task_name:
+    if task["task_name"] == "task" + task_name:
         task_tuple = (
-            task['task_name'],
-            task['task_instruction'],
-            task['examples'],
-            task['expected_content'],
+            task["task_name"],
+            task["task_instruction"],
+            task["examples"],
+            task["expected_content"],
             f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/task{task_name}",
             f"/home/cyzhao/prompt2model_test/testdataset/NI/test/task{task_name}",
-            task['optional_list']
+            task["optional_list"],
         )
         choosen_task = task
         break
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
-    instruction=choosen_task['task_instruction'],  # # noqa E501
-    examples=choosen_task['examples'],  # noqa E501
+    instruction=choosen_task["task_instruction"],  # # noqa E501
+    examples=choosen_task["examples"],  # noqa E501
 )
 
 input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=0.9)
@@ -64,6 +64,6 @@ inputs = input_generator.batch_generation_inputs(
         temperature=0.6,
         min_input_length=100,
     ),
-    expected_content=choosen_task['expected_content'],
-    optional_list=choosen_task['optional_list']
+    expected_content=choosen_task["expected_content"],
+    optional_list=choosen_task["optional_list"],
 )

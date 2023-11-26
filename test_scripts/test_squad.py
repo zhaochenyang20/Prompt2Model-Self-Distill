@@ -5,6 +5,7 @@ from pathlib import Path
 import datasets
 import ray
 import torch
+from datasets import load_dataset
 from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
@@ -14,8 +15,6 @@ from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 #! TODO 改为新任务的 test set path
 
-import datasets
-from datasets import load_dataset
 
 original_dataset = load_dataset("squad", split="validation")
 
@@ -103,7 +102,9 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
 path = "/data2/cyzhao/best_ckpt/SQuAD_exp_7"
 ray.init(ignore_reinit_error=True)
-tuned_vicuna = LLM(model=base_model, gpu_memory_utilization=0.95, tensor_parallel_size=2)
+tuned_vicuna = LLM(
+    model=base_model, gpu_memory_utilization=0.95, tensor_parallel_size=2
+)
 tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
 tuned_vicuna_generated_outputs = [each.outputs[0].text for each in tuned_vicuna_outputs]
 
