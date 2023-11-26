@@ -5,7 +5,7 @@ from prompt2model.utils import get_formatted_logger
 logger = get_formatted_logger("QualityEvaluator")
 
 
-def length_filter(strings, min_length=120):
+def min_max_length_filter(strings, min_length=120, max_length=None):
     """
     The function filters and returns strings from the input list that are longer than the specified minimum length.
 
@@ -23,24 +23,31 @@ def length_filter(strings, min_length=120):
     """
 
     if strings is None:
-        logger.info("Input strings in length_filter is None.")
+        logger.info("Input strings in min_max_length_filter is None.")
         return None
 
     if not isinstance(min_length, int) or min_length <= 0:
         logger.info(
-            "Invalid min_length value in length_filter. It should be a positive integer."
+            "Invalid min_length value in min_max_length_filter. It should be a positive integer."
         )
         return None
 
     try:
-        filtered_strings = [string for string in strings if len(string) >= min_length]
+        if max_length is not None:
+            filtered_strings = [
+                string for string in strings if max_length > len(string) >= min_length
+            ]
+        else:
+            filtered_strings = [
+                string for string in strings if len(string) >= min_length
+            ]
         if len(filtered_strings) == 0:
-            logger.info("length_filter filtered result is empty.")
+            logger.info("min_max_length_filter filtered result is empty.")
             return None
         return filtered_strings
 
     except Exception as e:
-        logger.warning(f"Error in length_filter: {e}")
+        logger.warning(f"Error in min_max_length_filter: {e}")
         return None
 
 
