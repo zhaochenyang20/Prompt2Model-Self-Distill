@@ -259,6 +259,7 @@ def main(config_path: str):
             tensor_parallel_size,
             expected_content,
             loaded_params["optional_list"],
+            loaded_params["portion"],
         )
 
     if not (log_and_data_path / "dataset").exists():

@@ -2,10 +2,11 @@ import csv
 import json
 import os
 from pathlib import Path
+
 import optuna
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 from main import main, validate_or_test
-
 
 max_training_epochs = 3
 file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
@@ -51,6 +52,7 @@ tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # gpu_memory_utilization 越小，则 inference 越慢
 # 然而，不是每张卡都是空的，比如 0 卡已经有人跑了 40G 了，那么 gpu_memory_utilization < 0.5
 
+
 def write_results(log_and_data_root, max_training_epochs):
     csv_header = [
         "task_name",
@@ -95,6 +97,7 @@ def print_and_execute_command(command):
     print(command)
     os.system(command)
 
+
 for task in tasks:
     (
         task_name,
@@ -117,6 +120,7 @@ for task in tasks:
         min_frequency,
         min_input_length,
         training_epochs,
+        portion,
     ):
         generation_epochs = int(generation_epochs)
         generation_batch_size = int(generation_batch_size)
@@ -154,6 +158,7 @@ for task in tasks:
             "evaluation_result_file_tail": evaluation_result_file_tail,
             "optional_list": optional_list,
             "metric": metric,
+            "portion": portion,
         }
         with open(log_and_data_path / "config.json", "w") as f:
             json.dump(params, f, indent=4)
@@ -238,6 +243,7 @@ for task in tasks:
         min_frequency = trial.suggest_categorical("min_frequency", [0.3, 0.35, 0.4])
         min_input_length = trial.suggest_categorical("min_input_length", [50, 55, 60])
         training_epochs = trial.suggest_int("training_epochs", 3, max_training_epochs)
+        portion = trial.suggest_categorical("portion", [0.6, 0.7, 0.8])
 
         return objective_function(
             generation_epochs,
@@ -247,6 +253,7 @@ for task in tasks:
             min_frequency,
             min_input_length,
             training_epochs,
+            portion,
         )
 
     study = optuna.create_study(direction="maximize")
