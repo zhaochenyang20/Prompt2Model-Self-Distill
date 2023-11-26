@@ -1,9 +1,12 @@
 import gc
-from prompt2model.output_annotator import VLLMPromptBasedOutputAnnotator
+import json
+
 import datasets
 import ray
-import torch, json
+import torch
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
+
+from prompt2model.output_annotator import VLLMPromptBasedOutputAnnotator
 
 
 def annotate_and_write_outputs(

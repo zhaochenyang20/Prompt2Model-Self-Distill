@@ -1,7 +1,13 @@
-import wandb, datasets, torch, os, gc
+import gc
+import os
+from functools import partial
+
+import datasets
+import torch
+import wandb
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
-from functools import partial
+
 from prompt2model.output_annotator import construct_meta_prompt
 
 

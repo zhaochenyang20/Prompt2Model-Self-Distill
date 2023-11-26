@@ -1,9 +1,11 @@
 import gc
-from prompt2model.input_generator import VLLMPromptBasedInputGenerator
+
 import datasets
 import ray
 import torch
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
+
+from prompt2model.input_generator import VLLMPromptBasedInputGenerator
 
 
 def generate_and_write_inputs(

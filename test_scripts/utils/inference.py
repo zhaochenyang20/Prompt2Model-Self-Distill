@@ -1,6 +1,9 @@
+import gc
+
+import ray
+import torch
 from vllm import LLM, SamplingParams
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
-import ray, gc, torch
 
 
 def vllm_inference(model_path, gpu_memory_utilization, tensor_parallel_size, prompts):
