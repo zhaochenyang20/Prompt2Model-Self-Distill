@@ -17,7 +17,7 @@ from prompt2model.prompt_parser import PromptSpec
 from prompt2model.quality_evaluator import (
     ablation_list_filter,
     get_middle_portion,
-    length_filter,
+    min_max_length_filter,
 )
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 
@@ -170,6 +170,9 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             new_inputs: The generated inputs.
         """
 
+        if new_inputs is None:
+            return None
+
         def construct_filter_prompt(
             few_shot_example_string: str,
             new_input: str,
@@ -189,8 +192,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 expected_content=expected_content,
             )
 
-        if new_inputs is None:
-            return None
         filter_prompts = [
             construct_filter_prompt(prompt_spec.examples, each) for each in new_inputs
         ]
@@ -214,7 +215,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         hyperparameter_choices: dict[str, Any],
         expected_content,
         optional_list=[],
-        portion=0.5,
+        portion=1,
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
 
@@ -225,6 +226,11 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             hyperparameter_choices: A dictionary of hyperparameter choices.
         """
         ablation_filter = partial(ablation_list_filter, optional_list=optional_list)
+        length_filter = partial(
+            min_max_length_filter,
+            min_length=hyperparameter_choices.get("min_input_length", 120),
+            max_length=hyperparameter_choices.get("max_input_length", None),
+        )
         generated_inputs = []
         for _ in tqdm(range(generation_epochs)):
             new_inputs = self.generate_inputs(
@@ -239,18 +245,12 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 length_filter(
                     self.verify(
                         prompt_spec,
-                        ablation_filter(
-                            length_filter(
-                                new_inputs,
-                                hyperparameter_choices.get("min_input_length", 120),
-                            )
-                        ),
+                        ablation_filter(length_filter(new_inputs)),
                         expected_content=expected_content,
-                    ),
-                    hyperparameter_choices.get("min_input_length", 120),
+                    )
                 )
             )
-            if filtered_inputs is not None:
+            if filtered_inputs is not None and filtered_inputs != []:
                 generated_inputs.extend(filtered_inputs)
                 generated_inputs = list(set(generated_inputs))
         middle_generated_inputs = get_middle_portion(generated_inputs, portion)

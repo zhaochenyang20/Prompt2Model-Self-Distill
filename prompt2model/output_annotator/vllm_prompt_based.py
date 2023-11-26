@@ -9,7 +9,11 @@ from vllm import LLM, SamplingParams
 from prompt2model.output_annotator import OutputAnnotator
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import PromptSpec
-from prompt2model.quality_evaluator import ablation_list_filter, self_consistency_filter
+from prompt2model.quality_evaluator import (
+    ablation_list_filter,
+    min_max_length_filter,
+    self_consistency_filter,
+)
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 
 logger = get_formatted_logger("OutputAnnotator")
@@ -103,6 +107,15 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             A dataset of `input_col` and `output_col`.
         """
         prompts = []
+        consistency_filter = partial(
+            self_consistency_filter,
+            min_frequency=hyperparameter_choices.get("min_frequency", 0.2),
+        )
+        length_filter = partial(
+            min_max_length_filter,
+            min_length=hyperparameter_choices.get("min_output_length", 10),
+            max_length=hyperparameter_choices.get("max_output_length", None),
+        )
         ablation_filter = partial(ablation_list_filter, optional_list=optional_list)
         for input in input_strings:
             prompts += [
@@ -130,9 +143,8 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                 for output in output_sequence[idx].outputs
                 if (output.text is not None and output.text != "")
             ]
-            min_frequency = hyperparameter_choices.get("min_frequency", 0.2)
-            consistent_output = self_consistency_filter(
-                ablation_filter(outputs), min_frequency
+            consistent_output = consistency_filter(
+                ablation_filter(length_filter(outputs))
             )
             if (
                 consistent_output is not None

@@ -5,7 +5,7 @@ from prompt2model.quality_evaluator import (
     self_consistency_filter,
     semantic_filter,
 )
-from prompt2model.quality_evaluator.length_filter import length_filter
+from prompt2model.quality_evaluator.min_max_length_filter import min_max_length_filter
 
 
 class TestAblationListFilter(unittest.TestCase):
@@ -84,13 +84,13 @@ class TestCheckParagraphCoherence(unittest.TestCase):
 class TestLengthFilter(unittest.TestCase):
     def test_normal_functionality(self):
         self.assertEqual(
-            length_filter(["hello", "world", "a", "Python", "code"], 3),
+            min_max_length_filter(["hello", "world", "a", "Python", "code"], 3),
             ["hello", "world", "Python", "code"],
         )
 
     def test_default_min_length(self):
         self.assertEqual(
-            length_filter(
+            min_max_length_filter(
                 [
                     "short",
                     "medium length string",
@@ -101,17 +101,17 @@ class TestLengthFilter(unittest.TestCase):
         )
 
     def test_empty_list(self):
-        self.assertIsNone(length_filter([], 3))
+        self.assertIsNone(min_max_length_filter([], 3))
 
     def test_none_input(self):
-        self.assertIsNone(length_filter(None, 3))
+        self.assertIsNone(min_max_length_filter(None, 3))
 
     def test_invalid_min_length(self):
-        self.assertIsNone(length_filter(["hello", "world"], "three"))
-        self.assertIsNone(length_filter(["hello", "world"], -1))
+        self.assertIsNone(min_max_length_filter(["hello", "world"], "three"))
+        self.assertIsNone(min_max_length_filter(["hello", "world"], -1))
 
     def test_no_strings_meet_criteria(self):
-        self.assertIsNone(length_filter(["a", "b", "c", "d"], 5))
+        self.assertIsNone(min_max_length_filter(["a", "b", "c", "d"], 5))
 
 
 if __name__ == "__main__":

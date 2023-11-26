@@ -13,6 +13,8 @@ def annotate_and_write_outputs(
     log_and_data_path,
     gpu_memory_utilization,
     min_frequency,
+    min_output_length,
+    max_output_lengh,
     tensor_parallel_size,
     prompt_spec,
     optional_list,
@@ -29,7 +31,11 @@ def annotate_and_write_outputs(
     output_dataset = output_annotator.annotate_outputs(
         input_strings=inputs,
         prompt_spec=prompt_spec,
-        hyperparameter_choices={"min_frequency": min_frequency},
+        hyperparameter_choices=dict(
+            min_frequency=min_frequency,
+            min_output_length=min_output_length,
+            max_output_lengh=max_output_lengh,
+        ),
         optional_list=optional_list,
     )
     output_dataset.save_to_disk(log_and_data_path / f"dataset")
