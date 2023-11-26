@@ -61,7 +61,7 @@ tasks = []
 
 # TODO change task name
 task_name = "task121"
-experiment_name = "NI_" + task_name + "_exp_1"
+experiment_name = "NI_" + task_name + "_exp_3"
 # TODO change avilable cards
 # Discuss 加入了 metric 需要改写
 os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
@@ -89,7 +89,7 @@ log_and_data_root.mkdir(parents=True, exist_ok=True)
 ckpt_root.mkdir(parents=True, exist_ok=True)
 best_ckpt_path.mkdir(parents=True, exist_ok=True)
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-gpu_memory_utilization = 0.9
+gpu_memory_utilization = 0.80
 tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
 # gpu_memory_utilization 是在每张卡上的占比，比如 CUDA_CONDITION = "0,1,4,5", gpu_memory_utilization = 0.9
@@ -235,11 +235,8 @@ for task in tasks:
             "generation_batch_size", [10, 15, 20]
         )
         generation_top_k = trial.suggest_categorical("generation_top_k", [40, 45, 50])
-        # generation_temperature = trial.suggest_categorical(
-        #     "generation_temperature", [0.3, 0.4,0.6, 0,7, 0.8, 0.9]
-        # )
         generation_temperature = trial.suggest_categorical(
-            "generation_temperature", [0.3, 0.4, 0.5, 0.6]
+            "generation_temperature", [0.75, 0.80, 0.85]
         )
         min_frequency = trial.suggest_categorical(
             "min_frequency", [0.3, 0.35, 0.4]

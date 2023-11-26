@@ -1,0 +1,38 @@
+[2023-11-26 02:51:23,511] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+task121
+searching parameters: task121_15_15_45_0.5_0.3_50_3
+/home/cyzhao/NI_task121_exp_1/task121_15_15_45_0.5_0.3_50_3
+/home/cyzhao/NI_task121_exp_1/task121_15_15_45_0.5_0.3_50_3/config.json
+generate_and_write_inputs!
+INFO 11-26 02:51:29 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-26 02:51:45 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-26 02:53:11 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-26 02:53:27 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 87
+expected_example_num: 225
+selection_ratio: 0.38666666666666666
+finetune_vicuna!
+[2023-11-26 02:58:23,178] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+task121
+searching parameters: task121_15_20_50_0.4_0.35_50_3
+/home/cyzhao/NI_task121_exp_1/task121_15_20_50_0.4_0.35_50_3
+/home/cyzhao/NI_task121_exp_1/task121_15_20_50_0.4_0.35_50_3/config.json
+generate_and_write_inputs!
+INFO 11-26 02:58:29 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-26 02:58:43 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+[2023-11-26 03:00:08,646] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+task121
+searching parameters: task121_15_20_40_0.4_0.4_60_3
+/home/cyzhao/NI_task121_exp_1/task121_15_20_40_0.4_0.4_60_3
+/home/cyzhao/NI_task121_exp_1/task121_15_20_40_0.4_0.4_60_3/config.json
+generate_and_write_inputs!
+INFO 11-26 03:00:14 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-26 03:00:31 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-26 03:02:40 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-26 03:02:57 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
+generated_example_num: 105
+expected_example_num: 300
+selection_ratio: 0.35
+finetune_vicuna!
