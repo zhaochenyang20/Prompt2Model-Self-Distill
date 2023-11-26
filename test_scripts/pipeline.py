@@ -1,9 +1,11 @@
 import csv
+import json
 import os
 from pathlib import Path
-import json
+
 import optuna
 from main import search_against_parameter, validate_or_test
+
 
 def write_results(log_and_data_root, max_training_epochs):
     csv_header = [
@@ -39,18 +41,21 @@ def write_results(log_and_data_root, max_training_epochs):
         writer.writeheader()
         writer.writerows(csv_data)
 
+
 def read_json(file_path):
     with open(file_path, "r") as file:
         return json.load(file)
+
 
 def print_and_execute_command(command):
     print(command)
     os.system(command)
 
-max_training_epochs = 3
-file_path = '/home/cyzhao/main/NI_tasks/tasks.json'  
 
-with open(file_path, 'r', encoding='utf-8') as json_file:
+max_training_epochs = 3
+file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
+
+with open(file_path, "r", encoding="utf-8") as json_file:
     all_tasks = json.load(json_file)
 
 tasks = []
@@ -60,22 +65,22 @@ task_name = "task1345"
 # TODO change avilable cards
 os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 for task in all_tasks:
-    if task['task_name'] == task_name:
+    if task["task_name"] == task_name:
         task_tuple = (
-            task['task_name'],
-            task['task_instruction'],
-            task['examples'],
-            task['expected_content'],
+            task["task_name"],
+            task["task_instruction"],
+            task["examples"],
+            task["expected_content"],
             f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/{task_name}",
             f"/home/cyzhao/prompt2model_test/testdataset/NI/test/{task_name}",
-            task['optional_list']
+            task["optional_list"],
         )
         tasks.append(task_tuple)
 
 
 # TODO change experiment name
 # experiment_name = "NI_"+task_name+"_exp_2"
-experiment_name = "NI_"+task_name+"_exp_1"
+experiment_name = "NI_" + task_name + "_exp_1"
 
 log_and_data_root = Path("/home/cyzhao") / experiment_name
 evaluation_result_file_tail = "result.json"
@@ -103,7 +108,7 @@ for task in tasks[0:]:
         expected_content,
         evaluation_dataset_path,
         test_set_path,
-        optional_list
+        optional_list,
     ) = task
 
     print(task_name)
@@ -116,7 +121,7 @@ for task in tasks[0:]:
         min_frequency,
         min_input_length,
         training_epochs,
-        optional_list
+        optional_list,
     ):
         generation_epochs = int(generation_epochs)
         generation_batch_size = int(generation_batch_size)
@@ -243,7 +248,9 @@ for task in tasks[0:]:
         generation_temperature = trial.suggest_categorical(
             "generation_temperature", [0.3, 0.4, 0.8, 0.9]
         )
-        min_frequency = trial.suggest_categorical("min_frequency", [0.3, 0.35, 0.4, 0.5])
+        min_frequency = trial.suggest_categorical(
+            "min_frequency", [0.3, 0.35, 0.4, 0.5]
+        )
         min_input_length = trial.suggest_categorical(
             "min_input_length", [115, 120, 125, 130]
         )
@@ -257,7 +264,7 @@ for task in tasks[0:]:
             min_frequency,
             min_input_length,
             training_epochs,
-            optional_list
+            optional_list,
         )
 
     study = optuna.create_study(direction="maximize")

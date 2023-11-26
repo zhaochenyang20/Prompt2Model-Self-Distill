@@ -211,7 +211,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         per_epoch_num: int,
         hyperparameter_choices: dict[str, Any],
         expected_content,
-        optional_list = []
+        optional_list=[],
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
 
@@ -237,14 +237,16 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                         prompt_spec,
                         ablation_list_filter(
                             length_filter(
-                                new_inputs, hyperparameter_choices.get("min_input_length", 120)
+                                new_inputs,
+                                hyperparameter_choices.get("min_input_length", 120),
                             ),
-                            optional_list
+                            optional_list,
                         ),
                         expected_content=expected_content,
-                    ),hyperparameter_choices.get("min_input_length", 120)
+                    ),
+                    hyperparameter_choices.get("min_input_length", 120),
                 ),
-                optional_list
+                optional_list,
             )
             if filtered_inputs is not None:
                 generated_inputs.extend(filtered_inputs)

@@ -1,22 +1,23 @@
 import os
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 import gc
+import json
 from functools import partial
 from pathlib import Path
-import json
-from IPython import embed
-
-# import os
 
 import datasets
 import ray
 import torch
+from IPython import embed
 from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
+
+# import os
 
 
 def lcs_length_dp(x, y):
@@ -35,6 +36,7 @@ def lcs_length_dp(x, y):
 
     return dp_table[m][n]
 
+
 def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
     scores = []
     for gt, gen in zip(GROUND_TRUTH, tuned_model_generated_outputs):
@@ -48,33 +50,33 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
         scores.append(f_measure)
     return sum(scores) / len(scores)
 
+
 def evaluate_model(task_names):
     for task_name in task_names:
-        experiment_name = 'NI_'+task_name+'_exp_1'
-        for test_type in ['test', 'eval']:
+        experiment_name = "NI_" + task_name + "_exp_1"
+        for test_type in ["test", "eval"]:
             test_dataset = datasets.load_from_disk(
                 f"/home/cyzhao/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
             )
             inputs_dir = Path("/home/cyzhao/")
 
-            file_path = '/home/cyzhao/main/NI_tasks/tasks.json'  
+            file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
 
-            with open(file_path, 'r', encoding='utf-8') as json_file:
+            with open(file_path, "r", encoding="utf-8") as json_file:
                 data = json.load(json_file)
 
             index = 0
             for task in data:
-                if task['task_name'] == task_name:
+                if task["task_name"] == task_name:
                     break
                 index += 1
             task_instruction = data[index]["task_instruction"]
             task_name = data[index]["task_name"]
             examples = data[index]["examples"]
 
-
             prompt_spec = MockPromptSpec(
                 task_type=TaskType.TEXT_GENERATION,
-                instruction = task_instruction,
+                instruction=task_instruction,
                 examples=examples,
             )
 
@@ -91,15 +93,17 @@ def evaluate_model(task_names):
                 trust_remote_code=True,
             )
 
-
             def map_func(example):
-                example["model_input"] = construct_prompt(new_input=example["input_col"])
+                example["model_input"] = construct_prompt(
+                    new_input=example["input_col"]
+                )
                 example["model_output"] = example["output_col"]
                 example["text"] = (
-                    example["model_input"] + example["model_output"] + tokenizer.eos_token
+                    example["model_input"]
+                    + example["model_output"]
+                    + tokenizer.eos_token
                 )
                 return example
-
 
             test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
             prompts = test_dataset["model_input"]
@@ -123,14 +127,18 @@ def evaluate_model(task_names):
             # path = f"/data2/cyzhao/best_ckpt/NI/{experiment_name}"
             ray.init(ignore_reinit_error=True)
             tuned_vicuna = LLM(
-                model=base_model, gpu_memory_utilization=0.9, tensor_parallel_size=len(os.environ["CUDA_VISIBLE_DEVICES"].split(",")) # 根据卡数改
+                model=base_model,
+                gpu_memory_utilization=0.9,
+                tensor_parallel_size=len(
+                    os.environ["CUDA_VISIBLE_DEVICES"].split(",")
+                ),  # 根据卡数改
             )
             tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
             tuned_vicuna_generated_outputs = [
                 each.outputs[0].text for each in tuned_vicuna_outputs
             ]
             rouge_socre = rouge_l_score(GROUND_TRUTH, tuned_vicuna_generated_outputs)
-            print(f'{task_name} {test_type}: {rouge_socre}')
+            print(f"{task_name} {test_type}: {rouge_socre}")
             with open(inputs_dir / f"evaluate_10_times.txt", "a+") as file:
                 file.write(
                     f"\n\nresult of {base_model} th:\n\n------------------------------------------------{rouge_socre}------------------------------------------------\n\n"
@@ -139,9 +147,11 @@ def evaluate_model(task_names):
             #! 记得改名字
             evaluate_generated_content_path = inputs_dir / f"base_vicuna_{task_name}"
             # print(f"Genrated contents are stored in {str(evaluate_generated_content_path)}")
-            print(f'length of tuned_vicuna_generated_outputs: {len(tuned_vicuna_generated_outputs)}')
-            print(f'length of prompts: {len(prompts)}')
-            print(f'length of groud_truth: {len(GROUND_TRUTH)}')
+            print(
+                f"length of tuned_vicuna_generated_outputs: {len(tuned_vicuna_generated_outputs)}"
+            )
+            print(f"length of prompts: {len(prompts)}")
+            print(f"length of groud_truth: {len(GROUND_TRUTH)}")
             datasets.Dataset.from_dict(
                 dict(
                     model_output=tuned_vicuna_generated_outputs,
@@ -154,5 +164,6 @@ def evaluate_model(task_names):
             ray.shutdown()
             destroy_model_parallel()
 
-task_names = ['task1356']
+
+task_names = ["task1356"]
 evaluate_model(task_names)

@@ -1,6 +1,5 @@
 """The main pipeline of Prompt2Model-Self-Distill."""
 
-import gc
 import json
 import logging
 import os
@@ -9,28 +8,21 @@ import re
 import shutil
 from functools import partial
 from pathlib import Path
-
 import datasets
 import numpy
-import ray
 import torch
+from prompt2model.utils import count_tokens_from_string
 
 # wandb sync wandb/offline-run-*
 os.environ["WANDB_MODE"] = "offline"
 
 from collections import OrderedDict
-
-import wandb
-from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
-from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
-from vllm import LLM, SamplingParams
-from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
-
-from prompt2model.input_generator import VLLMPromptBasedInputGenerator
-from prompt2model.output_annotator import (
-    VLLMPromptBasedOutputAnnotator,
-    construct_meta_prompt,
-)
+from utils.input_generation import generate_and_write_inputs
+from utils.output_annotation import annotate_and_write_outputs
+from utils.trainer import finetune_vicuna
+from utils.inference import vllm_inference
+from utils.evaluate import rouge_l_score, exact_match_score
+from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 
@@ -43,94 +35,6 @@ def set_seed(seed=42):
     torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
-
-
-def generate_and_write_inputs(
-    prompt_spec,
-    generation_epochs,
-    generation_batch_size,
-    parameter_dict,
-    log_and_data_path,
-    gpu_memory_utilization,
-    tensor_parallel_size,
-    expected_content,
-    optional_list
-):
-    ray.init(ignore_reinit_error=True)
-    input_generator = VLLMPromptBasedInputGenerator(
-        gpu_memory_utilization=gpu_memory_utilization,
-        tensor_parallel_size=tensor_parallel_size,
-    )
-    inputs = input_generator.batch_generation_inputs(
-        prompt_spec,
-        generation_epochs,
-        generation_batch_size,
-        parameter_dict,
-        expected_content,
-        optional_list
-    )
-    with open(log_and_data_path / f"inputs.txt", "w") as file:
-        for index, item in enumerate(inputs):
-            file.write(
-                f"{index}:\n\n------------------------------------------------\n\n{item}\n\n------------------------------------------------\n\n"
-            )
-    dataset = datasets.Dataset.from_dict({"input_col": inputs})
-    dataset.save_to_disk(log_and_data_path / "inputs")
-    del input_generator
-    destroy_model_parallel()
-    gc.collect()
-    torch.cuda.empty_cache()
-    ray.shutdown()
-
-
-def annotate_and_write_outputs(
-    log_and_data_path,
-    gpu_memory_utilization,
-    min_frequency,
-    tensor_parallel_size,
-    prompt_spec,
-    optional_list
-):
-    if (log_and_data_path / "dataset").exists():
-        return
-    ray.init(ignore_reinit_error=True)
-    output_annotator = VLLMPromptBasedOutputAnnotator(
-        gpu_memory_utilization=gpu_memory_utilization,
-        tensor_parallel_size=tensor_parallel_size,
-    )
-    dataset = datasets.load_from_disk(log_and_data_path / "inputs")
-    inputs = dataset["input_col"]
-    output_dataset = output_annotator.annotate_outputs(
-        input_strings=inputs,
-        prompt_spec=prompt_spec,
-        hyperparameter_choices={"min_frequency": min_frequency},
-        optional_list=optional_list
-    )
-    output_dataset.save_to_disk(log_and_data_path / f"dataset")
-    with open(log_and_data_path / f"dataset.txt", "w") as file:
-        for index, item in enumerate(output_dataset):
-            file.write(
-                f"{index}:\n\n------------------------------------------------\n\n[INPUT]\n\n{item['input_col']}\n\n[OUPUT]\n\n{item['output_col']} \n\n------------------------------------------------\n\n"
-            )
-    with open(log_and_data_path / "config.json", "r") as json_file:
-        loaded_params = json.load(json_file)
-    loaded_params["generated_example_num"] = len(output_dataset)
-    loaded_params["expected_example_num"] = (
-        loaded_params["generation_epochs"] * loaded_params["generation_batch_size"]
-    )
-    loaded_params["selection_ratio"] = (
-        loaded_params["generated_example_num"] / loaded_params["expected_example_num"]
-    )
-    print(f"generated_example_num: {loaded_params['generated_example_num']}")
-    print(f"expected_example_num: {loaded_params['expected_example_num']}")
-    print(f"selection_ratio: {loaded_params['selection_ratio']}")
-    with open(log_and_data_path / "config.json", "w") as f:
-        json.dump(loaded_params, f, indent=4)
-    del output_annotator
-    destroy_model_parallel()
-    gc.collect()
-    torch.cuda.empty_cache()
-    ray.shutdown()
 
 
 def check_and_remove_checkpoints(ckpt_path):
@@ -168,93 +72,6 @@ def check_and_remove_checkpoints(ckpt_path):
     )
 
 
-def finetune_vicuna(
-    prompt_spec,
-    log_and_data_path,
-    ckpt_path,
-    pretrain_model_path,
-    training_epochs,
-    resume_from_checkpoint,
-    run_name,
-    task_name,
-):
-    construct_prompt = partial(
-        construct_meta_prompt,
-        instruction=prompt_spec.instruction,
-        examples=prompt_spec.examples,
-    )
-
-    def filter_func(example):
-        return example["output_col"] is not None and example["input_col"] is not None
-
-    dataset = datasets.load_from_disk(log_and_data_path / "dataset").filter(filter_func)
-
-    def map_func(example):
-        example["model_input"] = construct_prompt(new_input=example["input_col"])
-        example["model_output"] = example["output_col"]
-        example["text"] = (
-            example["model_input"] + example["model_output"] + tokenizer.eos_token
-        )
-        return example
-
-    tokenizer = AutoTokenizer.from_pretrained(
-        pretrain_model_path,
-        local_files_only=True,
-        padding_side="left",
-        trust_remote_code=True,
-    )
-    mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
-    response_template_with_context = "\n### Your Output:\n\n"
-    response_template_ids = tokenizer.encode(
-        response_template_with_context, add_special_tokens=False
-    )[2:]
-    data_collator = DataCollatorForCompletionOnlyLM(
-        response_template_ids, tokenizer=tokenizer
-    )
-    ckpt_path.mkdir(parents=True, exist_ok=True)
-    model = AutoModelForCausalLM.from_pretrained(
-        pretrain_model_path,
-        device_map="auto",
-        torch_dtype=torch.bfloat16,
-        use_flash_attention_2=True,
-    )
-    wandb.init(project=task_name, name=run_name)
-    wandb.watch(model)
-    training_args = TrainingArguments(
-        report_to="wandb",
-        run_name=run_name,
-        output_dir=str(ckpt_path),
-        do_eval=False,
-        save_strategy="epoch",
-        evaluation_strategy="no",
-        logging_steps=4,
-        num_train_epochs=training_epochs,
-        seed=42,
-    )
-    trainer = SFTTrainer(
-        model=model,
-        args=training_args,
-        train_dataset=mapped_dataset,
-        dataset_text_field="text",
-        data_collator=data_collator,
-        max_seq_length=1500,
-    )
-    wandb.config.update(training_args.to_dict(), allow_val_change=True)
-    trainer.train(resume_from_checkpoint=resume_from_checkpoint)
-    for dirpath, _, filenames in os.walk(str(ckpt_path), topdown=True):
-        # Delete optimizer
-        for filename in filenames:
-            if filename == "optimizer.pt":
-                file_path = os.path.join(dirpath, filename)
-                print(f"Deleting {file_path}")
-                os.system(f"rm -rf {(str(file_path))}")
-    wandb.finish()
-    del trainer
-    del model
-    gc.collect()
-    torch.cuda.empty_cache()
-
-
 def count_occurrences(word, filename):
     count = 0
     with open(filename, "r") as file:
@@ -265,76 +82,6 @@ def count_occurrences(word, filename):
 
 def extract_number(s):
     return int(re.search(r"\d+", s).group())
-
-
-def vllm_inference(model_path, gpu_memory_utilization, tensor_parallel_size, prompts):
-    ray.init(ignore_reinit_error=True)
-    hyperparameter_choices = {}
-    sampling_params = SamplingParams(
-        top_k=hyperparameter_choices.get("top_k", -1),
-        top_p=hyperparameter_choices.get("top_p", 1),
-        temperature=hyperparameter_choices.get("temperature", 0),
-        max_tokens=hyperparameter_choices.get("max_tokens", 500),
-    )
-    model = LLM(
-        model=str(model_path),
-        gpu_memory_utilization=gpu_memory_utilization,
-        tensor_parallel_size=tensor_parallel_size,
-    )
-    model_outputs = model.generate(prompts, sampling_params)
-    model_generated_outputs = [each.outputs[0].text for each in model_outputs]
-    del model
-    gc.collect()
-    torch.cuda.empty_cache()
-    destroy_model_parallel()
-    ray.shutdown()
-    return model_generated_outputs
-
-
-# TODO: 改 metric
-# TODO: 跟 paper 对齐的 metric
-def evalute_squad(
-    GROUND_TRUTH,
-    tuned_model_generated_outputs,
-):
-    index = 0
-    for i in range(len(GROUND_TRUTH)):
-        if (
-            GROUND_TRUTH[i] in tuned_model_generated_outputs[i]
-            or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]
-        ):
-            index += 1
-    exact_match = index / len(GROUND_TRUTH)
-    return exact_match
-
-def lcs_length_dp(x, y):
-    """Compute the length of the longest common subsequence between two strings using dynamic programming."""
-    m, n = len(x), len(y)
-    dp_table = [[0] * (n + 1) for _ in range(m + 1)]
-
-    for i in range(m + 1):
-        for j in range(n + 1):
-            if i == 0 or j == 0:
-                dp_table[i][j] = 0
-            elif x[i - 1] == y[j - 1]:
-                dp_table[i][j] = dp_table[i - 1][j - 1] + 1
-            else:
-                dp_table[i][j] = max(dp_table[i - 1][j], dp_table[i][j - 1])
-
-    return dp_table[m][n]
-
-def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
-    scores = []
-    for gt, gen in zip(GROUND_TRUTH, tuned_model_generated_outputs):
-        lcs = lcs_length_dp(gt, gen)
-        if lcs == 0:
-            scores.append(0)
-            continue
-        precision = lcs / len(gen)
-        recall = lcs / len(gt)
-        f_measure = (2 * precision * recall) / (precision + recall)
-        scores.append(f_measure)
-    return sum(scores) / len(scores)
 
 
 def store_evaluation_content(
@@ -349,6 +96,9 @@ def store_evaluation_content(
         )
     ).save_to_disk(content_store_path)
 
+
+def filter_function(example):
+    return count_tokens_from_string(example) <= 3200
 
 def validate_or_test(
     evaluation_dataset_path,
@@ -373,9 +123,10 @@ def validate_or_test(
         example["model_output"] = example["output_col"]
         return example
 
-    test_dataset = datasets.load_from_disk(evaluation_dataset_path)
-    # test_dataset = datasets.Dataset.from_dict(test_dataset[:20])
-    test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
+    loaded_dataset = datasets.load_from_disk(evaluation_dataset_path)
+    # loaded_dataset = datasets.Dataset.from_dict(loaded_dataset[:20])
+    loaded_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
+    test_dataset = loaded_dataset.filter(lambda x: (count_tokens_from_string(x["model_input"]) <= 3200 and count_tokens_from_string(x["model_output"]) <= 500))
     prompts = test_dataset["model_input"]
     GROUND_TRUTH = test_dataset["model_output"]
 
@@ -477,6 +228,7 @@ def search_against_parameter(config_path: str):
     if not (log_and_data_path / "inputs").exists():
         print("generate_and_write_inputs!")
         logging.log(logging.INFO, "generate_and_write_inputs!")
+
         generate_and_write_inputs(
             prompt_spec,
             loaded_params["generation_epochs"],
@@ -490,8 +242,9 @@ def search_against_parameter(config_path: str):
             gpu_memory_utilization,
             tensor_parallel_size,
             expected_content,
-            loaded_params['optional_list']
+            loaded_params["optional_list"],
         )
+
     if not (log_and_data_path / "dataset").exists():
         print("annotate_and_write_outputs!")
         logging.log(logging.INFO, "annotate_and_write_outputs!")
@@ -502,7 +255,7 @@ def search_against_parameter(config_path: str):
             min_frequency,
             tensor_parallel_size,
             prompt_spec,
-            loaded_params['optional_list']
+            loaded_params["optional_list"],
         )
 
     pretrain_model_path = Path(

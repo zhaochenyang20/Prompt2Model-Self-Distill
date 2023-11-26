@@ -38,7 +38,7 @@ def ablation_list_filter(strings, optional_list=[]):
         if len(strings) == 0:
             logger.info("strings passed in ablation_list_filter is empty.")
             return None
-    
+
         filtered_strings = []
         greetings.extend(optional_list)
         for s in strings:
