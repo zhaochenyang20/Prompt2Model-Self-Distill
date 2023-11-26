@@ -1,6 +1,7 @@
 """Input Generator based on Prompts."""
 
 from typing import Any
+from IPython import embed
 
 import datasets
 from vllm import LLM, SamplingParams
@@ -90,6 +91,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         input_strings: list[str],
         prompt_spec: PromptSpec,
         hyperparameter_choices: dict[str, Any],
+        optional_list = []
     ) -> datasets.Dataset:
         """Generate candidate outputs for each given input.
 
@@ -130,11 +132,13 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             ]
             min_frequency = hyperparameter_choices.get("min_frequency", 0.2)
             consistent_output = self_consistency_filter(
-                ablation_list_filter(outputs), min_frequency
-            )
-            if consistent_output is not None and consistent_output != "":
+                    ablation_list_filter(outputs, optional_list), 
+                    min_frequency
+                )
+            if consistent_output is not None and consistent_output != "" and isinstance(consistent_output, str):
                 input_cols.append(input)
                 output_cols.append(consistent_output)
+        embed()
         return datasets.Dataset.from_dict(
             dict(input_col=input_cols, output_col=output_cols)
         )

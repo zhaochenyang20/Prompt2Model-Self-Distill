@@ -1,0 +1,238 @@
+[2023-11-25 08:14:09,688] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+task121
+searching parameters: task121_10_10_50_0.3_0.3_130_3
+/home/cyzhao/NI_task121_exp_1/task121_10_10_50_0.3_0.3_130_3
+/home/cyzhao/NI_task121_exp_1/task121_10_10_50_0.3_0.3_130_3/config.json
+generate_and_write_inputs!
+INFO 11-25 08:14:15 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-25 08:14:32 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+WARNING 11-25 08:15:19 scheduler.py:146] Input prompt (4116 tokens) is too long and exceeds limit of 4096
+WARNING 11-25 08:15:43 scheduler.py:146] Input prompt (4222 tokens) is too long and exceeds limit of 4096
+WARNING 11-25 08:16:06 scheduler.py:146] Input prompt (4136 tokens) is too long and exceeds limit of 4096
+annotate_and_write_outputs!
+INFO 11-25 08:18:31 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-25 08:18:47 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+Python 3.11.3 (main, May 15 2023, 15:45:52) [GCC 11.2.0]
+Type 'copyright', 'credits' or 'license' for more information
+IPython 8.16.1 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: [2023-11-25 08:54:59,594] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+task121
+searching parameters: task121_20_20_45_0.4_0.5_125_3
+/home/cyzhao/NI_task121_exp_1/task121_20_20_45_0.4_0.5_125_3
+/home/cyzhao/NI_task121_exp_1/task121_20_20_45_0.4_0.5_125_3/config.json
+generate_and_write_inputs!
+INFO 11-25 08:55:06 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-25 08:55:23 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+WARNING 11-25 08:58:10 scheduler.py:146] Input prompt (4284 tokens) is too long and exceeds limit of 4096
+WARNING 11-25 08:59:31 scheduler.py:146] Input prompt (4284 tokens) is too long and exceeds limit of 4096
+WARNING 11-25 08:59:59 scheduler.py:146] Input prompt (4285 tokens) is too long and exceeds limit of 4096
+WARNING 11-25 09:00:53 scheduler.py:146] Input prompt (4209 tokens) is too long and exceeds limit of 4096
+WARNING 11-25 09:04:04 scheduler.py:146] Input prompt (4251 tokens) is too long and exceeds limit of 4096
+WARNING 11-25 09:04:38 scheduler.py:146] Input prompt (4254 tokens) is too long and exceeds limit of 4096
+WARNING 11-25 09:04:38 scheduler.py:146] Input prompt (4245 tokens) is too long and exceeds limit of 4096
+annotate_and_write_outputs!
+INFO 11-25 09:05:10 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-25 09:05:26 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+Python 3.11.3 (main, May 15 2023, 15:45:52) [GCC 11.2.0]
+Type 'copyright', 'credits' or 'license' for more information
+IPython 8.16.1 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: ---------------------------------------------------------------------------
+KeyboardInterrupt                         Traceback (most recent call last)
+File ~/main/test_scripts/pipeline.py:264
+    252     return objective_function(
+    253         generation_epochs,
+    254         generation_batch_size,
+   (...)
+    260         optional_list
+    261     )
+    263 study = optuna.create_study(direction="maximize")
+--> 264 study.optimize(objective, n_trials=10)
+    266 best_params = study.best_params
+    267 print(best_params)
+
+File ~/miniconda3/envs/prompt/lib/python3.11/site-packages/optuna/study/study.py:451, in Study.optimize(self, func, n_trials, timeout, n_jobs, catch, callbacks, gc_after_trial, show_progress_bar)
+    348 def optimize(
+    349     self,
+    350     func: ObjectiveFuncType,
+   (...)
+    357     show_progress_bar: bool = False,
+    358 ) -> None:
+    359     """Optimize an objective function.
+    360 
+    361     Optimization is done by choosing a suitable set of hyperparameter values from a given
+   (...)
+    449             If nested invocation of this method occurs.
+    450     """
+--> 451     _optimize(
+    452         study=self,
+    453         func=func,
+    454         n_trials=n_trials,
+    455         timeout=timeout,
+    456         n_jobs=n_jobs,
+    457         catch=tuple(catch) if isinstance(catch, Iterable) else (catch,),
+    458         callbacks=callbacks,
+    459         gc_after_trial=gc_after_trial,
+    460         show_progress_bar=show_progress_bar,
+    461     )
+
+File ~/miniconda3/envs/prompt/lib/python3.11/site-packages/optuna/study/_optimize.py:66, in _optimize(study, func, n_trials, timeout, n_jobs, catch, callbacks, gc_after_trial, show_progress_bar)
+     64 try:
+     65     if n_jobs == 1:
+---> 66         _optimize_sequential(
+     67             study,
+     68             func,
+     69             n_trials,
+     70             timeout,
+     71             catch,
+     72             callbacks,
+     73             gc_after_trial,
+     74             reseed_sampler_rng=False,
+     75             time_start=None,
+     76             progress_bar=progress_bar,
+     77         )
+     78     else:
+     79         if n_jobs == -1:
+
+File ~/miniconda3/envs/prompt/lib/python3.11/site-packages/optuna/study/_optimize.py:163, in _optimize_sequential(study, func, n_trials, timeout, catch, callbacks, gc_after_trial, reseed_sampler_rng, time_start, progress_bar)
+    160         break
+    162 try:
+--> 163     frozen_trial = _run_trial(study, func, catch)
+    164 finally:
+    165     # The following line mitigates memory problems that can be occurred in some
+    166     # environments (e.g., services that use computing containers such as GitHub Actions).
+    167     # Please refer to the following PR for further details:
+    168     # https://github.com/optuna/optuna/pull/325.
+    169     if gc_after_trial:
+
+File ~/miniconda3/envs/prompt/lib/python3.11/site-packages/optuna/study/_optimize.py:251, in _run_trial(study, func, catch)
+    244         assert False, "Should not reach."
+    246 if (
+    247     frozen_trial.state == TrialState.FAIL
+    248     and func_err is not None
+    249     and not isinstance(func_err, catch)
+    250 ):
+--> 251     raise func_err
+    252 return frozen_trial
+
+File ~/miniconda3/envs/prompt/lib/python3.11/site-packages/optuna/study/_optimize.py:200, in _run_trial(study, func, catch)
+    198 with get_heartbeat_thread(trial._trial_id, study._storage):
+    199     try:
+--> 200         value_or_values = func(trial)
+    201     except exceptions.TrialPruned as e:
+    202         # TODO(mamu): Handle multi-objective cases.
+    203         state = TrialState.PRUNED
+
+File ~/main/test_scripts/pipeline.py:252, in objective(trial)
+    247 min_input_length = trial.suggest_categorical(
+    248     "min_input_length", [115, 120, 125, 130]
+    249 )
+    250 training_epochs = trial.suggest_int("training_epochs", 3, max_training_epochs)
+--> 252 return objective_function(
+    253     generation_epochs,
+    254     generation_batch_size,
+    255     generation_top_k,
+    256     generation_temperature,
+    257     min_frequency,
+    258     min_input_length,
+    259     training_epochs,
+    260     optional_list
+    261 )
+
+File ~/main/test_scripts/pipeline.py:196, in objective_function(generation_epochs, generation_batch_size, generation_top_k, generation_temperature, min_frequency, min_input_length, training_epochs, optional_list)
+    191 if (
+    192     not all(path.exists() for path in required_paths)
+    193     or len(list(evaluate_result.keys())) < training_epochs
+    194 ):
+    195     print(log_and_data_path)
+--> 196     ckpt_paths_and_result = search_against_parameter(
+    197         str(log_and_data_path / "config.json")
+    198     )
+    200     highest_result_path = max(
+    201         ckpt_paths_and_result, key=ckpt_paths_and_result.get
+    202     )
+    203     highest_validation_result = ckpt_paths_and_result[highest_result_path]
+
+File ~/main/test_scripts/main.py:499, in search_against_parameter(config_path)
+    497     logging.log(logging.INFO, "annotate_and_write_outputs!")
+    498     min_frequency = loaded_params["min_frequency"]
+--> 499     annotate_and_write_outputs(
+    500         log_and_data_path,
+    501         gpu_memory_utilization,
+    502         min_frequency,
+    503         tensor_parallel_size,
+    504         prompt_spec,
+    505         loaded_params['optional_list']
+    506     )
+    508 pretrain_model_path = Path(
+    509     "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+    510 )
+    512 complete_ckpts = check_and_remove_checkpoints(ckpt_path)
+
+File ~/main/test_scripts/main.py:103, in annotate_and_write_outputs(log_and_data_path, gpu_memory_utilization, min_frequency, tensor_parallel_size, prompt_spec, optional_list)
+    101 dataset = datasets.load_from_disk(log_and_data_path / "inputs")
+    102 inputs = dataset["input_col"]
+--> 103 output_dataset = output_annotator.annotate_outputs(
+    104     input_strings=inputs,
+    105     prompt_spec=prompt_spec,
+    106     hyperparameter_choices={"min_frequency": min_frequency},
+    107     optional_list=optional_list
+    108 )
+    109 output_dataset.save_to_disk(log_and_data_path / f"dataset")
+    110 with open(log_and_data_path / f"dataset.txt", "w") as file:
+
+File ~/miniconda3/envs/prompt/lib/python3.11/site-packages/prompt2model/output_annotator/vllm_prompt_based.py:141, in VLLMPromptBasedOutputAnnotator.annotate_outputs(self, input_strings, prompt_spec, hyperparameter_choices, optional_list)
+    139         input_cols.append(input)
+    140         output_cols.append(consistent_output)
+--> 141 embed()
+    142 return datasets.Dataset.from_dict(
+    143     dict(input_col=input_cols, output_col=output_cols)
+    144 )
+
+File ~/miniconda3/envs/prompt/lib/python3.11/site-packages/IPython/terminal/embed.py:415, in embed(header, compile_flags, **kwargs)
+    412 frame = sys._getframe(1)
+    413 shell = InteractiveShellEmbed.instance(_init_location_id='%s:%s' % (
+    414     frame.f_code.co_filename, frame.f_lineno), **kwargs)
+--> 415 shell(header=header, stack_depth=2, compile_flags=compile_flags,
+    416     _call_location_id='%s:%s' % (frame.f_code.co_filename, frame.f_lineno))
+    417 InteractiveShellEmbed.clear_instance()
+    418 #restore previous instance
+
+File ~/miniconda3/envs/prompt/lib/python3.11/site-packages/IPython/terminal/embed.py:251, in InteractiveShellEmbed.__call__(self, header, local_ns, module, dummy, stack_depth, compile_flags, **kw)
+    247     self.show_banner()
+    249 # Call the embedding code with a stack depth of 1 so it can skip over
+    250 # our call and get the original caller's namespaces.
+--> 251 self.mainloop(
+    252     local_ns, module, stack_depth=stack_depth, compile_flags=compile_flags
+    253 )
+    255 self.banner2 = self.old_banner2
+    257 if self.exit_msg is not None:
+
+File ~/miniconda3/envs/prompt/lib/python3.11/site-packages/IPython/terminal/embed.py:343, in InteractiveShellEmbed.mainloop(self, local_ns, module, stack_depth, compile_flags)
+    340 self.set_completer_frame()
+    342 with self.builtin_trap, self.display_trap:
+--> 343     self.interact()
+    345 # now, purge out the local namespace of IPython's hidden variables.
+    346 if local_ns is not None:
+
+File ~/miniconda3/envs/prompt/lib/python3.11/site-packages/IPython/terminal/interactiveshell.py:873, in TerminalInteractiveShell.interact(self)
+    870 print(self.separate_in, end='')
+    872 try:
+--> 873     code = self.prompt_for_code()
+    874 except EOFError:
+    875     if (not self.confirm_exit) \
+    876             or self.ask_yes_no('Do you really want to exit ([y]/n)?','y','n'):
+
+File ~/miniconda3/envs/prompt/lib/python3.11/site-packages/IPython/terminal/interactiveshell.py:615, in TerminalInteractiveShell.init_prompt_toolkit_cli.<locals>.prompt()
+    613 def prompt():
+    614     prompt_text = "".join(x[1] for x in self.prompts.in_prompt_tokens())
+--> 615     lines = [input(prompt_text)]
+    616     prompt_continuation = "".join(x[1] for x in self.prompts.continuation_prompt_tokens())
+    617     while self.check_complete('\n'.join(lines))[0] == 'incomplete':
+
+File ~/miniconda3/envs/prompt/lib/python3.11/site-packages/IPython/utils/py3compat.py:48, in input(prompt)
+     47 def input(prompt=""):
+---> 48     return builtin_mod.input(prompt)
+
+KeyboardInterrupt: 

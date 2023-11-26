@@ -54,6 +54,7 @@ def generate_and_write_inputs(
     gpu_memory_utilization,
     tensor_parallel_size,
     expected_content,
+    optional_list
 ):
     ray.init(ignore_reinit_error=True)
     input_generator = VLLMPromptBasedInputGenerator(
@@ -66,6 +67,7 @@ def generate_and_write_inputs(
         generation_batch_size,
         parameter_dict,
         expected_content,
+        optional_list
     )
     with open(log_and_data_path / f"inputs.txt", "w") as file:
         for index, item in enumerate(inputs):
@@ -87,6 +89,7 @@ def annotate_and_write_outputs(
     min_frequency,
     tensor_parallel_size,
     prompt_spec,
+    optional_list
 ):
     if (log_and_data_path / "dataset").exists():
         return
@@ -101,6 +104,7 @@ def annotate_and_write_outputs(
         input_strings=inputs,
         prompt_spec=prompt_spec,
         hyperparameter_choices={"min_frequency": min_frequency},
+        optional_list=optional_list
     )
     output_dataset.save_to_disk(log_and_data_path / f"dataset")
     with open(log_and_data_path / f"dataset.txt", "w") as file:
@@ -287,6 +291,8 @@ def vllm_inference(model_path, gpu_memory_utilization, tensor_parallel_size, pro
     return model_generated_outputs
 
 
+# TODO: 改 metric
+# TODO: 跟 paper 对齐的 metric
 def evalute_squad(
     GROUND_TRUTH,
     tuned_model_generated_outputs,
@@ -300,6 +306,35 @@ def evalute_squad(
             index += 1
     exact_match = index / len(GROUND_TRUTH)
     return exact_match
+
+def lcs_length_dp(x, y):
+    """Compute the length of the longest common subsequence between two strings using dynamic programming."""
+    m, n = len(x), len(y)
+    dp_table = [[0] * (n + 1) for _ in range(m + 1)]
+
+    for i in range(m + 1):
+        for j in range(n + 1):
+            if i == 0 or j == 0:
+                dp_table[i][j] = 0
+            elif x[i - 1] == y[j - 1]:
+                dp_table[i][j] = dp_table[i - 1][j - 1] + 1
+            else:
+                dp_table[i][j] = max(dp_table[i - 1][j], dp_table[i][j - 1])
+
+    return dp_table[m][n]
+
+def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
+    scores = []
+    for gt, gen in zip(GROUND_TRUTH, tuned_model_generated_outputs):
+        lcs = lcs_length_dp(gt, gen)
+        if lcs == 0:
+            scores.append(0)
+            continue
+        precision = lcs / len(gen)
+        recall = lcs / len(gt)
+        f_measure = (2 * precision * recall) / (precision + recall)
+        scores.append(f_measure)
+    return sum(scores) / len(scores)
 
 
 def store_evaluation_content(
@@ -364,7 +399,7 @@ def validate_or_test(
             tuned_model_generated_outputs = vllm_inference(
                 model_path, gpu_memory_utilization, tensor_parallel_size, prompts
             )
-            exact_match = evalute_squad(GROUND_TRUTH, tuned_model_generated_outputs)
+            exact_match = rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs)
             evaluate_result[f"{ckpt_index + 1}"] = exact_match
             name = str(log_and_data_path).split("/")[-1]
             print(
@@ -390,7 +425,7 @@ def validate_or_test(
         tuned_model_generated_outputs = vllm_inference(
             ckpt_path, gpu_memory_utilization, tensor_parallel_size, prompts
         )
-        exact_match = evalute_squad(GROUND_TRUTH, tuned_model_generated_outputs)
+        exact_match = rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs)
         print(
             f"\n\nresult of {ckpt_path}\n\n------------------------------------------------\n\n{exact_match}\n\n------------------------------------------------\n\n"
         )
@@ -455,6 +490,7 @@ def search_against_parameter(config_path: str):
             gpu_memory_utilization,
             tensor_parallel_size,
             expected_content,
+            loaded_params['optional_list']
         )
     if not (log_and_data_path / "dataset").exists():
         print("annotate_and_write_outputs!")
@@ -466,6 +502,7 @@ def search_against_parameter(config_path: str):
             min_frequency,
             tensor_parallel_size,
             prompt_spec,
+            loaded_params['optional_list']
         )
 
     pretrain_model_path = Path(
