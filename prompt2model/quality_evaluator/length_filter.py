@@ -44,7 +44,8 @@ def min_max_length_filter(strings, min_length=120, max_length=None):
         if len(filtered_strings) == 0:
             logger.info("min_max_length_filter filtered result is empty.")
             return None
-        return filtered_strings
+        else:
+            return filtered_strings
 
     except Exception as e:
         logger.warning(f"Error in min_max_length_filter: {e}")
