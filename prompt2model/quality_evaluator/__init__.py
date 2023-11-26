@@ -6,7 +6,7 @@ from prompt2model.quality_evaluator.information_extractor import (
 )
 from prompt2model.quality_evaluator.length_filter import (
     get_middle_portion,
-    length_filter,
+    min_max_length_filter,
 )
 from prompt2model.quality_evaluator.mock import MockQualityEvaluator
 from prompt2model.quality_evaluator.rule_based_filter import rule_based_filter
@@ -22,5 +22,5 @@ __all__ = (
     "rule_based_filter",
     "ablation_list_filter",
     "get_middle_portion",
-    "length_filter",
+    "min_max_length_filter",
 )
