@@ -1,3 +1,5 @@
+import random
+
 from prompt2model.utils import get_formatted_logger
 
 logger = get_formatted_logger("QualityEvaluator")
@@ -70,5 +72,5 @@ def get_middle_portion(strings, portion=0.5):
 
     # Get the middle portion
     middle_portion = sorted_strings[start_index:end_index]
-
+    random.shuffle(middle_portion)
     return middle_portion
