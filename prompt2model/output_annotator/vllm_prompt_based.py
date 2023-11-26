@@ -4,7 +4,7 @@ from typing import Any
 
 import datasets
 from vllm import LLM, SamplingParams
-
+from functools import partial
 from prompt2model.output_annotator import OutputAnnotator
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import PromptSpec
@@ -102,6 +102,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             A dataset of `input_col` and `output_col`.
         """
         prompts = []
+        ablation_filter = partial(ablation_list_filter, optional_list=optional_list)
         for input in input_strings:
             prompts += [
                 self.construct_prompt(
@@ -114,7 +115,6 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
 
         sampling_params = SamplingParams(
             n=hyperparameter_choices.get("n", 10),
-            # do_sample=hyperparameter_choices.get("do_sample", True),
             best_of=hyperparameter_choices.get("best_of", 20),
             top_k=hyperparameter_choices.get("top_k", 10),
             temperature=hyperparameter_choices.get("temperature", 0.2),
@@ -131,7 +131,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             ]
             min_frequency = hyperparameter_choices.get("min_frequency", 0.2)
             consistent_output = self_consistency_filter(
-                ablation_list_filter(outputs, optional_list), min_frequency
+                ablation_filter(outputs), min_frequency
             )
             if (
                 consistent_output is not None

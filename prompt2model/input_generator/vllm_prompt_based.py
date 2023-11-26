@@ -3,7 +3,7 @@
 import random
 import re
 from typing import Any
-
+from functools import partial
 from tqdm import tqdm
 from vllm import LLM, SamplingParams
 
@@ -209,7 +209,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         per_epoch_num: int,
         hyperparameter_choices: dict[str, Any],
         expected_content,
-        optional_list=[],
+        optional_list = []
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
 
@@ -219,6 +219,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             inputs_num: The number of new inputs to generate.
             hyperparameter_choices: A dictionary of hyperparameter choices.
         """
+        ablation_filter = partial(ablation_list_filter, optional_list=optional_list)
         generated_inputs = []
         for _ in tqdm(range(generation_epochs)):
             new_inputs = self.generate_inputs(
@@ -229,23 +230,19 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 for element in new_inputs
                 if element is not None and element != ""
             ]
-            filtered_inputs = ablation_list_filter(
+            filtered_inputs = ablation_filter(
                 length_filter(
                     self.verify(
                         prompt_spec,
-                        ablation_list_filter(
+                        ablation_filter(
                             length_filter(
-                                new_inputs,
-                                hyperparameter_choices.get("min_input_length", 120),
-                            ),
-                            optional_list,
+                                new_inputs, hyperparameter_choices.get("min_input_length", 120)
+                            )
                         ),
                         expected_content=expected_content,
-                    ),
-                    hyperparameter_choices.get("min_input_length", 120),
-                ),
-                optional_list,
-            )
+                    ),hyperparameter_choices.get("min_input_length", 120)
+                )
+            ) 
             if filtered_inputs is not None:
                 generated_inputs.extend(filtered_inputs)
                 generated_inputs = list(set(generated_inputs))
