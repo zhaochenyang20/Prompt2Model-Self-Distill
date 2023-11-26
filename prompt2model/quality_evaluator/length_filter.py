@@ -40,3 +40,17 @@ def length_filter(strings, min_length=120):
     except Exception as e:
         logger.warning(f"Error in length_filter: {e}")
         return None
+
+
+def get_middle_portion(strings, portion=0.5):
+    # Sort the list by length of strings
+    sorted_strings = sorted(strings, key=len)
+
+    # Calculate start and end indices for the middle portion
+    start_index = int(len(sorted_strings) * ((1 - portion) / 2))
+    end_index = int(len(sorted_strings) * (1 - ((1 - portion) / 2)))
+
+    # Get the middle portion
+    middle_portion = sorted_strings[start_index:end_index]
+
+    return middle_portion

@@ -238,12 +238,8 @@ for task in tasks:
         generation_temperature = trial.suggest_categorical(
             "generation_temperature", [0.75, 0.80, 0.85]
         )
-        min_frequency = trial.suggest_categorical(
-            "min_frequency", [0.3, 0.35, 0.4]
-        )
-        min_input_length = trial.suggest_categorical(
-            "min_input_length", [50, 55, 60]
-        )
+        min_frequency = trial.suggest_categorical("min_frequency", [0.3, 0.35, 0.4])
+        min_input_length = trial.suggest_categorical("min_input_length", [50, 55, 60])
         training_epochs = trial.suggest_int("training_epochs", 3, max_training_epochs)
 
         return objective_function(

@@ -27,7 +27,7 @@ for task in all_tasks:
             f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/task{task_name}",
             f"/home/cyzhao/prompt2model_test/testdataset/NI/test/task{task_name}",
             task.get("optional_list", []),
-            task.get("metric", "exact_match")
+            task.get("metric", "exact_match"),
         )
         choosen_task = task
         break

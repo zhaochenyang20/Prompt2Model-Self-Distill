@@ -1,10 +1,11 @@
 """Input Generator based on Prompts."""
 
+from functools import partial
 from typing import Any
 
 import datasets
 from vllm import LLM, SamplingParams
-from functools import partial
+
 from prompt2model.output_annotator import OutputAnnotator
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import PromptSpec
