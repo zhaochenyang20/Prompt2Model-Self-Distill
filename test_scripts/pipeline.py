@@ -6,6 +6,10 @@ from pathlib import Path
 import optuna
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
+# TODO change task name
+task_name = "task121"
+experiment_rank = 6
+experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
 gpu_memory_utilization = 0.90
 tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
@@ -22,10 +26,6 @@ with open(file_path, "r", encoding="utf-8") as json_file:
 
 tasks = []
 
-# TODO change task name
-task_name = "task121"
-experiment_rank = 6
-experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # TODO change avilable cards
 # Discuss 加入了 metric 需要改写
 for task in all_tasks:
@@ -163,6 +163,7 @@ for task in tasks:
             "optional_list": optional_list,
             "metric": metric,
             "experiment_rank": experiment_rank,
+            "portion": 1,
         }
         with open(log_and_data_path / "config.json", "w") as f:
             json.dump(params, f, indent=4)
@@ -197,6 +198,9 @@ for task in tasks:
         ):
             print(log_and_data_path)
             ckpt_paths_and_result = main(str(log_and_data_path / "config.json"))
+
+            if ckpt_paths_and_result is None:
+                return 0
 
             highest_result_path = max(
                 ckpt_paths_and_result, key=ckpt_paths_and_result.get

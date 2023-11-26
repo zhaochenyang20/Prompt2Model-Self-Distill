@@ -278,6 +278,9 @@ def main(config_path: str):
             loaded_params["optional_list"],
         )
 
+    if len(datasets.load_from_disk(log_and_data_path / "dataset")) == 0:
+        return None
+
     pretrain_model_path = Path(
         "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
     )
