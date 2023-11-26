@@ -6,7 +6,14 @@ from pathlib import Path
 import optuna
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
-from main import main, validate_or_test
+# 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
+gpu_memory_utilization = 0.90
+tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
+# 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
+# gpu_memory_utilization 是在每张卡上的占比，比如 CUDA_CONDITION = "0,1,4,5", gpu_memory_utilization = 0.9
+# 则每张卡都会占去全部显存的 0.9，会占用四张卡，推理效率极其高
+# gpu_memory_utilization 越小，则 inference 越慢
+# 然而，不是每张卡都是空的，比如 0 卡已经有人跑了 40G 了，那么 gpu_memory_utilization < 0.5
 
 max_training_epochs = 3
 file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
@@ -17,7 +24,8 @@ tasks = []
 
 # TODO change task name
 task_name = "task121"
-experiment_name = "NI_" + task_name + "_exp_3"
+experiment_rank = 6
+experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # TODO change avilable cards
 # Discuss 加入了 metric 需要改写
 for task in all_tasks:
@@ -43,14 +51,6 @@ best_validation_result_path = log_and_data_root / "best_validation_result.json"
 log_and_data_root.mkdir(parents=True, exist_ok=True)
 ckpt_root.mkdir(parents=True, exist_ok=True)
 best_ckpt_path.mkdir(parents=True, exist_ok=True)
-# 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-gpu_memory_utilization = 0.80
-tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
-# 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
-# gpu_memory_utilization 是在每张卡上的占比，比如 CUDA_CONDITION = "0,1,4,5", gpu_memory_utilization = 0.9
-# 则每张卡都会占去全部显存的 0.9，会占用四张卡，推理效率极其高
-# gpu_memory_utilization 越小，则 inference 越慢
-# 然而，不是每张卡都是空的，比如 0 卡已经有人跑了 40G 了，那么 gpu_memory_utilization < 0.5
 
 
 def write_results(log_and_data_root, max_training_epochs):
@@ -87,6 +87,7 @@ def write_results(log_and_data_root, max_training_epochs):
         writer.writeheader()
         writer.writerows(csv_data)
 
+from main import main, validate_or_test
 
 def read_json(file_path):
     with open(file_path, "r") as file:
@@ -129,7 +130,7 @@ for task in tasks:
         min_frequency = float(min_frequency)
         min_input_length = int(min_input_length)
         training_epochs = int(training_epochs)
-        name = f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{min_input_length}_{training_epochs}"
+        name = f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{min_input_length}_{training_epochs}_{portion}_{experiment_rank}"
         print(f"searching parameters: {name}")
         log_and_data_path = log_and_data_root / name
         log_and_data_path.mkdir(parents=True, exist_ok=True)
@@ -159,6 +160,7 @@ for task in tasks:
             "optional_list": optional_list,
             "metric": metric,
             "portion": portion,
+            "experiment_rank": experiment_rank,
         }
         with open(log_and_data_path / "config.json", "w") as f:
             json.dump(params, f, indent=4)
@@ -238,12 +240,12 @@ for task in tasks:
         )
         generation_top_k = trial.suggest_categorical("generation_top_k", [40, 45, 50])
         generation_temperature = trial.suggest_categorical(
-            "generation_temperature", [0.85, 0.90, 0.95]
+            "generation_temperature", [0.4, 0.5, 0.6, 0.7, 0.8]
         )
         min_frequency = trial.suggest_categorical("min_frequency", [0.3, 0.35, 0.4])
         min_input_length = trial.suggest_categorical("min_input_length", [50, 55, 60])
         training_epochs = trial.suggest_int("training_epochs", 3, max_training_epochs)
-        portion = trial.suggest_categorical("portion", [0.6, 0.7, 0.8])
+        portion = trial.suggest_categorical("portion", [0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
 
         return objective_function(
             generation_epochs,
