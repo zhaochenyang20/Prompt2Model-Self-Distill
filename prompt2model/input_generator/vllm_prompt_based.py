@@ -5,6 +5,7 @@ import re
 from functools import partial
 from typing import Any
 
+import numpy as np
 from tqdm import tqdm
 from vllm import LLM, SamplingParams
 
@@ -95,6 +96,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 few_shot_example_string,
                 re.DOTALL,
             )
+            assert matches != []
             high_quality_inputs = [match[0] for match in matches]
             random.shuffle(high_quality_inputs)
             if len(high_quality_inputs) == 0:
@@ -182,6 +184,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 few_shot_example_string,
                 re.DOTALL,
             )
+            assert matches != []
             high_quality_inputs = [match[0] for match in matches]
             high_quality_input_string = ""
             for input in high_quality_inputs:
@@ -225,11 +228,33 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             inputs_num: The number of new inputs to generate.
             hyperparameter_choices: A dictionary of hyperparameter choices.
         """
+
+        def calculate_string_metrics(string_list):
+            # Calculate the lengths of each string
+            lengths = np.array([len(s) for s in string_list])
+            # Calculate mean and standard deviation
+            mean_length = np.mean(lengths)
+            std_dev = np.std(lengths)
+            # Calculate mean ± 2σ
+            mean_plus_2std = mean_length + 2 * std_dev
+            mean_minus_2std = mean_length - 2 * std_dev
+
+            return mean_length, mean_plus_2std, mean_minus_2std
+
         ablation_filter = partial(ablation_list_filter, optional_list=optional_list)
+        matches = re.findall(
+            r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
+            prompt_spec.examples,
+            re.DOTALL,
+        )
+        assert matches != []
+        _, mean_plus_2std, mean_minus_2std = calculate_string_metrics(
+            [match[0] for match in matches]
+        )
         length_filter = partial(
             min_max_length_filter,
-            min_length=hyperparameter_choices.get("min_input_length", 120),
-            max_length=hyperparameter_choices.get("max_input_length", None),
+            min_length=int(mean_minus_2std),
+            max_length=int(mean_plus_2std),
         )
         generated_inputs = []
         for _ in tqdm(range(generation_epochs)):

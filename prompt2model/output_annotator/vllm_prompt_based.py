@@ -1,9 +1,11 @@
 """Input Generator based on Prompts."""
 
+import re
 from functools import partial
 from typing import Any
 
 import datasets
+import numpy as np
 from vllm import LLM, SamplingParams
 
 from prompt2model.output_annotator import OutputAnnotator
@@ -106,6 +108,29 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         Returns:
             A dataset of `input_col` and `output_col`.
         """
+
+        def calculate_string_metrics(string_list):
+            # Calculate the lengths of each string
+            lengths = np.array([len(s) for s in string_list])
+            # Calculate mean and standard deviation
+            mean_length = np.mean(lengths)
+            std_dev = np.std(lengths)
+            # Calculate mean ± 2σ
+            mean_plus_2std = mean_length + 2 * std_dev
+            mean_minus_2std = mean_length - 2 * std_dev
+
+            return mean_length, mean_plus_2std, mean_minus_2std
+
+        ablation_filter = partial(ablation_list_filter, optional_list=optional_list)
+        matches = re.findall(
+            r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
+            prompt_spec.examples,
+            re.DOTALL,
+        )
+        assert matches != []
+        _, mean_plus_2std, mean_minus_2std = calculate_string_metrics(
+            [match[1] for match in matches]
+        )
         prompts = []
         consistency_filter = partial(
             self_consistency_filter,
@@ -113,8 +138,8 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         )
         length_filter = partial(
             min_max_length_filter,
-            min_length=hyperparameter_choices.get("min_output_length", 10),
-            max_length=hyperparameter_choices.get("max_output_length", None),
+            min_length=int(mean_minus_2std),
+            max_length=int(mean_plus_2std),
         )
         ablation_filter = partial(ablation_list_filter, optional_list=optional_list)
         for input in input_strings:
