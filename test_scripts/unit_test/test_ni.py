@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 import gc
 import json
 from functools import partial
@@ -16,6 +16,7 @@ from vllm.model_executor.parallel_utils.parallel_state import destroy_model_para
 
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
+from prompt2model.utils import count_tokens_from_string
 
 # import os
 
@@ -53,7 +54,7 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
 
 def evaluate_model(task_names):
     for task_name in task_names:
-        experiment_name = "NI_" + task_name + "_exp_1"
+        experiment_name = "NI_" + task_name + "_exp_5"
         for test_type in ["test", "eval"]:
             test_dataset = datasets.load_from_disk(
                 f"/home/cyzhao/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
@@ -106,6 +107,14 @@ def evaluate_model(task_names):
                 return example
 
             test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
+
+            test_dataset = test_dataset.filter(
+                lambda x: (
+                    count_tokens_from_string(x["model_input"]) <= 3200
+                    and count_tokens_from_string(x["model_output"]) <= 500
+                )
+            )
+
             prompts = test_dataset["model_input"]
             GROUND_TRUTH = test_dataset["model_output"]
             hyperparameter_choices = {}
@@ -124,10 +133,10 @@ def evaluate_model(task_names):
             # vicuna base model "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
             base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
             # 改了这里的名字
-            # path = f"/data2/cyzhao/best_ckpt/NI/{experiment_name}"
+            path = f"/data2/cyzhao/best_ckpt/{experiment_name}"
             ray.init(ignore_reinit_error=True)
             tuned_vicuna = LLM(
-                model=base_model,
+                model=path,
                 gpu_memory_utilization=0.9,
                 tensor_parallel_size=len(
                     os.environ["CUDA_VISIBLE_DEVICES"].split(",")
@@ -141,7 +150,7 @@ def evaluate_model(task_names):
             print(f"{task_name} {test_type}: {rouge_socre}")
             with open(inputs_dir / f"evaluate_10_times.txt", "a+") as file:
                 file.write(
-                    f"\n\nresult of {base_model} th:\n\n------------------------------------------------{rouge_socre}------------------------------------------------\n\n"
+                    f"\n\nresult of {path} th:\n\n------------------------------------------------{rouge_socre}------------------------------------------------\n\n"
                 )
             del tuned_vicuna
             #! 记得改名字
@@ -165,5 +174,5 @@ def evaluate_model(task_names):
             destroy_model_parallel()
 
 
-task_names = ["task1356"]
+task_names = ["task121"]
 evaluate_model(task_names)
