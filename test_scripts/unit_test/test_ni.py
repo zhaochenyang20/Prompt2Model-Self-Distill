@@ -136,7 +136,7 @@ def evaluate_model(task_names):
             path = f"/data2/cyzhao/best_ckpt/{experiment_name}"
             ray.init(ignore_reinit_error=True)
             tuned_vicuna = LLM(
-                model=path,
+                model=base_model,
                 gpu_memory_utilization=0.9,
                 tensor_parallel_size=len(
                     os.environ["CUDA_VISIBLE_DEVICES"].split(",")
