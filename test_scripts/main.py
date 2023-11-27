@@ -252,8 +252,6 @@ def main(config_path: str):
             dict(
                 top_k=loaded_params["generation_top_k"],
                 temperature=loaded_params["generation_temperature"],
-                min_input_length=loaded_params["min_input_length"],
-                max_input_length=loaded_params["max_input_length"],
             ),
             log_and_data_path,
             gpu_memory_utilization,
@@ -271,8 +269,6 @@ def main(config_path: str):
             log_and_data_path,
             gpu_memory_utilization,
             min_frequency,
-            loaded_params["min_output_length"],
-            loaded_params["max_output_length"],
             tensor_parallel_size,
             prompt_spec,
             loaded_params["optional_list"],
