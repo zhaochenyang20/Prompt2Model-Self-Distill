@@ -147,7 +147,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 instruction=prompt_spec.instruction,
                 few_shot_example_string=prompt_spec.examples,
                 generated_inputs=generated_inputs,
-                context_cutoff=hyperparameter_choices.get("context_cutoff", 3500),
+                context_cutoff=hyperparameter_choices.get("context_cutoff", 3000),
             )
             for _ in range(inputs_num)
         ]

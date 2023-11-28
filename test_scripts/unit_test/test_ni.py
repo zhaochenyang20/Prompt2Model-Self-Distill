@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "7"
 import gc
 import json
 from functools import partial
@@ -52,9 +52,20 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
     return sum(scores) / len(scores)
 
 
-def evaluate_model(task_names):
+def evaluate_model(task_names, finetuned=False):
     for task_name in task_names:
-        experiment_name = "NI_" + task_name + "_exp_5"
+        experiment_name = "NI_" + task_name + "_exp_1"
+        base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+        # 改了这里的名字
+        path = f"/data2/cyzhao/best_ckpt/{experiment_name}"
+        ray.init(ignore_reinit_error=True)
+        tuned_vicuna = LLM(
+            model=base_model if not finetuned else path,
+            gpu_memory_utilization=0.9,
+            tensor_parallel_size=len(
+                os.environ["CUDA_VISIBLE_DEVICES"].split(",")
+            ),  # 根据卡数改
+        )
         for test_type in ["test", "eval"]:
             test_dataset = datasets.load_from_disk(
                 f"/home/cyzhao/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
@@ -110,7 +121,7 @@ def evaluate_model(task_names):
 
             test_dataset = test_dataset.filter(
                 lambda x: (
-                    count_tokens_from_string(x["model_input"]) <= 3200
+                    count_tokens_from_string(x["model_input"]) <= 3000
                     and count_tokens_from_string(x["model_output"]) <= 500
                 )
             )
@@ -131,17 +142,6 @@ def evaluate_model(task_names):
 
             #! 这里测试轮次比较多，是为了看结果是否稳定
             # vicuna base model "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-            base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-            # 改了这里的名字
-            path = f"/data2/cyzhao/best_ckpt/{experiment_name}"
-            ray.init(ignore_reinit_error=True)
-            tuned_vicuna = LLM(
-                model=base_model,
-                gpu_memory_utilization=0.9,
-                tensor_parallel_size=len(
-                    os.environ["CUDA_VISIBLE_DEVICES"].split(",")
-                ),  # 根据卡数改
-            )
             tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
             tuned_vicuna_generated_outputs = [
                 each.outputs[0].text for each in tuned_vicuna_outputs
@@ -152,15 +152,9 @@ def evaluate_model(task_names):
                 file.write(
                     f"\n\nresult of {path} th:\n\n------------------------------------------------{rouge_socre}------------------------------------------------\n\n"
                 )
-            del tuned_vicuna
             #! 记得改名字
             evaluate_generated_content_path = inputs_dir / f"base_vicuna_{task_name}"
             # print(f"Genrated contents are stored in {str(evaluate_generated_content_path)}")
-            print(
-                f"length of tuned_vicuna_generated_outputs: {len(tuned_vicuna_generated_outputs)}"
-            )
-            print(f"length of prompts: {len(prompts)}")
-            print(f"length of groud_truth: {len(GROUND_TRUTH)}")
             datasets.Dataset.from_dict(
                 dict(
                     model_output=tuned_vicuna_generated_outputs,
@@ -168,11 +162,12 @@ def evaluate_model(task_names):
                     groud_truth=GROUND_TRUTH,
                 )
             ).save_to_disk(evaluate_generated_content_path)
-            gc.collect()
-            torch.cuda.empty_cache()
-            ray.shutdown()
-            destroy_model_parallel()
+        del tuned_vicuna
+        gc.collect()
+        torch.cuda.empty_cache()
+        ray.shutdown()
+        destroy_model_parallel()
 
 
-task_names = ["task121"]
-evaluate_model(task_names)
+task_names = ["task1659"]
+evaluate_model(task_names, finetuned=True)

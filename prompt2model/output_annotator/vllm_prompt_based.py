@@ -148,7 +148,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                     prompt_spec.instruction,
                     prompt_spec.examples,
                     new_input=input,
-                    context_cutoff=3200,
+                    context_cutoff=3000,
                 )
             ]
 
@@ -170,6 +170,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             ]
             consistent_output = consistency_filter(
                 ablation_filter(length_filter(outputs))
+                # ablation_filter(outputs)
             )
             if (
                 consistent_output is not None
@@ -180,4 +181,4 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                 output_cols.append(consistent_output)
         return datasets.Dataset.from_dict(
             dict(input_col=input_cols, output_col=output_cols)
-        )
+        ).shuffle()
