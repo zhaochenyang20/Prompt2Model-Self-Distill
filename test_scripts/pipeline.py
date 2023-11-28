@@ -5,10 +5,10 @@ from pathlib import Path
 
 import optuna
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
+os.environ["CUDA_VISIBLE_DEVICES"] = "3,4"
 # TODO change task name
-task_name = "task121"
-experiment_rank = 6
+task_name = "task1659"
+experiment_rank = 2
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
 gpu_memory_utilization = 0.90
@@ -38,7 +38,7 @@ for task in all_tasks:
             f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/{task_name}",
             f"/home/cyzhao/prompt2model_test/testdataset/NI/test/{task_name}",
             task.get("optional_list", []),
-            task.get("metric", "exact_match"),
+            task.get("metric", "rouge"),
         )
         tasks.append(task_tuple)
 

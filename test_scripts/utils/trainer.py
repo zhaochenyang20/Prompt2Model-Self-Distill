@@ -46,7 +46,7 @@ def finetune_vicuna(
         padding_side="left",
         trust_remote_code=True,
     )
-    mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
+    mapped_dataset = dataset.map(map_func, load_from_cache_file=False).shuffle(seed=42)
     response_template_with_context = "\n### Your Output:\n\n"
     response_template_ids = tokenizer.encode(
         response_template_with_context, add_special_tokens=False

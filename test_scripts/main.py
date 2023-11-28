@@ -133,7 +133,7 @@ def validate_or_test(
     loaded_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
     test_dataset = loaded_dataset.filter(
         lambda x: (
-            count_tokens_from_string(x["model_input"]) <= 3200
+            count_tokens_from_string(x["model_input"]) <= 3000
             and count_tokens_from_string(x["model_output"]) <= 500
         )
     )
