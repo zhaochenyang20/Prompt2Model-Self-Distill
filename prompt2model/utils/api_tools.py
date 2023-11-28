@@ -15,6 +15,9 @@ import tiktoken
 from aiohttp import ClientSession
 from litellm import acompletion, completion
 from tqdm.asyncio import tqdm_asyncio
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained("lmsys/vicuna-7b-v1.5")
 
 # Note that litellm converts all API errors into openai errors,
 # so openai errors are valid even when using other services.
@@ -247,8 +250,12 @@ def count_tokens_from_string(string: str, encoding_name: str = "cl100k_base") ->
     Returns:
         The number of tokens in the string.
     """
-    encoding = tiktoken.get_encoding(encoding_name)
-    num_tokens = len(encoding.encode(string, disallowed_special=()))
+    if encoding_name == "cl100k_base":
+        encoding = tiktoken.get_encoding(encoding_name)
+        num_tokens = len(encoding.encode(string, disallowed_special=()))
+    else:
+        encoded_input = tokenizer(string)
+        num_tokens = len(encoded_input["input_ids"])
     return num_tokens
 
 

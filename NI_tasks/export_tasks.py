@@ -50,8 +50,8 @@ if os.path.exists(folder_path):
                 examples = task_data["Positive Examples"]
                 example_string = ""
                 for example in examples:
-                    example_string += "[input]=\"" + example["input"] + "\"\n"
-                    example_string += "[output]=\"" + example["output"] + "\"\n\n"
+                    example_string += '[input]="' + example["input"] + '"\n'
+                    example_string += '[output]="' + example["output"] + '"\n\n'
 
                 new_data = {
                     "task_instruction": task_data["Definition"][0],
