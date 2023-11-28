@@ -77,7 +77,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                 examples=few_shot_example_string,
                 new_input=new_input,
             )
-            if count_tokens_from_string(prompt) < context_cutoff:
+            if count_tokens_from_string(prompt, "vicuna") < context_cutoff:
                 return prompt
             else:
                 orginal_input_string = (
@@ -85,7 +85,10 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                     if few_shot_example_string
                     else instruction
                 )
-                if count_tokens_from_string(orginal_input_string) > context_cutoff:
+                if (
+                    count_tokens_from_string(orginal_input_string, "vicuna")
+                    > context_cutoff
+                ):
                     logger.warning(
                         "The original input prompt is too long. "
                         "Consider writing a shorter prompt."

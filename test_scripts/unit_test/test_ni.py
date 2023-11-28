@@ -121,8 +121,8 @@ def evaluate_model(task_names, finetuned=False):
 
             test_dataset = test_dataset.filter(
                 lambda x: (
-                    count_tokens_from_string(x["model_input"]) <= 3000
-                    and count_tokens_from_string(x["model_output"]) <= 500
+                    count_tokens_from_string(x["model_input"], "vicuna") <= 3000
+                    and count_tokens_from_string(x["model_output"], "vicuna") <= 500
                 )
             )
 

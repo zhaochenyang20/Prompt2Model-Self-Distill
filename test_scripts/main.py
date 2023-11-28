@@ -100,10 +100,6 @@ def store_evaluation_content(
     ).save_to_disk(content_store_path)
 
 
-def filter_function(example):
-    return count_tokens_from_string(example) <= 3200
-
-
 def validate_or_test(
     evaluation_dataset_path,
     ckpt_path,
@@ -133,8 +129,8 @@ def validate_or_test(
     loaded_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
     test_dataset = loaded_dataset.filter(
         lambda x: (
-            count_tokens_from_string(x["model_input"]) <= 3000
-            and count_tokens_from_string(x["model_output"]) <= 500
+            count_tokens_from_string(x["model_input"], "vicuna") <= 3000
+            and count_tokens_from_string(x["model_output"], "vicuna") <= 500
         )
     )
     prompts = test_dataset["model_input"]

@@ -102,7 +102,7 @@ class HFPromptBasedInputGenerator(InputGenerator):
                 low_quality_input_string=low_quality_input_string,
                 high_quality_input_string=high_quality_input_string,
             )
-            if count_tokens_from_string(prompt) < context_cutoff:
+            if count_tokens_from_string(prompt, "vicuna") < context_cutoff:
                 return prompt
             else:
                 orginal_input_string = (
@@ -110,7 +110,10 @@ class HFPromptBasedInputGenerator(InputGenerator):
                     if few_shot_example_string
                     else instruction
                 )
-                if count_tokens_from_string(orginal_input_string) > context_cutoff:
+                if (
+                    count_tokens_from_string(orginal_input_string, "vicuna")
+                    > context_cutoff
+                ):
                     logger.warning(
                         "The original input prompt is too long. "
                         "Consider writing a shorter prompt."
