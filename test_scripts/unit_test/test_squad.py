@@ -66,7 +66,7 @@ construct_prompt = partial(
 )
 
 tokenizer = AutoTokenizer.from_pretrained(
-    "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
+    "/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8",
     local_files_only=True,
     padding_side="left",
     trust_remote_code=True,
@@ -99,14 +99,14 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 )
 
 #! 这里测试轮次比较多，是为了看结果是否稳定
-base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+base_model = "/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8"
 path = "/data2/cyzhao/best_ckpt/SQuAD_exp_7"
 ray.init(ignore_reinit_error=True)
-tuned_vicuna = LLM(
+tuned_deepseek = LLM(
     model=base_model, gpu_memory_utilization=0.95, tensor_parallel_size=2
 )
-tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
-tuned_vicuna_generated_outputs = [each.outputs[0].text for each in tuned_vicuna_outputs]
+tuned_deepseek_outputs = tuned_deepseek.generate(prompts, sampling_params)
+tuned_deepseek_generated_outputs = [each.outputs[0].text for each in tuned_deepseek_outputs]
 
 
 # def evalute_squad(
@@ -127,7 +127,7 @@ tuned_vicuna_generated_outputs = [each.outputs[0].text for each in tuned_vicuna_
 # for idx, i in enumerate(list(range(0, len(joined_dataset), 1000))):
 #     exact_match = evalute_squad(
 #         GROUND_TRUTH=GROUND_TRUTH[i : i + 1000],
-#         tuned_model_generated_outputs=tuned_vicuna_generated_outputs[i : i + 1000],
+#         tuned_model_generated_outputs=tuned_deepseek_generated_outputs[i : i + 1000],
 #     )
 #     with open(inputs_dir / f"evaluate_base_model_on_the_whole.txt", "a+") as file:
 #         print(
@@ -136,13 +136,13 @@ tuned_vicuna_generated_outputs = [each.outputs[0].text for each in tuned_vicuna_
 #         file.write(
 #             f"\n\nresult of {idx + 1} th:\n\n------------------------------------------------{exact_match}------------------------------------------------\n\n"
 #         )
-# del tuned_vicuna
+# del tuned_deepseek
 # #! 记得改名字
-# evaluate_generated_content_path = inputs_dir / "base_vicuna_squad"
+# evaluate_generated_content_path = inputs_dir / "base_deepseek_squad"
 # print(f"Genrated contents are stored in {str(evaluate_generated_content_path)}")
 # datasets.Dataset.from_dict(
 #     dict(
-#         model_output=tuned_vicuna_generated_outputs,
+#         model_output=tuned_deepseek_generated_outputs,
 #         model_input=prompts,
 #         groud_truth=GROUND_TRUTH,
 #     )
