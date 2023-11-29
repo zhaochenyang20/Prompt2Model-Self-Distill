@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "7"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 import gc
 import json
 from functools import partial
@@ -169,5 +169,5 @@ def evaluate_model(task_names, finetuned=False):
         destroy_model_parallel()
 
 
-task_names = ["task1659"]
-evaluate_model(task_names, finetuned=True)
+# task_names = ["task1631"]
+# evaluate_model(task_names, finetuned=False)

@@ -72,6 +72,7 @@ def finetune_vicuna(
         evaluation_strategy="no",
         logging_steps=4,
         num_train_epochs=training_epochs,
+        per_device_train_batch_size=6,
         seed=42,
     )
     trainer = SFTTrainer(
@@ -80,7 +81,7 @@ def finetune_vicuna(
         train_dataset=mapped_dataset,
         dataset_text_field="text",
         data_collator=data_collator,
-        max_seq_length=1500,
+        max_seq_length=1800,
     )
     wandb.config.update(training_args.to_dict(), allow_val_change=True)
     trainer.train(resume_from_checkpoint=resume_from_checkpoint)
