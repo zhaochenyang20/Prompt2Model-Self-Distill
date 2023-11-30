@@ -6,11 +6,11 @@ from pathlib import Path
 import optuna
 
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1,5"
 # TODO change task name
-task_name = "squad"
+task_name = "task1356"
 # TODO change experiment rank
-experiment_rank = 0
+experiment_rank = 2
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
 gpu_memory_utilization = 0.85
@@ -62,11 +62,8 @@ def write_results(log_and_data_root, max_training_epochs):
         "generation_top_k",
         "generation_temperature",
         "min_frequency",
-        "min_input_length",
-        "max_input_length",
-        "min_output_length",
-        "max_output_length",
-        "training_epochs",
+        "intput_length_constraint",
+        "output_length_constraint"
     ] + ["epoch_" + str(i) for i in range(1, max_training_epochs + 1)]
     csv_data = []
     for experiment_folder in log_and_data_root.iterdir():
@@ -236,23 +233,23 @@ for task in tasks:
         write_results(log_and_data_root, max_training_epochs)
         return highest_validation_result
 
+
     def objective(trial):
-        generation_epochs = trial.suggest_categorical("generation_epochs", [15, 25])
-        generation_batch_size = trial.suggest_categorical(
-            "generation_batch_size", [10, 20]
-        )
-        generation_top_k = trial.suggest_categorical("generation_top_k", [40, 45, 50])
-        generation_temperature = trial.suggest_categorical(
-            "generation_temperature", [0.4, 0.6, 0.8]
-        )
-        min_frequency = trial.suggest_categorical("min_frequency", [0.3, 0.4])
-        intput_length_constraint = trial.suggest_categorical(
-            "intput_length_constraint", [True, False]
-        )
-        output_length_constraint = trial.suggest_categorical(
-            "output_length_constraint", [False, True]
-        )
+        # Suggesting parameters
+        generation_epochs = trial.suggest_categorical("generation_epochs", [20, 10])
+        generation_batch_size = trial.suggest_categorical("generation_batch_size", [10, 20])
+        generation_top_k = trial.suggest_categorical("generation_top_k", [40])
+        generation_temperature = trial.suggest_categorical("generation_temperature", [0.6, 0.7, 0.8, 0.9, 1.0])
+        min_frequency = trial.suggest_categorical("min_frequency", [0.3])
+        intput_length_constraint = trial.suggest_categorical("intput_length_constraint", [True, False])
+        output_length_constraint = trial.suggest_categorical("output_length_constraint", [False, True])
         training_epochs = trial.suggest_int("training_epochs", 3, max_training_epochs)
+
+        for t in trial.study.trials:
+            if t.state != optuna.trial.TrialState.COMPLETE:
+                continue
+            if t.params == trial.params:
+                return t.value
 
         return objective_function(
             generation_epochs,
@@ -265,8 +262,11 @@ for task in tasks:
             output_length_constraint,
         )
 
+    # Create and optimize the study
+    unique_trials = 20
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=20)
+    while unique_trials > len(set(str(t.params) for t in study.trials)):
+        study.optimize(objective, n_trials=1)
     best_params = study.best_params
     print(best_params)
 

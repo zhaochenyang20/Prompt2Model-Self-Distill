@@ -4,9 +4,8 @@ from prompt2model.quality_evaluator import (
     ablation_list_filter,
     self_consistency_filter,
     semantic_filter,
+    min_max_length_filter,
 )
-from prompt2model.quality_evaluator.min_max_length_filter import min_max_length_filter
-
 
 class TestAblationListFilter(unittest.TestCase):
     def test_filter_with_greetings(self):
