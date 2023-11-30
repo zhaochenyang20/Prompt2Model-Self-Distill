@@ -6,9 +6,9 @@ from pathlib import Path
 import optuna
 
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "1,5"
+os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 # TODO change task name
-task_name = "task1356"
+task_name = "squad"
 # TODO change experiment rank
 experiment_rank = 2
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
@@ -59,9 +59,7 @@ def write_results(log_and_data_root, max_training_epochs):
         "task_name",
         "generation_epochs",
         "generation_batch_size",
-        "generation_top_k",
         "generation_temperature",
-        "min_frequency",
         "intput_length_constraint",
         "output_length_constraint"
     ] + ["epoch_" + str(i) for i in range(1, max_training_epochs + 1)]
@@ -119,14 +117,11 @@ for task in tasks:
     def objective_function(
         generation_epochs,
         generation_batch_size,
-        generation_top_k,
         generation_temperature,
-        min_frequency,
-        training_epochs,
         intput_length_constraint,
         output_length_constraint,
     ):
-        name = f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{intput_length_constraint}_{output_length_constraint}_{experiment_rank}"
+        name = f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_temperature}_{intput_length_constraint}_{output_length_constraint}_{experiment_rank}"
         print(f"searching parameters: {name}")
         log_and_data_path = log_and_data_root / name
         log_and_data_path.mkdir(parents=True, exist_ok=True)
@@ -143,13 +138,13 @@ for task in tasks:
             "test_set_path": test_set_path,
             "generation_epochs": int(generation_epochs),
             "generation_batch_size": int(generation_batch_size),
-            "generation_top_k": int(generation_top_k),
+            "generation_top_k": int(40),
             "generation_temperature": float(generation_temperature),
             "log_and_data_path": str(log_and_data_path),
             "ckpt_path": str(ckpt_path),
             "gpu_memory_utilization": float(gpu_memory_utilization),
-            "min_frequency": float(min_frequency),
-            "training_epochs": int(training_epochs),
+            "min_frequency": float(0.3),
+            "training_epochs": int(max_training_epochs),
             "tensor_parallel_size": int(tensor_parallel_size),
             "evaluation_result_file_tail": evaluation_result_file_tail,
             "optional_list": optional_list,
@@ -188,7 +183,7 @@ for task in tasks:
 
         if (
             not all(path.exists() for path in required_paths)
-            or len(list(evaluate_result.keys())) < training_epochs
+            or len(list(evaluate_result.keys())) < max_training_epochs
         ):
             print(log_and_data_path)
             ckpt_paths_and_result = main(str(log_and_data_path / "config.json"))
@@ -238,12 +233,9 @@ for task in tasks:
         # Suggesting parameters
         generation_epochs = trial.suggest_categorical("generation_epochs", [20, 10])
         generation_batch_size = trial.suggest_categorical("generation_batch_size", [10, 20])
-        generation_top_k = trial.suggest_categorical("generation_top_k", [40])
         generation_temperature = trial.suggest_categorical("generation_temperature", [0.6, 0.7, 0.8, 0.9, 1.0])
-        min_frequency = trial.suggest_categorical("min_frequency", [0.3])
         intput_length_constraint = trial.suggest_categorical("intput_length_constraint", [True, False])
         output_length_constraint = trial.suggest_categorical("output_length_constraint", [False, True])
-        training_epochs = trial.suggest_int("training_epochs", 3, max_training_epochs)
 
         for t in trial.study.trials:
             if t.state != optuna.trial.TrialState.COMPLETE:
@@ -254,10 +246,7 @@ for task in tasks:
         return objective_function(
             generation_epochs,
             generation_batch_size,
-            generation_top_k,
             generation_temperature,
-            min_frequency,
-            training_epochs,
             intput_length_constraint,
             output_length_constraint,
         )
