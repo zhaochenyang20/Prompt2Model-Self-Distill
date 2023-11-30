@@ -26,7 +26,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
 
     def __init__(
         self,
-        pretrained_model_name: str = "vicuna-ai/vicuna-llm-67b-base",
+        pretrained_model_name: str = "lmsys/vicuna-7b-v1.5",
         gpu_memory_utilization=0.5,
         tensor_parallel_size=1,
     ) -> None:
@@ -37,7 +37,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             gpu_memory_utilization: The portion of CUDA memory to use on a single GPU.
             tensor_parallel_size: The number of GPUs to use for distributed execution.
         """
-        if pretrained_model_name == "vicuna-ai/vicuna-llm-67b-base":
+        if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.language_model = LLM(
                 model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
                 gpu_memory_utilization=gpu_memory_utilization,

@@ -23,14 +23,14 @@ class HFPromptBasedInputGenerator(InputGenerator):
 
     def __init__(
         self,
-        pretrained_model_name: str = "vicuna-ai/vicuna-llm-67b-base",
+        pretrained_model_name: str = "lmsys/vicuna-7b-v1.5",
     ) -> None:
         """Create a new instance of the HFPromptBasedInputGenerator.
 
         Args:
             pretrained_model_name: The name of a pre-trained decoder-only model.
         """
-        if pretrained_model_name == "vicuna-ai/vicuna-llm-67b-base":
+        if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.tokenizer = AutoTokenizer.from_pretrained(
                 "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
                 local_files_only=True,
