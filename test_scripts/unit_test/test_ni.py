@@ -169,5 +169,5 @@ def evaluate_model(task_names, finetuned=False):
         destroy_model_parallel()
 
 
-# task_names = ["task1631"]
-# evaluate_model(task_names, finetuned=False)
+task_names = ["task760"]
+evaluate_model(task_names, finetuned=False)

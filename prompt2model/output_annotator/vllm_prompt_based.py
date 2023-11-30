@@ -101,6 +101,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         prompt_spec: PromptSpec,
         hyperparameter_choices: dict[str, Any],
         optional_list=[],
+        output_length_constraint=False,
     ) -> datasets.Dataset:
         """Generate candidate outputs for each given input.
 
@@ -173,7 +174,8 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             ]
             consistent_output = consistency_filter(
                 ablation_filter(length_filter(outputs))
-                # ablation_filter(outputs)
+                if output_length_constraint
+                else ablation_filter(outputs)
             )
             if (
                 consistent_output is not None

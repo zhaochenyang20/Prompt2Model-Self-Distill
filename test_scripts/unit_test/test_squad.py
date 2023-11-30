@@ -31,6 +31,11 @@ def join_function(example):
 joined_dataset = original_dataset.map(join_function)
 joined_dataset.remove_columns(["question", "answers"])
 
+validation_set = datasets.Dataset.from_dict(joined_dataset[0:1000])
+test_set = datasets.Dataset.from_dict(joined_dataset[1000:2000])
+validation_set.save_to_disk("/home/cyzhao/prompt2model_test/testdataset/NI/eval/squad")
+test_set.save_to_disk("/home/cyzhao/prompt2model_test/testdataset/NI/test/squad")
+
 # test_dataset = datasets.load_from_disk(
 # "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test"
 # )
@@ -106,7 +111,9 @@ tuned_deepseek = LLM(
     model=base_model, gpu_memory_utilization=0.95, tensor_parallel_size=2
 )
 tuned_deepseek_outputs = tuned_deepseek.generate(prompts, sampling_params)
-tuned_deepseek_generated_outputs = [each.outputs[0].text for each in tuned_deepseek_outputs]
+tuned_deepseek_generated_outputs = [
+    each.outputs[0].text for each in tuned_deepseek_outputs
+]
 
 
 # def evalute_squad(

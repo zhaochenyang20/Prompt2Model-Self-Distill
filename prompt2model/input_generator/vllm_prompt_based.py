@@ -222,6 +222,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         expected_content,
         optional_list=[],
         portion=1,
+        intput_length_constraint=False,
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
 
@@ -273,7 +274,11 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 length_filter(
                     self.verify(
                         prompt_spec,
-                        ablation_filter(length_filter(new_inputs)),
+                        ablation_filter(
+                            length_filter(new_inputs)
+                            if intput_length_constraint
+                            else new_inputs
+                        ),
                         expected_content=expected_content,
                     )
                 )

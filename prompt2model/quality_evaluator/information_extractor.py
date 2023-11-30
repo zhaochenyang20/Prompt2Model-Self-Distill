@@ -78,7 +78,9 @@ Output of the model:
 class VLLMInformationExtractor(QualityEvaluator):
     """Abstract useful information from the generated content of model."""
 
-    def __init__(self, pretrained_model_name: str = "deepseek-ai/deepseek-llm-67b-base") -> None:
+    def __init__(
+        self, pretrained_model_name: str = "deepseek-ai/deepseek-llm-67b-base"
+    ) -> None:
         """Initializes InformationExtractor with a pre-trained model.
 
         Args:
