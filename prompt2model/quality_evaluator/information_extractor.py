@@ -79,7 +79,7 @@ class VLLMInformationExtractor(QualityEvaluator):
     """Abstract useful information from the generated content of model."""
 
     def __init__(
-        self, pretrained_model_name: str = "vicuna-ai/vicuna-llm-67b-base"
+        self, pretrained_model_name: str = "lmsys/vicuna-7b-v1.5"
     ) -> None:
         """Initializes InformationExtractor with a pre-trained model.
 
@@ -87,7 +87,7 @@ class VLLMInformationExtractor(QualityEvaluator):
             pretrained_model_name: The name of a pre-trained
                 middle-sized autoregressive model.
         """
-        if pretrained_model_name == "vicuna-ai/vicuna-llm-67b-base":
+        if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.language_model = LLM(
                 model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
             )
