@@ -6,14 +6,14 @@ from pathlib import Path
 import optuna
 
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 # TODO change task name
 task_name = "squad"
 # TODO change experiment rank
 experiment_rank = 0
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-gpu_memory_utilization = 0.90
+gpu_memory_utilization = 0.85
 tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
 # gpu_memory_utilization 是在每张卡上的占比，比如 CUDA_CONDITION = "0,1,4,5", gpu_memory_utilization = 0.9
@@ -129,7 +129,7 @@ for task in tasks:
         intput_length_constraint,
         output_length_constraint,
     ):
-        name = f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{training_epochs}_{experiment_rank}"
+        name = f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{intput_length_constraint}_{output_length_constraint}_{experiment_rank}"
         print(f"searching parameters: {name}")
         log_and_data_path = log_and_data_root / name
         log_and_data_path.mkdir(parents=True, exist_ok=True)
@@ -250,7 +250,7 @@ for task in tasks:
             "intput_length_constraint", [True, False]
         )
         output_length_constraint = trial.suggest_categorical(
-            "output_length_constraint", [True, False]
+            "output_length_constraint", [False, True]
         )
         training_epochs = trial.suggest_int("training_epochs", 3, max_training_epochs)
 
