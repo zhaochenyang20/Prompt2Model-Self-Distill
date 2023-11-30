@@ -55,11 +55,11 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
 def evaluate_model(task_names, finetuned=False):
     for task_name in task_names:
         experiment_name = "NI_" + task_name + "_exp_1"
-        base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+        base_model = "/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8"
         # 改了这里的名字
         path = f"/data2/cyzhao/best_ckpt/{experiment_name}"
         ray.init(ignore_reinit_error=True)
-        tuned_vicuna = LLM(
+        tuned_deepseek = LLM(
             model=base_model if not finetuned else path,
             gpu_memory_utilization=0.9,
             tensor_parallel_size=len(
@@ -99,7 +99,7 @@ def evaluate_model(task_names, finetuned=False):
             )
 
             tokenizer = AutoTokenizer.from_pretrained(
-                "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
+                "/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8",
                 local_files_only=True,
                 padding_side="left",
                 trust_remote_code=True,
@@ -121,8 +121,8 @@ def evaluate_model(task_names, finetuned=False):
 
             test_dataset = test_dataset.filter(
                 lambda x: (
-                    count_tokens_from_string(x["model_input"], "vicuna") <= 3000
-                    and count_tokens_from_string(x["model_output"], "vicuna") <= 500
+                    count_tokens_from_string(x["model_input"], "deepseek") <= 3000
+                    and count_tokens_from_string(x["model_output"], "deepseek") <= 500
                 )
             )
 
@@ -141,28 +141,28 @@ def evaluate_model(task_names, finetuned=False):
             )
 
             #! 这里测试轮次比较多，是为了看结果是否稳定
-            # vicuna base model "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-            tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
-            tuned_vicuna_generated_outputs = [
-                each.outputs[0].text for each in tuned_vicuna_outputs
+            # deepseek base model "/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8"
+            tuned_deepseek_outputs = tuned_deepseek.generate(prompts, sampling_params)
+            tuned_deepseek_generated_outputs = [
+                each.outputs[0].text for each in tuned_deepseek_outputs
             ]
-            rouge_socre = rouge_l_score(GROUND_TRUTH, tuned_vicuna_generated_outputs)
+            rouge_socre = rouge_l_score(GROUND_TRUTH, tuned_deepseek_generated_outputs)
             print(f"{task_name} {test_type}: {rouge_socre}")
             with open(inputs_dir / f"evaluate_10_times.txt", "a+") as file:
                 file.write(
                     f"\n\nresult of {path} th:\n\n------------------------------------------------{rouge_socre}------------------------------------------------\n\n"
                 )
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"base_vicuna_{task_name}"
+            evaluate_generated_content_path = inputs_dir / f"base_deepseek_{task_name}"
             # print(f"Genrated contents are stored in {str(evaluate_generated_content_path)}")
             datasets.Dataset.from_dict(
                 dict(
-                    model_output=tuned_vicuna_generated_outputs,
+                    model_output=tuned_deepseek_generated_outputs,
                     model_input=prompts,
                     groud_truth=GROUND_TRUTH,
                 )
             ).save_to_disk(evaluate_generated_content_path)
-        del tuned_vicuna
+        del tuned_deepseek
         gc.collect()
         torch.cuda.empty_cache()
         ray.shutdown()

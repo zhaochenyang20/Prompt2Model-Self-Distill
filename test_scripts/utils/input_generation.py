@@ -19,6 +19,7 @@ def generate_and_write_inputs(
     expected_content,
     optional_list,
     portion,
+    intput_length_constraint,
 ):
     ray.init(ignore_reinit_error=True)
     input_generator = VLLMPromptBasedInputGenerator(
@@ -33,6 +34,7 @@ def generate_and_write_inputs(
         expected_content,
         optional_list,
         portion,
+        intput_length_constraint,
     )
     with open(log_and_data_path / f"inputs.txt", "w") as file:
         for index, item in enumerate(inputs):

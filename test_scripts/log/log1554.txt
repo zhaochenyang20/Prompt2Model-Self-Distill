@@ -4,15 +4,15 @@ searching parameters: NI_task1554_30_15_40_0.8_0.35_125_5
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_30_15_40_0.8_0.35_125_5
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_30_15_40_0.8_0.35_125_5/config.json
 generate_and_write_inputs!
-INFO 11-24 06:05:46 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 06:05:46 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 06:06:01 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 annotate_and_write_outputs!
-INFO 11-24 06:14:03 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 06:14:03 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 06:14:21 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 generated_example_num: 382
 expected_example_num: 450
 selection_ratio: 0.8488888888888889
-finetune_vicuna!
+finetune_deepseek!
 {'loss': 1.5695, 'learning_rate': 4.9166666666666665e-05, 'epoch': 0.08}
 {'loss': 0.3893, 'learning_rate': 4.8333333333333334e-05, 'epoch': 0.17}
 {'loss': 0.5397, 'learning_rate': 4.75e-05, 'epoch': 0.25}
@@ -160,15 +160,15 @@ searching parameters: NI_task1554_20_10_45_1.0_0.5_125_5
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_20_10_45_1.0_0.5_125_5
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_20_10_45_1.0_0.5_125_5/config.json
 generate_and_write_inputs!
-INFO 11-24 06:34:11 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 06:34:11 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 06:34:25 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 annotate_and_write_outputs!
-INFO 11-24 06:37:53 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 06:37:53 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 06:38:08 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 generated_example_num: 129
 expected_example_num: 200
 selection_ratio: 0.645
-finetune_vicuna!
+finetune_deepseek!
 {'loss': 0.9913, 'learning_rate': 4.7647058823529414e-05, 'epoch': 0.24}
 {'loss': 0.9927, 'learning_rate': 4.5294117647058826e-05, 'epoch': 0.47}
 {'loss': 0.579, 'learning_rate': 4.294117647058823e-05, 'epoch': 0.71}
@@ -277,15 +277,15 @@ searching parameters: NI_task1554_50_10_45_1.0_0.35_115_4
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_50_10_45_1.0_0.35_115_4
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_50_10_45_1.0_0.35_115_4/config.json
 generate_and_write_inputs!
-INFO 11-24 06:51:31 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 06:51:31 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 06:51:46 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 annotate_and_write_outputs!
-INFO 11-24 07:01:59 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 07:01:59 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 07:02:15 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 generated_example_num: 375
 expected_example_num: 500
 selection_ratio: 0.75
-finetune_vicuna!
+finetune_deepseek!
 {'loss': 2.7496, 'learning_rate': 4.893617021276596e-05, 'epoch': 0.09}
 {'loss': 1.206, 'learning_rate': 4.787234042553192e-05, 'epoch': 0.17}
 {'loss': 0.6459, 'learning_rate': 4.680851063829788e-05, 'epoch': 0.26}
@@ -404,15 +404,15 @@ searching parameters: NI_task1554_40_40_40_0.9_0.35_130_4
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_40_40_40_0.9_0.35_130_4
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_40_40_40_0.9_0.35_130_4/config.json
 generate_and_write_inputs!
-INFO 11-24 07:17:32 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 07:17:32 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 07:17:48 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 annotate_and_write_outputs!
-INFO 11-24 07:33:12 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 07:33:12 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 07:33:27 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 generated_example_num: 1260
 expected_example_num: 1600
 selection_ratio: 0.7875
-finetune_vicuna!
+finetune_deepseek!
 {'loss': 2.465, 'learning_rate': 4.968354430379747e-05, 'epoch': 0.03}
 {'loss': 1.372, 'learning_rate': 4.936708860759494e-05, 'epoch': 0.05}
 {'loss': 1.1708, 'learning_rate': 4.905063291139241e-05, 'epoch': 0.08}
@@ -642,15 +642,15 @@ searching parameters: NI_task1554_50_10_45_0.8_0.4_130_5
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_50_10_45_0.8_0.4_130_5
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_50_10_45_0.8_0.4_130_5/config.json
 generate_and_write_inputs!
-INFO 11-24 08:04:21 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 08:04:21 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 08:04:34 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 annotate_and_write_outputs!
-INFO 11-24 08:16:21 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 08:16:21 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 08:16:36 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 generated_example_num: 449
 expected_example_num: 500
 selection_ratio: 0.898
-finetune_vicuna!
+finetune_deepseek!
 {'loss': 1.9733, 'learning_rate': 4.9298245614035086e-05, 'epoch': 0.07}
 {'loss': 0.685, 'learning_rate': 4.859649122807018e-05, 'epoch': 0.14}
 {'loss': 0.4785, 'learning_rate': 4.789473684210526e-05, 'epoch': 0.21}
@@ -810,15 +810,15 @@ searching parameters: NI_task1554_20_10_50_1.0_0.35_120_3
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_20_10_50_1.0_0.35_120_3
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_20_10_50_1.0_0.35_120_3/config.json
 generate_and_write_inputs!
-INFO 11-24 08:38:37 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 08:38:37 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 08:38:51 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 annotate_and_write_outputs!
-INFO 11-24 08:43:02 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 08:43:02 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 08:43:16 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 generated_example_num: 142
 expected_example_num: 200
 selection_ratio: 0.71
-finetune_vicuna!
+finetune_deepseek!
 {'loss': 2.9361, 'learning_rate': 4.62962962962963e-05, 'epoch': 0.22}
 {'loss': 0.3198, 'learning_rate': 4.259259259259259e-05, 'epoch': 0.44}
 {'loss': 0.5742, 'learning_rate': 3.888888888888889e-05, 'epoch': 0.67}
@@ -887,15 +887,15 @@ searching parameters: NI_task1554_40_30_40_0.9_0.35_125_3
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_40_30_40_0.9_0.35_125_3
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_40_30_40_0.9_0.35_125_3/config.json
 generate_and_write_inputs!
-INFO 11-24 08:51:56 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 08:51:56 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 08:52:10 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 annotate_and_write_outputs!
-INFO 11-24 09:08:45 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 09:08:45 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 09:08:59 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 generated_example_num: 954
 expected_example_num: 1200
 selection_ratio: 0.795
-finetune_vicuna!
+finetune_deepseek!
 {'loss': 0.8289, 'learning_rate': 4.9444444444444446e-05, 'epoch': 0.03}
 {'loss': 0.4229, 'learning_rate': 4.888888888888889e-05, 'epoch': 0.07}
 {'loss': 0.7053, 'learning_rate': 4.8333333333333334e-05, 'epoch': 0.1}
@@ -1041,15 +1041,15 @@ searching parameters: NI_task1554_50_20_50_1.0_0.35_130_5
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_50_20_50_1.0_0.35_130_5
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_50_20_50_1.0_0.35_130_5/config.json
 generate_and_write_inputs!
-INFO 11-24 09:37:04 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 09:37:04 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 09:37:19 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 annotate_and_write_outputs!
-INFO 11-24 09:50:28 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 09:50:28 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 09:50:49 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 generated_example_num: 775
 expected_example_num: 1000
 selection_ratio: 0.775
-finetune_vicuna!
+finetune_deepseek!
 {'loss': 2.5301, 'learning_rate': 4.958762886597938e-05, 'epoch': 0.04}
 {'loss': 0.7357, 'learning_rate': 4.9175257731958763e-05, 'epoch': 0.08}
 {'loss': 0.3066, 'learning_rate': 4.8762886597938144e-05, 'epoch': 0.12}
@@ -1258,15 +1258,15 @@ searching parameters: NI_task1554_10_20_40_0.8_0.35_115_4
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_10_20_40_0.8_0.35_115_4
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_10_20_40_0.8_0.35_115_4/config.json
 generate_and_write_inputs!
-INFO 11-24 10:19:14 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 10:19:14 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 10:19:29 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 annotate_and_write_outputs!
-INFO 11-24 10:22:29 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 10:22:29 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 10:22:45 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 generated_example_num: 167
 expected_example_num: 200
 selection_ratio: 0.835
-finetune_vicuna!
+finetune_deepseek!
 {'loss': 1.6674, 'learning_rate': 4.761904761904762e-05, 'epoch': 0.19}
 {'loss': 1.2761, 'learning_rate': 4.523809523809524e-05, 'epoch': 0.38}
 {'loss': 0.8121, 'learning_rate': 4.2857142857142856e-05, 'epoch': 0.57}
@@ -1359,16 +1359,16 @@ searching parameters: NI_task1554_40_40_45_0.9_0.4_130_4
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_40_40_45_0.9_0.4_130_4
 /home/cyzhao/NI_task1554_exp_1/NI_task1554_40_40_45_0.9_0.4_130_4/config.json
 generate_and_write_inputs!
-INFO 11-24 10:34:02 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 10:34:02 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 10:34:16 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 WARNING 11-24 10:51:20 scheduler.py:146] Input prompt (4108 tokens) is too long and exceeds limit of 4096
 annotate_and_write_outputs!
-INFO 11-24 10:52:15 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-24 10:52:15 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-24 10:52:31 llm_engine.py:207] # GPU blocks: 14474, # CPU blocks: 1024
 generated_example_num: 1234
 expected_example_num: 1600
 selection_ratio: 0.77125
-finetune_vicuna!
+finetune_deepseek!
 {'loss': 0.6756, 'learning_rate': 4.967741935483871e-05, 'epoch': 0.03}
 {'loss': 0.3212, 'learning_rate': 4.935483870967742e-05, 'epoch': 0.05}
 {'loss': 0.1975, 'learning_rate': 4.903225806451613e-05, 'epoch': 0.08}

@@ -16,6 +16,7 @@ def annotate_and_write_outputs(
     tensor_parallel_size,
     prompt_spec,
     optional_list,
+    output_length_constraint,
 ):
     if (log_and_data_path / "dataset").exists():
         return
@@ -33,6 +34,7 @@ def annotate_and_write_outputs(
             min_frequency=min_frequency,
         ),
         optional_list=optional_list,
+        output_length_constraint=output_length_constraint,
     )
     output_dataset.save_to_disk(log_and_data_path / f"dataset")
     with open(log_and_data_path / f"dataset.txt", "w") as file:

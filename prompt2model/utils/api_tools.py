@@ -17,7 +17,7 @@ from litellm import acompletion, completion
 from tqdm.asyncio import tqdm_asyncio
 from transformers import AutoTokenizer
 
-tokenizer = AutoTokenizer.from_pretrained("lmsys/vicuna-7b-v1.5")
+tokenizer = AutoTokenizer.from_pretrained("deepseek-ai/deepseek-llm-67b-base")
 
 # Note that litellm converts all API errors into openai errors,
 # so openai errors are valid even when using other services.

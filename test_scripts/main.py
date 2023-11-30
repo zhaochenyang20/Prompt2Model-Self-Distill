@@ -26,7 +26,7 @@ from utils.evaluate import exact_match_score, rouge_l_score
 from utils.inference import vllm_inference
 from utils.input_generation import generate_and_write_inputs
 from utils.output_annotation import annotate_and_write_outputs
-from utils.trainer import finetune_vicuna
+from utils.trainer import finetune_deepseek
 
 
 def set_seed(seed=42):
@@ -129,8 +129,8 @@ def validate_or_test(
     loaded_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
     test_dataset = loaded_dataset.filter(
         lambda x: (
-            count_tokens_from_string(x["model_input"], "vicuna") <= 3000
-            and count_tokens_from_string(x["model_output"], "vicuna") <= 500
+            count_tokens_from_string(x["model_input"], "deepseek") <= 3000
+            and count_tokens_from_string(x["model_output"], "deepseek") <= 500
         )
     )
     prompts = test_dataset["model_input"]
@@ -255,6 +255,7 @@ def main(config_path: str):
             expected_content,
             loaded_params["optional_list"],
             loaded_params["portion"],
+            loaded_params["intput_length_constraint"],
         )
 
     if not (log_and_data_path / "dataset").exists():
@@ -268,13 +269,14 @@ def main(config_path: str):
             tensor_parallel_size,
             prompt_spec,
             loaded_params["optional_list"],
+            loaded_params["output_length_constraint"],
         )
 
     if len(datasets.load_from_disk(log_and_data_path / "dataset")) == 0:
         return None
 
     pretrain_model_path = Path(
-        "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+        "/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8"
     )
 
     complete_ckpts = check_and_remove_checkpoints(ckpt_path)
@@ -292,9 +294,9 @@ def main(config_path: str):
         complete_ckpts < loaded_params["training_epochs"]
         and len(list(evaluate_result.keys())) < loaded_params["training_epochs"]
     ):
-        print("finetune_vicuna!")
-        logging.log(logging.INFO, "finetune_vicuna!")
-        finetune_vicuna(
+        print("finetune_deepseek!")
+        logging.log(logging.INFO, "finetune_deepseek!")
+        finetune_deepseek(
             prompt_spec,
             log_and_data_path,
             ckpt_path,

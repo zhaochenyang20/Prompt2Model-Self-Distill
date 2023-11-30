@@ -78,16 +78,18 @@ Output of the model:
 class VLLMInformationExtractor(QualityEvaluator):
     """Abstract useful information from the generated content of model."""
 
-    def __init__(self, pretrained_model_name: str = "lmsys/vicuna-7b-v1.5") -> None:
+    def __init__(
+        self, pretrained_model_name: str = "deepseek-ai/deepseek-llm-67b-base"
+    ) -> None:
         """Initializes InformationExtractor with a pre-trained model.
 
         Args:
             pretrained_model_name: The name of a pre-trained
                 middle-sized autoregressive model.
         """
-        if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
+        if pretrained_model_name == "deepseek-ai/deepseek-llm-67b-base":
             self.language_model = LLM(
-                model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+                model="/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8"
             )
         else:
             self.language_model = LLM(model=pretrained_model_name)

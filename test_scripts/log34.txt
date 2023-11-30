@@ -1,0 +1,1229 @@
+[2023-11-29 05:41:46,883] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+task034
+searching parameters: task034_20_20_45_0.4_0.35_3_1
+/home/cyzhao/NI_task034_exp_1/task034_20_20_45_0.4_0.35_3_1
+/home/cyzhao/NI_task034_exp_1/task034_20_20_45_0.4_0.35_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 05:41:53 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 05:42:07 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 05:44:36 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 05:44:51 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 183
+expected_example_num: 400
+selection_ratio: 0.4575
+finetune_deepseek!
+{'loss': 0.7278, 'learning_rate': 4.78494623655914e-05, 'epoch': 0.13}
+{'loss': 0.9968, 'learning_rate': 4.56989247311828e-05, 'epoch': 0.26}
+{'loss': 0.0916, 'learning_rate': 4.3548387096774194e-05, 'epoch': 0.39}
+{'loss': 0.2073, 'learning_rate': 4.13978494623656e-05, 'epoch': 0.52}
+{'loss': 0.142, 'learning_rate': 3.924731182795699e-05, 'epoch': 0.65}
+{'loss': 0.1593, 'learning_rate': 3.7096774193548386e-05, 'epoch': 0.77}
+{'loss': 0.115, 'learning_rate': 3.494623655913979e-05, 'epoch': 0.9}
+{'loss': 0.0834, 'learning_rate': 3.279569892473118e-05, 'epoch': 1.03}
+{'loss': 0.0945, 'learning_rate': 3.0645161290322585e-05, 'epoch': 1.16}
+{'loss': 0.0224, 'learning_rate': 2.8494623655913982e-05, 'epoch': 1.29}
+{'loss': 0.044, 'learning_rate': 2.6344086021505376e-05, 'epoch': 1.42}
+{'loss': 0.0197, 'learning_rate': 2.4193548387096777e-05, 'epoch': 1.55}
+{'loss': 0.0301, 'learning_rate': 2.2043010752688174e-05, 'epoch': 1.68}
+{'loss': 0.0623, 'learning_rate': 1.989247311827957e-05, 'epoch': 1.81}
+{'loss': 0.0591, 'learning_rate': 1.774193548387097e-05, 'epoch': 1.94}
+{'loss': 0.0162, 'learning_rate': 1.5591397849462366e-05, 'epoch': 2.06}
+{'loss': 0.0414, 'learning_rate': 1.3440860215053763e-05, 'epoch': 2.19}
+{'loss': 0.0246, 'learning_rate': 1.129032258064516e-05, 'epoch': 2.32}
+{'loss': 0.0194, 'learning_rate': 9.13978494623656e-06, 'epoch': 2.45}
+{'loss': 0.0173, 'learning_rate': 6.989247311827957e-06, 'epoch': 2.58}
+{'loss': 0.0117, 'learning_rate': 4.838709677419355e-06, 'epoch': 2.71}
+{'loss': 0.0147, 'learning_rate': 2.688172043010753e-06, 'epoch': 2.84}
+{'loss': 0.0163, 'learning_rate': 5.376344086021506e-07, 'epoch': 2.97}
+{'train_runtime': 379.7948, 'train_samples_per_second': 1.446, 'train_steps_per_second': 0.245, 'train_loss': 0.12979260690620428, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_20_45_0.4_0.35_3_1/checkpoint-31/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_20_45_0.4_0.35_3_1/checkpoint-62/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_20_45_0.4_0.35_3_1/checkpoint-93/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 05:53:52 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_20_45_0.4_0.35_3_1/checkpoint-31', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_20_45_0.4_0.35_3_1/checkpoint-31', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 05:54:34 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_20_45_0.4_0.35_3_1 epoch 1
+
+------------------------------------------------
+
+0.9420451357748445
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_20_45_0.4_0.35_3_1/generated_contents/1
+INFO 11-29 05:56:58 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_20_45_0.4_0.35_3_1/checkpoint-62', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_20_45_0.4_0.35_3_1/checkpoint-62', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 05:57:12 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_20_45_0.4_0.35_3_1 epoch 2
+
+------------------------------------------------
+
+0.9557693733815027
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_20_45_0.4_0.35_3_1/generated_contents/2
+INFO 11-29 05:59:36 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_20_45_0.4_0.35_3_1/checkpoint-93', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_20_45_0.4_0.35_3_1/checkpoint-93', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 05:59:51 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_20_45_0.4_0.35_3_1 epoch 3
+
+------------------------------------------------
+
+0.9551234127984137
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_20_45_0.4_0.35_3_1/generated_contents/3
+mv /data2/cyzhao/ckpt_data_p2ms/task034_20_20_45_0.4_0.35_3_1/checkpoint-62 /data2/cyzhao/best_ckpt/NI_task034_exp_1
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_20_45_0.4_0.35_3_1/checkpoint-31
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_20_45_0.4_0.35_3_1/checkpoint-93
+searching parameters: task034_30_15_40_0.4_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_30_15_40_0.4_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_30_15_40_0.4_0.4_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 06:02:19 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:02:33 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 06:06:12 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:06:26 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 216
+expected_example_num: 450
+selection_ratio: 0.48
+finetune_deepseek!
+{'loss': 0.9958, 'learning_rate': 4.814814814814815e-05, 'epoch': 0.11}
+{'loss': 0.4554, 'learning_rate': 4.62962962962963e-05, 'epoch': 0.22}
+{'loss': 0.4858, 'learning_rate': 4.4444444444444447e-05, 'epoch': 0.33}
+{'loss': 0.2383, 'learning_rate': 4.259259259259259e-05, 'epoch': 0.44}
+{'loss': 0.1857, 'learning_rate': 4.074074074074074e-05, 'epoch': 0.56}
+{'loss': 0.1386, 'learning_rate': 3.888888888888889e-05, 'epoch': 0.67}
+{'loss': 0.1249, 'learning_rate': 3.7037037037037037e-05, 'epoch': 0.78}
+{'loss': 0.1034, 'learning_rate': 3.518518518518519e-05, 'epoch': 0.89}
+{'loss': 0.1858, 'learning_rate': 3.3333333333333335e-05, 'epoch': 1.0}
+{'loss': 0.0802, 'learning_rate': 3.148148148148148e-05, 'epoch': 1.11}
+{'loss': 0.0323, 'learning_rate': 2.962962962962963e-05, 'epoch': 1.22}
+{'loss': 0.0487, 'learning_rate': 2.777777777777778e-05, 'epoch': 1.33}
+{'loss': 0.0319, 'learning_rate': 2.5925925925925925e-05, 'epoch': 1.44}
+{'loss': 0.0605, 'learning_rate': 2.4074074074074074e-05, 'epoch': 1.56}
+{'loss': 0.0463, 'learning_rate': 2.2222222222222223e-05, 'epoch': 1.67}
+{'loss': 0.0517, 'learning_rate': 2.037037037037037e-05, 'epoch': 1.78}
+{'loss': 0.0321, 'learning_rate': 1.8518518518518518e-05, 'epoch': 1.89}
+{'loss': 0.0584, 'learning_rate': 1.6666666666666667e-05, 'epoch': 2.0}
+{'loss': 0.0405, 'learning_rate': 1.4814814814814815e-05, 'epoch': 2.11}
+{'loss': 0.022, 'learning_rate': 1.2962962962962962e-05, 'epoch': 2.22}
+{'loss': 0.0084, 'learning_rate': 1.1111111111111112e-05, 'epoch': 2.33}
+{'loss': 0.0118, 'learning_rate': 9.259259259259259e-06, 'epoch': 2.44}
+{'loss': 0.0138, 'learning_rate': 7.4074074074074075e-06, 'epoch': 2.56}
+{'loss': 0.0091, 'learning_rate': 5.555555555555556e-06, 'epoch': 2.67}
+{'loss': 0.0095, 'learning_rate': 3.7037037037037037e-06, 'epoch': 2.78}
+{'loss': 0.0221, 'learning_rate': 1.8518518518518519e-06, 'epoch': 2.89}
+{'loss': 0.01, 'learning_rate': 0.0, 'epoch': 3.0}
+{'train_runtime': 429.5035, 'train_samples_per_second': 1.509, 'train_steps_per_second': 0.251, 'train_loss': 0.12974022349549663, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_15_40_0.4_0.4_3_1/checkpoint-36/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_15_40_0.4_0.4_3_1/checkpoint-72/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_15_40_0.4_0.4_3_1/checkpoint-108/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 06:16:44 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_40_0.4_0.4_3_1/checkpoint-36', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_40_0.4_0.4_3_1/checkpoint-36', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:16:59 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_15_40_0.4_0.4_3_1 epoch 1
+
+------------------------------------------------
+
+0.9553430766501121
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_15_40_0.4_0.4_3_1/generated_contents/1
+INFO 11-29 06:19:27 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_40_0.4_0.4_3_1/checkpoint-72', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_40_0.4_0.4_3_1/checkpoint-72', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:19:42 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_15_40_0.4_0.4_3_1 epoch 2
+
+------------------------------------------------
+
+0.9605068975771256
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_15_40_0.4_0.4_3_1/generated_contents/2
+INFO 11-29 06:22:05 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_40_0.4_0.4_3_1/checkpoint-108', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_40_0.4_0.4_3_1/checkpoint-108', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:22:20 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_15_40_0.4_0.4_3_1 epoch 3
+
+------------------------------------------------
+
+0.9597380768189608
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_15_40_0.4_0.4_3_1/generated_contents/3
+rm -rf /data2/cyzhao/best_ckpt/NI_task034_exp_1
+mv /data2/cyzhao/ckpt_data_p2ms/task034_30_15_40_0.4_0.4_3_1/checkpoint-72 /data2/cyzhao/best_ckpt/NI_task034_exp_1
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_15_40_0.4_0.4_3_1/checkpoint-36
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_15_40_0.4_0.4_3_1/checkpoint-108
+searching parameters: task034_10_15_50_0.6_0.3_3_1
+/home/cyzhao/NI_task034_exp_1/task034_10_15_50_0.6_0.3_3_1
+/home/cyzhao/NI_task034_exp_1/task034_10_15_50_0.6_0.3_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 06:24:51 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:25:07 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 06:26:34 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:26:48 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 90
+expected_example_num: 150
+selection_ratio: 0.6
+finetune_deepseek!
+{'loss': 0.4424, 'learning_rate': 4.555555555555556e-05, 'epoch': 0.27}
+{'loss': 0.4874, 'learning_rate': 4.111111111111111e-05, 'epoch': 0.53}
+{'loss': 0.239, 'learning_rate': 3.6666666666666666e-05, 'epoch': 0.8}
+{'loss': 0.1433, 'learning_rate': 3.222222222222223e-05, 'epoch': 1.07}
+{'loss': 0.1008, 'learning_rate': 2.777777777777778e-05, 'epoch': 1.33}
+{'loss': 0.1041, 'learning_rate': 2.3333333333333336e-05, 'epoch': 1.6}
+{'loss': 0.0473, 'learning_rate': 1.888888888888889e-05, 'epoch': 1.87}
+{'loss': 0.0411, 'learning_rate': 1.4444444444444444e-05, 'epoch': 2.13}
+{'loss': 0.025, 'learning_rate': 1e-05, 'epoch': 2.4}
+{'loss': 0.0242, 'learning_rate': 5.555555555555556e-06, 'epoch': 2.67}
+{'loss': 0.0439, 'learning_rate': 1.1111111111111112e-06, 'epoch': 2.93}
+{'train_runtime': 286.7033, 'train_samples_per_second': 0.942, 'train_steps_per_second': 0.157, 'train_loss': 0.15113571957788532, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_10_15_50_0.6_0.3_3_1/checkpoint-30/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_10_15_50_0.6_0.3_3_1/checkpoint-45/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_10_15_50_0.6_0.3_3_1/checkpoint-15/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 06:33:15 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_10_15_50_0.6_0.3_3_1/checkpoint-15', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_10_15_50_0.6_0.3_3_1/checkpoint-15', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:33:30 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_10_15_50_0.6_0.3_3_1 epoch 1
+
+------------------------------------------------
+
+0.9511862643381338
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_10_15_50_0.6_0.3_3_1/generated_contents/1
+INFO 11-29 06:35:57 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_10_15_50_0.6_0.3_3_1/checkpoint-30', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_10_15_50_0.6_0.3_3_1/checkpoint-30', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:36:12 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_10_15_50_0.6_0.3_3_1 epoch 2
+
+------------------------------------------------
+
+0.9587885152202459
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_10_15_50_0.6_0.3_3_1/generated_contents/2
+INFO 11-29 06:38:37 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_10_15_50_0.6_0.3_3_1/checkpoint-45', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_10_15_50_0.6_0.3_3_1/checkpoint-45', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:38:52 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_10_15_50_0.6_0.3_3_1 epoch 3
+
+------------------------------------------------
+
+0.959048490241366
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_10_15_50_0.6_0.3_3_1/generated_contents/3
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_10_15_50_0.6_0.3_3_1/checkpoint-15
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_10_15_50_0.6_0.3_3_1/checkpoint-30
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_10_15_50_0.6_0.3_3_1/checkpoint-45
+searching parameters: task034_20_10_40_0.8_0.3_3_1
+/home/cyzhao/NI_task034_exp_1/task034_20_10_40_0.8_0.3_3_1
+/home/cyzhao/NI_task034_exp_1/task034_20_10_40_0.8_0.3_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 06:41:20 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:41:36 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 06:43:48 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:44:04 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 119
+expected_example_num: 200
+selection_ratio: 0.595
+finetune_deepseek!
+{'loss': 0.85, 'learning_rate': 4.666666666666667e-05, 'epoch': 0.2}
+{'loss': 0.3075, 'learning_rate': 4.3333333333333334e-05, 'epoch': 0.4}
+{'loss': 0.1794, 'learning_rate': 4e-05, 'epoch': 0.6}
+{'loss': 0.2056, 'learning_rate': 3.6666666666666666e-05, 'epoch': 0.8}
+{'loss': 0.1224, 'learning_rate': 3.3333333333333335e-05, 'epoch': 1.0}
+{'loss': 0.069, 'learning_rate': 3e-05, 'epoch': 1.2}
+{'loss': 0.0278, 'learning_rate': 2.6666666666666667e-05, 'epoch': 1.4}
+{'loss': 0.0706, 'learning_rate': 2.3333333333333336e-05, 'epoch': 1.6}
+{'loss': 0.0484, 'learning_rate': 2e-05, 'epoch': 1.8}
+{'loss': 0.0696, 'learning_rate': 1.6666666666666667e-05, 'epoch': 2.0}
+{'loss': 0.036, 'learning_rate': 1.3333333333333333e-05, 'epoch': 2.2}
+{'loss': 0.035, 'learning_rate': 1e-05, 'epoch': 2.4}
+{'loss': 0.0066, 'learning_rate': 6.666666666666667e-06, 'epoch': 2.6}
+{'loss': 0.0417, 'learning_rate': 3.3333333333333333e-06, 'epoch': 2.8}
+{'loss': 0.0104, 'learning_rate': 0.0, 'epoch': 3.0}
+{'train_runtime': 307.4993, 'train_samples_per_second': 1.161, 'train_steps_per_second': 0.195, 'train_loss': 0.13866994995623827, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_10_40_0.8_0.3_3_1/checkpoint-40/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_10_40_0.8_0.3_3_1/checkpoint-20/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_10_40_0.8_0.3_3_1/checkpoint-60/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 06:51:16 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_10_40_0.8_0.3_3_1/checkpoint-20', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_10_40_0.8_0.3_3_1/checkpoint-20', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:51:33 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_10_40_0.8_0.3_3_1 epoch 1
+
+------------------------------------------------
+
+0.9535665127902693
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_10_40_0.8_0.3_3_1/generated_contents/1
+INFO 11-29 06:54:02 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_10_40_0.8_0.3_3_1/checkpoint-40', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_10_40_0.8_0.3_3_1/checkpoint-40', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:54:15 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_10_40_0.8_0.3_3_1 epoch 2
+
+------------------------------------------------
+
+0.9486949959757348
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_10_40_0.8_0.3_3_1/generated_contents/2
+INFO 11-29 06:56:51 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_10_40_0.8_0.3_3_1/checkpoint-60', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_10_40_0.8_0.3_3_1/checkpoint-60', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 06:57:07 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_10_40_0.8_0.3_3_1 epoch 3
+
+------------------------------------------------
+
+0.9560982176989887
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_10_40_0.8_0.3_3_1/generated_contents/3
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_10_40_0.8_0.3_3_1/checkpoint-20
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_10_40_0.8_0.3_3_1/checkpoint-40
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_10_40_0.8_0.3_3_1/checkpoint-60
+searching parameters: task034_10_20_40_0.8_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_10_20_40_0.8_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_10_20_40_0.8_0.4_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 06:59:45 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:00:00 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 07:01:33 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:01:47 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 125
+expected_example_num: 200
+selection_ratio: 0.625
+finetune_deepseek!
+{'loss': 0.5019, 'learning_rate': 4.682539682539683e-05, 'epoch': 0.19}
+{'loss': 0.522, 'learning_rate': 4.3650793650793655e-05, 'epoch': 0.38}
+{'loss': 0.2715, 'learning_rate': 4.047619047619048e-05, 'epoch': 0.57}
+{'loss': 0.1654, 'learning_rate': 3.730158730158731e-05, 'epoch': 0.76}
+{'loss': 0.122, 'learning_rate': 3.412698412698413e-05, 'epoch': 0.95}
+{'loss': 0.0226, 'learning_rate': 3.095238095238095e-05, 'epoch': 1.14}
+{'loss': 0.0473, 'learning_rate': 2.777777777777778e-05, 'epoch': 1.33}
+{'loss': 0.0452, 'learning_rate': 2.4603174603174602e-05, 'epoch': 1.52}
+{'loss': 0.0554, 'learning_rate': 2.1428571428571428e-05, 'epoch': 1.71}
+{'loss': 0.047, 'learning_rate': 1.8253968253968254e-05, 'epoch': 1.9}
+{'loss': 0.0183, 'learning_rate': 1.5079365079365079e-05, 'epoch': 2.1}
+{'loss': 0.0088, 'learning_rate': 1.1904761904761905e-05, 'epoch': 2.29}
+{'loss': 0.0076, 'learning_rate': 8.73015873015873e-06, 'epoch': 2.48}
+{'loss': 0.0071, 'learning_rate': 5.555555555555556e-06, 'epoch': 2.67}
+{'loss': 0.0098, 'learning_rate': 2.3809523809523808e-06, 'epoch': 2.86}
+{'train_runtime': 325.0071, 'train_samples_per_second': 1.154, 'train_steps_per_second': 0.194, 'train_loss': 0.11815765399544959, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_10_20_40_0.8_0.4_3_1/checkpoint-63/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_10_20_40_0.8_0.4_3_1/checkpoint-42/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_10_20_40_0.8_0.4_3_1/checkpoint-21/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 07:09:12 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_10_20_40_0.8_0.4_3_1/checkpoint-21', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_10_20_40_0.8_0.4_3_1/checkpoint-21', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:09:27 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_10_20_40_0.8_0.4_3_1 epoch 1
+
+------------------------------------------------
+
+0.9256455516663935
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_10_20_40_0.8_0.4_3_1/generated_contents/1
+INFO 11-29 07:12:00 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_10_20_40_0.8_0.4_3_1/checkpoint-42', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_10_20_40_0.8_0.4_3_1/checkpoint-42', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:12:18 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_10_20_40_0.8_0.4_3_1 epoch 2
+
+------------------------------------------------
+
+0.9520755137479137
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_10_20_40_0.8_0.4_3_1/generated_contents/2
+INFO 11-29 07:14:42 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_10_20_40_0.8_0.4_3_1/checkpoint-63', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_10_20_40_0.8_0.4_3_1/checkpoint-63', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:14:56 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_10_20_40_0.8_0.4_3_1 epoch 3
+
+------------------------------------------------
+
+0.9523754157847631
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_10_20_40_0.8_0.4_3_1/generated_contents/3
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_10_20_40_0.8_0.4_3_1/checkpoint-21
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_10_20_40_0.8_0.4_3_1/checkpoint-42
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_10_20_40_0.8_0.4_3_1/checkpoint-63
+searching parameters: task034_20_10_50_0.6_0.35_3_1
+/home/cyzhao/NI_task034_exp_1/task034_20_10_50_0.6_0.35_3_1
+/home/cyzhao/NI_task034_exp_1/task034_20_10_50_0.6_0.35_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 07:17:28 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:17:43 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 07:19:24 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:19:39 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 125
+expected_example_num: 200
+selection_ratio: 0.625
+finetune_deepseek!
+{'loss': 0.4851, 'learning_rate': 4.682539682539683e-05, 'epoch': 0.19}
+{'loss': 0.2211, 'learning_rate': 4.3650793650793655e-05, 'epoch': 0.38}
+{'loss': 0.165, 'learning_rate': 4.047619047619048e-05, 'epoch': 0.57}
+{'loss': 0.198, 'learning_rate': 3.730158730158731e-05, 'epoch': 0.76}
+{'loss': 0.0951, 'learning_rate': 3.412698412698413e-05, 'epoch': 0.95}
+{'loss': 0.0938, 'learning_rate': 3.095238095238095e-05, 'epoch': 1.14}
+{'loss': 0.0343, 'learning_rate': 2.777777777777778e-05, 'epoch': 1.33}
+{'loss': 0.0454, 'learning_rate': 2.4603174603174602e-05, 'epoch': 1.52}
+{'loss': 0.0434, 'learning_rate': 2.1428571428571428e-05, 'epoch': 1.71}
+{'loss': 0.068, 'learning_rate': 1.8253968253968254e-05, 'epoch': 1.9}
+{'loss': 0.0288, 'learning_rate': 1.5079365079365079e-05, 'epoch': 2.1}
+{'loss': 0.0272, 'learning_rate': 1.1904761904761905e-05, 'epoch': 2.29}
+{'loss': 0.0132, 'learning_rate': 8.73015873015873e-06, 'epoch': 2.48}
+{'loss': 0.0075, 'learning_rate': 5.555555555555556e-06, 'epoch': 2.67}
+{'loss': 0.0092, 'learning_rate': 2.3809523809523808e-06, 'epoch': 2.86}
+{'train_runtime': 331.6738, 'train_samples_per_second': 1.131, 'train_steps_per_second': 0.19, 'train_loss': 0.09804176817101146, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_10_50_0.6_0.35_3_1/checkpoint-63/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_10_50_0.6_0.35_3_1/checkpoint-42/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_10_50_0.6_0.35_3_1/checkpoint-21/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 07:27:09 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_10_50_0.6_0.35_3_1/checkpoint-21', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_10_50_0.6_0.35_3_1/checkpoint-21', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:27:24 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_10_50_0.6_0.35_3_1 epoch 1
+
+------------------------------------------------
+
+0.9534956304792973
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_10_50_0.6_0.35_3_1/generated_contents/1
+INFO 11-29 07:29:50 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_10_50_0.6_0.35_3_1/checkpoint-42', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_10_50_0.6_0.35_3_1/checkpoint-42', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:30:06 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_10_50_0.6_0.35_3_1 epoch 2
+
+------------------------------------------------
+
+0.9521283011936298
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_10_50_0.6_0.35_3_1/generated_contents/2
+INFO 11-29 07:32:40 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_10_50_0.6_0.35_3_1/checkpoint-63', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_10_50_0.6_0.35_3_1/checkpoint-63', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:32:54 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_10_50_0.6_0.35_3_1 epoch 3
+
+------------------------------------------------
+
+0.9541680714019322
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_10_50_0.6_0.35_3_1/generated_contents/3
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_10_50_0.6_0.35_3_1/checkpoint-21
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_10_50_0.6_0.35_3_1/checkpoint-42
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_10_50_0.6_0.35_3_1/checkpoint-63
+searching parameters: task034_10_15_45_0.5_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_10_15_45_0.5_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_10_15_45_0.5_0.4_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 07:35:23 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:35:39 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 07:37:00 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:37:14 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 78
+expected_example_num: 150
+selection_ratio: 0.52
+finetune_deepseek!
+{'loss': 0.7729, 'learning_rate': 4.4871794871794874e-05, 'epoch': 0.31}
+{'loss': 0.8931, 'learning_rate': 3.974358974358974e-05, 'epoch': 0.62}
+{'loss': 0.2738, 'learning_rate': 3.461538461538462e-05, 'epoch': 0.92}
+{'loss': 0.1103, 'learning_rate': 2.948717948717949e-05, 'epoch': 1.23}
+{'loss': 0.0685, 'learning_rate': 2.435897435897436e-05, 'epoch': 1.54}
+{'loss': 0.0874, 'learning_rate': 1.923076923076923e-05, 'epoch': 1.85}
+{'loss': 0.0372, 'learning_rate': 1.4102564102564104e-05, 'epoch': 2.15}
+{'loss': 0.0495, 'learning_rate': 8.974358974358976e-06, 'epoch': 2.46}
+{'loss': 0.0132, 'learning_rate': 3.846153846153847e-06, 'epoch': 2.77}
+{'train_runtime': 263.0708, 'train_samples_per_second': 0.889, 'train_steps_per_second': 0.148, 'train_loss': 0.23756683063812745, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_10_15_45_0.5_0.4_3_1/checkpoint-26/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_10_15_45_0.5_0.4_3_1/checkpoint-13/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_10_15_45_0.5_0.4_3_1/checkpoint-39/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 07:43:19 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_10_15_45_0.5_0.4_3_1/checkpoint-13', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_10_15_45_0.5_0.4_3_1/checkpoint-13', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:43:37 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_10_15_45_0.5_0.4_3_1 epoch 1
+
+------------------------------------------------
+
+0.9501861919529608
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_10_15_45_0.5_0.4_3_1/generated_contents/1
+INFO 11-29 07:46:06 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_10_15_45_0.5_0.4_3_1/checkpoint-26', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_10_15_45_0.5_0.4_3_1/checkpoint-26', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:46:26 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_10_15_45_0.5_0.4_3_1 epoch 2
+
+------------------------------------------------
+
+0.949434965826166
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_10_15_45_0.5_0.4_3_1/generated_contents/2
+INFO 11-29 07:48:51 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_10_15_45_0.5_0.4_3_1/checkpoint-39', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_10_15_45_0.5_0.4_3_1/checkpoint-39', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:49:09 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_10_15_45_0.5_0.4_3_1 epoch 3
+
+------------------------------------------------
+
+0.9515897948943427
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_10_15_45_0.5_0.4_3_1/generated_contents/3
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_10_15_45_0.5_0.4_3_1/checkpoint-13
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_10_15_45_0.5_0.4_3_1/checkpoint-26
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_10_15_45_0.5_0.4_3_1/checkpoint-39
+searching parameters: task034_20_15_40_0.5_0.35_3_1
+/home/cyzhao/NI_task034_exp_1/task034_20_15_40_0.5_0.35_3_1
+/home/cyzhao/NI_task034_exp_1/task034_20_15_40_0.5_0.35_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 07:51:43 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:52:01 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 07:54:37 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 07:54:56 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 168
+expected_example_num: 300
+selection_ratio: 0.56
+finetune_deepseek!
+{'loss': 0.8747, 'learning_rate': 4.761904761904762e-05, 'epoch': 0.14}
+{'loss': 0.3328, 'learning_rate': 4.523809523809524e-05, 'epoch': 0.29}
+{'loss': 0.1292, 'learning_rate': 4.2857142857142856e-05, 'epoch': 0.43}
+{'loss': 0.1275, 'learning_rate': 4.047619047619048e-05, 'epoch': 0.57}
+{'loss': 0.0505, 'learning_rate': 3.809523809523809e-05, 'epoch': 0.71}
+{'loss': 0.2044, 'learning_rate': 3.571428571428572e-05, 'epoch': 0.86}
+{'loss': 0.0796, 'learning_rate': 3.3333333333333335e-05, 'epoch': 1.0}
+{'loss': 0.0392, 'learning_rate': 3.095238095238095e-05, 'epoch': 1.14}
+{'loss': 0.0652, 'learning_rate': 2.857142857142857e-05, 'epoch': 1.29}
+{'loss': 0.0425, 'learning_rate': 2.6190476190476192e-05, 'epoch': 1.43}
+{'loss': 0.0341, 'learning_rate': 2.380952380952381e-05, 'epoch': 1.57}
+{'loss': 0.1048, 'learning_rate': 2.1428571428571428e-05, 'epoch': 1.71}
+{'loss': 0.0435, 'learning_rate': 1.9047619047619046e-05, 'epoch': 1.86}
+{'loss': 0.0599, 'learning_rate': 1.6666666666666667e-05, 'epoch': 2.0}
+{'loss': 0.0207, 'learning_rate': 1.4285714285714285e-05, 'epoch': 2.14}
+{'loss': 0.0302, 'learning_rate': 1.1904761904761905e-05, 'epoch': 2.29}
+{'loss': 0.0164, 'learning_rate': 9.523809523809523e-06, 'epoch': 2.43}
+{'loss': 0.0161, 'learning_rate': 7.142857142857143e-06, 'epoch': 2.57}
+{'loss': 0.0236, 'learning_rate': 4.7619047619047615e-06, 'epoch': 2.71}
+{'loss': 0.0416, 'learning_rate': 2.3809523809523808e-06, 'epoch': 2.86}
+{'loss': 0.015, 'learning_rate': 0.0, 'epoch': 3.0}
+{'train_runtime': 350.3658, 'train_samples_per_second': 1.438, 'train_steps_per_second': 0.24, 'train_loss': 0.11197647177392528, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_15_40_0.5_0.35_3_1/checkpoint-56/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_15_40_0.5_0.35_3_1/checkpoint-28/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_15_40_0.5_0.35_3_1/checkpoint-84/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 08:03:33 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_15_40_0.5_0.35_3_1/checkpoint-28', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_15_40_0.5_0.35_3_1/checkpoint-28', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:03:53 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_15_40_0.5_0.35_3_1 epoch 1
+
+------------------------------------------------
+
+0.9568851200658381
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_15_40_0.5_0.35_3_1/generated_contents/1
+INFO 11-29 08:06:20 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_15_40_0.5_0.35_3_1/checkpoint-56', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_15_40_0.5_0.35_3_1/checkpoint-56', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:06:38 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_15_40_0.5_0.35_3_1 epoch 2
+
+------------------------------------------------
+
+0.9539267233341286
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_15_40_0.5_0.35_3_1/generated_contents/2
+INFO 11-29 08:09:06 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_15_40_0.5_0.35_3_1/checkpoint-84', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_15_40_0.5_0.35_3_1/checkpoint-84', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:09:24 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_15_40_0.5_0.35_3_1 epoch 3
+
+------------------------------------------------
+
+0.9549988612358095
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_15_40_0.5_0.35_3_1/generated_contents/3
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_15_40_0.5_0.35_3_1/checkpoint-28
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_15_40_0.5_0.35_3_1/checkpoint-56
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_15_40_0.5_0.35_3_1/checkpoint-84
+searching parameters: task034_20_15_45_0.7_0.3_3_1
+/home/cyzhao/NI_task034_exp_1/task034_20_15_45_0.7_0.3_3_1
+/home/cyzhao/NI_task034_exp_1/task034_20_15_45_0.7_0.3_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 08:11:59 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:12:19 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 08:14:35 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:14:54 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 206
+expected_example_num: 300
+selection_ratio: 0.6866666666666666
+finetune_deepseek!
+{'loss': 0.4712, 'learning_rate': 4.80952380952381e-05, 'epoch': 0.11}
+{'loss': 0.4119, 'learning_rate': 4.6190476190476194e-05, 'epoch': 0.23}
+{'loss': 0.1589, 'learning_rate': 4.428571428571428e-05, 'epoch': 0.34}
+{'loss': 0.1457, 'learning_rate': 4.2380952380952385e-05, 'epoch': 0.46}
+{'loss': 0.1445, 'learning_rate': 4.047619047619048e-05, 'epoch': 0.57}
+{'loss': 0.0999, 'learning_rate': 3.857142857142858e-05, 'epoch': 0.69}
+{'loss': 0.1066, 'learning_rate': 3.6666666666666666e-05, 'epoch': 0.8}
+{'loss': 0.1092, 'learning_rate': 3.476190476190476e-05, 'epoch': 0.91}
+{'loss': 0.1467, 'learning_rate': 3.285714285714286e-05, 'epoch': 1.03}
+{'loss': 0.0478, 'learning_rate': 3.095238095238095e-05, 'epoch': 1.14}
+{'loss': 0.0412, 'learning_rate': 2.9047619047619052e-05, 'epoch': 1.26}
+{'loss': 0.0448, 'learning_rate': 2.714285714285714e-05, 'epoch': 1.37}
+{'loss': 0.037, 'learning_rate': 2.523809523809524e-05, 'epoch': 1.49}
+{'loss': 0.0255, 'learning_rate': 2.3333333333333336e-05, 'epoch': 1.6}
+{'loss': 0.0327, 'learning_rate': 2.1428571428571428e-05, 'epoch': 1.71}
+{'loss': 0.0431, 'learning_rate': 1.9523809523809524e-05, 'epoch': 1.83}
+{'loss': 0.0494, 'learning_rate': 1.761904761904762e-05, 'epoch': 1.94}
+{'loss': 0.0208, 'learning_rate': 1.5714285714285715e-05, 'epoch': 2.06}
+{'loss': 0.0069, 'learning_rate': 1.3809523809523811e-05, 'epoch': 2.17}
+{'loss': 0.0207, 'learning_rate': 1.1904761904761905e-05, 'epoch': 2.29}
+{'loss': 0.0141, 'learning_rate': 1e-05, 'epoch': 2.4}
+{'loss': 0.0085, 'learning_rate': 8.095238095238097e-06, 'epoch': 2.51}
+{'loss': 0.0293, 'learning_rate': 6.190476190476191e-06, 'epoch': 2.63}
+{'loss': 0.0088, 'learning_rate': 4.285714285714286e-06, 'epoch': 2.74}
+{'loss': 0.0276, 'learning_rate': 2.3809523809523808e-06, 'epoch': 2.86}
+{'loss': 0.0097, 'learning_rate': 4.761904761904763e-07, 'epoch': 2.97}
+{'train_runtime': 370.6397, 'train_samples_per_second': 1.667, 'train_steps_per_second': 0.283, 'train_loss': 0.08635879198000544, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_15_45_0.7_0.3_3_1/checkpoint-35/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_15_45_0.7_0.3_3_1/checkpoint-105/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_20_15_45_0.7_0.3_3_1/checkpoint-70/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 08:23:59 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_15_45_0.7_0.3_3_1/checkpoint-35', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_15_45_0.7_0.3_3_1/checkpoint-35', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:24:17 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_15_45_0.7_0.3_3_1 epoch 1
+
+------------------------------------------------
+
+0.9599765108421352
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_15_45_0.7_0.3_3_1/generated_contents/1
+INFO 11-29 08:26:44 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_15_45_0.7_0.3_3_1/checkpoint-70', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_15_45_0.7_0.3_3_1/checkpoint-70', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:27:01 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_15_45_0.7_0.3_3_1 epoch 2
+
+------------------------------------------------
+
+0.9549364338211201
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_15_45_0.7_0.3_3_1/generated_contents/2
+INFO 11-29 08:29:29 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_20_15_45_0.7_0.3_3_1/checkpoint-105', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_20_15_45_0.7_0.3_3_1/checkpoint-105', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:29:45 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_20_15_45_0.7_0.3_3_1 epoch 3
+
+------------------------------------------------
+
+0.9562499005590309
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_20_15_45_0.7_0.3_3_1/generated_contents/3
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_15_45_0.7_0.3_3_1/checkpoint-35
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_15_45_0.7_0.3_3_1/checkpoint-70
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_20_15_45_0.7_0.3_3_1/checkpoint-105
+searching parameters: task034_30_15_45_0.4_0.35_3_1
+/home/cyzhao/NI_task034_exp_1/task034_30_15_45_0.4_0.35_3_1
+/home/cyzhao/NI_task034_exp_1/task034_30_15_45_0.4_0.35_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 08:32:09 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:32:26 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 08:37:11 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:37:29 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 211
+expected_example_num: 450
+selection_ratio: 0.4688888888888889
+finetune_deepseek!
+{'loss': 0.8677, 'learning_rate': 4.814814814814815e-05, 'epoch': 0.11}
+{'loss': 0.5586, 'learning_rate': 4.62962962962963e-05, 'epoch': 0.22}
+{'loss': 0.2814, 'learning_rate': 4.4444444444444447e-05, 'epoch': 0.33}
+{'loss': 0.1533, 'learning_rate': 4.259259259259259e-05, 'epoch': 0.44}
+{'loss': 0.1856, 'learning_rate': 4.074074074074074e-05, 'epoch': 0.56}
+{'loss': 0.1372, 'learning_rate': 3.888888888888889e-05, 'epoch': 0.67}
+{'loss': 0.0834, 'learning_rate': 3.7037037037037037e-05, 'epoch': 0.78}
+{'loss': 0.0804, 'learning_rate': 3.518518518518519e-05, 'epoch': 0.89}
+{'loss': 0.0637, 'learning_rate': 3.3333333333333335e-05, 'epoch': 1.0}
+{'loss': 0.0517, 'learning_rate': 3.148148148148148e-05, 'epoch': 1.11}
+{'loss': 0.0315, 'learning_rate': 2.962962962962963e-05, 'epoch': 1.22}
+{'loss': 0.0288, 'learning_rate': 2.777777777777778e-05, 'epoch': 1.33}
+{'loss': 0.0233, 'learning_rate': 2.5925925925925925e-05, 'epoch': 1.44}
+{'loss': 0.0481, 'learning_rate': 2.4074074074074074e-05, 'epoch': 1.56}
+{'loss': 0.0153, 'learning_rate': 2.2222222222222223e-05, 'epoch': 1.67}
+{'loss': 0.0376, 'learning_rate': 2.037037037037037e-05, 'epoch': 1.78}
+{'loss': 0.0729, 'learning_rate': 1.8518518518518518e-05, 'epoch': 1.89}
+{'loss': 0.0149, 'learning_rate': 1.6666666666666667e-05, 'epoch': 2.0}
+{'loss': 0.0095, 'learning_rate': 1.4814814814814815e-05, 'epoch': 2.11}
+{'loss': 0.0244, 'learning_rate': 1.2962962962962962e-05, 'epoch': 2.22}
+{'loss': 0.0112, 'learning_rate': 1.1111111111111112e-05, 'epoch': 2.33}
+{'loss': 0.0057, 'learning_rate': 9.259259259259259e-06, 'epoch': 2.44}
+{'loss': 0.0088, 'learning_rate': 7.4074074074074075e-06, 'epoch': 2.56}
+{'loss': 0.0133, 'learning_rate': 5.555555555555556e-06, 'epoch': 2.67}
+{'loss': 0.0189, 'learning_rate': 3.7037037037037037e-06, 'epoch': 2.78}
+{'loss': 0.0087, 'learning_rate': 1.8518518518518519e-06, 'epoch': 2.89}
+{'loss': 0.0081, 'learning_rate': 0.0, 'epoch': 3.0}
+{'train_runtime': 402.3505, 'train_samples_per_second': 1.573, 'train_steps_per_second': 0.268, 'train_loss': 0.10534077094591877, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_15_45_0.4_0.35_3_1/checkpoint-36/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_15_45_0.4_0.35_3_1/checkpoint-72/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_15_45_0.4_0.35_3_1/checkpoint-108/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 08:47:23 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_45_0.4_0.35_3_1/checkpoint-36', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_45_0.4_0.35_3_1/checkpoint-36', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:47:41 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_15_45_0.4_0.35_3_1 epoch 1
+
+------------------------------------------------
+
+0.9571799681588494
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_15_45_0.4_0.35_3_1/generated_contents/1
+INFO 11-29 08:50:22 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_45_0.4_0.35_3_1/checkpoint-72', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_45_0.4_0.35_3_1/checkpoint-72', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:50:40 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_15_45_0.4_0.35_3_1 epoch 2
+
+------------------------------------------------
+
+0.9592930779753495
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_15_45_0.4_0.35_3_1/generated_contents/2
+INFO 11-29 08:53:12 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_45_0.4_0.35_3_1/checkpoint-108', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_45_0.4_0.35_3_1/checkpoint-108', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:53:29 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_15_45_0.4_0.35_3_1 epoch 3
+
+------------------------------------------------
+
+0.9600007242995539
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_15_45_0.4_0.35_3_1/generated_contents/3
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_15_45_0.4_0.35_3_1/checkpoint-36
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_15_45_0.4_0.35_3_1/checkpoint-72
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_15_45_0.4_0.35_3_1/checkpoint-108
+searching parameters: task034_30_10_40_0.4_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_30_10_40_0.4_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_30_10_40_0.4_0.4_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 08:55:57 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:56:15 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 08:59:13 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 08:59:31 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 161
+expected_example_num: 300
+selection_ratio: 0.5366666666666666
+finetune_deepseek!
+{'loss': 0.5998, 'learning_rate': 4.7530864197530866e-05, 'epoch': 0.15}
+{'loss': 0.3692, 'learning_rate': 4.506172839506173e-05, 'epoch': 0.3}
+{'loss': 0.2244, 'learning_rate': 4.259259259259259e-05, 'epoch': 0.44}
+{'loss': 0.1237, 'learning_rate': 4.012345679012346e-05, 'epoch': 0.59}
+{'loss': 0.0804, 'learning_rate': 3.7654320987654326e-05, 'epoch': 0.74}
+{'loss': 0.1225, 'learning_rate': 3.518518518518519e-05, 'epoch': 0.89}
+{'loss': 0.0916, 'learning_rate': 3.271604938271605e-05, 'epoch': 1.04}
+{'loss': 0.0405, 'learning_rate': 3.0246913580246916e-05, 'epoch': 1.19}
+{'loss': 0.061, 'learning_rate': 2.777777777777778e-05, 'epoch': 1.33}
+{'loss': 0.0242, 'learning_rate': 2.5308641975308646e-05, 'epoch': 1.48}
+{'loss': 0.0341, 'learning_rate': 2.2839506172839506e-05, 'epoch': 1.63}
+{'loss': 0.0458, 'learning_rate': 2.037037037037037e-05, 'epoch': 1.78}
+{'loss': 0.0285, 'learning_rate': 1.7901234567901236e-05, 'epoch': 1.93}
+{'loss': 0.0576, 'learning_rate': 1.54320987654321e-05, 'epoch': 2.07}
+{'loss': 0.026, 'learning_rate': 1.2962962962962962e-05, 'epoch': 2.22}
+{'loss': 0.0159, 'learning_rate': 1.0493827160493827e-05, 'epoch': 2.37}
+{'loss': 0.0074, 'learning_rate': 8.02469135802469e-06, 'epoch': 2.52}
+{'loss': 0.0028, 'learning_rate': 5.555555555555556e-06, 'epoch': 2.67}
+{'loss': 0.0479, 'learning_rate': 3.0864197530864196e-06, 'epoch': 2.81}
+{'loss': 0.0112, 'learning_rate': 6.17283950617284e-07, 'epoch': 2.96}
+{'train_runtime': 340.0583, 'train_samples_per_second': 1.42, 'train_steps_per_second': 0.238, 'train_loss': 0.09949663228981978, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.4_0.4_3_1/checkpoint-81/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.4_0.4_3_1/checkpoint-54/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.4_0.4_3_1/checkpoint-27/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 09:07:41 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.4_0.4_3_1/checkpoint-27', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.4_0.4_3_1/checkpoint-27', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 09:07:58 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_10_40_0.4_0.4_3_1 epoch 1
+
+------------------------------------------------
+
+0.9504434734815266
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_10_40_0.4_0.4_3_1/generated_contents/1
+INFO 11-29 09:10:29 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.4_0.4_3_1/checkpoint-54', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.4_0.4_3_1/checkpoint-54', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 09:10:47 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_10_40_0.4_0.4_3_1 epoch 2
+
+------------------------------------------------
+
+0.9530920931819098
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_10_40_0.4_0.4_3_1/generated_contents/2
+INFO 11-29 09:13:17 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.4_0.4_3_1/checkpoint-81', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.4_0.4_3_1/checkpoint-81', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 09:13:35 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_10_40_0.4_0.4_3_1 epoch 3
+
+------------------------------------------------
+
+0.9528845419806472
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_10_40_0.4_0.4_3_1/generated_contents/3
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.4_0.4_3_1/checkpoint-27
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.4_0.4_3_1/checkpoint-54
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.4_0.4_3_1/checkpoint-81
+searching parameters: task034_30_15_45_0.4_0.35_3_1
+searching parameters: task034_30_15_40_0.4_0.4_3_1
+searching parameters: task034_30_15_40_0.4_0.4_3_1
+searching parameters: task034_30_20_40_0.7_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_30_20_40_0.7_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_30_20_40_0.7_0.4_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 09:16:05 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 09:16:24 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 09:21:03 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 09:21:22 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 380
+expected_example_num: 600
+selection_ratio: 0.6333333333333333
+finetune_deepseek!
+{'loss': 0.7612, 'learning_rate': 4.8958333333333335e-05, 'epoch': 0.06}
+{'loss': 0.4033, 'learning_rate': 4.791666666666667e-05, 'epoch': 0.12}
+{'loss': 0.2567, 'learning_rate': 4.6875e-05, 'epoch': 0.19}
+{'loss': 0.1981, 'learning_rate': 4.5833333333333334e-05, 'epoch': 0.25}
+{'loss': 0.1744, 'learning_rate': 4.4791666666666673e-05, 'epoch': 0.31}
+{'loss': 0.2306, 'learning_rate': 4.375e-05, 'epoch': 0.38}
+{'loss': 0.1299, 'learning_rate': 4.270833333333333e-05, 'epoch': 0.44}
+{'loss': 0.1687, 'learning_rate': 4.166666666666667e-05, 'epoch': 0.5}
+{'loss': 0.2166, 'learning_rate': 4.0625000000000005e-05, 'epoch': 0.56}
+{'loss': 0.1454, 'learning_rate': 3.958333333333333e-05, 'epoch': 0.62}
+{'loss': 0.0769, 'learning_rate': 3.854166666666667e-05, 'epoch': 0.69}
+{'loss': 0.0771, 'learning_rate': 3.7500000000000003e-05, 'epoch': 0.75}
+{'loss': 0.1047, 'learning_rate': 3.6458333333333336e-05, 'epoch': 0.81}
+{'loss': 0.1717, 'learning_rate': 3.541666666666667e-05, 'epoch': 0.88}
+{'loss': 0.1252, 'learning_rate': 3.4375e-05, 'epoch': 0.94}
+{'loss': 0.0777, 'learning_rate': 3.3333333333333335e-05, 'epoch': 1.0}
+{'loss': 0.0311, 'learning_rate': 3.229166666666667e-05, 'epoch': 1.06}
+{'loss': 0.0363, 'learning_rate': 3.125e-05, 'epoch': 1.12}
+{'loss': 0.0479, 'learning_rate': 3.0208333333333334e-05, 'epoch': 1.19}
+{'loss': 0.0612, 'learning_rate': 2.916666666666667e-05, 'epoch': 1.25}
+{'loss': 0.0617, 'learning_rate': 2.8125000000000003e-05, 'epoch': 1.31}
+{'loss': 0.0648, 'learning_rate': 2.7083333333333332e-05, 'epoch': 1.38}
+{'loss': 0.061, 'learning_rate': 2.604166666666667e-05, 'epoch': 1.44}
+{'loss': 0.0354, 'learning_rate': 2.5e-05, 'epoch': 1.5}
+{'loss': 0.0583, 'learning_rate': 2.3958333333333334e-05, 'epoch': 1.56}
+{'loss': 0.0261, 'learning_rate': 2.2916666666666667e-05, 'epoch': 1.62}
+{'loss': 0.0132, 'learning_rate': 2.1875e-05, 'epoch': 1.69}
+{'loss': 0.0368, 'learning_rate': 2.0833333333333336e-05, 'epoch': 1.75}
+{'loss': 0.0562, 'learning_rate': 1.9791666666666665e-05, 'epoch': 1.81}
+{'loss': 0.0344, 'learning_rate': 1.8750000000000002e-05, 'epoch': 1.88}
+{'loss': 0.029, 'learning_rate': 1.7708333333333335e-05, 'epoch': 1.94}
+{'loss': 0.041, 'learning_rate': 1.6666666666666667e-05, 'epoch': 2.0}
+{'loss': 0.0164, 'learning_rate': 1.5625e-05, 'epoch': 2.06}
+{'loss': 0.0203, 'learning_rate': 1.4583333333333335e-05, 'epoch': 2.12}
+{'loss': 0.0154, 'learning_rate': 1.3541666666666666e-05, 'epoch': 2.19}
+{'loss': 0.0119, 'learning_rate': 1.25e-05, 'epoch': 2.25}
+{'loss': 0.0145, 'learning_rate': 1.1458333333333333e-05, 'epoch': 2.31}
+{'loss': 0.0129, 'learning_rate': 1.0416666666666668e-05, 'epoch': 2.38}
+{'loss': 0.0291, 'learning_rate': 9.375000000000001e-06, 'epoch': 2.44}
+{'loss': 0.0307, 'learning_rate': 8.333333333333334e-06, 'epoch': 2.5}
+{'loss': 0.0178, 'learning_rate': 7.2916666666666674e-06, 'epoch': 2.56}
+{'loss': 0.0067, 'learning_rate': 6.25e-06, 'epoch': 2.62}
+{'loss': 0.0073, 'learning_rate': 5.208333333333334e-06, 'epoch': 2.69}
+{'loss': 0.0099, 'learning_rate': 4.166666666666667e-06, 'epoch': 2.75}
+{'loss': 0.0031, 'learning_rate': 3.125e-06, 'epoch': 2.81}
+{'loss': 0.0092, 'learning_rate': 2.0833333333333334e-06, 'epoch': 2.88}
+{'loss': 0.0186, 'learning_rate': 1.0416666666666667e-06, 'epoch': 2.94}
+{'loss': 0.0252, 'learning_rate': 0.0, 'epoch': 3.0}
+{'train_runtime': 596.5268, 'train_samples_per_second': 1.911, 'train_steps_per_second': 0.322, 'train_loss': 0.08877103838312905, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_20_40_0.7_0.4_3_1/checkpoint-128/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_20_40_0.7_0.4_3_1/checkpoint-64/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_20_40_0.7_0.4_3_1/checkpoint-192/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 09:36:13 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_20_40_0.7_0.4_3_1/checkpoint-64', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_20_40_0.7_0.4_3_1/checkpoint-64', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 09:36:30 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_20_40_0.7_0.4_3_1 epoch 1
+
+------------------------------------------------
+
+0.9452235779365292
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_20_40_0.7_0.4_3_1/generated_contents/1
+INFO 11-29 09:38:54 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_20_40_0.7_0.4_3_1/checkpoint-128', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_20_40_0.7_0.4_3_1/checkpoint-128', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 09:39:11 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_20_40_0.7_0.4_3_1 epoch 2
+
+------------------------------------------------
+
+0.9531093763027156
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_20_40_0.7_0.4_3_1/generated_contents/2
+INFO 11-29 09:41:44 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_20_40_0.7_0.4_3_1/checkpoint-192', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_20_40_0.7_0.4_3_1/checkpoint-192', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 09:42:01 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_20_40_0.7_0.4_3_1 epoch 3
+
+------------------------------------------------
+
+0.955436694641098
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_20_40_0.7_0.4_3_1/generated_contents/3
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_20_40_0.7_0.4_3_1/checkpoint-64
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_20_40_0.7_0.4_3_1/checkpoint-128
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_20_40_0.7_0.4_3_1/checkpoint-192
+searching parameters: task034_30_15_40_0.4_0.4_3_1
+searching parameters: task034_30_15_50_0.4_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_30_15_50_0.4_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_30_15_50_0.4_0.4_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 09:44:37 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 09:44:55 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 09:48:28 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 09:48:46 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 218
+expected_example_num: 450
+selection_ratio: 0.48444444444444446
+finetune_deepseek!
+{'loss': 0.7244, 'learning_rate': 4.8198198198198205e-05, 'epoch': 0.11}
+{'loss': 1.0556, 'learning_rate': 4.6396396396396394e-05, 'epoch': 0.22}
+{'loss': 0.2593, 'learning_rate': 4.4594594594594596e-05, 'epoch': 0.32}
+{'loss': 0.1337, 'learning_rate': 4.27927927927928e-05, 'epoch': 0.43}
+{'loss': 0.1762, 'learning_rate': 4.099099099099099e-05, 'epoch': 0.54}
+{'loss': 0.1733, 'learning_rate': 3.918918918918919e-05, 'epoch': 0.65}
+{'loss': 0.1708, 'learning_rate': 3.738738738738739e-05, 'epoch': 0.76}
+{'loss': 0.1559, 'learning_rate': 3.558558558558558e-05, 'epoch': 0.86}
+{'loss': 0.1187, 'learning_rate': 3.3783783783783784e-05, 'epoch': 0.97}
+{'loss': 0.1024, 'learning_rate': 3.198198198198199e-05, 'epoch': 1.08}
+{'loss': 0.069, 'learning_rate': 3.0180180180180183e-05, 'epoch': 1.19}
+{'loss': 0.0561, 'learning_rate': 2.8378378378378378e-05, 'epoch': 1.3}
+{'loss': 0.0476, 'learning_rate': 2.6576576576576577e-05, 'epoch': 1.41}
+{'loss': 0.0475, 'learning_rate': 2.4774774774774777e-05, 'epoch': 1.51}
+{'loss': 0.0372, 'learning_rate': 2.2972972972972976e-05, 'epoch': 1.62}
+{'loss': 0.0431, 'learning_rate': 2.117117117117117e-05, 'epoch': 1.73}
+{'loss': 0.0249, 'learning_rate': 1.936936936936937e-05, 'epoch': 1.84}
+{'loss': 0.0331, 'learning_rate': 1.756756756756757e-05, 'epoch': 1.95}
+{'loss': 0.0142, 'learning_rate': 1.5765765765765765e-05, 'epoch': 2.05}
+{'loss': 0.0127, 'learning_rate': 1.3963963963963963e-05, 'epoch': 2.16}
+{'loss': 0.0159, 'learning_rate': 1.2162162162162164e-05, 'epoch': 2.27}
+{'loss': 0.0293, 'learning_rate': 1.0360360360360361e-05, 'epoch': 2.38}
+{'loss': 0.015, 'learning_rate': 8.558558558558558e-06, 'epoch': 2.49}
+{'loss': 0.0162, 'learning_rate': 6.7567567567567575e-06, 'epoch': 2.59}
+{'loss': 0.0159, 'learning_rate': 4.954954954954955e-06, 'epoch': 2.7}
+{'loss': 0.0093, 'learning_rate': 3.153153153153153e-06, 'epoch': 2.81}
+{'loss': 0.0102, 'learning_rate': 1.3513513513513515e-06, 'epoch': 2.92}
+{'train_runtime': 413.098, 'train_samples_per_second': 1.583, 'train_steps_per_second': 0.269, 'train_loss': 0.12894698816376762, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_15_50_0.4_0.4_3_1/checkpoint-37/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_15_50_0.4_0.4_3_1/checkpoint-74/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_15_50_0.4_0.4_3_1/checkpoint-111/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 09:58:43 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_50_0.4_0.4_3_1/checkpoint-37', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_50_0.4_0.4_3_1/checkpoint-37', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 09:58:57 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_15_50_0.4_0.4_3_1 epoch 1
+
+------------------------------------------------
+
+0.9551620083817622
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_15_50_0.4_0.4_3_1/generated_contents/1
+INFO 11-29 10:01:07 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_50_0.4_0.4_3_1/checkpoint-74', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_50_0.4_0.4_3_1/checkpoint-74', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 10:01:20 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_15_50_0.4_0.4_3_1 epoch 2
+
+------------------------------------------------
+
+0.9562316190132201
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_15_50_0.4_0.4_3_1/generated_contents/2
+INFO 11-29 10:03:41 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_50_0.4_0.4_3_1/checkpoint-111', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_15_50_0.4_0.4_3_1/checkpoint-111', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 10:03:54 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_15_50_0.4_0.4_3_1 epoch 3
+
+------------------------------------------------
+
+0.9567563736750923
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_15_50_0.4_0.4_3_1/generated_contents/3
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_15_50_0.4_0.4_3_1/checkpoint-37
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_15_50_0.4_0.4_3_1/checkpoint-74
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_15_50_0.4_0.4_3_1/checkpoint-111
+searching parameters: task034_30_15_40_0.4_0.4_3_1
+searching parameters: task034_30_10_40_0.8_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_30_10_40_0.8_0.4_3_1
+/home/cyzhao/NI_task034_exp_1/task034_30_10_40_0.8_0.4_3_1/config.json
+generate_and_write_inputs!
+INFO 11-29 10:06:15 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 10:06:29 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+annotate_and_write_outputs!
+INFO 11-29 10:09:36 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 10:09:50 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+generated_example_num: 184
+expected_example_num: 300
+selection_ratio: 0.6133333333333333
+finetune_deepseek!
+{'loss': 0.6367, 'learning_rate': 4.78494623655914e-05, 'epoch': 0.13}
+{'loss': 0.2543, 'learning_rate': 4.56989247311828e-05, 'epoch': 0.26}
+{'loss': 0.2221, 'learning_rate': 4.3548387096774194e-05, 'epoch': 0.39}
+{'loss': 0.1947, 'learning_rate': 4.13978494623656e-05, 'epoch': 0.52}
+{'loss': 0.1677, 'learning_rate': 3.924731182795699e-05, 'epoch': 0.65}
+{'loss': 0.1468, 'learning_rate': 3.7096774193548386e-05, 'epoch': 0.77}
+{'loss': 0.1228, 'learning_rate': 3.494623655913979e-05, 'epoch': 0.9}
+{'loss': 0.0928, 'learning_rate': 3.279569892473118e-05, 'epoch': 1.03}
+{'loss': 0.0601, 'learning_rate': 3.0645161290322585e-05, 'epoch': 1.16}
+{'loss': 0.0552, 'learning_rate': 2.8494623655913982e-05, 'epoch': 1.29}
+{'loss': 0.0461, 'learning_rate': 2.6344086021505376e-05, 'epoch': 1.42}
+{'loss': 0.0519, 'learning_rate': 2.4193548387096777e-05, 'epoch': 1.55}
+{'loss': 0.042, 'learning_rate': 2.2043010752688174e-05, 'epoch': 1.68}
+{'loss': 0.0366, 'learning_rate': 1.989247311827957e-05, 'epoch': 1.81}
+{'loss': 0.0542, 'learning_rate': 1.774193548387097e-05, 'epoch': 1.94}
+{'loss': 0.0226, 'learning_rate': 1.5591397849462366e-05, 'epoch': 2.06}
+{'loss': 0.0194, 'learning_rate': 1.3440860215053763e-05, 'epoch': 2.19}
+{'loss': 0.0202, 'learning_rate': 1.129032258064516e-05, 'epoch': 2.32}
+{'loss': 0.0146, 'learning_rate': 9.13978494623656e-06, 'epoch': 2.45}
+{'loss': 0.0239, 'learning_rate': 6.989247311827957e-06, 'epoch': 2.58}
+{'loss': 0.0081, 'learning_rate': 4.838709677419355e-06, 'epoch': 2.71}
+{'loss': 0.0302, 'learning_rate': 2.688172043010753e-06, 'epoch': 2.84}
+{'loss': 0.0231, 'learning_rate': 5.376344086021506e-07, 'epoch': 2.97}
+{'train_runtime': 368.5241, 'train_samples_per_second': 1.498, 'train_steps_per_second': 0.252, 'train_loss': 0.10093124450424747, 'epoch': 3.0}
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.8_0.4_3_1/checkpoint-31/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.8_0.4_3_1/checkpoint-62/optimizer.pt
+Deleting /data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.8_0.4_3_1/checkpoint-93/optimizer.pt
+validate!
+last validate 0.
+INFO 11-29 10:18:51 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.8_0.4_3_1/checkpoint-31', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.8_0.4_3_1/checkpoint-31', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 10:19:06 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_10_40_0.8_0.4_3_1 epoch 1
+
+------------------------------------------------
+
+0.9546815075998935
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_10_40_0.8_0.4_3_1/generated_contents/1
+INFO 11-29 10:21:33 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.8_0.4_3_1/checkpoint-62', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.8_0.4_3_1/checkpoint-62', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 10:21:48 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_10_40_0.8_0.4_3_1 epoch 2
+
+------------------------------------------------
+
+0.9577625568128606
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_10_40_0.8_0.4_3_1/generated_contents/2
+INFO 11-29 10:24:16 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.8_0.4_3_1/checkpoint-93', tokenizer='/data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.8_0.4_3_1/checkpoint-93', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 10:24:30 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of task034_30_10_40_0.8_0.4_3_1 epoch 3
+
+------------------------------------------------
+
+0.9591686219980079
+
+------------------------------------------------
+
+
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/task034_30_10_40_0.8_0.4_3_1/generated_contents/3
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.8_0.4_3_1/checkpoint-31
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.8_0.4_3_1/checkpoint-62
+rm -rf /data2/cyzhao/ckpt_data_p2ms/task034_30_10_40_0.8_0.4_3_1/checkpoint-93
+searching parameters: task034_30_20_40_0.7_0.4_3_1
+{'generation_epochs': 30, 'generation_batch_size': 15, 'generation_top_k': 40, 'generation_temperature': 0.4, 'min_frequency': 0.4, 'training_epochs': 3}
+test best ckpt.
+INFO 11-29 10:27:05 llm_engine.py:72] Initializing an LLM engine with config: model='/data2/cyzhao/best_ckpt/NI_task034_exp_1', tokenizer='/data2/cyzhao/best_ckpt/NI_task034_exp_1', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-29 10:27:34 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
+
+
+result of /data2/cyzhao/best_ckpt/NI_task034_exp_1
+
+------------------------------------------------
+
+0.9615560553644141
+
+------------------------------------------------
+
+
+The best ckpt on test set gain 0.9615560553644141
+Genrated contents are stored in /home/cyzhao/NI_task034_exp_1/best_ckpt_generated_content

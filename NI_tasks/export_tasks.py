@@ -13,7 +13,7 @@ from test_ni import evaluate_model
 # TODO paste name of json files
 github_raw_urls = [
     "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task1557_jfleg_answer_generation.json",
-    "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task760_msr_sqa_long_text_generation.json"
+    "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task760_msr_sqa_long_text_generation.json",
 ]
 unprocessed_file_folder = "/home/cyzhao/main/NI_tasks/task_json/unprocessed/"
 for github_raw_url in github_raw_urls:
@@ -31,7 +31,7 @@ for github_raw_url in github_raw_urls:
 
 
 # step1: 导入task desciption到task json文件
-task_json_file_path = "/home/cyzhao/main/NI_tasks/tasks.json" 
+task_json_file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
 folder_path = "/home/cyzhao/main/NI_tasks/task_json/unprocessed"
 destination_folder = "/home/cyzhao/main/NI_tasks/task_json/processed"
 
