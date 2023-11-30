@@ -270,18 +270,19 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 for element in new_inputs
                 if element is not None and element != ""
             ]
+            verified_inputs = self.verify(
+                prompt_spec,
+                ablation_filter(
+                    length_filter(new_inputs)
+                    if intput_length_constraint
+                    else new_inputs
+                ),
+                expected_content=expected_content,
+            )
             filtered_inputs = ablation_filter(
-                length_filter(
-                    self.verify(
-                        prompt_spec,
-                        ablation_filter(
-                            length_filter(new_inputs)
-                            if intput_length_constraint
-                            else new_inputs
-                        ),
-                        expected_content=expected_content,
-                    )
-                )
+                length_filter(verified_inputs)
+                if intput_length_constraint
+                else verified_inputs
             )
             if filtered_inputs is not None and filtered_inputs != []:
                 generated_inputs.extend(filtered_inputs)
