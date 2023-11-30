@@ -31,6 +31,11 @@ def join_function(example):
 joined_dataset = original_dataset.map(join_function)
 joined_dataset.remove_columns(["question", "answers"])
 
+validation_set = datasets.Dataset.from_dict(joined_dataset[0:1000])
+test_set = datasets.Dataset.from_dict(joined_dataset[1000:2000])
+validation_set.save_to_disk("/home/cyzhao/prompt2model_test/testdataset/NI/eval/squad")
+test_set.save_to_disk("/home/cyzhao/prompt2model_test/testdataset/NI/test/squad")
+
 # test_dataset = datasets.load_from_disk(
 # "/home/cyzhao/prompt2model_test/testdataset/SQuAD_transformed_test"
 # )

@@ -5,9 +5,9 @@ from pathlib import Path
 
 import optuna
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "5,6"
+os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 # TODO change task name
-task_name = "task1622"
+task_name = "task1356"
 # TODO change experiment rank
 experiment_rank = 1
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"

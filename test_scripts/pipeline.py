@@ -5,11 +5,11 @@ from pathlib import Path
 
 import optuna
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "3,4"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 # TODO change task name
-task_name = "task1557"
+task_name = "squad"
 # TODO change experiment rank
-experiment_rank = 1
+experiment_rank = 0
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
 gpu_memory_utilization = 0.90

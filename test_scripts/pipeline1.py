@@ -7,7 +7,7 @@ import optuna
 # TODO change card name
 os.environ["CUDA_VISIBLE_DEVICES"] = "1,2"
 # TODO change task name
-task_name = "task034"
+task_name = "task036"
 # TODO change experiment rank
 experiment_rank = 1
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
