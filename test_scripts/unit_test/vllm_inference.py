@@ -2,7 +2,7 @@ from vllm import LLM, SamplingParams
 
 path = "/data/cyzhao/best_ckpt/SQuAD"
 
-default = "/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8"
+default = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
 
 language_model = LLM(
     model=default,

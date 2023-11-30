@@ -23,16 +23,16 @@ class HFPromptBasedInputGenerator(InputGenerator):
 
     def __init__(
         self,
-        pretrained_model_name: str = "deepseek-ai/deepseek-llm-67b-base",
+        pretrained_model_name: str = "vicuna-ai/vicuna-llm-67b-base",
     ) -> None:
         """Create a new instance of the HFPromptBasedInputGenerator.
 
         Args:
             pretrained_model_name: The name of a pre-trained decoder-only model.
         """
-        if pretrained_model_name == "deepseek-ai/deepseek-llm-67b-base":
+        if pretrained_model_name == "vicuna-ai/vicuna-llm-67b-base":
             self.tokenizer = AutoTokenizer.from_pretrained(
-                "/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8",
+                "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
                 local_files_only=True,
                 padding_side="left",
                 trust_remote_code=True,
@@ -42,7 +42,7 @@ class HFPromptBasedInputGenerator(InputGenerator):
                 pretrained_model_name, padding_side="left"
             )
         model = AutoModelForCausalLM.from_pretrained(
-            "/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8",
+            "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
             trust_remote_code=True,
             device_map="auto",
             torch_dtype=torch.bfloat16,
@@ -102,7 +102,7 @@ class HFPromptBasedInputGenerator(InputGenerator):
                 low_quality_input_string=low_quality_input_string,
                 high_quality_input_string=high_quality_input_string,
             )
-            if count_tokens_from_string(prompt, "deepseek") < context_cutoff:
+            if count_tokens_from_string(prompt, "vicuna") < context_cutoff:
                 return prompt
             else:
                 orginal_input_string = (
@@ -111,7 +111,7 @@ class HFPromptBasedInputGenerator(InputGenerator):
                     else instruction
                 )
                 if (
-                    count_tokens_from_string(orginal_input_string, "deepseek")
+                    count_tokens_from_string(orginal_input_string, "vicuna")
                     > context_cutoff
                 ):
                     logger.warning(
