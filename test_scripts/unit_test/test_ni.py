@@ -52,7 +52,18 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
     return sum(scores) / len(scores)
 
 
-def evaluate_model(task_names, finetuned=False):
+def exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs):
+    index = 0
+    for i in range(len(GROUND_TRUTH)):
+        if (
+            GROUND_TRUTH[i] in tuned_model_generated_outputs[i]
+            or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]
+        ):
+            index += 1
+    exact_match = index / len(GROUND_TRUTH)
+    return exact_match
+
+def evaluate_model(task_names, finetuned=False, exact_match=False):
     for task_name in task_names:
         experiment_name = "NI_" + task_name + "_exp_1"
         base_model = "/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8"
@@ -135,10 +146,6 @@ def evaluate_model(task_names, finetuned=False):
                 temperature=hyperparameter_choices.get("temperature", 0),
                 max_tokens=hyperparameter_choices.get("max_tokens", 500),
             )
-            MODEL_INPUTS = prompts
-            VALIDATION_DATASET = datasets.Dataset.from_dict(
-                {"model_ouput": GROUND_TRUTH, "model_input": MODEL_INPUTS}
-            )
 
             #! 这里测试轮次比较多，是为了看结果是否稳定
             # deepseek base model "/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8"
@@ -146,15 +153,14 @@ def evaluate_model(task_names, finetuned=False):
             tuned_deepseek_generated_outputs = [
                 each.outputs[0].text for each in tuned_deepseek_outputs
             ]
-            rouge_socre = rouge_l_score(GROUND_TRUTH, tuned_deepseek_generated_outputs)
-            print(f"{task_name} {test_type}: {rouge_socre}")
+            evaluate_result = rouge_l_score(GROUND_TRUTH, tuned_deepseek_generated_outputs) if not exact_match else exact_match_score(GROUND_TRUTH, tuned_deepseek_generated_outputs) 
+            print(f"{task_name} {test_type}: {evaluate_result}")
             with open(inputs_dir / f"evaluate_10_times.txt", "a+") as file:
                 file.write(
-                    f"\n\nresult of {path} th:\n\n------------------------------------------------{rouge_socre}------------------------------------------------\n\n"
+                    f"\n\nresult of {path} th:\n\n------------------------------------------------{evaluate_result}------------------------------------------------\n\n"
                 )
             #! 记得改名字
             evaluate_generated_content_path = inputs_dir / f"base_deepseek_{task_name}"
-            # print(f"Genrated contents are stored in {str(evaluate_generated_content_path)}")
             datasets.Dataset.from_dict(
                 dict(
                     model_output=tuned_deepseek_generated_outputs,
@@ -169,5 +175,5 @@ def evaluate_model(task_names, finetuned=False):
         destroy_model_parallel()
 
 
-task_names = ["task760"]
-evaluate_model(task_names, finetuned=False)
+task_names = ["squad"]
+evaluate_model(task_names, finetuned=False, exact_match=True)

@@ -116,19 +116,19 @@ tuned_deepseek_generated_outputs = [
 ]
 
 
-# def evalute_squad(
-#     GROUND_TRUTH,
-#     tuned_model_generated_outputs,
-# ):
-#     index = 0
-#     for i in range(len(GROUND_TRUTH)):
-#         if (
-#             GROUND_TRUTH[i] in tuned_model_generated_outputs[i]
-#             or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]
-#         ):
-#             index += 1
-#     exact_match = index / len(GROUND_TRUTH)
-#     return exact_match
+def evalute_squad(
+    GROUND_TRUTH,
+    tuned_model_generated_outputs,
+):
+    index = 0
+    for i in range(len(GROUND_TRUTH)):
+        if (
+            GROUND_TRUTH[i] in tuned_model_generated_outputs[i]
+            or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]
+        ):
+            index += 1
+    exact_match = index / len(GROUND_TRUTH)
+    return exact_match
 
 
 # for idx, i in enumerate(list(range(0, len(joined_dataset), 1000))):
