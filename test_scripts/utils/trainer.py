@@ -11,7 +11,7 @@ from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 from prompt2model.output_annotator import construct_meta_prompt
 
 
-def finetune_deepseek(
+def finetune_vicuna(
     prompt_spec,
     log_and_data_path,
     ckpt_path,

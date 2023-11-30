@@ -4,10 +4,10 @@ searching parameters: task1345_15_20_45_0.8_0.5_130_3
 /home/cyzhao/NI_task1345_exp_1/task1345_15_20_45_0.8_0.5_130_3
 /home/cyzhao/NI_task1345_exp_1/task1345_15_20_45_0.8_0.5_130_3/config.json
 generate_and_write_inputs!
-INFO 11-25 08:18:16 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-25 08:18:16 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-25 08:18:33 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
 annotate_and_write_outputs!
-INFO 11-25 08:23:03 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-25 08:23:03 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-25 08:23:17 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
 Python 3.11.3 (main, May 15 2023, 15:45:52) [GCC 11.2.0]
 Type 'copyright', 'credits' or 'license' for more information
@@ -19,10 +19,10 @@ searching parameters: task1345_15_20_40_0.4_0.35_130_3
 /home/cyzhao/NI_task1345_exp_1/task1345_15_20_40_0.4_0.35_130_3
 /home/cyzhao/NI_task1345_exp_1/task1345_15_20_40_0.4_0.35_130_3/config.json
 generate_and_write_inputs!
-INFO 11-25 08:56:10 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-25 08:56:10 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-25 08:56:26 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
 annotate_and_write_outputs!
-INFO 11-25 08:57:32 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer='/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
+INFO 11-25 08:57:32 llm_engine.py:72] Initializing an LLM engine with config: model='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer='/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=2, quantization=None, seed=0)
 INFO 11-25 08:57:49 llm_engine.py:207] # GPU blocks: 16502, # CPU blocks: 1024
 Python 3.11.3 (main, May 15 2023, 15:45:52) [GCC 11.2.0]
 Type 'copyright', 'credits' or 'license' for more information
@@ -156,7 +156,7 @@ File ~/main/test_scripts/main.py:499, in search_against_parameter(config_path)
     505         loaded_params['optional_list']
     506     )
     508 pretrain_model_path = Path(
-    509     "/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8"
+    509     "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
     510 )
     512 complete_ckpts = check_and_remove_checkpoints(ckpt_path)
 

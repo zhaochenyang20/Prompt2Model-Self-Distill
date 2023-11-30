@@ -30,7 +30,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
 
     def __init__(
         self,
-        pretrained_model_name: str = "deepseek-ai/deepseek-llm-67b-base",
+        pretrained_model_name: str = "vicuna-ai/vicuna-llm-67b-base",
         gpu_memory_utilization=0.5,
         tensor_parallel_size=1,
     ) -> None:
@@ -41,9 +41,9 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             gpu_memory_utilization: The portion of CUDA memory to use on a single GPU.
             tensor_parallel_size: The number of GPUs to use for distributed execution.
         """
-        if pretrained_model_name == "deepseek-ai/deepseek-llm-67b-base":
+        if pretrained_model_name == "vicuna-ai/vicuna-llm-67b-base":
             self.language_model = LLM(
-                model="/data/ckpts/huggingface/models/models--deepseek-ai--deepseek-llm-7b-chat/snapshots/afbda8b347ec881666061fa67447046fc5164ec8",
+                model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
                 gpu_memory_utilization=gpu_memory_utilization,
                 tensor_parallel_size=tensor_parallel_size,
             )
@@ -112,7 +112,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 low_quality_input_string=low_quality_input_string,
                 high_quality_input_string=high_quality_input_string,
             )
-            if count_tokens_from_string(prompt, "deepseek") < context_cutoff:
+            if count_tokens_from_string(prompt, "vicuna") < context_cutoff:
                 return prompt
             else:
                 orginal_input_string = (
@@ -121,7 +121,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     else instruction
                 )
                 if (
-                    count_tokens_from_string(orginal_input_string, "deepseek")
+                    count_tokens_from_string(orginal_input_string, "vicuna")
                     > context_cutoff
                 ):
                     logger.warning(
