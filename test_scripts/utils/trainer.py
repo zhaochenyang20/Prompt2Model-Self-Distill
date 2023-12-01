@@ -21,6 +21,7 @@ def finetune_vicuna(
     run_name,
     task_name,
     max_seq_length=2000,
+    per_device_train_batch_size=6,
 ):
     construct_prompt = partial(
         construct_meta_prompt,
@@ -77,7 +78,7 @@ def finetune_vicuna(
         evaluation_strategy="no",
         logging_steps=4,
         num_train_epochs=training_epochs,
-        per_device_train_batch_size=6,
+        per_device_train_batch_size=per_device_train_batch_size,
         seed=42,
     )
     trainer = SFTTrainer(

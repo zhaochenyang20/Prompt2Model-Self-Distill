@@ -8,12 +8,15 @@ import optuna
 # TODO change card name
 os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 # TODO change task name
-task_name = "squad"
+task_name = "task1345"
 # TODO change experiment rank
 experiment_rank = 1
+# TODO 加expected content和metrics
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
 gpu_memory_utilization = 0.85
+per_device_train_batch_size = 6
+# bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
 tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
 # gpu_memory_utilization 是在每张卡上的占比，比如 CUDA_CONDITION = "0,1,4,5", gpu_memory_utilization = 0.9
@@ -28,7 +31,6 @@ with open(file_path, "r", encoding="utf-8") as json_file:
 
 tasks = []
 
-# Discuss 加入了 metric 需要改写
 for task in all_tasks:
     if task["task_name"] == task_name:
         task_tuple = (
@@ -124,6 +126,10 @@ for task in tasks:
         ckpt_path = ckpt_root / name
         ckpt_path.mkdir(parents=True, exist_ok=True)
 
+        assert optional_list != []
+        assert expected_content != ""
+        assert metric != ""
+        
         params = {
             "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
             "task_name": task_name,
@@ -146,6 +152,7 @@ for task in tasks:
             "optional_list": optional_list,
             "metric": metric,
             "experiment_rank": experiment_rank,
+            "per_device_train_batch_size": per_device_train_batch_size,
             "portion": 1,
             "intput_length_constraint": intput_length_constraint,
             "output_length_constraint": output_length_constraint,

@@ -10,7 +10,7 @@
         "task_instruction": "In this task, you need to write a topic word from the given fact. The topic word must have at least one word overlap with the given fact. The topic word often involves adding a new word from a related concept. In your topic word, use at least one word from the given fact. Topic words with two or more words work best.",
         "task_name": "task036",
         "examples": "[input]=\"Fact: pesticides cause pollution.\"\n[output]=\"pollution harms.\"\n\n[input]=\"Fact: pesticides cause pollution.\"\n[output]=\"modern farming pesticide.\"\n\n[input]=\"Fact: a solar panel converts sunlight into electricity.\"\n[output]=\"sunlight sun.\"\n\n[input]=\"Fact: running requires a lot of energy.\"\n[output]=\"marathon running.\"\n\n[input]=\"Fact: soil is formed by rocks eroding.\"\n[output]=\"rain erode rock.\"\n\n[input]=\"Fact: a plant requires water for survival.\"\n[output]=\"rain water.\"\n\n[input]=\"Fact: a radio converts electrical energy into vibrations.\"\n[output]=\"vibrations sound.\"\n\n[input]=\"Fact: habitat destruction causes animals to move to find shelter in another habitat.\"\n[output]=\"chopping down trees habitat destruction.\"\n\n[input]=\"Fact: a protractor is used for measuring the angles of a triangular object.\"\n[output]=\"prism triangular.\"\n\n[input]=\"Fact: lightning can cause a forest fire.\"\n[output]=\"forest fire harms.\"\n\n",
-        "expected_content": "\"Fact\"",
+        "expected_content": "Fact",
         "optional_list": [
             "input",
             "output",
@@ -63,15 +63,23 @@
         "task_instruction": "You will be given three sentences. Read them, then identify a noun phrase (person, place, or thing) or event that is shared between all three sentences. As the output, write the span of the text corresponding to that phrase in each sentence. Keep the order of the sentences, that is, your answer should look like: 1: *a phras from sentence 1e* 2: *a phras from sentence 2* 3: *a phrase from sentence 3*",
         "task_name": "task281",
         "examples": "[input]=\"1: Four employees of the store have been arrested , but its manager -- herself a woman -- was still at large Saturday , said Goa police superintendent Kartik Kashyap . 2: If convicted , they could spend up to three years in jail , Kashyap said . 3: The four store workers arrested could spend 3 years each in prison if convicted .\"\n[output]=\"1: Four employees of the store 2: they 3: The four store workers\"\n\n[input]=\"1: Stewart said that she and her husband , Joseph Naaman , booked Felix on their Etihad Airways flight from the United Arab Emirates to New York 's John F . Kennedy International Airport on April 1 . 2: The couple said they spent $ 1,200 to ship Felix on the 14-hour flight . 3: Couple spends $ 1,200 to ship their cat , Felix , on a flight from the United Arab Emirates .\"\n[output]=\"1: their Etihad Airways flight from the United Arab Emirates to New York 's John F . Kennedy International Airport 2: the 14-hour flight 3: a flight from the United Arab Emirates\"\n\n[input]=\"1: But an Arizona official told CNN Bates never trained with the agency . 2:  He did n't come to Arizona ,  the official from the Maricopa County Sheriff 's Office said ,  and he certainly did n't train with us .  3: Maricopa County Sheriff 's Office in Arizona says Robert Bates never trained with them .\"\n[output]=\"1: never trained 2: did n't train 3: never trained\"\n\n",
-        "expected_content": "",
-        "optional_list": []
+        "expected_content": "three sentences with a noun phrase (person, place, or thing) or event that is shared between all three sentences",
+        "optional_list": [
+            "input",
+        "output",
+        "\n\n"
+    ]
     },
     {
         "task_instruction": "In this task, you are given a statement spoken by a politician in natural language. Your task is to generate the subject of the discussion for the given statement. The subject generated is not necessarily a part of the given input. Your answer should contain one or more words.",
         "task_name": "task613",
-        "examples": "[input]=\"Says the Annies List political group supports third-trimester abortions on demand.\"\n[output]=\"abortion\"\n\n[input]=\"In this last election in November, ... 63 percent of the American people chose not to vote, ... 80 percent of young people, (and) 75 percent of low-income workers chose not to vote.\"\n[output]=\"election\"\n\n[input]=\"The nuclear test conducted in our nation this time is the Earth's 2,054th nuclear test. The five permanent members of the U.N. Security Council have conducted 99.99 percent of the total nuclear tests.\"\n[output]=\"military\"\n\n",
-        "expected_content": "",
-        "optional_list": []
+        "examples": "[input]=\"Republicans enacted the most drastic cuts to K-12 public schools of any state in the nation.\"\n[output]=\"education\"\n\n[input]=\"Just look at what the FBI director said about her (Hillary Clinton) her misconduct is a disgrace and embarrassment to our country.\"\n[output]=\"candidates-biography\"\n\n[input]=\"When his grandfather arrived in the United States, there were no government benefits for immigrants.\"\n[output]=\"welfare\"\n\n",
+        "expected_content": "a statement spoken by a politician in natural language",
+        "optional_list": [
+            "input",
+            "output",
+            "\n\n"
+        ]
     },
     {
         "task_instruction": "In this task you will be given a claim and a perspective. You should determine whether that perspective supports or undermines the claim. If the perspective could possibly convince someone with different view, it is supporting, otherwise it is undermining.",
@@ -187,7 +195,8 @@
             "input",
             "output",
             "\n\n"
-        ]
+        ],
+        "metric": "rouge"
     },
     {
         "task_instruction": "Given a disfluent sentence, modify the sentence to it to its equivalent fluent form, preserving the meaning of the sentence.",
@@ -215,14 +224,18 @@
         "task_instruction": "You're given a fill-in-the-blank question where the answer is PersonX. You need to minimally change the given question so that the answer flips to PersonY. This task typically involves replacing one word i.e., the 'trigger word' with its antonym (e.g., changing from \"sympathetic\" to \"stern\"). You should not change any content in the given question beyond a word or two i.e. the trigger word/phrase. PersonX and PersonY should not be equally likely to fill the blank. For your question, PersonY should be a well-agreed answer to fill in the blank. Your generations should NOT contain potentially explicit, offensive, or adult content. Do not use the names of real people or generic names (e.g., Donald Trump, John Doe, etc.) in your question. Avoid repeating the same style or phrase in generating your modified question e.g. this task can be always solved using a simple negation i.e. by adding not, never, etc. Instead, try to increase the word diversity. Your question must contain at least 15 and at most 30 words. Your question must have at least 70% overlapping words with the given question. You must utilize the given context word while writing the question. Your question must contain only one blank. Make sure that PersonX and PersonY have the same gender. In your question, PersonX and PersonY should be used only ONCE and PersonX should appear earlier than PersonY. Although there are many correct answers, you only need to write one of them.",
         "task_name": "task035",
         "examples": "[input]=\"Context word: upset. \nQuestion: PersonX yelled at PersonY because _ was so upset about the news. \nAnswer: PersonX.\"\n[output]=\"PersonX comforted at PersonY because _ was so upset about the news.\"\n\n[input]=\"Context word: library. \nQuestion: PersonX asked PersonY what time the library closes, because _ had forgotten. \nAnswer: PersonX.\"\n[output]=\"PersonX asked PersonY what time the library closes, but _ had forgotten.\"\n\n[input]=\"Context word: door. \nQuestion: PersonX knocked on PersonY's door, but there was no answer. _ was disappointed. \nAnswer: PersonX.\"\n[output]=\"PersonX knocked on PersonY's door, but there was no answer. _ was out.\"\n\n[input]=\"Context word: step. \nQuestion: PersonX was always ahead of PersonY, as _ walked with a quick step. \nAnswer: PersonX.\"\n[output]=\"PersonX was always behind PersonY, as _ walked with a quick step .\"\n\n[input]=\"Context word: dropped. \nQuestion: When PersonX dropped his ice cream, PersonY giggled, so father gave _ a sympathetic look. \nAnswer: PersonX.\"\n[output]=\"When PersonX dropped his ice cream, PersonY giggled, so father gave _ a stern look.\"\n\n",
-        "expected_content": "\"Context word\", \"Question\", and \"Answer\"",
-        "optional_list": []
+        "expected_content": "Context word, Question and Answer",
+        "optional_list": [            
+        "input",
+        "output",
+        "\n\n"],
+        "metric": "rouge"
     },
     {
         "task_instruction": "In this task, you're given an ambiguous question (which can be answered in more than one way). Your task is to provide one question which clarifies the input question and it has one unique answer, and also provide an answer to the generated question. Generated question and answer should be separated with a new line.",
         "task_name": "task671",
         "examples": "[input]=\"Lucifer how many episodes are in season 3?\"\n[output]=\"How many episodes of season 3 of Lucifer were there, including bonus episodes? \n 26\"\n\n[input]=\"What is the tallest ride at six flags over texas?\"\n[output]=\"What is the tallest roller coaster at six flags over texas 2001? \n The Titan\"\n\n[input]=\"Who won the final hoh big brother 20?\"\n[output]=\"Who won the Final HoH in the American reality show Big Brother 20? \n Kaycee Clark\"\n\n",
-        "expected_content": "an ambiguous question (which can be answered in more than one way",
+        "expected_content": "an ambiguous question (which can be answered in more than one way)",
         "optional_list": [
             "input",
             "output",
@@ -255,7 +268,7 @@
         "task_instruction": "In this task, you're given a fill-in-the-blank question that contains two object names. Additionally, you're given one answer which is one of the objects present in the question. In this task, you need to minimally change the given question so that the answer flips to another object in the question. Remember the question has to be about both objects which are related but different; for example, \"trophy\" and \"suitcase\". This task typically involves replacing one word i.e., the 'trigger word' with its antonym (e.g., changing from \"small\" to \"big\"). You should not change any content in the given question beyond a word or two, i.e., the trigger word/phrase. The expected answer to your question must not be associated with just the trigger word; instead, it should depend on the context present in the question. The expected answer should not be ambiguous. For your question, there should be an agreed upon answer to fill in the blank. Your generations should NOT contain potentially explicit, offensive, or adult content. In your generated question, retain the object names from the input question. Avoid repeating the same style or phrase in generating your modified question e.g. this task can be always solved using a simple negation i.e. by adding not, never, etc. Instead, try to increase the word diversity. Your question must contain at least 15 and at most 30 words. Your question must have at least 70% overlapping words with the given question. You must utilize the given context word while writing the question. Your question must contain only one blank. The two objects should be used ONCE in your question. Here is a list of attributes and associated contrastive words that may help write contrastive trigger words. Note that contrastive trigger words help in flipping the label.\n| Attribute | triggerword | contrastive triggerword | \n| age | old | new | \n| altitude | low | high |\n| area | small | vast | \n| brightness | dark | light | \n| clarity | obscure | clear | \n| cleanness | dirty | clean | \n| complexity | simple | complex | \n| cost | cheap | expensive |\n| density | sparse | dense |\n| depth | shallow | deep |\n| distance | near | far |  \n| electric conductivity | low | high |\n| flexibility | rigid | flexible |\n| granularity | fine | coarse | \n| hardness | soft | hard | \n| length | short | long | \n| magnitude | small | large | \n| mass | small | large | \n| odor | weak | strong | \n| pressure | low | high | \n| resistance | low | high | \n| shape | round | sharp |\n| shape | flat | spiky |\n| size | small | large | \n| sound | quiet | loud | \n| sound pitch | low | high | \n| speed | slow | fast | \n| stability | unstable | stable | \n| strength | weak | strong | \n| temperature | low | high | \n| texture | smooth | rough | \n| thermal conductivity | low | high |\n| thickness | thin | thick | \n| volume | small | large |\n| weight | light | heavy | \n| width | narrow | wide | \n| location | in | out |\n| location | up | down |\n| location | above | below |\n| location | on | off |\n| location | to | from |\n",
         "task_name": "task034",
         "examples": "[input]=\"Context word: fit. \nQuestion: The trophy doesn't fit into the brown suitcase because _ is too large. \nAnswer: trophy.\"\n[output]=\"The trophy doesn't fit into the brown suitcase because _ is too small.\"\n\n[input]=\"Context word: trade. \nQuestion: Grace was happy to trade me her sweater for my jacket. She thinks _ looks dowdy on her. \nAnswer: sweater.\"\n[output]=\"Grace was happy to trade me her sweater for my jacket. She thinks _ looks great on her.\"\n\n[input]=\"Context word: carpet. \nQuestion: While redecorating her home, Sam took out the carpet and replaced it with wood floors. The _ was old. \nAnswer: carpet.\"\n[output]=\"While redecorating her home, Sam took out the carpet and replaced it with wood floors. The _ was trendy.\"\n\n[input]=\"Context word: fit. \nQuestion: The table won't fit through the doorway because the _ is too wide. \nAnswer: table.\"\n[output]=\"The table won't fit through the doorway because the _ is too narrow.\"\n\n[input]=\"Context word: water. \nQuestion: I poured water from the bottle into the cup until the _ was empty. \nAnswer: bottle.\"\n[output]=\"I poured water from the bottle into the cup until the _ was full.\"\n\n[input]=\"Context word: catch. \nQuestion: My meeting started at 4:00 and I needed to catch the train at 4:30, so there wasn't much time. Luckily, the _ was short, so it worked out. \nAnswer: meeting.\"\n[output]=\"My meeting started at 4:00 and I needed to catch the train at 4:30, so there wasn't much time. Luckily, the _ was delayed, so it worked out.\"\n\n[input]=\"Context word: candle. \nQuestion: James wanted to light the candle in the wind when on a date but the _ is too weak. \nAnswer: light.\"\n[output]=\"James wanted to light the candle in the wind when on a date but the _ is too strong.\"\n\n",
-        "expected_content": "\"Context word\", \"nQuestion\", and \"Answer\"",
+        "expected_content": "Context word, Question and Answer",
         "optional_list": [
             "input",
             "output",
@@ -266,7 +279,7 @@
         "task_instruction": "Generate an appropriate title for the given text. The generated title must be short and include the main topic of the text. The preferred titles are under fifteen words.",
         "task_name": "task1356",
         "examples": "[input]=\"But Eluned Morgan conceded that it would be \"difficult for us to stop\" from a legal point of view. Her comments were criticised by a Labour AM. Alun Davies said threatening legal action \"sounds like the last breath before you're thrown out of the pub\". Mr Davies said he was not convinced the Welsh Government would \"have a leg to stand on\" in trying to shape international trade deals after Brexit. Following Donald Trump's comments during last week's trade visit that the NHS would be \"on the table\" in any future trade talks between the UK and the USA, Eluned Morgan said there was \"absolutely no prospect whatsoever of us allowing the Welsh NHS to be part of any negotiation.\" The US President then rowed back on his initial comments following criticism from a number of MPs. Asked about her response to President Trump's remarks as she gave evidence to the Assembly's Brexit committee on Monday, Ms Morgan said \"legally, it would be difficult for us to stop because we don't have a veto over trade\". \"Politically, I think it's extremely unlikely to happen,\" the international relations and the Welsh language minister said. \"They [the UK Government] should not be concluding any trade agreements without consulting us where we have the power.\" Ms Morgan explained that UK and Welsh government officials are working on an agreement or 'concordat' for how future trade deals are negotiated. During a robust exchange, the Labour AM Alun Davies said: \"I want something which is in law to which I can hold you to account and which colleagues in Westminster can hold the UK Government to account. \"The argument we'll make life difficult for them, it sounds alright on the street, but it's not the reality of intergovernmental relations.\" \"The United Kingdom has to find a way of functioning. \"At the moment, your answers aren't giving me any confidence that there is that structure in place because, if the Welsh Government's argument is, 'we'll see you in court', it's not a very impressive argument either for the continuation of the structure of United Kingdom as a state or the commitment of the government within the United Kingdom to actually work together,\" he added. Responding to the criticism, Ms Morgan said: \"Is the current intergovernmental structure adequate? \"Absolutely not... and it's not just in relation to trade, it's in relation to almost every aspect of government policy. So, that infrastructure needs to be built.\"\"\n[output]=\"NHS Wales: Court action if trade deals affect service?\"\n\n[input]=\"By Jon Welch and Paul MoseleyBBC News Details of health problems, family bereavements and personal issues were sent by the University of East Anglia (UEA) in Norwich to 298 students. Megan Baynes, 23, said she felt \"sick and horrified\" when she realised her details had been shared. The UEA apologised \"unreservedly\" and said an inquiry had begun. The email contained a spreadsheet listing 172 names and details extenuating circumstances in which extensions and other academic concessions were granted to 42 students. 'Felt sick' It was sent to nearly 300 undergraduates, including Ms Baynes, a former editor of student newspaper Concrete. She is currently awaiting the results of her American Literature and Creative Writing degree, and had been granted extensions for coursework because of an illness suffered by a family member. \"I felt sick at seeing my personal situation written in a spreadsheet, and then seemingly sent to everyone on my course,\" she said. \"My situation was not the worst on there but there are some on there that are so personal. There are people I know and I feel so awful for them and can't imagine how they are feeling.\" Theo Antoniou Phillips, UEA Students' Union undergraduate education officer, said: \"This is a shocking and utterly unacceptable data breach that should never have happened.\" Jo Swo, the union's welfare, community and diversity officer, said: \"Given the university is supposed to be making mental health a priority, this is a real slap in the face to students who have sought support.\" In a statement, a UEA spokeswoman said: \"An email was mistakenly sent to 298 American Studies undergraduates this morning containing details of 42 students with extenuating circumstances. \"This clearly should not have happened and the university apologises unreservedly. The university has launched an urgent enquiry and is contacting all affected students to offer support. \"Anyone needing support should call 01603 592761. The university is informing the ICO (Information Commissioner's Office).\" The ICO has been contacted for comment.\"\n[output]=\"University of East Anglia in students' personal data breach\"\n\n[input]=\"Media reports say Stanislav Bogdanovich and Alexandra Vernigora - also a top chess player - were found with balloons containing the gas, nitrous oxide. The gas is inhaled using a balloon. Russian investigators reported the deaths, without naming the pair, and said there were no signs of foul play. Bogdanovich was a speed chess champion. Vernigora was also a professional chess player and was studying at Moscow State University. The Ukrainian sports website sport.ua says Bogdanovich was a grandmaster from Odessa who won the Ukrainian Under-18 championship and various chess awards at international tournaments. Russian chess website chess-news.ru says that in 2015 he was rated eighth in the world for speed (blitz) chess. Reports say Bogdanovich drew much criticism recently for representing Russia in an internet chess match against Ukraine, which he won. Sport.ua quotes a Facebook post from him (in Russian) about that, in which he argued that playing for Russia was good for business, that he was living as a guest in Russia and being treated well, and this was his small contribution to ending the Russia-Ukraine conflict. Nitrous oxide was first used as an anaesthetic in 1844, but is now being used as a recreational drug and has been linked to a number of deaths. It can also cause breathing difficulties, dangerously increased heart rate and burns.\"\n[output]=\"Young Ukraine chess couple 'killed by laughing gas'\"\n\n",
-        "expected_content": "some random context",
+        "expected_content": "some text on a same topic",
         "optional_list": [
             "input",
             "output",
@@ -299,7 +312,20 @@
         "task_instruction": "In this task, you have to generate the title of the recipe given its required ingredients and directions.",
         "task_name": "task569",
         "examples": "[input]=\"ingredients: '1 cup minced onion', '1 1/2 tablespoons lemon juice', '3/4 teaspoon Hungarian paprika', '3/4 teaspoon ground cayenne pepper', '1/4 teaspoon salt', <sep> directions: 'Rinse onions in sieve under cold running water; drain.', 'Mix together ingredients in a small bowl; allow flavors to meld over 1 hour period before serving.', 'Serve as table condiment with Indian foods, samosas, pakoras, along with other chutneys.'\"\n[output]=\"Indian Hot Onion Relish\"\n\n[input]=\"ingredients: '2 sheets frozen puff pastry, thawed', '4 oz semi-dried tomatoes, chopped', '3 oz seeded black olives', '4 oz soft goat cheese, crumbled', '1/2  red onion, sliced', '1/4 cup fresh torn basil leaves', '1  egg, beaten lightly', <sep> directions: 'Preheat oven to 400\\u00b0F. Line a baking tray with parchment paper.', 'Cut a 6 x 9 1/2 inch rectangle from 1 sheet of puff pastry. Place on baking tray and top with tomatoes, olives, cheese, onion and basil leaves.', 'Cut a 7 x 9 1/2 inch rectangle from remaining sheet of puff pastry. Score in a diamond pattern then place on top of filling, pressing edges to seal. Brush with egg then bake for 20 mins.'\"\n[output]=\"Tomato, Olive And Goat Cheese Tart\"\n\n",
-        "expected_content": "\"ingredients\", \"directions\"",
+        "expected_content": "ingredients and directions of a recipe",
+        "optional_list": [
+            "input",
+            "output",
+            "\n\n",
+            "\\_\\_"
+        ],
+        "metric": "rouge"
+    },
+    {
+        "task_instruction": "Given two noun phrases (arguments) and relationship between them, form a sentence that expresses theses arguments with the given relationship.",
+        "task_name": "task677",
+        "examples": "[input]=\"Relationship: 'knock', Argument/Subject 1: 'someone', Argument/Subject 2: 'it'\"\n[output]=\"The mailbox was bent and broken and looked like someone had knocked it over on purpose.\"\n\n[input]=\"Relationship: 'talk', Argument/Subject 1: 'you', Argument/Subject 2: 'me'\"\n[output]=\"Are you seriously going to talk about me that way?\"\n\n[input]=\"Relationship: 'read', Argument/Subject 1: 'I', Argument/Subject 2: 'book'\"\n[output]=\"To expand my knowledge on the topic, I read a book.\"\n\n",
+        "expected_content": "two noun phrases (arguments) and relationship between them",
         "optional_list": [
             "input",
             "output",
@@ -307,18 +333,16 @@
         ]
     },
     {
-        "task_instruction": "Given two noun phrases (arguments) and relationship between them, form a sentence that expresses theses arguments with the given relationship.",
-        "task_name": "task677",
-        "examples": "[input]=\"Relationship: 'knock', Argument/Subject 1: 'someone', Argument/Subject 2: 'it'\"\n[output]=\"The mailbox was bent and broken and looked like someone had knocked it over on purpose.\"\n\n[input]=\"Relationship: 'talk', Argument/Subject 1: 'you', Argument/Subject 2: 'me'\"\n[output]=\"Are you seriously going to talk about me that way?\"\n\n[input]=\"Relationship: 'read', Argument/Subject 1: 'I', Argument/Subject 2: 'book'\"\n[output]=\"To expand my knowledge on the topic, I read a book.\"\n\n",
-        "expected_content": "",
-        "optional_list": []
-    },
-    {
         "task_instruction": "Given an entity, a before event, an after event, and an attribute related to the entity, generate a sentence as output. Your sentence should show the changes in the attribute of the entity.",
         "task_name": "task1631",
-        "examples": "[input]=\" entity: arm \nbefore: free \nafter: grasped \nattr: state\"\n[output]=\"state of arm was free before and grasped afterwards\"\n\n[input]=\"entity: person \nbefore: standing \nafter: in air \nattr: location\"\n[output]=\"location of person was standing before and in air afterwards.\"\n\n[input]=\"entity: mixture \nbefore: chunky \nafter: smoother \nattr: texture\"\n[output]=\"texture of mixture was chunky before and smoother afterwards.\"\n\n",
-        "expected_content": "",
-        "optional_list": []
+        "examples": "[input]=\"entity: arm \nbefore: free \nafter: grasped \nattr: state\"\n[output]=\"state of arm was free before and grasped afterwards\"\n\n[input]=\"entity: person \nbefore: standing \nafter: in air \nattr: location\"\n[output]=\"location of person was standing before and in air afterwards.\"\n\n[input]=\"entity: mixture \nbefore: chunky \nafter: smoother \nattr: texture\"\n[output]=\"texture of mixture was chunky before and smoother afterwards.\"\n\n",
+        "expected_content": "an entity, a before event, an after event and an attribute related to the entity",
+        "optional_list": [
+            "input",
+            "output",
+            "\n\n",
+            "\\_\\_"
+        ]
     },
     {
         "task_instruction": "The task is to write a full sentence or two using all of the information given. The sentence(s) will be a brief review of a restaurant. Use all of the information provided.",
