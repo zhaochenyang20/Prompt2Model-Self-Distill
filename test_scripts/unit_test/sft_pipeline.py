@@ -2,7 +2,7 @@ import gc
 import os
 from functools import partial
 from pathlib import Path
-os.environ["CUDA_VISIBLE_DEVICES"] = "2,4"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1,3"
 os.environ["WANDB_MODE"] = "offline"
 import datasets
 import torch
@@ -71,7 +71,7 @@ model = AutoModelForCausalLM.from_pretrained(
     model_path,
     device_map="auto",
     torch_dtype=torch.bfloat16,
-    use_flash_attention_2=True,
+    use_flash_attention_2=False,
 )
 response_template_with_context = "\n### Your Output:\n\n"
 response_template_ids = tokenizer.encode(
@@ -86,7 +86,7 @@ training_args = TrainingArguments(
     report_to="wandb",
     do_eval=False,
     save_strategy="epoch",
-    output_dir="/data2/cyzhao/ckpt_3",
+    output_dir="/data2/cyzhao/ckpt_1",
     evaluation_strategy="no",
     logging_steps=4,
     num_train_epochs=3,

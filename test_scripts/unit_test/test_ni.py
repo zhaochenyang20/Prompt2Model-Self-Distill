@@ -175,5 +175,5 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         destroy_model_parallel()
 
 
-task_names = ["squad"]
-evaluate_model(task_names, finetuned=False, exact_match=True)
+task_names = ["task1529"]
+evaluate_model(task_names, finetuned=True, exact_match=True)

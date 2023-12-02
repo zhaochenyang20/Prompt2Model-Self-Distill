@@ -6,16 +6,17 @@ from pathlib import Path
 import optuna
 
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
+os.environ["CUDA_VISIBLE_DEVICES"] = "4,5"
 # TODO change task name
-task_name = "task1345"
+task_name = "task1388"
 # TODO change experiment rank
 experiment_rank = 1
 # TODO 加expected content和metrics
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-gpu_memory_utilization = 0.85
-per_device_train_batch_size = 6
+# TODO 改显存配置
+gpu_memory_utilization = 0.5
+per_device_train_batch_size = 2
 # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
 tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
@@ -236,7 +237,6 @@ for task in tasks:
         generation_temperature = trial.suggest_categorical("generation_temperature", [0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
         intput_length_constraint = trial.suggest_categorical("intput_length_constraint", [False, True])
         output_length_constraint = trial.suggest_categorical("output_length_constraint", [False, True])
-
         return objective_function(
             generation_temperature,
             intput_length_constraint,
@@ -252,7 +252,7 @@ for task in tasks:
     with open(best_validation_result_path, "r") as json_file:
         evaluate_result = json.load(json_file)
     if "test_result" in evaluate_result:
-        print("Already tested")
+        print("Already tested.")
         continue
     else:
         print("test best ckpt.")
