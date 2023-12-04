@@ -1,0 +1,1346 @@
+NI_task738_exp_1
+'support': 560 times
+'undermine': 440 times
+groud_truth data: biased
+mean: 500.0, std: 60.0
+--------------------------------------------------
+NI_task738_exp_1
+'undermine': 485 times
+'support': 515 times
+model_output data: biased
+mean: 500.0, std: 15.0
+==================================================
+NI_task1554_exp_1
+'neutral': 482 times
+'entails': 517 times
+groud_truth data: biased
+mean: 499.5, std: 17.5
+--------------------------------------------------
+NI_task1554_exp_1
+'entails': 999 times
+model_output data: biased
+mean: 999.0, std: 0.0
+==================================================
+NI_task1386_exp_1
+'Neutral': 167 times
+'Entailment': 173 times
+'Contradiction': 150 times
+groud_truth data: not biased
+mean: 163.33333333333334, std: 9.741092797468305
+--------------------------------------------------
+NI_task1386_exp_1
+'Contradiction': 490 times
+model_output data: biased
+mean: 490.0, std: 0.0
+==================================================
+NI_task020_exp_1
+'No.': 90 times
+'Yes.': 60 times
+groud_truth data: biased
+mean: 75.0, std: 15.0
+--------------------------------------------------
+NI_task020_exp_1
+'No.': 150 times
+model_output data: biased
+mean: 150.0, std: 0.0
+==================================================
+NI_task1516_exp_1
+'neutral': 115 times
+'positive': 120 times
+'negated': 115 times
+groud_truth data: not biased
+mean: 116.66666666666667, std: 2.357022603955158
+--------------------------------------------------
+NI_task1516_exp_1
+'"positive"': 350 times
+model_output data: biased
+mean: 350.0, std: 0.0
+==================================================
+NI_task935_exp_1
+'strengthener': 508 times
+'weakener': 492 times
+groud_truth data: not biased
+mean: 500.0, std: 8.0
+--------------------------------------------------
+NI_task935_exp_1
+'strengthener': 1000 times
+model_output data: biased
+mean: 1000.0, std: 0.0
+==================================================
+NI_task1612_exp_1
+'2': 320 times
+'1': 334 times
+'0': 346 times
+groud_truth data: biased
+mean: 333.3333333333333, std: 10.624918300339484
+--------------------------------------------------
+NI_task1612_exp_1
+'"1"': 1000 times
+model_output data: biased
+mean: 1000.0, std: 0.0
+==================================================
+NI_task937_exp_1
+'strengthener': 1552 times
+'weakener': 1448 times
+groud_truth data: biased
+mean: 1500.0, std: 52.0
+--------------------------------------------------
+NI_task937_exp_1
+'strengthener': 2915 times
+'weakener': 85 times
+model_output data: biased
+mean: 1500.0, std: 1415.0
+==================================================
+NI_task200_exp_1
+'1': 340 times
+'2': 352 times
+'3': 308 times
+groud_truth data: biased
+mean: 333.3333333333333, std: 18.571184369578823
+--------------------------------------------------
+NI_task200_exp_1
+'2': 337 times
+'1': 531 times
+'3': 132 times
+model_output data: biased
+mean: 333.3333333333333, std: 162.91170069157778
+==================================================
+NI_task190_exp_1
+'C': 668 times
+'N': 332 times
+groud_truth data: biased
+mean: 500.0, std: 168.0
+--------------------------------------------------
+NI_task190_exp_1
+': Your Name: E-mail: Phone:
+
+: Your Name: Address: City: State/Province: Zip Code: Country:
+E': 18 times
+': Url: E': 69 times
+': Url: E-mail: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+E': 30 times
+': Your name: E-mail:
+
+: Your name: Phone:
+
+: Your address: City: State/Province: Zip code: Country:
+
+: Your comment:': 9 times
+': Url: E-mail: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+E': 108 times
+': Url: E-mail: E-mail:
+
+: Url: Website:
+
+: Url: Twitter:
+E': 53 times
+': Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+E': 58 times
+': Notes: 1. E': 1 times
+': Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+E': 137 times
+': Url: E-mail:': 84 times
+': Your Name: E-mail: Phone:
+
+'E': 6 times
+': Your name: E-mail: Phone:
+
+: Your name: Address: City: State/Province: Zip code: Country:
+E': 28 times
+': Url: Url: E': 20 times
+': Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+E': 33 times
+': Your name: E-mail:': 61 times
+': Url: Url: E-mail: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:': 2 times
+': Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 5 times
+': Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+E': 4 times
+': Notes: E': 44 times
+': Url: Url 1: Url 2: Url 3: Url 4: Url 5: Url 6: Url 7: Url 8: Url 9: Url 10: Url 11: Url 12: Url 13: Url 14: Url 15: Url 16: Url 17: Url 18: Url 19: Url 20: Url 21: Url 22: Url 23: Url 24: Url 25: Url 26: Url 27: Url 28: Url 29: Url 30: Url 31: Url 32: Url 33: Url 34: Url 35: Url 36: Url 37: Url 38: Url 39: Url 40: Url 41: Url 42: Url 43: Url 44: Url 45: Url 46: Url 47: Url 48: Url 49: Url 50: Url 51: Url 52: Url 53: Url 54: Url 55: Url 56: Url 57: Url 58: Url 59: Url 60: Url 61: Url 62: Url 63: Url 64: Url 65: Url 66: Url 67: Url 68: Url 69: Url 70: Url 71: Url 72: Url 73: Url 74: Url 75: Url 76: Url 77: Url 78: Url 79: Url 80: Url 81: Url 82: Url 83: Url 84: U': 21 times
+': Url: E-mail: Phone:
+
+: Url: E-mail: Comments:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 2 times
+': Notes: 1: The man is a veteran of the war. 2: The man is a veteran of the war. 3: The man is a veteran of the war. 4: The man is a veteran of the war. 5: The man is a veteran of the war. 6: The man is a veteran of the war. 7: The man is a veteran of the war. 8: The man is a veteran of the war. 9: The man is a veteran of the war. 10: The man is a veteran of the war. 11: The man is a veteran of the war. 12: The man is a veteran of the war. 13: The man is a veteran of the war. 14: The man is a veteran of the war. 15: The man is a veteran of the war. 16: The man is a veteran of the war. 17: The man is a veteran of the war. 18: The man is a veteran of the war. 19: The man is a veteran of the war. 20: The man is a veteran of the war. 21: The man is a veteran of the war. 22: The man is a veteran of the war. 23: The man is a veteran of the war. 24: The man is a veteran of the war. 25: The man is a veteran of the war. 26: The man is a veteran of the war. 27: The man is a veteran of the war. 28: The man is a veteran of the war. 29: The man is a veteran of the war. 30: The man is a veteran of the war. 31: The man is a veteran of the war. 32: The man is a veteran of the war. 33: The man is a veteran of the war. 34: The man is a veteran of the war. 35: The man is a veteran of the war. 36: The man is a veteran of the war. ': 1 times
+': Your name: E-mail:
+
+: Your name: E-mail:
+
+: Your address: E-mail:
+
+: Your city: E-mail:
+
+: Your state/province: E-mail:
+
+: Your country: E-mail:
+
+: Your phone number: E-mail:
+
+: Your Twitter handle: E-mail:
+
+: Your LinkedIn profile: E-mail:
+E': 4 times
+': Url: E-mail address': 1 times
+': Your name: E': 19 times
+': Your name: E-mail: Phone:
+
+'E': 5 times
+':': 27 times
+': Url: E-mail address for the Wikimedia Foundation.
+
+: Url: E-mail address for the Wikimedia Foundation.
+
+: Url: E-mail address for the Wikimedia Foundation.
+
+: Url: E-mail address for the Wikimedia Foundation.
+
+: Url: E-mail address for the Wikimedia Foundation.
+
+: Url: E-mail address for the Wikimedia Foundation.
+
+: Url: E-mail address for the Wikimedia Foundation.
+
+: Url: E-mail address for the Wikimedia Foundation.
+
+: Url: E-mail address for the Wikimedia Foundation.
+
+: Url: E-mail address for the Wikimedia Foundation.
+
+: Url: E-mail address for the Wikimedia Foundation.
+
+: Url: E-mail address for the Wikimedia Foundation.': 1 times
+': Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 7 times
+': Notes: 1: The boys are playing soccer in a field. 2: The boys are practicing to make the varsity team.
+E': 1 times
+': Your Name: Your Email: Your Phone Number:
+': 11 times
+': Url: Url: E-mail: E-mail:
+
+: Url: Url: C-': 3 times
+': Url: E-mail: Phone:
+
+: Url: E-mail: Comments:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+E': 1 times
+': Notebook: E': 13 times
+': Url: Url for the two sentences.': 8 times
+': Url: E-mail: Phone:
+
+: Url: E-mail: Phone:
+
+: Url: E-mail: Phone:
+
+: Url: E-mail: Phone:
+E': 1 times
+': Url: Url: E-mail: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+E': 1 times
+': Notes: Two children are looking in a display case.
+
+'E': 1 times
+': Notes: 1: The man is a bum. 2: The man is a hobo.
+E': 1 times
+': Url: E-mail: E-mail: Phone:
+
+: Url: E-mail: Phone:
+
+: Url: E-mail: Phone:
+E': 5 times
+': Your name: Your address: E': 3 times
+': Url: E-mail: Phone:
+
+: Url: E-mail: Comments:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 2 times
+': Notes: Two crossing guards wait on a street corner.
+
+'E': 1 times
+': Notes: 1: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A: A': 1 times
+': Url: Url for the train station.
+
+: Url: Url for the train.
+E': 1 times
+': Notes: 1: The trailer is 20 feet long 2: The trailer is 8 feet wide 3: The trailer is 12 feet high 4: The trailer is 40 feet long 5: The trailer is 10 feet wide 6: The trailer is 30 feet high 7: The trailer is 50 feet long 8: The trailer is 15 feet wide 9: The trailer is 30 feet high 10: The trailer is 50 feet long 11: The trailer is 15 feet wide 12: The trailer is 30 feet high 13: The trailer is 50 feet long 14: The trailer is 15 feet wide 15: The trailer is 30 feet high 16: The trailer is 50 feet long 17: The trailer is 15 feet wide 18: The trailer is 30 feet high 19: The trailer is 50 feet long 20: The trailer is 15 feet wide 21: The trailer is 30 feet high 22: The trailer is 50 feet long 23: The trailer is 15 feet wide 24: The trailer is 30 feet high 25: The trailer is 50 feet long 26: The trailer is 15 feet wide 27: The trailer is 30 feet high 28: The trailer is 50 feet long 29: The trailer is 15 feet wide 30: The trailer is 30 feet high 31: The trailer is 50 feet long 32: The trailer is 15 feet wide 33: The trailer is 30 feet high 34: The trailer is 50 feet long 35: The trailer is 15 feet wide 36: The trailer is 30 feet high 37: The trailer is 50 feet long 38: The trailer is 15 feet wide 39: The trailer is 30 feet': 1 times
+': Url: A participant in a sporting event has landed on his head while holding the ball on a field of grass.': 1 times
+': Url: E-mail: Phone:
+
+: Url: E-mail: Comments:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 4 times
+': Your name: E-mail:
+
+: Your name: Phone:
+
+: Your address: City: State/Province: Zip code: Country:
+E': 1 times
+': Url: Url: E-mail: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:': 1 times
+': Url: E-mail: Phone:
+
+: Url: E-mail: Comments:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 5 times
+': Two sentences: E': 1 times
+': Two men are playing music together with a clarinet and an accordion.
+E': 1 times
+': Url: Url for the two sentences
+
+: Url for the two sentences
+
+: Url for the two sentences
+
+: Url for the two groups
+
+: Url for the two groups
+E': 1 times
+': Url: E-mail: Phone:
+
+: Url: E-mail: Comments:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 1 times
+': Url: Snowboarder wearing cream and brown snowsuit is jumping on a snowy slope.
+
+'E': 1 times
+': Url: E-mail: Phone:
+
+: Url: E-mail: Comments:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 2 times
+': Url: Url for the construction worker
+
+: Url for the construction worker's company
+
+E': 1 times
+': Notes: 1: A blue race car on the side of the track. Sentence 2: The track is black.
+E': 1 times
+': Notes: Two kids riding on sleds.
+E': 1 times
+': Url: E-mail: E-mail:
+
+: Url: Web:
+
+: Url: Twitter:
+E': 1 times
+': Notes: Two dogs are fighting over a black object.
+
+'E': 1 times
+': Url: E-mail: Phone:
+
+: Url: E-mail: Comments:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 3 times
+': Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 2 times
+': Notes: Two dogs are playing outside.
+E': 1 times
+': Url: Url: E-mail: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:': 1 times
+': Url: Url for the concert.
+
+: Url for the musicians.
+
+: Url for the concert.
+
+: Url for the musicians.
+E': 1 times
+': Url: Url for the two sentences
+
+: Url for the two sentences
+
+: Url for the two sentences
+
+: Url for the two people
+
+: Url for the two conversations
+E': 1 times
+': Your name: E-mail:
+
+: Your name:
+
+: Your address:
+
+: City:
+E': 2 times
+': Url: E-mail: E-mail: Phone: Comments: Cc:
+
+: Url: E-mail: Phone: Comments: Cc:
+
+: Url: E-mail: Phone: Comments: Cc:
+
+: Url: E-mail: Phone: Comments: Cc:
+E': 2 times
+': Url: E-mail: Phone:
+
+: Url: E-mail: Comments:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+E': 1 times
+': Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 1 times
+': Notes: Two football players fight to gain possession of the ball.
+E': 1 times
+': Your name: E-mail:
+
+: Your name:
+
+'s and D's:
+E': 1 times
+': Notes: 1: E': 1 times
+': Url: Url': 1 times
+': Url: Url for the club.
+
+: Url for the people.
+
+: Url for the event.
+
+: Url for the location.
+
+: Url for the time.
+
+: Url for the date.
+
+: Url for the people.
+
+: Url for the event.
+
+: Url for the location.
+
+: Url for the time.
+E': 1 times
+': Notes: 1: A man is playing a guitar in the background. 2: A man is playing a guitar in the background.
+
+'E': 1 times
+': Url: Url for the event.
+
+: Url: Url for the event.
+
+: Url: Url for the event.
+
+: Url: Url for the event.
+E': 2 times
+': Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 1 times
+': Url: Url for the two sentences
+
+: Url: Url for the two sentences
+E': 1 times
+': Url: E-mail: Phone:
+
+: Url: E-mail: Comments:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 1 times
+': Notes: Two teenage females are posing near a body of water.
+
+'E': 1 times
+': Url: Url for the martial arts school.
+
+: Url: Url for the martial arts school.
+E': 1 times
+': Url: E-mail: Phone:
+
+: Url: E-mail: Comments:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 1 times
+': Notes: 1: The girl is playing with her toys. 2: The girl is playing with her toys. 3: The girl is playing with her toys. 4: The girl is playing with her toys. 5: The girl is playing with her toys. 6: The girl is playing with her toys. 7: The girl is playing with her toys. 8: The girl is playing with her toys. 9: The girl is playing with her toys. 10: The girl is playing with her toys. 11: The girl is playing with her toys. 12: The girl is playing with her toys. 13: The girl is playing with her toys. 14: The girl is playing with her toys. 15: The girl is playing with her toys. 16: The girl is playing with her toys. 17: The girl is playing with her toys. 18: The girl is playing with her toys. 19: The girl is playing with her toys. 20: The girl is playing with her toys. 21: The girl is playing with her toys. 22: The girl is playing with her toys. 23: The girl is playing with her toys. 24: The girl is playing with her toys. 25: The girl is playing with her toys. 26: The girl is playing with her toys. 27: The girl is playing with her toys. 28: The girl is playing with her toys. 29: The girl is playing with her toys. 30: The girl is playing with her toys. 31: The girl is playing with her toys. 32: The girl is playing with her toys. 33: The girl is playing with her toys. 34: The girl is playing with her toys. 35: The girl is playing with her toys. 36: The girl is playing with her toys. 37: The girl is playing with her toys. 38: The girl is playing with her toys. 39: The girl is playing with her to': 1 times
+': Notes: 1: A woman is next to a child
+E': 1 times
+': Your name: E-mail: Phone:
+
+: Your name: Address: City: State/Province: Zip code: Country:
+
+': 1 times
+': Url: Url: E-mail: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+
+: Url: Url: E-mail:
+E': 1 times
+': Notes: Two children are playing outside
+E': 1 times
+': Your name: E-mail:
+
+: Your name: Phone:
+
+: Your address: City: State/Province: Zip code: Country:
+
+: Your name: E-mail:
+
+: Your address: City: State/Province: Zip code: Country:
+
+: Your name: Phone:
+
+: Your address: City: State/Province: Zip code: Country:
+E': 3 times
+': Notes: 1: A wedding is all set up
+E': 1 times
+': Your name: E-mail:
+
+: Your name: E-mail:
+
+: Your address: Street address: City: State/Province: Zip code: Country:
+
+: Your phone number: Alternate phone number: Fax number:
+
+: Your e-mail address: Alternate e-mail address:
+
+: Your Twitter handle: Alternate Twitter address:
+
+: Your LinkedIn profile URL: Alternate LinkedIn address:
+
+: Your Instagram handle: Alternate Instagram address:
+
+: Your TikTok handle: Alternate TikTok address:
+
+: Your YouTube channel URL: Alternate YouTube address:
+
+: Your Twitch channel URL: Alternate Twitch address:
+
+: Your Discord server URL: Alternate Discord address:
+
+: Your Slack workspace URL: Alternate Slack address:
+
+: Your GitHub repository URL: Alternate GitHub address:
+
+: Your GitLab repository URL: Alternate GitLab address:
+
+: Your Bitbucket repository URL: Alternate Bitbucket address:
+
+: Your CodeCommit repository URL: Alternate CodeCommit address:
+
+: Your CodeShare repository URL: Alternate CodeShare address:
+
+: Your Azure DevOps repository URL: Alternate Azure DevOps address:
+
+: Your Google Cloud Storage bucket URL: Alternate Google Cloud Storage address:
+
+E': 1 times
+': Your name: E-mail:
+
+: Your name: Phone:
+
+: Your address: City: State/Province: Zip code: Country:
+
+: Your comment: E': 1 times
+': Notes: Two people are standing near a curb outside a store.': 1 times
+': Notes: Snowboarding is a winter sport.
+
+'E': 1 times
+': Url: Two people in a canoe watching something in the boulder lined water.
+
+'E': 1 times
+': Url: Closeup of young girl with her face and body painted.
+
+: Url: Closeup of young boy with his face and body painted.
+E': 1 times
+': Url: Url for the two sentences
+
+: Url for the two sentences
+
+: Url for the two sentences
+
+: Url for the two sentences
+
+: Url for the two men
+
+: Url for the two women
+E': 1 times
+': Notes: 1 and 2: E': 3 times
+': Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 1 times
+': Url: E-mail: Phone:
+
+: Url: E-mail: Comments:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 2 times
+': Url: Url 1: Two dogs run across the grassy field.': 1 times
+': Your name: Your email: Your phone number:
+
+'E': 1 times
+': Your name: E-mail:
+
+: Your name: Phone:
+
+: Your address: City: State/Province: Zip code: Country:
+
+E': 1 times
+': Url: E-mail: E-mail:
+
+: Url: Web:
+
+: Url: E-mail:
+
+: Url: E-mail:
+E': 1 times
+': Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:
+
+: Url: E-mail:': 1 times
+': Url: E-mail: E-mail: Phone: Comments:
+
+: Url: E-mail: Phone: Comments:
+
+: Url: E-mail: Phone: Comments:
+E': 1 times
+': Your name: E-mail: Your address:
+
+'E': 1 times
+': Url: E-mail address for the person who sent the text message.
+
+: Url: E-mail address for the person who received the text message.
+
+: Url: E-mail address for the person who sent the text message.
+
+: Url: E-mail address for the person who received the text message.
+
+: Url: E-mail address for the person who sent the text message.
+E': 1 times
+': Url: Two monks walk down the stairs to go to meditate outdoors.
+E': 1 times
+': Url: Url for the band's website.
+
+: Url: Url for the band's MySpace page.
+
+: Url: Url for the band's Twitter account.
+
+: Url: Url for the band's Instagram account.
+
+: Url: Url for the band's YouTube channel.
+
+: Url: Url for the band's TikTok account.
+
+: Url: Url for the band's Facebook page.
+
+: Url: Url for the band's LinkedIn page.
+
+: Url: Url for the band's Pinterest page.
+
+: Url: Url for the band's Tumblr page.
+
+: Url: Url for the band's Medium page.
+
+: Url: Url for the band's Quora page.
+E': 1 times
+': Url: E-mail: E-mail: Phone:
+
+: Url: Street Address: City: State/Province: Zip Code: Country:
+
+': 1 times
+': Url: Url for the poem.': 1 times
+model_output data: biased
+mean: 8.771929824561404, std: 21.183424125463898
+==================================================
+NI_task201_exp_1
+'1': 339 times
+'2': 310 times
+'3': 351 times
+groud_truth data: biased
+mean: 333.3333333333333, std: 17.21110752456745
+--------------------------------------------------
+NI_task201_exp_1
+'2': 640 times
+'1': 360 times
+model_output data: biased
+mean: 500.0, std: 140.0
+==================================================
+NI_task1388_exp_1
+'Contradiction': 71 times
+'Entailment': 59 times
+'Neutral': 20 times
+groud_truth data: biased
+mean: 50.0, std: 21.77154105707724
+--------------------------------------------------
+NI_task1388_exp_1
+'"Entailment"': 150 times
+model_output data: biased
+mean: 150.0, std: 0.0
+==================================================
+NI_task1529_exp_1
+'neutral': 477 times
+'entails': 523 times
+groud_truth data: biased
+mean: 500.0, std: 23.0
+--------------------------------------------------
+NI_task1529_exp_1
+'entails': 986 times
+'neutral"': 14 times
+model_output data: biased
+mean: 500.0, std: 486.0
+==================================================
+NI_task199_exp_1
+'yes': 1964 times
+'no': 1036 times
+groud_truth data: biased
+mean: 1500.0, std: 464.0
+--------------------------------------------------
+NI_task199_exp_1
+'no': 3000 times
+model_output data: biased
+mean: 3000.0, std: 0.0
+==================================================
+NI_task1344_exp_1
+'0': 513 times
+'1': 487 times
+groud_truth data: biased
+mean: 500.0, std: 13.0
+--------------------------------------------------
+NI_task1344_exp_1
+'1': 1000 times
+model_output data: biased
+mean: 1000.0, std: 0.0
+==================================================
+NI_task202_exp_1
+'3': 970 times
+'2': 999 times
+'1': 1031 times
+groud_truth data: biased
+mean: 1000.0, std: 24.91318258807306
+--------------------------------------------------
+NI_task202_exp_1
+'3': 3000 times
+model_output data: biased
+mean: 3000.0, std: 0.0
+==================================================
+NI_task1385_exp_1
+'Neutral': 143 times
+'Contradiction': 152 times
+'Entailment': 155 times
+groud_truth data: not biased
+mean: 150.0, std: 5.0990195135927845
+--------------------------------------------------
+NI_task1385_exp_1
+'Contradiction': 422 times
+'"Entailment"': 26 times
+'"Contradiction"': 2 times
+model_output data: biased
+mean: 150.0, std: 192.58244987537157
+==================================================
+in all, we have 17 classification tasks
+ground truth biased ratio: 0.7647058823529411
+model output biased ratio: 1.0
+both biased ratio: 0.7647058823529411

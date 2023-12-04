@@ -1,6 +1,6 @@
 import os
-
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# TODO 改卡
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import gc
 import json
 from functools import partial
@@ -175,5 +175,6 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         destroy_model_parallel()
 
 
-task_names = ["task1529"]
-evaluate_model(task_names, finetuned=True, exact_match=True)
+# TODO 改任务
+task_names = ["task020", "task935", "task1386", "task1554", "task738"]
+evaluate_model(task_names, finetuned=False, exact_match=True)
