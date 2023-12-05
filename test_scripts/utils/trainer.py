@@ -7,8 +7,9 @@ import torch
 import wandb
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
-from prompt2model.utils import count_tokens_from_string
+
 from prompt2model.output_annotator import construct_meta_prompt
+from prompt2model.utils import count_tokens_from_string
 
 
 def finetune_vicuna(
@@ -48,9 +49,11 @@ def finetune_vicuna(
         padding_side="left",
         trust_remote_code=True,
     )
-    mapped_dataset = dataset.map(map_func, load_from_cache_file=False).shuffle(seed=42).filter(
-        lambda x: (
-            count_tokens_from_string(x["text"], "vicuna") <= max_seq_length
+    mapped_dataset = (
+        dataset.map(map_func, load_from_cache_file=False)
+        .shuffle(seed=42)
+        .filter(
+            lambda x: (count_tokens_from_string(x["text"], "vicuna") <= max_seq_length)
         )
     )
     response_template_with_context = "\n### Your Output:\n\n"

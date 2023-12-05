@@ -1,5 +1,6 @@
 import gc
 import os
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 from functools import partial
 from pathlib import Path
@@ -68,6 +69,7 @@ tokenizer = AutoTokenizer.from_pretrained(
     trust_remote_code=True,
 )
 
+
 def map_func(example):
     example["model_input"] = construct_prompt(new_input=example["input_col"])
     example["model_output"] = example["output_col"]
@@ -75,6 +77,7 @@ def map_func(example):
         example["model_input"] + example["model_output"] + tokenizer.eos_token
     )
     return example
+
 
 test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
 prompts = test_dataset["model_input"]
@@ -95,13 +98,9 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
 path = "/data2/cyzhao/ckpt_3/checkpoint-31"
 ray.init(ignore_reinit_error=True)
-tuned_vicuna = LLM(
-    model=path, gpu_memory_utilization=0.5, tensor_parallel_size=1
-)
+tuned_vicuna = LLM(model=path, gpu_memory_utilization=0.5, tensor_parallel_size=1)
 tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
-tuned_vicuna_generated_outputs = [
-    each.outputs[0].text for each in tuned_vicuna_outputs
-]
+tuned_vicuna_generated_outputs = [each.outputs[0].text for each in tuned_vicuna_outputs]
 
 
 def evalute_squad(
@@ -140,4 +139,4 @@ destroy_model_parallel()
 
 # ckpt 2: 0.402, 0.448, 0.46
 # ckpt 1: 0.402, 0.46/0.448, 0.46
-# with flash_attn: 0.568, 
+# with flash_attn: 0.568,

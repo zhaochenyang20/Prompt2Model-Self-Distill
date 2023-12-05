@@ -1,8 +1,9 @@
 import csv
 import json
 import os
-os.environ["TRANSFORMERS_OFFLINE"]="1"
-os.environ["HF_DATASETS_OFFLINE"]="1"
+
+os.environ["TRANSFORMERS_OFFLINE"] = "1"
+os.environ["HF_DATASETS_OFFLINE"] = "1"
 from pathlib import Path
 
 import optuna
@@ -64,7 +65,7 @@ def write_results(log_and_data_root, max_training_epochs):
         "task_name",
         "generation_temperature",
         "intput_length_constraint",
-        "output_length_constraint"
+        "output_length_constraint",
     ] + ["epoch_" + str(i) for i in range(1, max_training_epochs + 1)]
     csv_data = []
     for experiment_folder in log_and_data_root.iterdir():
@@ -132,7 +133,7 @@ for task in tasks:
         assert optional_list != []
         assert expected_content != ""
         assert metric != ""
-        
+
         params = {
             "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
             "task_name": task_name,
@@ -234,11 +235,16 @@ for task in tasks:
         write_results(log_and_data_root, max_training_epochs)
         return highest_validation_result
 
-
     def objective(trial):
-        generation_temperature = trial.suggest_categorical("generation_temperature", [0.1, 0.2, 0.3, 0.4, 0.5])
-        intput_length_constraint = trial.suggest_categorical("intput_length_constraint", [False, True])
-        output_length_constraint = trial.suggest_categorical("output_length_constraint", [False, True])
+        generation_temperature = trial.suggest_categorical(
+            "generation_temperature", [0.1, 0.2, 0.3, 0.4, 0.5]
+        )
+        intput_length_constraint = trial.suggest_categorical(
+            "intput_length_constraint", [False, True]
+        )
+        output_length_constraint = trial.suggest_categorical(
+            "output_length_constraint", [False, True]
+        )
         return objective_function(
             generation_temperature,
             intput_length_constraint,

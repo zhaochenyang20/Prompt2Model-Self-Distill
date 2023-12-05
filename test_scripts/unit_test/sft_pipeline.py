@@ -2,6 +2,7 @@ import gc
 import os
 from functools import partial
 from pathlib import Path
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "1,3"
 os.environ["WANDB_MODE"] = "offline"
 import datasets
@@ -18,7 +19,7 @@ model_path = Path(
 ckpt_path = Path("/home/cyzhao/ckpt")
 generated_dataset_path = Path("/home/cyzhao/generated_datasets")
 dataset_path = Path(
-   "/home/cyzhao/rerun_experiments/NI_squad_exp_1/squad_1.0_True_False_1/dataset"
+    "/home/cyzhao/rerun_experiments/NI_squad_exp_1/squad_1.0_True_False_1/dataset"
 )
 
 prompt_spec = MockPromptSpec(
