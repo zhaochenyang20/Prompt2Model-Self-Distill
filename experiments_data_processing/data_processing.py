@@ -2,6 +2,8 @@ from datasets import load_from_disk
 from collections import defaultdict
 import numpy as np
 import os
+from sklearn.metrics import f1_score
+# from IPython import embed
 
 def count_values(example, counts, label):
     counts[example[label]] += 1
@@ -26,9 +28,12 @@ for directory in best_directories:
     task_name = parts[4]
     categories = 0
     biased = False
+    y = []
     for label in ['groud_truth', 'model_output']:
         counts = defaultdict(int)
         data.map(count_values, fn_kwargs={'counts': counts, 'label': label}, keep_in_memory=True)
+        y.append(data[label])
+        # embed()
         if label == 'groud_truth':
             if len(counts.keys())>5:
                 break
@@ -55,7 +60,7 @@ for directory in best_directories:
                 if biased:
                     both_biased += 1
             else:             
-                threshold = 10
+                threshold = 20
                 if std_dev < threshold:
                     print(f"{label} data: not biased")
                 else:
@@ -64,11 +69,15 @@ for directory in best_directories:
                     if biased:
                         both_biased += 1
         print(f"mean: {mean}, std: {std_dev}")
-        
+        # embed()
+        if len(y)==2:
+            f1_weighted = f1_score(y[1], y[0], average='weighted')
+            print(f"{task_name} f1 score: {f1_weighted}")
         if label=='model_output':
             print('=' * 50)  
         else:
             print('-' * 50) 
+    
     
 print(f'in all, we have {total} classification tasks')
 print(f'ground truth biased ratio: {ground_truth_biased_count/total}')

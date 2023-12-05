@@ -1,14 +1,16 @@
 import csv
 import json
 import os
+os.environ["TRANSFORMERS_OFFLINE"]="1"
+os.environ["HF_DATASETS_OFFLINE"]="1"
 from pathlib import Path
 
 import optuna
 
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "1,3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 # TODO change task name
-task_name = "task202"
+task_name = "task199"
 # TODO change experiment rank
 experiment_rank = 1
 # TODO 加expected content和metrics
@@ -234,7 +236,7 @@ for task in tasks:
 
 
     def objective(trial):
-        generation_temperature = trial.suggest_categorical("generation_temperature", [0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+        generation_temperature = trial.suggest_categorical("generation_temperature", [0.1, 0.2, 0.3, 0.4, 0.5])
         intput_length_constraint = trial.suggest_categorical("intput_length_constraint", [False, True])
         output_length_constraint = trial.suggest_categorical("output_length_constraint", [False, True])
         return objective_function(

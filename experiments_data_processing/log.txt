@@ -7,8 +7,9 @@ mean: 500.0, std: 60.0
 NI_task738_exp_1
 'undermine': 485 times
 'support': 515 times
-model_output data: biased
+model_output data: not biased
 mean: 500.0, std: 15.0
+NI_task738_exp_1 f1 score: 0.810358516656191
 ==================================================
 NI_task1554_exp_1
 'neutral': 482 times
@@ -20,6 +21,7 @@ NI_task1554_exp_1
 'entails': 999 times
 model_output data: biased
 mean: 999.0, std: 0.0
+NI_task1554_exp_1 f1 score: 0.6820580474934037
 ==================================================
 NI_task1386_exp_1
 'Neutral': 167 times
@@ -32,6 +34,7 @@ NI_task1386_exp_1
 'Contradiction': 490 times
 model_output data: biased
 mean: 490.0, std: 0.0
+NI_task1386_exp_1 f1 score: 0.46874999999999994
 ==================================================
 NI_task020_exp_1
 'No.': 90 times
@@ -43,6 +46,7 @@ NI_task020_exp_1
 'No.': 150 times
 model_output data: biased
 mean: 150.0, std: 0.0
+NI_task020_exp_1 f1 score: 0.7499999999999999
 ==================================================
 NI_task1516_exp_1
 'neutral': 115 times
@@ -55,6 +59,7 @@ NI_task1516_exp_1
 '"positive"': 350 times
 model_output data: biased
 mean: 350.0, std: 0.0
+NI_task1516_exp_1 f1 score: 0.0
 ==================================================
 NI_task935_exp_1
 'strengthener': 508 times
@@ -66,6 +71,7 @@ NI_task935_exp_1
 'strengthener': 1000 times
 model_output data: biased
 mean: 1000.0, std: 0.0
+NI_task935_exp_1 f1 score: 0.6737400530503979
 ==================================================
 NI_task1612_exp_1
 '2': 320 times
@@ -78,6 +84,7 @@ NI_task1612_exp_1
 '"1"': 1000 times
 model_output data: biased
 mean: 1000.0, std: 0.0
+NI_task1612_exp_1 f1 score: 0.0
 ==================================================
 NI_task937_exp_1
 'strengthener': 1552 times
@@ -90,6 +97,7 @@ NI_task937_exp_1
 'weakener': 85 times
 model_output data: biased
 mean: 1500.0, std: 1415.0
+NI_task937_exp_1 f1 score: 0.6688872869404991
 ==================================================
 NI_task200_exp_1
 '1': 340 times
@@ -104,6 +112,7 @@ NI_task200_exp_1
 '3': 132 times
 model_output data: biased
 mean: 333.3333333333333, std: 162.91170069157778
+NI_task200_exp_1 f1 score: 0.391635136364621
 ==================================================
 NI_task190_exp_1
 'C': 668 times
@@ -1254,6 +1263,7 @@ E': 1 times
 ': Url: Url for the poem.': 1 times
 model_output data: biased
 mean: 8.771929824561404, std: 21.183424125463898
+NI_task190_exp_1 f1 score: 0.0
 ==================================================
 NI_task201_exp_1
 '1': 339 times
@@ -1267,6 +1277,7 @@ NI_task201_exp_1
 '1': 360 times
 model_output data: biased
 mean: 500.0, std: 140.0
+NI_task201_exp_1 f1 score: 0.39482159475943074
 ==================================================
 NI_task1388_exp_1
 'Contradiction': 71 times
@@ -1279,6 +1290,7 @@ NI_task1388_exp_1
 '"Entailment"': 150 times
 model_output data: biased
 mean: 150.0, std: 0.0
+NI_task1388_exp_1 f1 score: 0.0
 ==================================================
 NI_task1529_exp_1
 'neutral': 477 times
@@ -1291,6 +1303,7 @@ NI_task1529_exp_1
 'neutral"': 14 times
 model_output data: biased
 mean: 500.0, std: 486.0
+NI_task1529_exp_1 f1 score: 0.6795493704440027
 ==================================================
 NI_task199_exp_1
 'yes': 1964 times
@@ -1302,6 +1315,7 @@ NI_task199_exp_1
 'no': 3000 times
 model_output data: biased
 mean: 3000.0, std: 0.0
+NI_task199_exp_1 f1 score: 0.5133795837462835
 ==================================================
 NI_task1344_exp_1
 '0': 513 times
@@ -1313,6 +1327,7 @@ NI_task1344_exp_1
 '1': 1000 times
 model_output data: biased
 mean: 1000.0, std: 0.0
+NI_task1344_exp_1 f1 score: 0.6550100874243443
 ==================================================
 NI_task202_exp_1
 '3': 970 times
@@ -1325,6 +1340,7 @@ NI_task202_exp_1
 '3': 3000 times
 model_output data: biased
 mean: 3000.0, std: 0.0
+NI_task202_exp_1 f1 score: 0.48866498740554154
 ==================================================
 NI_task1385_exp_1
 'Neutral': 143 times
@@ -1339,8 +1355,9 @@ NI_task1385_exp_1
 '"Contradiction"': 2 times
 model_output data: biased
 mean: 150.0, std: 192.58244987537157
+NI_task1385_exp_1 f1 score: 0.4705226480836237
 ==================================================
 in all, we have 17 classification tasks
 ground truth biased ratio: 0.7647058823529411
-model output biased ratio: 1.0
-both biased ratio: 0.7647058823529411
+model output biased ratio: 0.9411764705882353
+both biased ratio: 0.7058823529411765
