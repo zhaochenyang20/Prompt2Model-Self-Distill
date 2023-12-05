@@ -78,9 +78,7 @@ Output of the model:
 class VLLMInformationExtractor(QualityEvaluator):
     """Abstract useful information from the generated content of model."""
 
-    def __init__(
-        self, pretrained_model_name: str = "lmsys/vicuna-7b-v1.5"
-    ) -> None:
+    def __init__(self, pretrained_model_name: str = "lmsys/vicuna-7b-v1.5") -> None:
         """Initializes InformationExtractor with a pre-trained model.
 
         Args:

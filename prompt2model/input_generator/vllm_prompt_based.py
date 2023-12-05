@@ -11,6 +11,7 @@ from vllm import LLM, SamplingParams
 
 from prompt2model.input_generator import InputGenerator
 from prompt2model.input_generator.prompt_template import (
+    construct_conditional_generation_prompt,
     construct_meta_prompt,
     construct_verify_prompt,
 )
@@ -60,6 +61,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         few_shot_example_string: str,
         generated_inputs: list[str],
         context_cutoff: int = 3200,
+        conditional_label: str = None,
     ) -> str:
         """Generates a prompt string for generating a new input.
 
@@ -71,6 +73,8 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             generated_inputs: A list of currently generated inputs.
             context_cutoff: If the total length of the prompt in tokens exceeds this
                 value, repeat the prompt generation process to generate a shorter one.
+            conditional_label: The expected output for the new input. Used for
+                classification tasks.
 
         Returns:
             The generated prompt string.
@@ -107,11 +111,19 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     high_quality_input_string += f'[input]="{input}"\n\n'
 
             # Construct the prompt.
-            prompt = construct_meta_prompt(
-                instruction=instruction,
-                low_quality_input_string=low_quality_input_string,
-                high_quality_input_string=high_quality_input_string,
-            )
+            if conditional_label is None:
+                prompt = construct_meta_prompt(
+                    instruction=instruction,
+                    low_quality_input_string=low_quality_input_string,
+                    high_quality_input_string=high_quality_input_string,
+                )
+            else:
+                prompt = construct_conditional_generation_prompt(
+                    instruction=instruction,
+                    low_quality_input_string=low_quality_input_string,
+                    high_quality_input_string=high_quality_input_string,
+                    conditional_label=conditional_label,
+                )
             if count_tokens_from_string(prompt, "vicuna") < context_cutoff:
                 return prompt
             else:
@@ -136,6 +148,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         prompt_spec: PromptSpec,
         inputs_num: int,
         hyperparameter_choices: dict[str, Any],
+        conditional_labels: list = [],
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
 
@@ -144,6 +157,8 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             prompt_spec: A prompt we use to generate new inputs.
             inputs_num: The number of new inputs to generate.
             hyperparameter_choices: A dictionary of hyperparameter choices.
+            conditional_labels: All the expected output labels for the new input.
+                Used for classification tasks.
         """
         prompts = [
             self.construct_generation_prompt(
@@ -151,6 +166,9 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 few_shot_example_string=prompt_spec.examples,
                 generated_inputs=generated_inputs,
                 context_cutoff=hyperparameter_choices.get("context_cutoff", 3000),
+                conditional_label=random.choice(conditional_labels)
+                if conditional_labels != []
+                else None,
             )
             for _ in range(inputs_num)
         ]
@@ -223,6 +241,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         optional_list=[],
         portion=1,
         intput_length_constraint=False,
+        conditional_labels=[],
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
 
@@ -263,7 +282,11 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         generated_inputs = []
         for _ in tqdm(range(generation_epochs)):
             new_inputs = self.generate_inputs(
-                generated_inputs, prompt_spec, per_epoch_num, hyperparameter_choices
+                generated_inputs,
+                prompt_spec,
+                per_epoch_num,
+                hyperparameter_choices,
+                conditional_labels,
             )
             new_inputs = [
                 element

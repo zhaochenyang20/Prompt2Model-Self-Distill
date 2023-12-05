@@ -1,4 +1,5 @@
 import os
+
 # TODO 改卡
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import gc
@@ -62,6 +63,7 @@ def exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs):
             index += 1
     exact_match = index / len(GROUND_TRUTH)
     return exact_match
+
 
 def evaluate_model(task_names, finetuned=False, exact_match=False):
     for task_name in task_names:
@@ -153,7 +155,11 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             tuned_vicuna_generated_outputs = [
                 each.outputs[0].text for each in tuned_vicuna_outputs
             ]
-            evaluate_result = rouge_l_score(GROUND_TRUTH, tuned_vicuna_generated_outputs) if not exact_match else exact_match_score(GROUND_TRUTH, tuned_vicuna_generated_outputs)
+            evaluate_result = (
+                rouge_l_score(GROUND_TRUTH, tuned_vicuna_generated_outputs)
+                if not exact_match
+                else exact_match_score(GROUND_TRUTH, tuned_vicuna_generated_outputs)
+            )
             print(f"{task_name} {test_type}: {evaluate_result}")
             with open(inputs_dir / f"evaluate_10_times.txt", "a+") as file:
                 file.write(
