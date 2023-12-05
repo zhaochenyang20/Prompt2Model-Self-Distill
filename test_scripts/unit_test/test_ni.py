@@ -1,6 +1,6 @@
 import os
-
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# TODO 改卡
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import gc
 import json
 from functools import partial
@@ -153,7 +153,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             tuned_vicuna_generated_outputs = [
                 each.outputs[0].text for each in tuned_vicuna_outputs
             ]
-            evaluate_result = rouge_l_score(GROUND_TRUTH, tuned_vicuna_outputs) if not exact_match else exact_match_score(GROUND_TRUTH, tuned_vicuna_outputs)
+            evaluate_result = rouge_l_score(GROUND_TRUTH, tuned_vicuna_generated_outputs) if not exact_match else exact_match_score(GROUND_TRUTH, tuned_vicuna_generated_outputs)
             print(f"{task_name} {test_type}: {evaluate_result}")
             with open(inputs_dir / f"evaluate_10_times.txt", "a+") as file:
                 file.write(
@@ -175,5 +175,6 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         destroy_model_parallel()
 
 
-task_names = ["squad"]
+# TODO 改任务
+task_names = ["task020", "task935", "task1386", "task1554", "task738"]
 evaluate_model(task_names, finetuned=False, exact_match=True)

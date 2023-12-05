@@ -7,7 +7,7 @@ import torch
 import wandb
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
-
+from prompt2model.utils import count_tokens_from_string
 from prompt2model.output_annotator import construct_meta_prompt
 
 
@@ -20,6 +20,8 @@ def finetune_vicuna(
     resume_from_checkpoint,
     run_name,
     task_name,
+    max_seq_length=2000,
+    per_device_train_batch_size=6,
 ):
     construct_prompt = partial(
         construct_meta_prompt,
@@ -46,7 +48,11 @@ def finetune_vicuna(
         padding_side="left",
         trust_remote_code=True,
     )
-    mapped_dataset = dataset.map(map_func, load_from_cache_file=False).shuffle(seed=42)
+    mapped_dataset = dataset.map(map_func, load_from_cache_file=False).shuffle(seed=42).filter(
+        lambda x: (
+            count_tokens_from_string(x["text"], "vicuna") <= max_seq_length
+        )
+    )
     response_template_with_context = "\n### Your Output:\n\n"
     response_template_ids = tokenizer.encode(
         response_template_with_context, add_special_tokens=False
@@ -72,7 +78,7 @@ def finetune_vicuna(
         evaluation_strategy="no",
         logging_steps=4,
         num_train_epochs=training_epochs,
-        per_device_train_batch_size=6,
+        per_device_train_batch_size=per_device_train_batch_size,
         seed=42,
     )
     trainer = SFTTrainer(
@@ -81,7 +87,7 @@ def finetune_vicuna(
         train_dataset=mapped_dataset,
         dataset_text_field="text",
         data_collator=data_collator,
-        max_seq_length=1800,
+        max_seq_length=max_seq_length,
     )
     wandb.config.update(training_args.to_dict(), allow_val_change=True)
     trainer.train(resume_from_checkpoint=resume_from_checkpoint)

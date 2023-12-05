@@ -1,6 +1,8 @@
 import csv
 import json
 import os
+os.environ["TRANSFORMERS_OFFLINE"]="1"
+os.environ["HF_DATASETS_OFFLINE"]="1"
 from pathlib import Path
 
 import optuna
@@ -8,12 +10,16 @@ import optuna
 # TODO change card name
 os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 # TODO change task name
-task_name = "squad"
+task_name = "task199"
 # TODO change experiment rank
-experiment_rank = 0
+experiment_rank = 1
+# TODO 加expected content和metrics
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
+# TODO 改显存配置
 gpu_memory_utilization = 0.85
+per_device_train_batch_size = 10
+# bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
 tensor_parallel_size = os.environ["CUDA_VISIBLE_DEVICES"].count(",") + 1
 # 进行 inference（除了训练之外的任何步骤）时，会分布在每张卡上，也即 tensor_parallel_size 就是所有能用的 CUDA
 # gpu_memory_utilization 是在每张卡上的占比，比如 CUDA_CONDITION = "0,1,4,5", gpu_memory_utilization = 0.9
@@ -28,7 +34,6 @@ with open(file_path, "r", encoding="utf-8") as json_file:
 
 tasks = []
 
-# Discuss 加入了 metric 需要改写
 for task in all_tasks:
     if task["task_name"] == task_name:
         task_tuple = (
@@ -57,16 +62,9 @@ best_ckpt_path.mkdir(parents=True, exist_ok=True)
 def write_results(log_and_data_root, max_training_epochs):
     csv_header = [
         "task_name",
-        "generation_epochs",
-        "generation_batch_size",
-        "generation_top_k",
         "generation_temperature",
-        "min_frequency",
-        "min_input_length",
-        "max_input_length",
-        "min_output_length",
-        "max_output_length",
-        "training_epochs",
+        "intput_length_constraint",
+        "output_length_constraint"
     ] + ["epoch_" + str(i) for i in range(1, max_training_epochs + 1)]
     csv_data = []
     for experiment_folder in log_and_data_root.iterdir():
@@ -120,22 +118,21 @@ for task in tasks:
     print(task_name)
 
     def objective_function(
-        generation_epochs,
-        generation_batch_size,
-        generation_top_k,
         generation_temperature,
-        min_frequency,
-        training_epochs,
         intput_length_constraint,
         output_length_constraint,
     ):
-        name = f"{task_name}_{generation_epochs}_{generation_batch_size}_{generation_top_k}_{generation_temperature}_{min_frequency}_{intput_length_constraint}_{output_length_constraint}_{experiment_rank}"
+        name = f"{task_name}_{generation_temperature}_{intput_length_constraint}_{output_length_constraint}_{experiment_rank}"
         print(f"searching parameters: {name}")
         log_and_data_path = log_and_data_root / name
         log_and_data_path.mkdir(parents=True, exist_ok=True)
         ckpt_path = ckpt_root / name
         ckpt_path.mkdir(parents=True, exist_ok=True)
 
+        assert optional_list != []
+        assert expected_content != ""
+        assert metric != ""
+        
         params = {
             "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
             "task_name": task_name,
@@ -144,20 +141,21 @@ for task in tasks:
             "expected_content": expected_content,
             "evaluation_dataset_path": evaluation_dataset_path,
             "test_set_path": test_set_path,
-            "generation_epochs": int(generation_epochs),
-            "generation_batch_size": int(generation_batch_size),
-            "generation_top_k": int(generation_top_k),
+            "generation_epochs": int(20),
+            "generation_batch_size": int(10),
+            "generation_top_k": int(40),
+            "min_frequency": float(0.3),
             "generation_temperature": float(generation_temperature),
             "log_and_data_path": str(log_and_data_path),
             "ckpt_path": str(ckpt_path),
             "gpu_memory_utilization": float(gpu_memory_utilization),
-            "min_frequency": float(min_frequency),
-            "training_epochs": int(training_epochs),
+            "training_epochs": int(max_training_epochs),
             "tensor_parallel_size": int(tensor_parallel_size),
             "evaluation_result_file_tail": evaluation_result_file_tail,
             "optional_list": optional_list,
             "metric": metric,
             "experiment_rank": experiment_rank,
+            "per_device_train_batch_size": per_device_train_batch_size,
             "portion": 1,
             "intput_length_constraint": intput_length_constraint,
             "output_length_constraint": output_length_constraint,
@@ -191,7 +189,7 @@ for task in tasks:
 
         if (
             not all(path.exists() for path in required_paths)
-            or len(list(evaluate_result.keys())) < training_epochs
+            or len(list(evaluate_result.keys())) < max_training_epochs
         ):
             print(log_and_data_path)
             ckpt_paths_and_result = main(str(log_and_data_path / "config.json"))
@@ -236,35 +234,18 @@ for task in tasks:
         write_results(log_and_data_root, max_training_epochs)
         return highest_validation_result
 
-    def objective(trial):
-        generation_epochs = trial.suggest_categorical("generation_epochs", [15, 25])
-        generation_batch_size = trial.suggest_categorical(
-            "generation_batch_size", [10, 20]
-        )
-        generation_top_k = trial.suggest_categorical("generation_top_k", [40, 45, 50])
-        generation_temperature = trial.suggest_categorical(
-            "generation_temperature", [0.4, 0.6, 0.8]
-        )
-        min_frequency = trial.suggest_categorical("min_frequency", [0.3, 0.4])
-        intput_length_constraint = trial.suggest_categorical(
-            "intput_length_constraint", [True, False]
-        )
-        output_length_constraint = trial.suggest_categorical(
-            "output_length_constraint", [False, True]
-        )
-        training_epochs = trial.suggest_int("training_epochs", 3, max_training_epochs)
 
+    def objective(trial):
+        generation_temperature = trial.suggest_categorical("generation_temperature", [0.1, 0.2, 0.3, 0.4, 0.5])
+        intput_length_constraint = trial.suggest_categorical("intput_length_constraint", [False, True])
+        output_length_constraint = trial.suggest_categorical("output_length_constraint", [False, True])
         return objective_function(
-            generation_epochs,
-            generation_batch_size,
-            generation_top_k,
             generation_temperature,
-            min_frequency,
-            training_epochs,
             intput_length_constraint,
             output_length_constraint,
         )
 
+    # Create and optimize the study
     study = optuna.create_study(direction="maximize")
     study.optimize(objective, n_trials=20)
     best_params = study.best_params
@@ -273,7 +254,7 @@ for task in tasks:
     with open(best_validation_result_path, "r") as json_file:
         evaluate_result = json.load(json_file)
     if "test_result" in evaluate_result:
-        print("Already tested")
+        print("Already tested.")
         continue
     else:
         print("test best ckpt.")

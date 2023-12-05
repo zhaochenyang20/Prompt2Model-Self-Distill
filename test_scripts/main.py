@@ -305,6 +305,7 @@ def main(config_path: str):
             resume_from_checkpoint=False if complete_ckpts == 0 else True,
             run_name=config_path.split("/")[-2],
             task_name=loaded_params["task_name"],
+            per_device_train_batch_size=loaded_params["per_device_train_batch_size"],
         )
 
     if len(list(evaluate_result.keys())) < loaded_params["training_epochs"]:

@@ -12,7 +12,7 @@ input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=0.9)
 
 
 # TODO change task name
-task_name = "121"
+task_name = "1529"
 file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
 with open(file_path, "r", encoding="utf-8") as json_file:
     all_tasks = json.load(json_file)

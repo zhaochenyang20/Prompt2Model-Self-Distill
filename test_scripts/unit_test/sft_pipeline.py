@@ -2,7 +2,7 @@ import gc
 import os
 from functools import partial
 from pathlib import Path
-
+os.environ["CUDA_VISIBLE_DEVICES"] = "1,3"
 os.environ["WANDB_MODE"] = "offline"
 import datasets
 import torch
@@ -18,7 +18,7 @@ model_path = Path(
 ckpt_path = Path("/home/cyzhao/ckpt")
 generated_dataset_path = Path("/home/cyzhao/generated_datasets")
 dataset_path = Path(
-    "/home/cyzhao/finished_experiments/SQuAD_experiments_7/SQuAD_10_15_40_0.8_0.4_120_3/dataset"
+   "/home/cyzhao/rerun_experiments/NI_squad_exp_1/squad_1.0_True_False_1/dataset"
 )
 
 prompt_spec = MockPromptSpec(
@@ -71,7 +71,7 @@ model = AutoModelForCausalLM.from_pretrained(
     model_path,
     device_map="auto",
     torch_dtype=torch.bfloat16,
-    use_flash_attention_2=True,
+    use_flash_attention_2=False,
 )
 response_template_with_context = "\n### Your Output:\n\n"
 response_template_ids = tokenizer.encode(
@@ -84,12 +84,13 @@ data_collator = DataCollatorForCompletionOnlyLM(
 
 training_args = TrainingArguments(
     report_to="wandb",
-    output_dir="/data2/cyzhao/test",
     do_eval=False,
-    save_strategy="no",
+    save_strategy="epoch",
+    output_dir="/data2/cyzhao/ckpt_1",
     evaluation_strategy="no",
     logging_steps=4,
     num_train_epochs=3,
+    per_device_train_batch_size=3,
     seed=42,
 )
 trainer = SFTTrainer(
@@ -98,7 +99,7 @@ trainer = SFTTrainer(
     train_dataset=mapped_dataset,
     dataset_text_field="text",
     data_collator=data_collator,
-    max_seq_length=1500,
+    max_seq_length=2000,
 )
 trainer.train()
 del trainer
