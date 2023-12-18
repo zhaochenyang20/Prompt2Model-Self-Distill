@@ -303,36 +303,38 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             )
             new_inputs = input_tuples[0]
             pseudo_labels = input_tuples[1]
-            new_inputs = [
+            input_to_label = dict(zip(new_inputs, pseudo_labels))
+            filtered_new_inputs = [
                 element
                 for element in new_inputs
                 if element is not None and element != ""
             ]
-            verified_inputs = self.verify(
-                prompt_spec,
-                ablation_filter(
+            filtered_new_inputs = ablation_filter(
                     length_filter(new_inputs)
                     if intput_length_constraint
                     else new_inputs
-                ),
+                )
+            filtered_pesudo_labels = [input_to_label[input_item] for input_item in new_inputs]
+            verified_inputs = self.verify(
+                prompt_spec,
+                filtered_new_inputs,
                 expected_content=expected_content,
             )
-            assert len(new_inputs) == len(verified_inputs)
-            filtered_inputs = ablation_filter(
+            assert len(filtered_new_inputs) == len(verified_inputs)
+            filtered_verified_inputs = ablation_filter(
                 length_filter(verified_inputs)
                 if intput_length_constraint
                 else verified_inputs
             )
             input_to_label = dict(zip(verified_inputs, pseudo_labels))
-            filtered_labels = [input_to_label[input_item] for input_item in filtered_inputs if input_item in input_to_label]
-            input_label_pairs = list(zip(filtered_inputs, filtered_labels))
-            if filtered_inputs is not None and filtered_inputs != []:
+            filtered_verified_labels = [input_to_label[input_item] for input_item in filtered_verified_inputs]
+            input_label_pairs = list(zip(filtered_verified_inputs, filtered_verified_labels))
+            if filtered_verified_inputs is not None and filtered_verified_inputs != []:
                 generated_inputs.extend(input_label_pairs)
                 unique_inputs = {}
                 filtered_generated_inputs = []
                 for input_item, label in generated_inputs:
                     if input_item not in unique_inputs:
-                        # If the input is not already in the dictionary, add it
                         unique_inputs[input_item] = label
                         filtered_generated_inputs.append((input_item, label))
                 generated_inputs = filtered_generated_inputs
