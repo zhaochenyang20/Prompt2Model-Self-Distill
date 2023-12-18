@@ -39,6 +39,7 @@ def generate_and_write_inputs(
         conditional_labels,
     )
     inputs = [each[0] for each in input_tuples]
+    pesudo_labels = [each[1] for each in input_tuples]
     with open(log_and_data_path / f"inputs.txt", "w") as file:
         for index, item in enumerate(inputs):
             file.write(
@@ -46,6 +47,17 @@ def generate_and_write_inputs(
             )
     dataset = datasets.Dataset.from_dict({"input_col": inputs})
     dataset.save_to_disk(log_and_data_path / "inputs")
+    if conditional_labels != []:
+            dataset = datasets.Dataset.from_dict({"input_col": inputs, "output_col": pesudo_labels})
+            dataset.save_to_disk(log_and_data_path / "dataset")
+            with open(log_and_data_path / f"dataset.txt", "w") as file:
+                for index, item in enumerate(inputs):
+                    file.write(
+                        f"{index}:\n\n------------------------------------------------\n\n{item}\n\n------------------------------------------------\n\n"
+                    )
+                    file.write(
+                        f"------------------------------------------------\n\n{pesudo_labels[index]}\n\n------------------------------------------------\n\n"
+                    )
     del input_generator
     destroy_model_parallel()
     gc.collect()
