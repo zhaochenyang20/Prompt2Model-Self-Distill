@@ -12,7 +12,7 @@ input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=0.9)
 
 
 # TODO change task name
-task_name = "1529"
+task_name = "1344"
 file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
 with open(file_path, "r", encoding="utf-8") as json_file:
     all_tasks = json.load(json_file)
@@ -28,6 +28,7 @@ for task in all_tasks:
             f"/home/cyzhao/prompt2model_test/testdataset/NI/test/task{task_name}",
             task.get("optional_list", []),
             task.get("metric", "exact_match"),
+            task.get("labels", [])
         )
         choosen_task = task
         break
@@ -49,6 +50,7 @@ inputs = input_generator.batch_generation_inputs(
     ),
     expected_content=choosen_task["expected_content"],
     optional_list=choosen_task["optional_list"],
+    conditional_labels=choosen_task["labels"],
 )
 
 inputs

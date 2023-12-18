@@ -256,6 +256,7 @@ def main(config_path: str):
             loaded_params["optional_list"],
             loaded_params["portion"],
             loaded_params["intput_length_constraint"],
+            loaded_params["conditional_labels"],
         )
 
     if not (log_and_data_path / "dataset").exists():

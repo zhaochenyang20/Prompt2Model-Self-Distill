@@ -111,6 +111,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     high_quality_input_string += f'[input]="{input}"\n\n'
 
             # Construct the prompt.
+            assert conditional_label is not None
             if conditional_label is None:
                 prompt = construct_meta_prompt(
                     instruction=instruction,

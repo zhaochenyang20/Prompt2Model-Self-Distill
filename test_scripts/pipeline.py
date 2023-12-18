@@ -11,7 +11,7 @@ import optuna
 # TODO change card name
 os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 # TODO change task name
-task_name = "task199"
+task_name = "task1554"
 # TODO change experiment rank
 experiment_rank = 1
 # TODO 加expected content和metrics
@@ -46,7 +46,9 @@ for task in all_tasks:
             f"/home/cyzhao/prompt2model_test/testdataset/NI/test/{task_name}",
             task.get("optional_list", []),
             task.get("metric", "rouge"),
+            task.get("labels", [])
         )
+        assert task.get("labels", []) != []
         tasks.append(task_tuple)
 
 
@@ -114,6 +116,7 @@ for task in tasks:
         test_set_path,
         optional_list,
         metric,
+        labels,
     ) = task
 
     print(task_name)
@@ -160,6 +163,7 @@ for task in tasks:
             "portion": 1,
             "intput_length_constraint": intput_length_constraint,
             "output_length_constraint": output_length_constraint,
+            "conditional_labels": labels,
         }
         with open(log_and_data_path / "config.json", "w") as f:
             json.dump(params, f, indent=4)
