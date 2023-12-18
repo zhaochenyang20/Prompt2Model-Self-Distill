@@ -310,23 +310,28 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 if element is not None and element != ""
             ]
             filtered_new_inputs = ablation_filter(
-                    length_filter(new_inputs)
+                    length_filter(filtered_new_inputs)
                     if intput_length_constraint
-                    else new_inputs
+                    else filtered_new_inputs
                 )
-            filtered_pesudo_labels = [input_to_label[input_item] for input_item in new_inputs]
+            filtered_pesudo_labels = [input_to_label[input_item] for input_item in filtered_new_inputs]
             verified_inputs = self.verify(
                 prompt_spec,
                 filtered_new_inputs,
                 expected_content=expected_content,
             )
             assert len(filtered_new_inputs) == len(verified_inputs)
+            input_to_label = dict(zip(verified_inputs, filtered_pesudo_labels))
+            filtered_verified_inputs = [
+                element
+                for element in verified_inputs
+                if element is not None and element != ""
+            ]
             filtered_verified_inputs = ablation_filter(
-                length_filter(verified_inputs)
+                length_filter(filtered_verified_inputs)
                 if intput_length_constraint
-                else verified_inputs
+                else filtered_verified_inputs
             )
-            input_to_label = dict(zip(verified_inputs, pseudo_labels))
             filtered_verified_labels = [input_to_label[input_item] for input_item in filtered_verified_inputs]
             input_label_pairs = list(zip(filtered_verified_inputs, filtered_verified_labels))
             if filtered_verified_inputs is not None and filtered_verified_inputs != []:
