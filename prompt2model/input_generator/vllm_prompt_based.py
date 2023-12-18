@@ -238,9 +238,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         filtered_inputs = [
             output.text for each in output_sequence for output in each.outputs
         ]
-        from IPython import embed
-        if len(new_inputs) != len(filtered_inputs):
-            embed()
         return filtered_inputs
 
     def batch_generation_inputs(
