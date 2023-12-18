@@ -321,7 +321,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 expected_content=expected_content,
             )
             assert len(filtered_new_inputs) == len(verified_inputs)
-            input_to_label = dict(zip(verified_inputs, filtered_pesudo_labels))
+            filtered_input_to_label = dict(zip(verified_inputs, filtered_pesudo_labels))
             filtered_verified_inputs = [
                 element
                 for element in verified_inputs
@@ -332,7 +332,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 if intput_length_constraint
                 else filtered_verified_inputs
             )
-            filtered_verified_labels = [input_to_label[input_item] for input_item in filtered_verified_inputs]
+            filtered_verified_labels = [filtered_input_to_label[input_item] for input_item in filtered_verified_inputs]
             input_label_pairs = list(zip(filtered_verified_inputs, filtered_verified_labels))
             if filtered_verified_inputs is not None and filtered_verified_inputs != []:
                 generated_inputs.extend(input_label_pairs)
