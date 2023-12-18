@@ -1,7 +1,7 @@
 import os
 
 # TODO 改卡
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 import gc
 import json
 from functools import partial
@@ -83,7 +83,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             test_dataset = datasets.load_from_disk(
                 f"/home/cyzhao/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
             )
-            inputs_dir = Path("/home/cyzhao/")
+            inputs_dir = Path("/home/cyzhao/baseline_generated_data")
 
             file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
 
@@ -166,7 +166,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                     f"\n\nresult of {path} th:\n\n------------------------------------------------{evaluate_result}------------------------------------------------\n\n"
                 )
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"base_deepseek_{task_name}"
+            evaluate_generated_content_path = inputs_dir / f"base_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=tuned_vicuna_generated_outputs,
@@ -182,5 +182,5 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 
 
 # TODO 改任务
-task_names = ["task020", "task935", "task1386", "task1554", "task738"]
+task_names = ["task1554"]
 evaluate_model(task_names, finetuned=False, exact_match=True)

@@ -167,7 +167,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["strengthener", "weakener"]
     },
     {
         "task_instruction": "In this task, you're given two sentences. Indicate if the first sentence clearly entails the second sentence (i.e., one can conclude the 2nd sentence by reading the 1st one). Indicate your answer with '1' if the first sentence entails the second sentence, otherwise answer with '0'.",
@@ -180,7 +181,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["0", "1"]
     },
     {
         "task_instruction": "In this task, you will be presented with a premise and a hypothesis sentence. Determine whether the hypothesis sentence entails (implies), contradicts (opposes), or is neutral with respect to the given premise sentence. Please answer with \"Contradiction\", \"Neutral\", or \"Entailment\".",
@@ -265,7 +267,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["entails", "neutral"]
     },
     {
         "task_instruction": "In this task, given 2 input sentences, you must classify the relation between them. If the second sentence has a similar meaning to that of the first sentence then the output is ' B_entails_A', if the second sentence has the opposite meaning to the first sentence then it is classified as ' B_contradicts_A'. If you cannot clearly ascertain agreement/disagreement between the two sentences, the label is ' B_neutral_A'.",
