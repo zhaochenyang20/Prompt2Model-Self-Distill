@@ -27,7 +27,7 @@ def generate_and_write_inputs(
         gpu_memory_utilization=gpu_memory_utilization,
         tensor_parallel_size=tensor_parallel_size,
     )
-    inputs = input_generator.batch_generation_inputs(
+    input_tuples = input_generator.batch_generation_inputs(
         prompt_spec,
         generation_epochs,
         generation_batch_size,
@@ -38,6 +38,7 @@ def generate_and_write_inputs(
         intput_length_constraint,
         conditional_labels,
     )
+    inputs = [each[0] for each in input_tuples]
     with open(log_and_data_path / f"inputs.txt", "w") as file:
         for index, item in enumerate(inputs):
             file.write(
