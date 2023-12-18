@@ -62,7 +62,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         generated_inputs: list[str],
         context_cutoff: int = 3200,
         conditional_label: str = None,
-    ) -> str:
+    ) -> tuple(str):
         """Generates a prompt string for generating a new input.
 
         Args:
@@ -126,7 +126,10 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     conditional_label=conditional_label,
                 )
             if count_tokens_from_string(prompt, "vicuna") < context_cutoff:
-                return prompt
+                if conditional_label is None:
+                    return (prompt,)
+                else:
+                    return (prompt, conditional_label)
             else:
                 orginal_input_string = (
                     instruction + few_shot_example_string
@@ -150,7 +153,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         inputs_num: int,
         hyperparameter_choices: dict[str, Any],
         conditional_labels: list = [],
-    ) -> list[str]:
+    ) -> tuple(list[str]):
         """Generate new inputs for a given prompt with a pre-trained model.
 
         Args:
@@ -161,7 +164,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             conditional_labels: All the expected output labels for the new input.
                 Used for classification tasks.
         """
-        prompts = [
+        prompt_tuples = [
             self.construct_generation_prompt(
                 instruction=prompt_spec.instruction,
                 few_shot_example_string=prompt_spec.examples,
@@ -173,6 +176,11 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             )
             for _ in range(inputs_num)
         ]
+        prompts = [each[0] for each in prompt_tuples]
+        if conditional_labels != []:
+            pseudo_labels = [each[1] for each in prompt_tuples]
+        else:
+            pseudo_labels = [None for _ in prompt_tuples]
         sampling_params = SamplingParams(
             n=hyperparameter_choices.get("n", 1),
             best_of=hyperparameter_choices.get("best_of", 1),
@@ -184,7 +192,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         new_inputs = [
             output.text for each in output_sequence for output in each.outputs
         ]
-        return new_inputs
+        return (new_inputs, pseudo_labels)
 
     def verify(self, prompt_spec: PromptSpec, new_inputs: list[str], expected_content):
         """Check the generated inputs.
@@ -281,14 +289,17 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             max_length=int(mean_plus_2std),
         )
         generated_inputs = []
+        # [(prompt, label | None)]
         for _ in tqdm(range(generation_epochs)):
-            new_inputs = self.generate_inputs(
-                generated_inputs,
+            input_tuples = self.generate_inputs(
+                [each[0] for each in generated_inputs],
                 prompt_spec,
                 per_epoch_num,
                 hyperparameter_choices,
                 conditional_labels,
             )
+            new_inputs = input_tuples[0]
+            pseudo_labels = input_tuples[1]
             new_inputs = [
                 element
                 for element in new_inputs
@@ -303,13 +314,23 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 ),
                 expected_content=expected_content,
             )
+            assert len(new_inputs) == len(verified_inputs)
             filtered_inputs = ablation_filter(
                 length_filter(verified_inputs)
                 if intput_length_constraint
                 else verified_inputs
             )
+            input_to_label = dict(zip(verified_inputs, pseudo_labels))
+            filtered_labels = [input_to_label[input_item] for input_item in filtered_inputs if input_item in input_to_label]
+            input_label_pairs = list(zip(filtered_inputs, filtered_labels))
             if filtered_inputs is not None and filtered_inputs != []:
-                generated_inputs.extend(filtered_inputs)
-                generated_inputs = list(set(generated_inputs))
-        middle_generated_inputs = get_middle_portion(generated_inputs, portion)
-        return middle_generated_inputs
+                generated_inputs.extend(input_label_pairs)
+                unique_inputs = {}
+                filtered_generated_inputs = []
+                for input_item, label in generated_inputs:
+                    if input_item not in unique_inputs:
+                        # If the input is not already in the dictionary, add it
+                        unique_inputs[input_item] = label
+                        filtered_generated_inputs.append((input_item, label))
+                generated_inputs = filtered_generated_inputs
+        return generated_inputs
