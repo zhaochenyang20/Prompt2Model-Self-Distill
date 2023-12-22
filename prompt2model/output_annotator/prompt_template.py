@@ -1,6 +1,6 @@
 """Utilities to construct an LLM "metaprompt" for our dataset generator."""
 
-PROMPT_TEMPLATE = """
+PROMPT_TEMPLATE_OLD = """
 ### Instructions:
 
 {instruction}
@@ -15,6 +15,19 @@ PROMPT_TEMPLATE = """
 
 ### Your Output:
 
+"""  # noqa E501
+
+PROMPT_TEMPLATE = """
+A chat between a curious user and an artificial intelligence assistant.
+The assistant gives helpful, detailed, and polite answers to the user's questions.
+USER: The artificial intelligence assistant only needs to help annotate label. The task is: {instruction} 
+ASSISTANT: Okay. 
+USER: [input] = "claim: Music containing lyrics that glorify violent and criminal lifestyles should be banned. perspective: hip hop artists have a right to free speech."
+ASSISTANT: undermine.
+USER: [input] = "claim: Abolish the US Electoral College. perspective: The electoral college weakens incentives for voting and party building."
+ASSISTANT: support
+USER: [input] = {new_input}
+ASSISTANT: 
 """  # noqa E501
 
 

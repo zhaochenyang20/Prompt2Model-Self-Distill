@@ -113,14 +113,28 @@ def validate_or_test(
     validation=True,
     metric="exact_match",
 ):
-    construct_prompt = partial(
-        construct_meta_prompt,
-        instruction=instruction,
-        examples=examples,
-    )
+    PROMPT_TEMPLATE = """
+    A chat between a curious user and an artificial intelligence assistant.
+    The assistant gives helpful, detailed, and polite answers to the user's questions.
+    USER: 
+
+    {task_instruction}
+
+    ASSISTANT: Okay.
+
+    USER:
+
+    {new_input}
+
+    ASSISTANT: The output is
+
+    """
 
     def map_func(example):
-        example["model_input"] = construct_prompt(new_input=example["input_col"])
+        example["model_input"] = PROMPT_TEMPLATE.format(
+            task_instruction=instruction,
+            new_input=example["input_col"],
+        )
         example["model_output"] = example["output_col"]
         return example
 

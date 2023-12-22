@@ -56,30 +56,33 @@ prompt_spec = MockPromptSpec(
     # noqa E501
 )
 
-construct_prompt = partial(
-    construct_meta_prompt,
-    instruction=prompt_spec.instruction,
-    examples=prompt_spec.examples,
-)
+PROMPT_TEMPLATE = """
+A chat between a curious user and an artificial intelligence assistant.
+The assistant gives helpful, detailed, and polite answers to the user's questions.
+USER: 
 
-tokenizer = AutoTokenizer.from_pretrained(
-    "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
-    local_files_only=True,
-    padding_side="left",
-    trust_remote_code=True,
-)
+{task_instruction}
 
+ASSISTANT: Okay.
+
+USER:
+
+{new_input}
+
+ASSISTANT: The output is
+
+"""
 
 def map_func(example):
-    example["model_input"] = construct_prompt(new_input=example["input_col"])
-    example["model_output"] = example["output_col"]
-    example["text"] = (
-        example["model_input"] + example["model_output"] + tokenizer.eos_token
+    example["model_input"] = PROMPT_TEMPLATE.format(
+        task_instruction=prompt_spec.instruction,
+        new_input=example["input_col"],
     )
+    example["model_output"] = example["output_col"]
     return example
 
 
-test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
+test_dataset = datasets.Dataset.from_dict(test_dataset.map(map_func, load_from_cache_file=False)[:40])
 prompts = test_dataset["model_input"]
 GROUND_TRUTH = test_dataset["model_output"]
 hyperparameter_choices = {}
@@ -96,7 +99,7 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 
 #! 这里测试轮次比较多，是为了看结果是否稳定
 base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
-path = "/data2/cyzhao/ckpt_3/checkpoint-31"
+path = "/data2/cyzhao/ckpt_1/checkpoint-31"
 ray.init(ignore_reinit_error=True)
 tuned_vicuna = LLM(model=path, gpu_memory_utilization=0.5, tensor_parallel_size=1)
 tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)

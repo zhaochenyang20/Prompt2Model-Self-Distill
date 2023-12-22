@@ -10,7 +10,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["No.", "Yes."]
     },
     {
         "task_instruction": "In this task, you need to write a topic word from the given fact. The topic word must have at least one word overlap with the given fact. The topic word often involves adding a new word from a related concept. In your topic word, use at least one word from the given fact. Topic words with two or more words work best.",
@@ -59,7 +60,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["yes", "no"]
     },
     {
         "task_instruction": "In this task, you're given a statement and three sentences as choices. Your job is to determine which sentence can be inferred from the statement. Incorrect choices change the meaning in important ways or have details that are not mentioned in the statement. Indicate your answer as 1,2, or 3 corresponding to the choice number of the selected sentence.",
@@ -72,7 +74,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["1", "2", "3"]
     },
     {
         "task_instruction": "In this task, you're given a statement and three sentences as choices. Your job is to determine the neutral choice based on your inference from the statement and your commonsense knowledge. The neutral choice is a sentence that neither agrees nor disagrees with the statement. Indicate your answer as '1', '2', or '3', corresponding to the choice number of the selected sentence. If sentence X agrees with sentence Y, one's correctness follows from the other one. If sentence X disagrees with sentence Y, they can not be correct at the same time.",
@@ -85,7 +88,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["1", "2", "3"]
     },
     {
         "task_instruction": "In this task, you're given a statement, and three sentences as choices. Your job is to determine which sentence clearly disagrees with the statement. Indicate your answer as '1', '2', or '3' corresponding to the choice number of the selected sentence.",
@@ -98,7 +102,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["1", "2", "3"]
     },
     {
         "task_instruction": "You will be given three sentences. Read them, then identify a noun phrase (person, place, or thing) or event that is shared between all three sentences. As the output, write the span of the text corresponding to that phrase in each sentence. Keep the order of the sentences, that is, your answer should look like: 1: *a phras from sentence 1e* 2: *a phras from sentence 2* 3: *a phrase from sentence 3*",
@@ -134,7 +139,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["support", "undermine"]
     },
     {
         "task_instruction": "In this task, you are given a premise, a hypothesis, and an update. The premise sentence describes a real-world situation and is always assumed to be true. The hypothesis sentence describes an assumption or inference that you might make about that situation having read the premise. The update provides additional information about the situation that might weaken or strengthen the hypothesis. A weakener is a statement that weakens the hypothesis. It makes you much less likely to believe the hypothesis is true. A strengthener is a statement that strengthens the hypothesis. It makes you much more likely to believe the hypothesis is true. Your task is to output 'strengthener' or 'weakener' if the update strengths or weakens the hypothesis, respectively.",
@@ -147,7 +153,8 @@
         "\n\n",
         "\\_\\_"
     ],
-    "metric": "exact_match"
+    "metric": "exact_match",
+    "labels": ["strengthener", "weakener"]
     },
     {
         "task_instruction": "In this task, you are given a premise, a hypothesis, and an update. The premise sentence describes a real-world situation and is always assumed to be true. The hypothesis sentence describes an assumption or inference that you might make about that situation having read the premise. The update provides additional information about the situation that might weaken or strengthen the hypothesis. A weakener is a statement that weakens the hypothesis, that is, it makes you much less likely to believe the hypothesis is true. A strengthener is a statement that strengthens the hypothesis, that is, it makes you much more likely to believe the hypothesis is true. Your task is to answer with 'strengthener' or 'weakener' if the update strengthens or weakens the hypothesis, respectively.",
@@ -195,7 +202,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["Neutral", "Contradiction", "Entailment"]
     },
     {
         "task_instruction": "In this task, you will be presented with a premise and a hypothesis sentence. Determine whether the hypothesis sentence entails (implies), contradicts (opposes), or is neutral with respect to the given premise. Please answer with \"Contradiction\", \"Neutral\", or \"Entailment\".",
@@ -208,7 +216,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["Neutral", "Entailment", "Contradiction"]
     },
     {
         "task_instruction": "In this task, you will be presented with a premise and a hypothesis sentence. Determine whether the hypothesis sentence entails (implies), contradicts (opposes), or is neutral with respect to the given premise sentence. Please answer with \"Contradiction\", \"Neutral\", or \"Entailment\".",
@@ -228,7 +237,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["Contradiction", "Entailment", "Neutral"]
     },
     {
         "task_instruction": "In this task, you are given a premise and hypothesis. The task is to classify them into three categories: 'positive' if the hypothesis supports the premise, 'negated' if it opposes the premise, and 'neutral' if it neither supports nor opposes it.",
@@ -241,7 +251,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["neutral", "positive", "negated"]
     },
     {
         "task_instruction": "You are given two sentences. You have to find if there is entailment or agreement of the Hypothesis by the Premise. From the given pair of sentences, you should identify if there is enough information in the Premise to support the claim made in the Hypothesis. The Premise may not exactly be the same as Hypothesis. Your task is to return 'entails' if the premise supports hypothesis else return 'neutral'.",
@@ -254,7 +265,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["neutral", "entails"]
     },
     {
         "task_instruction": "In this task, you are given two statements. The task is to output whether a given textual premise, i.e. Statement 2, entails or implies a given scientific fact, i.e. Statement 1. The output should be 'entails' if Statement 2 supports Statement 1 and should be 'neutral' otherwise.",
@@ -294,7 +306,8 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": ["0", "1", "2"]
     },
     {
         "task_instruction": "Given an abstract, generate a keyword (a noun phrase) that best describes the focus or contribution of the paper. Such keywords can be directly from the given abstract or outside it.",

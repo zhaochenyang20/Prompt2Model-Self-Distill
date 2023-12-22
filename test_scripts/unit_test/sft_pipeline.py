@@ -3,7 +3,7 @@ import os
 from functools import partial
 from pathlib import Path
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1,3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 os.environ["WANDB_MODE"] = "offline"
 import datasets
 import torch
@@ -56,14 +56,43 @@ def filter_func(example):
     return example["output_col"] is not None and example["input_col"] is not None
 
 
+# def map_func(example):
+#     example["model_input"] = construct_prompt(new_input=example["input_col"])
+#     example["model_output"] = example["output_col"]
+#     example["text"] = (
+#         example["model_input"] + example["model_output"] + tokenizer.eos_token
+#     )
+#     return example
+
+
+
+PROMPT_TEMPLATE = """
+A chat between a curious user and an artificial intelligence assistant.
+The assistant gives helpful, detailed, and polite answers to the user's questions.
+USER: 
+
+{task_instruction}
+
+ASSISTANT: Okay.
+
+USER:
+
+{new_input}
+
+ASSISTANT: The output is
+
+"""
+
 def map_func(example):
-    example["model_input"] = construct_prompt(new_input=example["input_col"])
+    example["model_input"] = PROMPT_TEMPLATE.format(
+        task_instruction=prompt_spec.instruction,
+        new_input=example["input_col"],
+    )
     example["model_output"] = example["output_col"]
     example["text"] = (
         example["model_input"] + example["model_output"] + tokenizer.eos_token
     )
     return example
-
 
 dataset = datasets.load_from_disk(dataset_path).filter(filter_func)
 mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
@@ -74,7 +103,7 @@ model = AutoModelForCausalLM.from_pretrained(
     torch_dtype=torch.bfloat16,
     use_flash_attention_2=False,
 )
-response_template_with_context = "\n### Your Output:\n\n"
+response_template_with_context = "ASSISTANT: The output is\n\n"
 response_template_ids = tokenizer.encode(
     response_template_with_context, add_special_tokens=False
 )[2:]

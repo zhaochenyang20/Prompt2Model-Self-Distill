@@ -31,8 +31,20 @@ Think twice before generating a new [input]. Only response the new [input] witho
 
 [input]=
 """
-
 INPUT_FILTER_TEMPLATE = """
+A chat between a curious user and an artificial intelligence assistant.
+The assistant gives helpful, detailed, and polite answers to the user's questions.
+USER: The task is: {instruction} The artificial intelligence assistant fixes input to meet the given label and extracts expected content from input, then output polished input as response.
+ASSISTANT: Okay. 
+USER: [input] = "claim: Music containing lyrics that glorify violent and criminal lifestyles should be banned. perspective: hip hop artists have a right to free speech." [expected output] = undermine.
+ASSISTANT: claim: Music containing lyrics that glorify violent and criminal lifestyles should be banned. perspective: hip hop artists have a right to free speech.
+USER: [input] = "claim: Abolish the US Electoral College. perspective: The Electoral College enhances nationwide voter participation and party building, ensuring that smaller states and rural areas have a greater voice in elections." [expected output] = support.
+ASSISTANT: claim: Abolish the US Electoral College. perspective: The electoral college weakens incentives for voting and party building.
+USER: [input] = {new_input} [expected output] = {label}
+ASSISTANT: 
+"""  # noqa E501
+
+INPUT_FILTER_TEMPLATE_OLD = """
 ### [EXAMPLE]
 
 {few_shot_examples}
@@ -87,12 +99,18 @@ def construct_verify_prompt(
     examples: str,
     new_input: str,
     expected_content: str,
+    label: str,
+    instruction: str
 ):
-    return INPUT_FILTER_TEMPLATE.format(
+    prompt = INPUT_FILTER_TEMPLATE.format(
         few_shot_examples=examples,
         new_input=new_input,
         expected_content=expected_content,
+        label = label,
+        instruction = instruction
     )
+    # print(prompt)
+    return prompt
 
 
 def construct_meta_prompt(

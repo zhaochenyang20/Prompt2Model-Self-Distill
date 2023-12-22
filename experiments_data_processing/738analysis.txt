@@ -1,0 +1,17 @@
+best_ckpt_generated_content
+'support': 560 times
+'undermine': 440 times
+groud_truth data: biased
+mean: 500.0, std: 60.0
+--------------------------------------------------
+best_ckpt_generated_content
+'support': 956 times
+'undermine': 44 times
+model_output data: biased
+mean: 500.0, std: 456.0
+best_ckpt_generated_content f1 score: 0.682532981530343
+==================================================
+in all, we have 1 classification tasks
+ground truth biased ratio: 1.0
+model output biased ratio: 1.0
+both biased ratio: 1.0

@@ -11,6 +11,22 @@ from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.utils import count_tokens_from_string
 
+PROMPT_TEMPLATE = """
+A chat between a curious user and an artificial intelligence assistant.
+The assistant gives helpful, detailed, and polite answers to the user's questions.
+USER: 
+
+{task_instruction}
+
+ASSISTANT: Okay.
+
+USER:
+
+{new_input}
+
+ASSISTANT: The output is
+
+"""
 
 def finetune_vicuna(
     prompt_spec,
@@ -24,11 +40,6 @@ def finetune_vicuna(
     max_seq_length=2000,
     per_device_train_batch_size=6,
 ):
-    construct_prompt = partial(
-        construct_meta_prompt,
-        instruction=prompt_spec.instruction,
-        examples=prompt_spec.examples,
-    )
 
     def filter_func(example):
         return example["output_col"] is not None and example["input_col"] is not None
@@ -36,7 +47,10 @@ def finetune_vicuna(
     dataset = datasets.load_from_disk(log_and_data_path / "dataset").filter(filter_func)
 
     def map_func(example):
-        example["model_input"] = construct_prompt(new_input=example["input_col"])
+        example["model_input"] = PROMPT_TEMPLATE.format(
+            task_instruction=prompt_spec.instruction,
+            new_input=example["input_col"],
+        )
         example["model_output"] = example["output_col"]
         example["text"] = (
             example["model_input"] + example["model_output"] + tokenizer.eos_token
@@ -56,7 +70,7 @@ def finetune_vicuna(
             lambda x: (count_tokens_from_string(x["text"], "vicuna") <= max_seq_length)
         )
     )
-    response_template_with_context = "\n### Your Output:\n\n"
+    response_template_with_context = "ASSISTANT: The output is\n\n"
     response_template_ids = tokenizer.encode(
         response_template_with_context, add_special_tokens=False
     )[2:]

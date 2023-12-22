@@ -24,6 +24,7 @@ from prompt2model.quality_evaluator import (
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 
 logger = get_formatted_logger("InputGenerator")
+test = False
 
 
 class VLLMPromptBasedInputGenerator(InputGenerator):
@@ -194,12 +195,13 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         ]
         return (new_inputs, pseudo_labels)
 
-    def verify(self, prompt_spec: PromptSpec, new_inputs: list[str], expected_content):
+    def verify(self, prompt_spec: PromptSpec, new_inputs: list[str], labels: list[str], expected_content):
         """Check the generated inputs.
 
         Args:
             prompt_spec: A prompt we use to generate new inputs.
             new_inputs: The generated inputs.
+            labels: The inputs' corresponding labels.
         """
 
         if new_inputs is None:
@@ -208,6 +210,8 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         def construct_filter_prompt(
             few_shot_example_string: str,
             new_input: str,
+            label: str,
+            instruction: str
         ):
             matches = re.findall(
                 r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
@@ -223,11 +227,13 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 examples=high_quality_input_string,
                 new_input=new_input,
                 expected_content=expected_content,
+                label = label,
+                instruction = instruction
             )
 
-        filter_prompts = [
-            construct_filter_prompt(prompt_spec.examples, each) for each in new_inputs
-        ]
+        filter_prompts = []
+        for i in range(len(new_inputs)):
+            filter_prompts.append(construct_filter_prompt(prompt_spec.examples, new_inputs[i], labels[i], prompt_spec.instruction))
         sampling_params = SamplingParams(
             top_k=-1,
             top_p=1,
@@ -311,33 +317,69 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     if intput_length_constraint
                     else filtered_new_inputs
                 )
-            filtered_pesudo_labels = [input_to_label[input_item] for input_item in filtered_new_inputs]
-            verified_inputs = self.verify(
-                prompt_spec,
-                filtered_new_inputs,
-                expected_content=expected_content,
-            )
-            assert len(filtered_new_inputs) == len(verified_inputs)
-            filtered_input_to_label = dict(zip(verified_inputs, filtered_pesudo_labels))
-            filtered_verified_inputs = [
-                element
-                for element in verified_inputs
-                if element is not None and element != ""
-            ]
-            filtered_verified_inputs = ablation_filter(
-                length_filter(filtered_verified_inputs)
-                if intput_length_constraint
-                else filtered_verified_inputs
-            )
-            filtered_verified_labels = [filtered_input_to_label[input_item] for input_item in filtered_verified_inputs]
-            input_label_pairs = list(zip(filtered_verified_inputs, filtered_verified_labels))
-            if filtered_verified_inputs is not None and filtered_verified_inputs != []:
-                generated_inputs.extend(input_label_pairs)
-                unique_inputs = {}
-                filtered_generated_inputs = []
-                for input_item, label in generated_inputs:
-                    if input_item not in unique_inputs:
-                        unique_inputs[input_item] = label
-                        filtered_generated_inputs.append((input_item, label))
-                generated_inputs = filtered_generated_inputs
+            if filtered_new_inputs is not None and filtered_new_inputs != []:
+                filtered_pesudo_labels = [input_to_label[input_item] for input_item in filtered_new_inputs]
+                if test:
+                    before_verifier = dict(zip(filtered_new_inputs, filtered_pesudo_labels))
+                    print("\n\nbefore filtering")
+                    print(before_verifier)
+                verified_inputs = self.verify(
+                    prompt_spec,
+                    filtered_new_inputs,
+                    filtered_pesudo_labels,
+                    expected_content=expected_content,
+                )
+                if test:
+                    after_verifier = dict(zip(verified_inputs, filtered_pesudo_labels))
+                    print("\nafter filtering")
+                    print(after_verifier)
+        
+                    print("\ncomparing")
+                    def compare_dictionaries(dict1, dict2):
+                        dict1 = {key.replace('"', '').replace("''", '').replace('\n', ''): value for key, value in dict1.items()}
+                        dict2 = {key.replace('"', '').replace("''", '').replace('\n', ''): value for key, value in dict2.items()}
+                        common_keys = set(dict1.keys()) & set(dict2.keys())
+                        unique_keys_dict1 = set(dict1.keys()) - set(dict2.keys())
+                        unique_keys_dict2 = set(dict2.keys()) - set(dict1.keys())
+
+                        print("在两个字典中都存在的键和它们的值：")
+                        for key in common_keys:
+                            print(f"{key}: {dict1[key]} == {dict2[key]}")
+
+                        if unique_keys_dict1:
+                            print("\n只在第一个字典中的键和它们的值：")
+                            for key in unique_keys_dict1:
+                                print(f"{key}: {dict1[key]}")
+
+                        if unique_keys_dict2:
+                            print("\n只在第二个字典中的键和它们的值：")
+                            for key in unique_keys_dict2:
+                                print(f"{key}: {dict2[key]}")
+                        
+                    compare_dictionaries(before_verifier, after_verifier)
+
+                assert len(filtered_new_inputs) == len(verified_inputs)
+                filtered_input_to_label = dict(zip(verified_inputs, filtered_pesudo_labels))
+                filtered_verified_inputs = [
+                    element
+                    for element in verified_inputs
+                    if element is not None and element != ""
+                ]
+                filtered_verified_inputs = ablation_filter(
+                    length_filter(filtered_verified_inputs)
+                    if intput_length_constraint
+                    else filtered_verified_inputs
+                )
+
+                if filtered_verified_inputs is not None and filtered_verified_inputs != []:
+                    filtered_verified_labels = [filtered_input_to_label[input_item] for input_item in filtered_verified_inputs]
+                    input_label_pairs = list(zip(filtered_verified_inputs, filtered_verified_labels))
+                    generated_inputs.extend(input_label_pairs)
+                    unique_inputs = {}
+                    filtered_generated_inputs = []
+                    for input_item, label in generated_inputs:
+                        if input_item not in unique_inputs:
+                            unique_inputs[input_item] = label
+                            filtered_generated_inputs.append((input_item, label))
+                    generated_inputs = filtered_generated_inputs
         return generated_inputs
