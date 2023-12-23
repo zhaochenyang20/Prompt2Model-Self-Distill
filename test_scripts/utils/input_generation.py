@@ -1,7 +1,6 @@
 import gc
 
 import datasets
-import ray
 import torch
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
@@ -21,11 +20,12 @@ def generate_and_write_inputs(
     portion,
     intput_length_constraint,
     conditional_labels,
+    reannotate=True,
+    extraction_examples=[],
 ):
-    ray.init(ignore_reinit_error=True)
     input_generator = VLLMPromptBasedInputGenerator(
         gpu_memory_utilization=gpu_memory_utilization,
-        tensor_parallel_size=tensor_parallel_size,
+        tensor_parallel_size=1,
     )
     input_tuples = input_generator.batch_generation_inputs(
         prompt_spec,
@@ -37,6 +37,7 @@ def generate_and_write_inputs(
         portion,
         intput_length_constraint,
         conditional_labels,
+        extraction_examples,
     )
     inputs = [each[0] for each in input_tuples]
     pesudo_labels = [each[1] for each in input_tuples]
@@ -47,7 +48,7 @@ def generate_and_write_inputs(
             )
     dataset = datasets.Dataset.from_dict({"input_col": inputs})
     dataset.save_to_disk(log_and_data_path / "inputs")
-    if conditional_labels != []:
+    if conditional_labels != [] and reannotate == False:
             dataset = datasets.Dataset.from_dict({"input_col": inputs, "output_col": pesudo_labels})
             dataset.save_to_disk(log_and_data_path / "dataset")
             with open(log_and_data_path / f"dataset.txt", "w") as file:
@@ -62,4 +63,3 @@ def generate_and_write_inputs(
     destroy_model_parallel()
     gc.collect()
     torch.cuda.empty_cache()
-    ray.shutdown()

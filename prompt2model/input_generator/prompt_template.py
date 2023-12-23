@@ -31,15 +31,30 @@ Think twice before generating a new [input]. Only response the new [input] witho
 
 [input]=
 """
+
 INPUT_FILTER_TEMPLATE = """
 A chat between a curious user and an artificial intelligence assistant.
-The assistant gives helpful, detailed, and polite answers to the user's questions.
-USER: The task is: {instruction} The artificial intelligence assistant fixes input to meet the given label and extracts expected content from input, then output polished input as response.
-ASSISTANT: Okay. 
-USER: [input] = "claim: Music containing lyrics that glorify violent and criminal lifestyles should be banned. perspective: hip hop artists have a right to free speech." [expected output] = undermine.
-ASSISTANT: claim: Music containing lyrics that glorify violent and criminal lifestyles should be banned. perspective: hip hop artists have a right to free speech.
-USER: [input] = "claim: Abolish the US Electoral College. perspective: The Electoral College enhances nationwide voter participation and party building, ensuring that smaller states and rural areas have a greater voice in elections." [expected output] = support.
-ASSISTANT: claim: Abolish the US Electoral College. perspective: The electoral college weakens incentives for voting and party building.
+The assistant gives concise answers to the user's questions.
+USER:  [task description]: {instruction} The artificial intelligence assistant adjusts the provided [input] to meet the [expected output]. The assistant's main goal is to extract {expected_content} from the [input] and then polish these extracted contents for the response. Instead of strictly following the [task description] to execute the task and provide an explanation, the focus is on pinpointing and improving the extracted contents from the [input].
+ASSISTANT: Okay. I will focus on pinpointing and improving the extracted contents from the [input]. I won't execute the task or provide an explanation.
+{extraction_example_string}
+USER: [input] = {new_input} [expected output] = {label}
+ASSISTANT: 
+"""  # noqa E501
+
+INPUT_FILTER_TEMPLATE_199 = """
+A chat between a curious user and an artificial intelligence assistant.
+The assistant gives concise answers to the user's questions.
+USER: The task is: {instruction} The artificial intelligence assistant adjusts the provided [input] to meet the [expected output]. The assistant's main goal is to extract {expected_content} from the [input] and then polish these extracted contents for the response. Instead of strictly following the original task instructions, the focus is on pinpointing and improving extracted contents from the [input].
+ASSISTANT: Okay. I will focus on pinpointing and improving extracted contents from the [input].
+USER: [input] = "Sentence 1: Next to the MGM Grand you will find M and M World. Sentence 2: The candy has many fans who love its attractions." [expected output] = no
+ASSISTANT: Sentence 1: Next to the MGM Grand you will find M and M World. Sentence 2: The candy has many fans who love its attractions.
+USER: [input] = "Sentence 1: I've forgotten his name now, confessed Tuppence. Sentence 2: Tuppence remembered his name later." [expected output] = no
+ASSISTANT: Sentence 1: I've forgotten his name now, confessed Tuppence. Sentence 2: Tuppence remembered his name later.
+USER: [input] = "Sentence 1: One of the first organizational realignments taking place is in the Office of the Taxpayer Advocate. Sentence 2: The office of the taxpayer advocate is having an organizational realignment." [expected output] = yes
+ASSISTANT: Sentence 1: One of the first organizational realignments taking place is in the Office of the Taxpayer Advocate. Sentence 2: The office of the taxpayer advocate is having an organizational realignment.
+USER: [input] = "Sentence 1: yeah I tell you what though if you go price some of those tennis shoes i can see why now you know they're getting up in the hundred dollar range. Sentence 2: The tennis shoes have only one price." [expected output] = yes
+ASSISTANT: Sentence 1: yeah I tell you what though if you go price some of those tennis shoes i can see why now you know they're getting up in the hundred dollar range. Sentence 2: The tennis shoes have only one price.
 USER: [input] = {new_input} [expected output] = {label}
 ASSISTANT: 
 """  # noqa E501
@@ -100,16 +115,18 @@ def construct_verify_prompt(
     new_input: str,
     expected_content: str,
     label: str,
-    instruction: str
+    instruction: str,
+    extraction_example_string
 ):
     prompt = INPUT_FILTER_TEMPLATE.format(
         few_shot_examples=examples,
         new_input=new_input,
         expected_content=expected_content,
         label = label,
-        instruction = instruction
+        instruction = instruction,
+        extraction_example_string=extraction_example_string,
     )
-    # print(prompt)
+    print(prompt)
     return prompt
 
 

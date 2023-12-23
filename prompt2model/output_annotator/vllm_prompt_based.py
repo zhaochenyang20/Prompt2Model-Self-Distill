@@ -70,11 +70,22 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         Returns:
             The generated prompt string.
         """
+        matches = re.findall(
+            r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
+            few_shot_example_string,
+            re.DOTALL,
+        )
+        assert matches != []
+        annotation_prompt_string = ""
+        for input, output in matches:
+            annotation_prompt_string += f"USER: [input] = {input}\n"
+            annotation_prompt_string += f"ASSISTANT: {output}\n"
+        assert annotation_prompt_string != ""
         while True:
             # Construct the prompt.
             prompt = construct_meta_prompt(
                 instruction=instruction,
-                examples=few_shot_example_string,
+                examples=annotation_prompt_string.strip(),
                 new_input=new_input,
             )
             if count_tokens_from_string(prompt, "vicuna") < context_cutoff:

@@ -195,7 +195,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         ]
         return (new_inputs, pseudo_labels)
 
-    def verify(self, prompt_spec: PromptSpec, new_inputs: list[str], labels: list[str], expected_content):
+    def verify(self, prompt_spec: PromptSpec, new_inputs: list[str], labels: list[str], expected_content, extraction_examples):
         """Check the generated inputs.
 
         Args:
@@ -211,7 +211,8 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             few_shot_example_string: str,
             new_input: str,
             label: str,
-            instruction: str
+            instruction: str,
+            extraction_examples,
         ):
             matches = re.findall(
                 r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
@@ -223,17 +224,23 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             high_quality_input_string = ""
             for input in high_quality_inputs:
                 high_quality_input_string += f'"{input}"\n\n'
+            extraction_example_string = ""
+            for extraction_input, extraction_output in extraction_examples:
+                extraction_example_string += f"USER: {extraction_input}\n"
+                extraction_example_string += f"ASSISTANT: {extraction_output}\n"
+            assert extraction_example_string != ""
             return construct_verify_prompt(
                 examples=high_quality_input_string,
                 new_input=new_input,
                 expected_content=expected_content,
+                extraction_example_string=extraction_example_string.strip(),
                 label = label,
                 instruction = instruction
             )
 
         filter_prompts = []
         for i in range(len(new_inputs)):
-            filter_prompts.append(construct_filter_prompt(prompt_spec.examples, new_inputs[i], labels[i], prompt_spec.instruction))
+            filter_prompts.append(construct_filter_prompt(prompt_spec.examples, new_inputs[i], labels[i], prompt_spec.instruction, extraction_examples))
         sampling_params = SamplingParams(
             top_k=-1,
             top_p=1,
@@ -257,6 +264,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         portion=1,
         intput_length_constraint=False,
         conditional_labels=[],
+        extraction_examples=[],
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
 
@@ -328,6 +336,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     filtered_new_inputs,
                     filtered_pesudo_labels,
                     expected_content=expected_content,
+                    extraction_examples=extraction_examples,
                 )
                 if test:
                     after_verifier = dict(zip(verified_inputs, filtered_pesudo_labels))

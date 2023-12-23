@@ -137,7 +137,9 @@
             "input",
             "output",
             "\n\n",
-            "\\_\\_"
+            "\\_\\_",
+            "therefore",
+            "Therefore"
         ],
         "metric": "exact_match",
         "labels": ["support", "undermine"]

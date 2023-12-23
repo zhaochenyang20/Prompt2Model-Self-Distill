@@ -271,6 +271,8 @@ def main(config_path: str):
             loaded_params["portion"],
             loaded_params["intput_length_constraint"],
             loaded_params["conditional_labels"],
+            reannotate=True,
+            extraction_examples=loaded_params["extraction_examples"]
         )
 
     if not (log_and_data_path / "dataset").exists():
@@ -285,6 +287,7 @@ def main(config_path: str):
             prompt_spec,
             loaded_params["optional_list"],
             loaded_params["output_length_constraint"],
+            loaded_params["conditional_labels"],
         )
 
     if len(datasets.load_from_disk(log_and_data_path / "dataset")) == 0:

@@ -2,12 +2,13 @@ import gc
 import json
 
 import datasets
-import ray
 import torch
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
-
+from functools import partial
 from prompt2model.output_annotator import VLLMPromptBasedOutputAnnotator
 
+def filter_func(example, conditional_label):
+    return example["output_col"] in conditional_label
 
 def annotate_and_write_outputs(
     log_and_data_path,
@@ -17,13 +18,13 @@ def annotate_and_write_outputs(
     prompt_spec,
     optional_list,
     output_length_constraint,
+    conditional_labels=[],
 ):
     if (log_and_data_path / "dataset").exists():
         return
-    ray.init(ignore_reinit_error=True)
     output_annotator = VLLMPromptBasedOutputAnnotator(
         gpu_memory_utilization=gpu_memory_utilization,
-        tensor_parallel_size=tensor_parallel_size,
+        tensor_parallel_size=1,
     )
     dataset = datasets.load_from_disk(log_and_data_path / "inputs")
     inputs = dataset["input_col"]
@@ -36,6 +37,9 @@ def annotate_and_write_outputs(
         optional_list=optional_list,
         output_length_constraint=output_length_constraint,
     )
+    if conditional_labels != []:
+        filter_func_partial = partial(filter_func, conditional_label=conditional_labels)
+        output_dataset = output_dataset.filter(filter_func_partial)
     output_dataset.save_to_disk(log_and_data_path / f"dataset")
     with open(log_and_data_path / f"dataset.txt", "w") as file:
         for index, item in enumerate(output_dataset):
@@ -60,4 +64,3 @@ def annotate_and_write_outputs(
     destroy_model_parallel()
     gc.collect()
     torch.cuda.empty_cache()
-    ray.shutdown()

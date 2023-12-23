@@ -1,0 +1,18 @@
+best_ckpt_generated_content
+'yes': 1964 times
+'no': 1036 times
+groud_truth data: biased
+mean: 1500.0, std: 464.0
+--------------------------------------------------
+best_ckpt_generated_content
+'no': 2450 times
+'
+no': 550 times
+model_output data: biased
+mean: 1500.0, std: 950.0
+best_ckpt_generated_content f1 score: 0.3898259705488621
+==================================================
+in all, we have 1 classification tasks
+ground truth biased ratio: 1.0
+model output biased ratio: 1.0
+both biased ratio: 1.0
