@@ -240,7 +240,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
 
         filter_prompts = []
         for i in range(len(new_inputs)):
-            filter_prompts.append(construct_filter_prompt(prompt_spec.examples, new_inputs[i], labels[i], prompt_spec.instruction, extraction_examples))
+            filter_prompts.append(construct_filter_prompt(prompt_spec.examples, new_inputs[i], labels[i], prompt_spec.instruction, extraction_examples).strip())
         sampling_params = SamplingParams(
             top_k=-1,
             top_p=1,
@@ -251,7 +251,13 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         filtered_inputs = [
             output.text for each in output_sequence for output in each.outputs
         ]
-        return filtered_inputs
+        trancated_outputs = []
+        for each in filtered_inputs:
+            if "USER:" in each:
+                trancated_outputs.append(each[:each.index("USER:")].strip())
+            else:
+                trancated_outputs.append(each.strip())
+        return trancated_outputs
 
     def batch_generation_inputs(
         self,

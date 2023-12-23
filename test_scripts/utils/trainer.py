@@ -50,7 +50,8 @@ def finetune_vicuna(
         example["model_input"] = PROMPT_TEMPLATE.format(
             task_instruction=prompt_spec.instruction,
             new_input=example["input_col"],
-        ).strip()
+        )
+        #! 此处绝对不可以 strip，否则 token 定位失效
         example["model_output"] = example["output_col"].strip()
         example["text"] = (
             example["model_input"] + example["model_output"] + tokenizer.eos_token

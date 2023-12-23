@@ -10,13 +10,13 @@ import optuna
 from functools import partial
 
 # TODO change task
-task = task1554
+task = task935
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "4,5"
 # TODO change task name
 task_name = task.task_name
 # TODO change experiment rank
-experiment_rank = 2
+experiment_rank = 1
 # TODO 加expected content和metrics
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G

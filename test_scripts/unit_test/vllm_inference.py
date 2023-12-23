@@ -10,7 +10,18 @@ language_model = LLM(
     tensor_parallel_size=1,
 )
 
-input_prompt = """\nA chat between a curious user and an artificial intelligence assistant.\nThe assistant gives concise answers to the user's questions.\nUSER: The artificial intelligence assistant only needs to help annotate label. The task is: In this task, you are given a premise, a hypothesis, and an update. The premise sentence describes a real-world situation and is always assumed to be true. The hypothesis sentence describes an assumption or inference that you might make about that situation having read the premise. The update provides additional information about the situation that might weaken or strengthen the hypothesis. A weakener is a statement that weakens the hypothesis. It makes you much less likely to believe the hypothesis is true. A strengthener is a statement that strengthens the hypothesis. It makes you much more likely to believe the hypothesis is true. Your task is to output 'strengthener' or 'weakener' if the update strengths or weakens the hypothesis, respectively. \nASSISTANT: Okay. \nUSER: [input] = Premise: PersonX seems interested\nHypothesis: PersonX then good activity\nUpdate: PersonX was a good student\nASSISTANT: strengthener\nUSER: [input] = Premise: PersonX seems interested\nHypothesis: PersonX then good activity\nUpdate: PersonX was faking to get close to a girl\nASSISTANT: weakener\nUSER: [input] = \nPremise: PersonX seems interested\nHypothesis: PersonX then good activity\nUpdate: PersonX was faking to get close to a girl\nASSISTANT: \n"""
+input_prompt = """
+A chat between a curious user and an artificial intelligence assistant.
+The assistant gives concise answers to the user's questions.
+USER:  [task description]: In this task, you are given two statements. The task is to output whether a given textual premise, i.e. Statement 2, entails or implies a given scientific fact, i.e. Statement 1. The output should be 'entails' if Statement 2 supports Statement 1 and should be 'neutral' otherwise. The artificial intelligence assistant adjusts the provided [input] to meet the [expected output]. The assistant's main goal is to extract "Sentence 1" and "Sentence 2" from the [input] and then polish these extracted contents for the response. Instead of strictly following the [task description] to execute the task and provide an explanation, the focus is on pinpointing and improving the extracted contents from the [input].
+ASSISTANT: Okay. I will focus on pinpointing and improving the extracted contents from the [input]. I won't execute the task or provide an explanation.
+USER: "[input] = "Yes. I can generate a new intput as Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism." [expected output] = entails
+ASSISTANT: claim: Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism.
+USER: [input] = "Sentence 1: Warm and humid temperature and moisture conditions describe an air mass that originates over the Atlantic ocean near the equator. Sentence 2: Maritime tropical air " [expected output] = neutral
+ASSISTANT: Sentence 1: Warm and humid temperature and moisture conditions describe an air mass that originates over the Atlantic ocean near the equator. Sentence 2: Maritime tropical air Warm, humid air mass that forms over tropical and subtropical oceans.
+USER: [input] = "Sentence 1: The process of photosynthesis converts solar energy into chemical energy. Sentence 2: The process of photosynthesis converts sunlight into glucose." [expected output] = neutral
+ASSISTANT:
+""".strip()
 
 #! 换一个 Question Context 多测试
 #! 用 [info] [/info] warp 起来
@@ -20,20 +31,12 @@ prompts = [input_prompt]
 
 hyperparameter_choices = {}
 
-sampling_params = SamplingParams(
-    n=hyperparameter_choices.get("n", 10),
-    best_of=hyperparameter_choices.get("best_of", 20),
-    top_k=-1,
-    top_p=1,
-    temperature=0.2,
-    max_tokens=500,
-)
 
 sampling_params = SamplingParams(
-    n=hyperparameter_choices.get("n", 10),
-    best_of=hyperparameter_choices.get("best_of", 20),
-    top_k=hyperparameter_choices.get("top_k", 10),
-    temperature=hyperparameter_choices.get("temperature", 0.2),
+    n=hyperparameter_choices.get("n", 1),
+    best_of=hyperparameter_choices.get("best_of", 1),
+    top_k=hyperparameter_choices.get("top_k", -1),
+    temperature=hyperparameter_choices.get("temperature", 0),
     max_tokens=hyperparameter_choices.get("max_tokens", 500),
 )
 

@@ -134,7 +134,7 @@ def validate_or_test(
         example["model_input"] = PROMPT_TEMPLATE.format(
             task_instruction=instruction,
             new_input=example["input_col"],
-        ).strip()
+        )
         example["model_output"] = example["output_col"].strip()
         return example
 
