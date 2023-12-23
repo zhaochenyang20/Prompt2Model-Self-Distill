@@ -233,7 +233,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 examples=high_quality_input_string,
                 new_input=new_input,
                 expected_content=expected_content,
-                extraction_example_string=extraction_example_string.strip(),
+                extraction_example_string=extraction_example_string,
                 label = label,
                 instruction = instruction
             )

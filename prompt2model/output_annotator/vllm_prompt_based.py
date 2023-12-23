@@ -87,9 +87,9 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                 instruction=instruction,
                 examples=annotation_prompt_string.strip(),
                 new_input=new_input,
-            )
+            ).strip()
             if count_tokens_from_string(prompt, "vicuna") < context_cutoff:
-                return prompt
+                return prompt.strip()
             else:
                 orginal_input_string = (
                     instruction + few_shot_example_string
@@ -146,6 +146,8 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         _, mean_plus_2std, mean_minus_2std = calculate_string_metrics(
             [match[1] for match in matches]
         )
+        # from IPython import embed
+        # embed()
         prompts = []
         consistency_filter = partial(
             self_consistency_filter,
@@ -164,7 +166,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                     prompt_spec.examples,
                     new_input=input,
                     context_cutoff=3000,
-                )
+                ).strip()
             ]
 
         sampling_params = SamplingParams(
@@ -179,7 +181,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         output_cols = []
         for idx, input in enumerate(input_strings):
             outputs = [
-                output.text
+                output.text.strip()
                 for output in output_sequence[idx].outputs
                 if (output.text is not None and output.text != "")
             ]

@@ -7,8 +7,14 @@ from vllm.model_executor.parallel_utils.parallel_state import destroy_model_para
 from functools import partial
 from prompt2model.output_annotator import VLLMPromptBasedOutputAnnotator
 
-def filter_func(example, conditional_label):
-    return example["output_col"] in conditional_label
+def filter_func(example, conditional_labels):
+    return example["output_col"] in conditional_labels
+
+def mapping_func(example, conditional_labels):
+    for conditional_label in conditional_labels:
+        if conditional_label in example["output_col"]:
+            example["output_col"] = conditional_label
+            return
 
 def annotate_and_write_outputs(
     log_and_data_path,
@@ -38,8 +44,12 @@ def annotate_and_write_outputs(
         output_length_constraint=output_length_constraint,
     )
     if conditional_labels != []:
-        filter_func_partial = partial(filter_func, conditional_label=conditional_labels)
+        mapping_function = partial(mapping_func, conditional_labels=conditional_labels)
+        output_dataset = output_dataset.map(mapping_function)
+        print(f"before label filtering {len(output_dataset)}")
+        filter_func_partial = partial(filter_func, conditional_labels=conditional_labels)
         output_dataset = output_dataset.filter(filter_func_partial)
+        print(f"after label filtering {len(output_dataset)}")
     output_dataset.save_to_disk(log_and_data_path / f"dataset")
     with open(log_and_data_path / f"dataset.txt", "w") as file:
         for index, item in enumerate(output_dataset):

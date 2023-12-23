@@ -54,13 +54,14 @@ task1554 = Task(
     task_instruction="In this task, you are given two statements. The task is to output whether a given textual premise, i.e. Statement 2, entails or implies a given scientific fact, i.e. Statement 1. The output should be 'entails' if Statement 2 supports Statement 1 and should be 'neutral' otherwise.",
     task_name="task1554",
     examples="""
-[input]="claim: Music containing lyrics that glorify violent and criminal lifestyles should be banned.
-perspective: hip hop artists have a right to free speech"
-[output]="undermine"
+"[input]="Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism."
+[output]="entails"
 
-[input]="claim: Abolish the US Electoral College.
-perspective: The electoral college weakens incentives for voting and party building."
-[output]="support"
+[input]="Sentence 1: The endocrine system produces most of the hormones that regulate body functions. Sentence 2: Your endocrine glands produce hormones that control all your body functions."
+[output]="entails"
+
+[input]="Sentence 1: Warm and humid temperature and moisture conditions describe an air mass that originates over the Atlantic ocean near the equator. Sentence 2: Maritime tropical air Warm, humid air mass that forms over tropical and subtropical oceans."
+[output]="neutral"
 """.strip(),
 expected_content="\"Sentence 1\" and \"Sentence 2\"",
 optional_list=["input", "output", "\n\n", "\\_\\_", "therefore", "Therefore"],
@@ -68,11 +69,11 @@ metric="exact_match",
 labels=["entails", "neutral"],
 extraction_examples=[
     (
-        """"[input] = "claim: Music containing lyrics that glorify violent and criminal lifestyles should be banned. perspective: hip hop artists have a right to free speech." [expected output] = neutral""",
-        """claim: Music containing lyrics that glorify violent and criminal lifestyles should be banned. perspective: hip hop artists have a right to free speech."""
+        """"[input] = "Yes. I can generate a new intput as Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism." [expected output] = entails""",
+        """claim: Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism."""
      ),
-    ("""[input] = "claim: Abolish the US Electoral College. perspective: The Electoral College enhances nationwide voter participation and party building, ensuring that smaller states and rural areas have a greater voice in elections." [expected output] = entails""",
-     """claim: Abolish the US Electoral College. perspective: The electoral college weakens incentives for voting and party building.""")
+    ("""[input] = "Sentence 1: Warm and humid temperature and moisture conditions describe an air mass that originates over the Atlantic ocean near the equator. Sentence 2: Maritime tropical air " [expected output] = neutral""",
+     """Sentence 1: Warm and humid temperature and moisture conditions describe an air mass that originates over the Atlantic ocean near the equator. Sentence 2: Maritime tropical air Warm, humid air mass that forms over tropical and subtropical oceans.""")
     ],
 is_classification=True,
 )

@@ -134,8 +134,8 @@ def validate_or_test(
         example["model_input"] = PROMPT_TEMPLATE.format(
             task_instruction=instruction,
             new_input=example["input_col"],
-        )
-        example["model_output"] = example["output_col"]
+        ).strip()
+        example["model_output"] = example["output_col"].strip()
         return example
 
     loaded_dataset = datasets.load_from_disk(evaluation_dataset_path)
