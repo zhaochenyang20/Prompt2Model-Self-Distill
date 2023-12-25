@@ -20,7 +20,6 @@ os.environ["WANDB_MODE"] = "offline"
 
 from collections import OrderedDict
 
-from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from utils.evaluate import exact_match_score, rouge_l_score
 from utils.inference import vllm_inference

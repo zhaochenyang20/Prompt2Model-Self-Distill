@@ -11,7 +11,7 @@ import itertools
 # TODO change task
 task = task202
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "4,5"
 # TODO change task name
 task_name = task.task_name
 # TODO change experiment rank
