@@ -23,7 +23,7 @@ def find_best_directories(root_dir):
 
 root_dir = "/home/cyzhao/rerun_experiments"
 # best_directories = find_best_directories(root_dir)
-best_directories = ['/home/cyzhao/rerun_experiments/NI_task199_exp_1/best_ckpt_generated_content']
+best_directories = ['/home/cyzhao/NI_task199_exp_1/best_ckpt_generated_content']
 ground_truth_biased_count = 0
 model_output_biased_count = 0
 total = 0

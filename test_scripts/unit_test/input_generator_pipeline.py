@@ -16,7 +16,7 @@ input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=0.9)
 
 # TODO change task name "201" "202" 有问题
 # task_names = ["738", "1554", "1386", "020", "1516", "935", "1612", "937", "200", "1388", "1529", "199", "1344", "1385"]
-task_names = ["738"]
+task_names = ["202"]
 
 for task_name in task_names:
     print(f"\n\nin task_{task_name}")

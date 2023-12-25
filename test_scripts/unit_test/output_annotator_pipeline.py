@@ -6,11 +6,11 @@ from datasets import Dataset, load_from_disk
 from prompt2model.output_annotator import VLLMPromptBasedOutputAnnotator
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
-config =         {
-        "task_instruction": "In this task, you are given two statements. The task is to output whether a given textual premise, i.e. Statement 2, entails or implies a given scientific fact, i.e. Statement 1. The output should be 'entails' if Statement 2 supports Statement 1 and should be 'neutral' otherwise.",
-        "task_name": "task1554",
-        "examples": "[input]=\"Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism.\"\n[output]=\"entails\"\n\n[input]=\"Sentence 1: The endocrine system produces most of the hormones that regulate body functions. Sentence 2: Your endocrine glands produce hormones that control all your body functions.\"\n[output]=\"entails\"\n\n[input]=\"Sentence 1: Warm and humid temperature and moisture conditions describe an air mass that originates over the Atlantic ocean near the equator. Sentence 2: Maritime tropical air Warm, humid air mass that forms over tropical and subtropical oceans.\"\n[output]=\"neutral\"\n\n",
-        "expected_content": "\"Sentence 1\" and \"Sentence 2\"",
+config =      {
+        "task_instruction": "In this task, you're given a statement, and three sentences as choices. Your job is to determine which sentence clearly disagrees with the statement. Indicate your answer as '1', '2', or '3' corresponding to the choice number of the selected sentence.",
+        "task_name": "task202",
+        "examples": "[input]=\"Statement: Next to the MGM Grand you will find M and M World, four stories of merchandise and memorabilia dedicated to the candy that doesn't melt in your hand. Choices: 1. The candy has many fans who love its attractions. 2. There's four stories of memorabilia dedicated to a candy. 3. That particular candy melts and becomes difficult to eat.\"\n[output]=\"3\"\n\n[input]=\"Statment: I've forgotten his name now, confessed Tuppence. Choices: 1. Tuppence forgot his name. 2.Tuppence remembered his name later. 3. Tuppence never could forget his name.\"\n[output]=\"3\"\n\n[input]=\"Statement: One of the first organizational realignments taking place is in the Office of the Taxpayer Advocate. Choices: 1. The office of the taxpayer advocate is the last to be realigned. 2. The realignment is taking place over a few weeks. 3. The office of the taxpayer advocate is having an organizational realignment.\"\n[output]=\"1\"\n\n[input]=\"Statement: yeah i tell you what though if you go price some of those tennis shoes i can see why now you know they're getting up in the hundred dollar range. Choices: 1. The tennis shoes have a range of prices. 2. The tennis shoes can be in the hundred dollar range. 3. The tennis shoes are not over hundred dollars.\"\n[output]=\"3\"\n\n",
+        "expected_content": "a \"Statement\" and three \"Choices\"",
         "optional_list": [
             "input",
             "output",
@@ -18,7 +18,7 @@ config =         {
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["entails", "neutral"]
+        "labels": ["1", "2", "3"]
     }
 
 prompt_spec = MockPromptSpec(
@@ -27,7 +27,7 @@ prompt_spec = MockPromptSpec(
     examples=config["examples"],  # noqa E501
 )
 
-dataset_path = "/home/cyzhao/NI_task1554_exp_1/task1554_0.2_True_False_1/inputs"
+dataset_path = "/home/cyzhao/NI_task202_exp_1/task202_0.6_False_False_1/inputs"
 
 inputs = load_from_disk(dataset_path)['input_col']
 

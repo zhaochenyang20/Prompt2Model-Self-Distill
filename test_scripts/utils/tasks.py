@@ -54,7 +54,7 @@ task1554 = Task(
     task_instruction="In this task, you are given two statements. The task is to output whether a given textual premise, i.e. Statement 2, entails or implies a given scientific fact, i.e. Statement 1. The output should be 'entails' if Statement 2 supports Statement 1 and should be 'neutral' otherwise.",
     task_name="task1554",
     examples="""
-"[input]="Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism."
+[input]="Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism."
 [output]="entails"
 
 [input]="Sentence 1: The endocrine system produces most of the hormones that regulate body functions. Sentence 2: Your endocrine glands produce hormones that control all your body functions."
@@ -69,7 +69,7 @@ metric="exact_match",
 labels=["entails", "neutral"],
 extraction_examples=[
     (
-        """"[input] = "Yes. I can generate a new intput as Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism." [expected output] = entails""",
+        """"[input] = "Yes. I can generate a new intput. Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism." [expected output] = entails""",
         """claim: Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism."""
      ),
     ("""[input] = "Sentence 1: Warm and humid temperature and moisture conditions describe an air mass that originates over the Atlantic ocean near the equator. Sentence 2: Maritime tropical air " [expected output] = neutral""",
@@ -98,11 +98,127 @@ metric="exact_match",
 labels=["strengthener", "weakener"],
 extraction_examples=[
     (
-        """"[input] = "Yeah. I can give a generated input as Premise: PersonX seems interested\nHypothesis: PersonX then good activity\nUpdate: PersonX was a good student" [expected output] = strengthener""",
+        """[input] = "Premise: PersonX seems interested\nHypothesis: PersonX then good activity\nUpdate: PersonX was a good student" [expected output] = strengthener""",
         """Premise: PersonX seems interested\nHypothesis: PersonX then good activity\nUpdate: PersonX was a good student"""
      ),
-    ("""[input] = "Premise: PersonX keeps my eyes open Hypothesis: Because PersonX wanted to examine my eyes Update: They are trying " [expected output] = weakener""",
-     """claim: Premise: PersonX keeps my eyes open Hypothesis: Because PersonX wanted to examine my eyes Update: They are trying to talk to them and they want to sleep""")
+    (
+        """[input] = "Premise: PersonX keeps my eyes open\nHypothesis: Because PersonX wanted to examine my eyes\nUpdate: They are trying" [expected output] = weakener""",
+        """Premise: PersonX keeps my eyes open\nHypothesis: Because PersonX wanted to examine my eyes\nUpdate: They are trying"""
+    )
+    ],
+is_classification=True,
+)
+
+task199 = Task(
+    task_instruction="In this task, you're given a pair of sentences, sentence 1 and sentence 2. Your job is to determine if the two sentences clearly agree/disagree with each other, or if this can't be determined. Indicate your answer as yes or no respectively.",
+    task_name="task199",
+    examples="""
+[input]="Sentence 1: Next to the MGM Grand you will find M and M World. Sentence 2: The candy has many fans who love its attractions."
+[output]="no"
+
+[input]="Sentence 1: I've forgotten his name now, confessed Tuppence. Sentence 2: Tuppence remembered his name later."
+[output]="no"
+
+[input]="Sentence 1: One of the first organizational realignments taking place is in the Office of the Taxpayer Advocate. Sentence 2: The office of the taxpayer advocate is having an organizational realignment."
+[output]="yes"
+
+[input]="Sentence 1: yeah i tell you what though if you go price some of those tennis shoes i can see why now you know they're getting up in the hundred dollar range. Sentence 2: The tennis shoes have only one price."
+[output]="yes"
+""".strip(),
+expected_content="\"Sentence 1\" and \"Sentence 2\"",
+optional_list=["input", "output", "\n\n", "\\_\\_", "therefore", "Therefore"],
+metric="exact_match",
+labels=["no", "yes"],
+extraction_examples=[
+    (
+        """
+        [input]="Sentence 1: Next to the MGM Grand you will find M and M World. Sentence 2: The candy has many " [expected output] = no
+        """.strip(),
+        """
+        Sentence 1: Next to the MGM Grand you will find M and M World. Sentence 2: The candy has many fans who love its attractions.
+        """.strip()
+     ),
+    (
+        """
+        [input] = "Yes. I can generate a new exmaple. Sentence 1: I've forgotten his name now, confessed Tuppence. Sentence 2: Tuppence remembered his name later."  [expected output] = no
+        """.strip(),
+        """
+        Sentence 1: I've forgotten his name now, confessed Tuppence. Sentence 2: Tuppence remembered his name later.
+        """.strip()
+    ),
+    (
+        """
+        [input]="Sentence 1: One of the first organizational realignments taking place is in the Office of the Taxpayer Advocate. Sentence 2: The office of the taxpayer advocate is having an organizational realignment." [expected output] = yes
+        """.strip(),
+        """
+        Sentence 1: One of the first organizational realignments taking place is in the Office of the Taxpayer Advocate. Sentence 2: The office of the taxpayer advocate is having an organizational realignment.
+        """.strip()
+    ),
+    (
+        """
+        [input]="Sentence 1: yeah i tell you what though if you go price some of those tennis shoes i can see why now you know they're getting up in the hundred dollar range. Sentence 2: The tennis shoes have only one price." [expected output] = yes
+        """.strip(),
+        """
+        Sentence 1: yeah i tell you what though if you go price some of those tennis shoes i can see why now you know they're getting up in the hundred dollar range. Sentence 2: The tennis shoes have only one price.
+        """.strip()
+    )
+    ],
+is_classification=True,
+)
+
+task202 = Task(
+    task_instruction="In this task, you're given a statement, and three sentences as choices. Your job is to determine which sentence clearly disagrees with the statement. Indicate your answer as '1', '2', or '3' corresponding to the choice number of the selected sentence.",
+    task_name="task202",
+    examples="""
+        [input]="Statement: Next to the MGM Grand you will find M and M World, four stories of merchandise and memorabilia dedicated to the candy that doesn't melt in your hand. Choices: 1. The candy has many fans who love its attractions. 2. There's four stories of memorabilia dedicated to a candy. 3. That particular candy melts and becomes difficult to eat."
+        [output]="3"
+        
+        [input]="Statement: I've forgotten his name now, confessed Tuppence. Choices: 1. Tuppence forgot his name. 2. Tuppence never could forget his name. 3. Tuppence remembered his name later."
+        [output]="2"
+        
+        [input]="Statement: One of the first organizational realignments taking place is in the Office of the Taxpayer Advocate. Choices: 1. The office of the taxpayer advocate is the last to be realigned. 2. The realignment is taking place over a few weeks. 3. The office of the taxpayer advocate is having an organizational realignment."
+        [output]="1"
+        
+        [input]="Statement: yeah i tell you what though if you go price some of those tennis shoes i can see why now you know they're getting up in the hundred dollar range. Choices: 1. The tennis shoes have a range of prices. 2. The tennis shoes can be in the hundred dollar range. 3. The tennis shoes are not over hundred dollars."
+        [output]="3"
+""".strip(),
+expected_content="""
+    "Statement" and "Choices"
+    """.strip(),
+optional_list=["input", "output", "\n\n", "\\_\\_", "therefore", "Therefore"],
+metric="exact_match",
+labels=["1", "2", "3"],
+extraction_examples=[
+    (
+        """
+[input] = "Statement: Next to the MGM Grand you will find M and M World, four stories of merchandise and memorabilia dedicated to the candy that doesn't melt in your hand.
+
+Choices:
+
+The candy has many fans who love its attractions.
+There's four stories of memorabilia dedicated to a candy.
+That particular candy melts and becomes difficult to eat.
+The statement suggests that M&M's World is a place where you can find merchandise and memorabilia dedicated to the candy that doesn't melt in your hand. Choice 1 does not necessarily disagree with the statement, but it is not relevant to the main point. Choice 2 is related to the statement, but it does not necessarily disagree with it. Therefore, the answer is not 1 or 2." [expected output] = 3
+        """.strip(),
+        """
+        Statement: Next to the MGM Grand you will find M and M World, four stories of merchandise and memorabilia dedicated to the candy that doesn't melt in your hand. Choices: 1. The candy has many fans who love its attractions. 2. There's four stories of memorabilia dedicated to a candy. 3. That particular candy melts and becomes difficult to eat.
+        """.strip()
+     ),
+    (
+        """
+        [input] = "Improved Statement: Tuppence confessed that she forgot the name of a person.
+
+Improved Choices:
+
+1.Tuppence forgot his name.
+2.Tuppence remembered his name later.
+3.Tuppence never could forget his name.
+The improved statement clearly states the main point of the original statement and the choices are relevant to the topic."  [expected output] = 3
+        """.strip(),
+        """
+        Statement: Tuppence confessed that she forgot the name of a person. Choices: 1. Tuppence forgot his name. 2.Tuppence remembered his name later. 3. Tuppence never could forget his name. 
+        """.strip()
+    )
     ],
 is_classification=True,
 )

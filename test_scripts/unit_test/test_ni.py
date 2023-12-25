@@ -4,23 +4,47 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 import gc
 import json
-from functools import partial
+import re
 from pathlib import Path
 
 import datasets
-import ray
 import torch
 from IPython import embed
 from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
-
-from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
 
 # import os
 
+PROMPT_TEMPLATE = """
+A chat between a curious user and an artificial intelligence assistant.
+The assistant gives concise answers to the user's questions.
+USER: The artificial intelligence assistant only needs to help annotate label. The task is: {instruction} 
+ASSISTANT: Okay. 
+{examples}
+USER: [input] = {new_input}
+ASSISTANT: 
+"""  # noqa E501
+
+def construct_meta_prompt(
+    instruction: str = None,
+    examples: str = None,
+    new_input: str = None,
+) -> str:
+    """Constructs a prompt template for the dataset generator.
+
+    Args:
+        instruction: The natural language instruction for the prompt.
+        input: A new input to be annotated.
+        high_quality_input_string: A string representing the high quality examples.
+    """
+    return PROMPT_TEMPLATE.format(
+        instruction=instruction,
+        new_input=new_input,
+        examples=examples,
+    )
 
 def lcs_length_dp(x, y):
     """Compute the length of the longest common subsequence between two strings using dynamic programming."""
@@ -71,13 +95,10 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
         # 改了这里的名字
         path = f"/data2/cyzhao/best_ckpt/{experiment_name}"
-        ray.init(ignore_reinit_error=True)
         tuned_vicuna = LLM(
             model=base_model if not finetuned else path,
             gpu_memory_utilization=0.9,
-            tensor_parallel_size=len(
-                os.environ["CUDA_VISIBLE_DEVICES"].split(",")
-            ),  # 根据卡数改
+            tensor_parallel_size=1,  # 根据卡数改
         )
         for test_type in ["test", "eval"]:
             test_dataset = datasets.load_from_disk(
@@ -105,23 +126,29 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                 examples=examples,
             )
 
-            construct_prompt = partial(
-                construct_meta_prompt,
-                instruction=prompt_spec.instruction,
-                examples=prompt_spec.examples,
-            )
-
             tokenizer = AutoTokenizer.from_pretrained(
                 "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
                 local_files_only=True,
                 padding_side="left",
                 trust_remote_code=True,
             )
-
+            matches = re.findall(
+                r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
+                prompt_spec.examples,
+                re.DOTALL,
+            )
+            assert matches != []
+            annotation_prompt_string = ""
+            for input, output in matches:
+                annotation_prompt_string += f"USER: [input] = {input}\n"
+                annotation_prompt_string += f"ASSISTANT: {output}\n"
+            assert annotation_prompt_string != ""
             def map_func(example):
-                example["model_input"] = construct_prompt(
-                    new_input=example["input_col"]
-                )
+                example["model_input"] = construct_meta_prompt(
+                instruction=prompt_spec.instruction,
+                examples=annotation_prompt_string.strip(),
+                new_input=example["input_col"],
+            ).strip()
                 example["model_output"] = example["output_col"]
                 example["text"] = (
                     example["model_input"]
@@ -177,10 +204,9 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         del tuned_vicuna
         gc.collect()
         torch.cuda.empty_cache()
-        ray.shutdown()
         destroy_model_parallel()
 
 
 # TODO 改任务
-task_names = ["task1554"]
+task_names = ["task202"]
 evaluate_model(task_names, finetuned=False, exact_match=True)

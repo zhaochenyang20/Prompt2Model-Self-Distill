@@ -5,18 +5,17 @@ import os
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
 from pathlib import Path
-from utils.tasks import task738, task1554, task935
-import optuna
-from functools import partial
+from utils.tasks import task738, task1554, task935, task199, task202
+import itertools
 
 # TODO change task
-task = task935
+task = task202
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "4,5"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 # TODO change task name
 task_name = task.task_name
 # TODO change experiment rank
-experiment_rank = 1
+experiment_rank = 3
 # TODO 加expected content和metrics
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
@@ -102,7 +101,7 @@ def objective_function(
     assert optional_list != []
     assert expected_content != ""
     assert metric != ""
-
+# change generation epoch to 40 for 738
     params = {
         "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
         "task_name": task_name,
@@ -111,7 +110,7 @@ def objective_function(
         "expected_content": expected_content,
         "evaluation_dataset_path": evaluation_dataset_path,
         "test_set_path": test_set_path,
-        "generation_epochs": int(20),
+        "generation_epochs": int(40),
         "generation_batch_size": int(10),
         "generation_top_k": int(40),
         "min_frequency": float(0.3),
@@ -206,30 +205,24 @@ def objective_function(
     write_results(log_and_data_root, max_training_epochs)
     return highest_validation_result
 
-def objective(trial, task):
-    generation_temperature = trial.suggest_categorical(
-        "generation_temperature", [0.1, 0.2, 0.3, 0.4, 0.5]
-    )
-    intput_length_constraint = trial.suggest_categorical(
-        "intput_length_constraint", [False, True]
-    )
+temperatures = [0.6, 0.7, 0.8, 0.9, 1.0]
+input_constraints = [False, True]
+output_constraints = [False, True]
+
+all_combinations = list(itertools.product(temperatures, input_constraints, output_constraints))
+
+# 遍历每组参数组合
+for combination in all_combinations:
+    generation_temperature, input_length_constraint, output_length_constraint = combination
+    
     if task.is_classification:
         output_length_constraint = False
-    else:
-        output_length_constraint = trial.suggest_categorical(
-            "output_length_constraint", [False, True]
-        )
-    return objective_function(
+
+    result = objective_function(
         generation_temperature,
-        intput_length_constraint,
+        input_length_constraint,
         output_length_constraint,
     )
-
-# Create and optimize the study
-study = optuna.create_study(direction="maximize")
-study.optimize(partial(objective, task=task), n_trials=20)
-best_params = study.best_params
-print(best_params)
 
 with open(best_validation_result_path, "r") as json_file:
     evaluate_result = json.load(json_file)

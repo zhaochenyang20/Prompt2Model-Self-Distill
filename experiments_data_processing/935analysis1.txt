@@ -1,0 +1,20 @@
+best_ckpt_generated_content
+'strengthener': 508 times
+'weakener': 492 times
+groud_truth data: not biased
+mean: 500.0, std: 8.0
+--------------------------------------------------
+best_ckpt_generated_content
+'strengthener'': 571 times
+'strengthener'
+weakener': 417 times
+'strengthener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener's weakener'': 11 times
+'strengthener': 1 times
+model_output data: biased
+mean: 250.0, std: 250.0259986481406
+best_ckpt_generated_content f1 score: 3.929273084479371e-06
+==================================================
+in all, we have 1 classification tasks
+ground truth biased ratio: 0.0
+model output biased ratio: 1.0
+both biased ratio: 0.0

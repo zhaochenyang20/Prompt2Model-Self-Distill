@@ -55,7 +55,8 @@ def finetune_vicuna(
         example["model_output"] = example["output_col"].strip()
         example["text"] = (
             example["model_input"] + example["model_output"] + tokenizer.eos_token
-        ).strip()
+        )
+        #! 此处其实也不用 strip，因为 eos 必定不是 \n
         return example
 
     tokenizer = AutoTokenizer.from_pretrained(
