@@ -1,16 +1,20 @@
 best_ckpt_generated_content
-'neutral': 482 times
-'entails': 517 times
+'3': 970 times
+'2': 999 times
+'1': 1031 times
 groud_truth data: biased
-mean: 499.5, std: 17.5
+mean: 1000.0, std: 24.91318258807306
 --------------------------------------------------
 best_ckpt_generated_content
-'neutral': 555 times
-'entails': 444 times
+'2': 1762 times
+'1': 1238 times
 model_output data: biased
-mean: 499.5, std: 55.5
-best_ckpt_generated_content f1 score: 0.7953660006959519
+mean: 1500.0, std: 262.0
+best_ckpt_generated_content f1 score: 0.39965639478758436
 ==================================================
+3 = 0.0
+2 = 0.5825825825825826
+1 = 0.40543161978661496
 in all, we have 1 classification tasks
 ground truth biased ratio: 1.0
 model output biased ratio: 1.0

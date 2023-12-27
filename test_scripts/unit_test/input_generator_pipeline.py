@@ -2,7 +2,7 @@
 import os
 
 # TODO 改卡
-os.environ["CUDA_VISIBLE_DEVICES"] = "5"
+os.environ["CUDA_VISIBLE_DEVICES"] = "4"
 
 import json
 from pathlib import Path
@@ -16,7 +16,7 @@ input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=0.9)
 
 # TODO change task name "201" "202" 有问题
 # task_names = ["738", "1554", "1386", "020", "1516", "935", "1612", "937", "200", "1388", "1529", "199", "1344", "1385"]
-task_names = ["202"]
+task_names = ["1386"]
 
 for task_name in task_names:
     print(f"\n\nin task_{task_name}")
@@ -58,4 +58,5 @@ for task_name in task_names:
         expected_content=choosen_task["expected_content"],
         optional_list=choosen_task["optional_list"],
         conditional_labels=choosen_task["labels"],
+        early_end=True,
     )

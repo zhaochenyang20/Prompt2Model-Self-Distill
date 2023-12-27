@@ -24,7 +24,7 @@ from prompt2model.quality_evaluator import (
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 
 logger = get_formatted_logger("InputGenerator")
-test = False
+test = True
 
 
 class VLLMPromptBasedInputGenerator(InputGenerator):
@@ -206,7 +206,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
 
         if new_inputs is None:
             return None
-
+        
         def construct_filter_prompt(
             few_shot_example_string: str,
             new_input: str,
@@ -271,6 +271,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         intput_length_constraint=False,
         conditional_labels=[],
         extraction_examples=[],
+        early_end=False,
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
 
@@ -337,9 +338,11 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     before_verifier = dict(zip(filtered_new_inputs, filtered_pesudo_labels))
                     print("\n\nbefore filtering")
                     print(before_verifier)
+                if early_end:
+                    return
                 verified_inputs = self.verify(
                     prompt_spec,
-                    filtered_new_inputs,
+                    [each.strip() for each in filtered_new_inputs],
                     filtered_pesudo_labels,
                     expected_content=expected_content,
                     extraction_examples=extraction_examples,
@@ -395,6 +398,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     for input_item, label in generated_inputs:
                         if input_item not in unique_inputs:
                             unique_inputs[input_item] = label
-                            filtered_generated_inputs.append((input_item, label))
+                            filtered_generated_inputs.append((input_item.strip(), label))
                     generated_inputs = filtered_generated_inputs
         return generated_inputs

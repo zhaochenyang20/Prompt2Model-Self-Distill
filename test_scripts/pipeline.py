@@ -5,23 +5,23 @@ import os
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
 from pathlib import Path
-from utils.tasks import task738, task1554, task935, task199, task202
+from utils.tasks import task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529
 import itertools
 
 # TODO change task
-task = task202
+task = task1529
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "4,5"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 # TODO change task name
 task_name = task.task_name
 # TODO change experiment rank
-experiment_rank = 3
+experiment_rank = 4
 # TODO 加expected content和metrics
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
 # TODO 改显存配置
 gpu_memory_utilization = 0.85
-per_device_train_batch_size = 10
+per_device_train_batch_size = 1
 # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
 max_training_epochs = 3
 file_path = "/home/cyzhao/main/NI_tasks/tasks.json"

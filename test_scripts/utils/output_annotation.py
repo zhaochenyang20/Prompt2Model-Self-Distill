@@ -2,6 +2,9 @@ import gc
 import json
 
 import datasets
+import random
+from collections import Counter
+from datasets import Dataset
 import torch
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 from functools import partial
@@ -52,6 +55,24 @@ def annotate_and_write_outputs(
         filter_func_partial = partial(filter_func, conditional_labels=conditional_labels)
         output_dataset = output_dataset.filter(filter_func_partial)
         print(f"after label filtering {len(output_dataset)}")
+        
+        #! 强行将生成的 label 平衡起来
+        output_col = output_dataset['output_col']
+        element_count = Counter(output_col)
+        min_count = min(element_count.values())
+        balanced_data = {'input_col': [], 'output_col': []}
+        class_samples = {label: [] for label in element_count.keys()}
+        for input_val, output_val in zip(output_dataset['input_col'], output_dataset['output_col']):
+            class_samples[output_val].append((input_val, output_val))
+        for _ in range(min_count):
+            for label in class_samples.keys():
+                sample = random.choice(class_samples[label])
+                print(sample)
+                balanced_data['input_col'].append(sample[0])
+                balanced_data['output_col'].append(sample[1])
+                class_samples[label].remove(sample)
+        output_dataset = Dataset.from_dict(balanced_data)
+
     output_dataset.save_to_disk(log_and_data_path / f"dataset")
     with open(log_and_data_path / f"dataset.txt", "w") as file:
         for index, item in enumerate(output_dataset):

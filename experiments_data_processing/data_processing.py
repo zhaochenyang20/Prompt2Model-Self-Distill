@@ -23,11 +23,16 @@ def find_best_directories(root_dir):
 
 root_dir = "/home/cyzhao/rerun_experiments"
 # best_directories = find_best_directories(root_dir)
-best_directories = ['/home/cyzhao/NI_task199_exp_1/best_ckpt_generated_content']
+best_directories = ['/home/cyzhao/NI_task202_exp_3/best_ckpt_generated_content']
 ground_truth_biased_count = 0
 model_output_biased_count = 0
 total = 0
 both_biased = 0
+
+ground_truth_labels = {}
+all_labels = {}
+correct_inputs = []
+
 for directory in best_directories:
     data = load_from_disk(directory)
     parts = directory.split("/")
@@ -43,13 +48,14 @@ for directory in best_directories:
             keep_in_memory=True,
         )
         y.append(data[label])
-        # embed()
         if label == "groud_truth":
             if len(counts.keys()) > 5:
                 break
         print(task_name)
         for value, count in counts.items():
             print(f"'{value}': {count} times")
+            if value not in all_labels:
+                all_labels[value] = 0
         values = list(counts.values())
         mean = np.mean(values)
         std_dev = np.std(values)
@@ -63,6 +69,8 @@ for directory in best_directories:
                 print(f"{label} data: biased")
                 biased = True
                 ground_truth_biased_count += 1
+            for value, count in counts.items():
+                ground_truth_labels[value] = count
         elif label == "model_output":
             if len(counts.values()) < categories:
                 print(f"{label} data: biased")
@@ -79,7 +87,6 @@ for directory in best_directories:
                     if biased:
                         both_biased += 1
         print(f"mean: {mean}, std: {std_dev}")
-        # embed()
         if len(y) == 2:
             f1_weighted = f1_score(y[1], y[0], average="weighted")
             print(f"{task_name} f1 score: {f1_weighted}")
@@ -87,9 +94,19 @@ for directory in best_directories:
             print("=" * 50)
         else:
             print("-" * 50)
+    for i in range(len(data['groud_truth'])):
+        if data['groud_truth'][i] == data['model_output'][i]:
+            all_labels[data['groud_truth'][i]]+=1
+            correct_inputs.append(i)
 
 
+for label in all_labels.keys():
+    print(f"{label} = {all_labels[label]/ground_truth_labels[label]}")       
+
+print(correct_inputs)
 print(f"in all, we have {total} classification tasks")
 print(f"ground truth biased ratio: {ground_truth_biased_count/total}")
 print(f"model output biased ratio: {model_output_biased_count/total}")
 print(f"both biased ratio: {both_biased/total}")
+
+

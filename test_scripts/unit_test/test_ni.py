@@ -145,10 +145,10 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             assert annotation_prompt_string != ""
             def map_func(example):
                 example["model_input"] = construct_meta_prompt(
-                instruction=prompt_spec.instruction,
-                examples=annotation_prompt_string.strip(),
-                new_input=example["input_col"],
-            ).strip()
+                    instruction=prompt_spec.instruction,
+                    examples=annotation_prompt_string.strip(),
+                    new_input=example["input_col"],
+                ).strip()
                 example["model_output"] = example["output_col"]
                 example["text"] = (
                     example["model_input"]
@@ -208,5 +208,5 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 
 
 # TODO 改任务
-task_names = ["task202"]
+task_names = ["task1529"]
 evaluate_model(task_names, finetuned=False, exact_match=True)
