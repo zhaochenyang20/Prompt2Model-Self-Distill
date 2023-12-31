@@ -5,22 +5,23 @@ import os
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
 from pathlib import Path
-from utils.tasks import task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529
+from utils.tasks import task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529, task190, task200, task937, task642, task1612, task1516, task1615
 import itertools
 
 # TODO change task
-task = task1529
+task = task1615
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 # TODO change task name
 task_name = task.task_name
 # TODO change experiment rank
-experiment_rank = 4
+experiment_rank = 5
 # TODO 加expected content和metrics
 experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
 # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
 # TODO 改显存配置
 gpu_memory_utilization = 0.85
+# 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
 per_device_train_batch_size = 1
 # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
 max_training_epochs = 3
@@ -110,7 +111,7 @@ def objective_function(
         "expected_content": expected_content,
         "evaluation_dataset_path": evaluation_dataset_path,
         "test_set_path": test_set_path,
-        "generation_epochs": int(40),
+        "generation_epochs": int(800),
         "generation_batch_size": int(10),
         "generation_top_k": int(40),
         "min_frequency": float(0.3),

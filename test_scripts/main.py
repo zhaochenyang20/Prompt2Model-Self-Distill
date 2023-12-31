@@ -12,6 +12,7 @@ from pathlib import Path
 import datasets
 import numpy
 import torch
+import time
 
 from prompt2model.utils import count_tokens_from_string
 
@@ -234,7 +235,7 @@ def get_ckpt_paths_and_result(ckpt_path, evaluate_result_path):
 
 
 def main(config_path: str):
-    set_seed(42)
+    set_seed(int(time.time()))
     print(str(config_path))
     with open(config_path, "r") as json_file:
         loaded_params = json.load(json_file)

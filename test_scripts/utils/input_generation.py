@@ -41,10 +41,10 @@ def generate_and_write_inputs(
     )
     inputs = [each[0] for each in input_tuples]
     pesudo_labels = [each[1] for each in input_tuples]
-    with open(log_and_data_path / f"inputs.txt", "w") as file:
+    with open(log_and_data_path / f"inputs.txt", "w", encoding="utf-8") as file:
         for index, item in enumerate(inputs):
             file.write(
-                f"{index}:\n\n------------------------------------------------\n\n{item}\n\n------------------------------------------------\n\n"
+                fr"{index}:\n\n------------------------------------------------\n\n{item}\n\n------------------------------------------------\n\n"
             )
     dataset = datasets.Dataset.from_dict({"input_col": inputs})
     dataset.save_to_disk(log_and_data_path / "inputs")

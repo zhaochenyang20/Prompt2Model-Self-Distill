@@ -18,7 +18,7 @@ class Task:
         assert task_name is not None and task_name != ""
         assert metric in ["exact_match", "rouge"]
         assert examples != ""
-        assert isinstance(extraction_examples, list) and len(extraction_examples) >= 2
+        # assert isinstance(extraction_examples, list) and len(extraction_examples) >= 2
         assert isinstance(is_classification, bool)
         assert ((labels != []) == is_classification)
 
@@ -222,7 +222,6 @@ The improved statement clearly states the main point of the original statement a
     ],
 is_classification=True,
 )
-
 
 task1344 = Task(
     task_instruction="In this task, you're given two sentences. Indicate if the first sentence clearly entails the second sentence (i.e., one can conclude the 2nd sentence by reading the 1st one). Indicate your answer with '1' if the first sentence entails the second sentence, otherwise answer with '0'.",
@@ -429,7 +428,6 @@ extraction_examples=[
 is_classification=True,
 )
 
-
 task1388 = Task(
     task_instruction="""In this task, you will be presented with a premise and a hypothesis sentence. Determine whether the hypothesis sentence entails (implies), contradicts (opposes), or is neutral with respect to the given premise. Please answer with "Contradiction", "Neutral", or "Entailment".""",
     task_name="task1388",
@@ -507,3 +505,390 @@ extraction_examples=[
     ],
 is_classification=True,
 )
+
+task190 = Task(
+    task_instruction="""In this task, you're given a pair of sentences, sentence 1 and sentence 2. Your job is to choose whether the two sentences clearly agree (entailment)/disagree (contradiction) with each other, or if this cannot be determined (neutral). Your answer must be in the form of the letters E, C, and N respectively.""",
+    task_name="task190",
+    examples="""   
+[input]="Sentence 1: Jon saw his friend Tom coming out of the grocery store with a bag of fruit. Sentence 2: Tom had been shopping for fruit to give Jon."
+[output]="N"
+[input]="Sentence 1: The girl transferred all the flowers from the boquet to a vase. Sentence 2: The flowers will soon wither."
+[output]="N"
+[input]="Sentence 1: The skier was on the edge of the ramp. Sentence 2: The skier was dressed in winter clothes."
+[output]="E"
+[input]="Sentence 1: Joyce likes to eat fruit salad as often as possible. Sentence 2: Joyce loves eating healthy."
+[output]="E"
+[input]="Sentence 1: The boy skated down the staircase railing. Sentence 2: The boy is a newbie skater."
+[output]="C"
+[input]="Sentence 1: Bertha was selected as captain of her basketball team. Sentence 2: Bertha was not atheletically inclined."
+[output]="C"
+""".strip(),
+expected_content="""
+    "Sentence 1" and "Sentence 2"
+    """.strip(),
+optional_list=["input", "output", "\n\n", "\\_\\_", "therefore", "Therefore", "Hence"],
+metric="exact_match",
+labels=["E", "C", "N"],
+extraction_examples=[
+    (
+        """
+        [input]="Yes. There is a new input for this task. Sentence 1: Jon saw his friend Tom coming out of the grocery store with a bag of fruit. Sentence 2: Tom had been shopping for fruit to give Jon." [expected output] = N
+        """.strip(),
+        """
+        Sentence 1: Jon saw his friend Tom coming out of the grocery store with a bag of fruit. Sentence 2: Tom had been shopping for fruit to give Jon.
+        """.strip()
+    ),
+    (
+        """
+        [input]="Sentence 1: The girl transferred all the flowers from the boquet to a vase. Sentence 2: The flower can live longer." [expected output] = N
+        """.strip(),
+        """
+        Sentence 1: The girl transferred all the flowers from the boquet to a vase. Sentence 2: The flowers will soon wither.
+        """.strip()
+    ),
+    (
+        """
+        [input]="Yes. There is a new input for this task. Sentence 1: The skier was on the edge of the ramp. Sentence 2: The skier was dressed in winter clothes." [expected output] = E
+        """.strip(),
+        """
+        Sentence 1: The skier was on the edge of the ramp. Sentence 2: The skier was dressed in winter clothes.
+        """.strip()
+    ),
+    (
+        """
+        [input]="Sentence 1: Joyce likes to eat fruit salad as often as possible. Sentence 2: Joyce does not love eating healthy." [expected output] = E
+        """.strip(),
+        """
+        Sentence 1: Joyce likes to eat fruit salad as often as possible. Sentence 2: Joyce loves eating healthy.
+        """.strip()
+    ),
+    (
+        """
+        [input]="Yes. There is a new input for this task. Sentence 1: The boy skated down the staircase railing. Sentence 2: The boy is a newbie skater." [expected output] = C
+        """.strip(),
+        """
+        Sentence 1: The boy skated down the staircase railing. Sentence 2: The boy is a newbie skater.
+        """.strip()
+    ),
+    (
+        """
+        [input]="Sentence 1: Bertha was selected as captain of her basketball team. Sentence 2: Bertha was atheletically inclined." [expected output] = C
+        """.strip(),
+        """
+        Sentence 1: Bertha was selected as captain of her basketball team. Sentence 2: Bertha was not atheletically inclined.
+        """.strip()
+    )
+    ],
+is_classification=True,
+)
+
+task200 = Task(
+    task_instruction="""In this task, you're given a statement and three sentences as choices. Your job is to determine which sentence can be inferred from the statement. Incorrect choices change the meaning in important ways or have details that are not mentioned in the statement. Indicate your answer as 1,2, or 3 corresponding to the choice number of the selected sentence.""",
+    task_name="task200",
+    examples="""   
+[input]="Statement: Next to the MGM Grand you will find M and M World, four stories of merchandise and memorabilia dedicated to the candy that doesn't melt in your hand. Choices: 1. The candy has many fans who love its attractions. 2. There's four stories of memorabilia dedicated to a candy. 3. That particular candy melts and becomes difficult to eat."
+[output]="2"
+[input]="Statment: I've forgotten his name now, confessed Tuppence. Choices: 1. Tuppence forgot his name. 2.Tuppence remembered his name later. 3. Tuppence never could forget his name."
+[output]="1"
+[input]="Statement: One of the first organizational realignments taking place is in the Office of the Taxpayer Advocate. Choices: 1. The office of the taxpayer advocate is the last to be realigned. 2. The realignment is taking place over a few weeks. 3. The office of the taxpayer advocate is having an organizational realignment."
+[output]="3"
+""".strip(),
+expected_content="""
+    "Statement" and "Choices"
+    """.strip(),
+optional_list=["input", "output", "\n\n", "\\_\\_", "therefore", "Therefore", "Hence"],
+metric="exact_match",
+labels=["1", "2", "3"],
+extraction_examples=[
+    (
+        """
+        [input]="Yes. There is a new input for this task. Statement: Next to the MGM Grand you will find M and M World, four stories of merchandise and memorabilia dedicated to the candy that doesn't melt in your hand. Choices: 1. The candy has many fans who love its attractions. 2. There's four stories of memorabilia dedicated to a candy. 3. That particular candy melts and becomes difficult to eat." [expected output] = 2
+        """.strip(),
+        """
+        Statement: Next to the MGM Grand you will find M and M World, four stories of merchandise and memorabilia dedicated to the candy that doesn't melt in your hand. Choices: 1. The candy has many fans who love its attractions. 2. There's four stories of memorabilia dedicated to a candy. 3. That particular candy melts and becomes difficult to eat.
+        """.strip()
+    ),
+    (
+        """
+        [input]="Statement: yeah i tell you what though if you go price some of those tennis shoes i can see why now you know they're getting up in the hundred dollar range. Choices: 1. The tennis shoes can be in the hundred dollar range. 2. The tennis shoes have a range of prices. 3. The tennis shoes are not over hundred dollars." [expected output] = 2
+        """.strip(),
+        """
+        Statement: yeah i tell you what though if you go price some of those tennis shoes i can see why now you know they're getting up in the hundred dollar range. Choices: 1. The tennis shoes have a range of prices. 2. The tennis shoes can be in the hundred dollar range. 3. The tennis shoes are not over hundred dollars.
+        """.strip()
+    ),
+    (
+        """
+        [input]="Yes. There is a new input for this task. Statment: I've forgotten his name now, confessed Tuppence. Choices: 1. Tuppence forgot his name. 2.Tuppence remembered his name later. 3. Tuppence never could forget his name." [expected output] = 1
+        """.strip(),
+        """
+        Statment: I've forgotten his name now, confessed Tuppence. Choices: 1. Tuppence forgot his name. 2.Tuppence remembered his name later. 3. Tuppence never could forget his name.
+        """.strip()
+    )
+    ],
+is_classification=True,
+)
+
+task937 = Task(
+    task_instruction="""In this task, you are given a hypothesis and an update. The hypothesis sentence is a statement that speaks of a socially normative behavior. In other words, it is a generalizing statement about how we expect people to behave in society. The update provides additional contexts about the situation that might UNDERMINE or SUPPORT the generalization. An undermining context provides a situation that weakens the hypothesis. A supporting context provides a situation that strengthens the generalization. Your task is to output 'strengthener' or 'weakener' if the update supports or undermines the hypothesis, respectively""",
+    task_name="task937",
+    examples="""   
+[input]="Hypothesis: You should help your family with funeral expenses.\nUpdate: They have asked you to chip in"
+[output]="strengthener"
+[input]="Hypothesis: It's good to protect your property.\nUpdate: you don't care what happens to your property."
+[output]="weakener"
+[input]="Hypothesis: You should help your family with funeral expenses.\nUpdate: You are not financially stable to help out"
+[output]="weakener"
+""".strip(),
+expected_content="""
+    "Hypothesis" and "Update"
+    """.strip(),
+optional_list=["input", "output", "\n\n", "\\_\\_", "therefore", "Therefore", "Hence"],
+metric="exact_match",
+labels=["strengthener", "weakener"],
+extraction_examples=[
+    (
+        """
+        [input]="Yes. There is a new input for this task. Hypothesis: You should help your family with funeral expenses.\nUpdate: They have asked you to chip in" [expected output] = strengthener
+        """.strip(),
+        """
+        Hypothesis: You should help your family with funeral expenses.\nUpdate: They have asked you to chip in
+        """.strip()
+    ),
+    (
+        """
+        [input]="Yes. There is a new input for this task. Hypothesis: It's good to protect your property.\nUpdate: you don't care what happens to your property." [expected output] = weakener
+        """.strip(),
+        """
+        Hypothesis: It's good to protect your property.\nUpdate: you don't care what happens to your property.
+        """.strip()
+    ),
+    (
+        """
+        [input]="Yes. There is a new input for this task. Hypothesis: You should help your family with funeral expenses.\nUpdate: You are not financially stable to help out" [expected output] = weakener
+        """.strip(),
+        """
+        Hypothesis: You should help your family with funeral expenses.\nUpdate: You are not financially stable to help out
+        """.strip()
+    )
+    ],
+is_classification=True,
+)
+
+task642 = Task(
+    task_instruction="""Given Sentence 1 and Sentence 2, indicate your answer as yes when the two sentences clearly agree or clearly disagree with each other. If the relationship cannot be determined, answer with 'no'.""",
+    task_name="task642",
+    examples="""   
+[input]="A boy in a blue jacket rides a skateboard down the street. <sep> A blue jacketed boy is standing in football field."
+[output]="yes"
+[input]="A large group of people gather at a piano bar. <sep> A group of men at a piano bar."
+[output]="no"
+""".strip(),
+expected_content="""
+    2 sentences
+    """.strip(),
+optional_list=["input", "output", "\n\n", "\\_\\_", "therefore", "Therefore", "Hence"],
+metric="exact_match",
+labels=["yes", "no"],
+extraction_examples=[
+    (
+        """
+        [input]="A boy in a blue jacket rides a skateboard down the street. <sep> A blue jacketed boy wears a hat." [expected output] = yes
+        """.strip(),
+        """
+        A boy in a blue jacket rides a skateboard down the street. <sep> A blue jacketed boy is standing in football field.
+        """.strip()
+    ),
+    (
+        """
+        [input]="Sentece 1: A large group of people gather at a piano bar. Sentence 2:A group of men at a piano bar." [expected output] = no
+        """.strip(),
+        """
+        A large group of people gather at a piano bar. <sep> A group of men at a piano bar.
+        """.strip()
+    )
+    ],
+is_classification=True,
+)
+
+task642 = Task(
+    task_instruction="""Given Sentence 1 and Sentence 2, indicate your answer as yes when the two sentences clearly agree or clearly disagree with each other. If the relationship cannot be determined, answer with 'no'.""",
+    task_name="task642",
+    examples="""   
+[input]="A boy in a blue jacket rides a skateboard down the street. <sep> A blue jacketed boy is standing in football field."
+[output]="yes"
+[input]="A large group of people gather at a piano bar. <sep> A group of men at a piano bar."
+[output]="no"
+""".strip(),
+expected_content="""
+    2 sentences
+    """.strip(),
+optional_list=["input", "output", "\n\n", "\\_\\_", "therefore", "Therefore", "Hence"],
+metric="exact_match",
+labels=["yes", "no"],
+extraction_examples=[
+    (
+        """
+        [input]="A boy in a blue jacket rides a skateboard down the street. <sep> A blue jacketed boy wears a hat." [expected output] = yes
+        """.strip(),
+        """
+        A boy in a blue jacket rides a skateboard down the street. <sep> A blue jacketed boy is standing in football field.
+        """.strip()
+    ),
+    (
+        """
+        [input]="Sentece 1: A large group of people gather at a piano bar. Sentence 2:A group of men at a piano bar." [expected output] = no
+        """.strip(),
+        """
+        A large group of people gather at a piano bar. <sep> A group of men at a piano bar.
+        """.strip()
+    )
+    ],
+is_classification=True,
+)
+
+
+task1612 = Task(
+    task_instruction="""In this task, you're given a pair of sentences, sentence 1 and sentence 2. Your job is to choose whether the two sentences clearly agree (entailment)/disagree (contradiction) with each other, or if this cannot be determined (neutral). Your answer must be in the form of the numbers 0 (entailment), 1 (neutral), or 2(contradiction).""".strip(),
+    task_name="task1612",
+    examples="""
+[input]="sentence_A: A dancer is dancing on the stage. sentence_B: A girl is giving dance performance on the dais."
+[output]="0"
+
+[input]="sentence_A: The crowd is cheering at her dance performance. sentence_B: The group is enjoying while eating food."
+[output]="1"
+
+[input]="sentence_A: A man is standing and has tears of joy seeing the dance performance. sentence_B: There is no man standing with happiness seeing the dance."
+[output]="2"
+
+""".strip(),
+    expected_content="""
+    "sentence_A" and "sentence_B"
+    """.strip(),
+    optional_list=["input", "output", "\n\n", "\\_\\_", "\\_", "therefore", "Therefore", "Hence"],
+    metric="exact_match",
+    labels=['0', '1', '2'],
+    is_classification=True,
+    extraction_examples=[
+    (
+        """
+        [input]="sentence_A: A dancer is dancing on the stage. sentence_B: A girl is exercising in the gym." [expected output] = 0
+        """.strip(),
+        """
+        sentence_A: A dancer is dancing on the stage. sentence_B: A girl is giving dance performance on the dais.
+        """.strip()
+    ),
+    (
+        """
+        [input]="sentence_A: The crowd is cheering at her dance performance. sentence_B: The group dislikes her performance." [expected output] = 1
+        """.strip(),
+        """
+        sentence_A: The crowd is cheering at her dance performance. sentence_B: The group is enjoying while eating food.
+        """.strip()
+    ),
+        (
+        """
+        [input]="sentence_A: A man is standing and has tears of joy seeing the dance performance. sentence_B: There is a man standing with happiness seeing the dance." [expected output] = 2
+        """.strip(),
+        """
+        sentence_A: A man is standing and has tears of joy seeing the dance performance. sentence_B: There is no man standing with happiness seeing the dance.
+        """.strip()
+    )
+    ]
+)
+            
+task1516 = Task(
+    task_instruction="""In this task, you are given a premise and hypothesis. The task is to classify them into three categories: 'positive' if the hypothesis supports the premise, 'negated' if it opposes the premise, and 'neutral' if it neither supports nor opposes it.""".strip(),
+    task_name="task1516",
+    examples="""
+[input]="'Premise : All ten guys that proved to boast were divorcing.','Hypothesis : There are exactly ten guys that proved to boast.'"
+[output]="positive"
+
+[input]="'Premise : All ten reports that can bore some waiter aren't disagreeing with Naomi.','Hypothesis : There are exactly eleven reports that can bore some waiter.'"
+[output]="negated"
+
+[input]="Premise : All ten guys that proved to boast weren't divorcing.','Hypothesis : There are exactly ten senators that proved to boast.'"
+[output]="neutral"
+
+""".strip(),
+    expected_content="""
+    "Premise" and "Hypothesis"
+    """.strip(),
+    optional_list=['input', 'output', '\n\n', '\\_\\_', 'therefore', 'Therefore', 'Hence'],
+    metric="exact_match",
+    labels=['neutral', 'positive', 'negated'],
+    is_classification=True,
+    extraction_examples=[
+    (
+        """
+        [input]="'Premise : All ten guys that proved to boast were divorcing.','Hypothesis : There are more than ten guys that proved to boast.'" [expected output] = "positive"
+        """.strip(),
+        """
+        'Premise : All ten guys that proved to boast were divorcing.','Hypothesis : There are exactly ten guys that proved to boast.'
+        """.strip()
+    ),
+    (
+        """
+        [input]="'Premise : All ten reports that can bore some waiter aren't disagreeing with Naomi.','Hypothesis : There are exactly ten reports that can bore some waiter.'" [expected output] = "negated"
+        """.strip(),
+        """
+        'Premise : All ten reports that can bore some waiter aren't disagreeing with Naomi.','Hypothesis : There are exactly eleven reports that can bore some waiter.'
+        """.strip()
+    ),
+        (
+        """
+        [input]="Premise : All ten guys that proved to boast weren't divorcing.','Hypothesis : There are exactly ten guys that proved to boast.'" [expected output] = "neutral"
+        """.strip(),
+        """
+        Premise : All ten guys that proved to boast weren't divorcing.','Hypothesis : There are exactly ten senators that proved to boast.'
+        """.strip()
+    )
+    ]
+)
+            
+task1615 = Task(
+    task_instruction="""In this task, given 2 input sentences, you must classify the relation between them. If the second sentence has a similar meaning to that of the first sentence then the output is 'B_entails_A', if the second sentence has the opposite meaning to the first sentence then it is classified as 'B_contradicts_A'. If you cannot clearly ascertain agreement/disagreement between the two sentences, the label is 'B_neutral_A'.""".strip(),
+    task_name="task1615",
+    examples="""
+[input]="sentence_A: man is wearing a hard hat and dancing. sentence_B: There is no man with a hard hat dancing."
+[output]="B_contradicts_A"
+
+[input]="sentence_A: A baby is crying. sentence_B: A man is exercising."
+[output]="B_neutral_A"
+
+[input]="sentence_A: A tiger is pacing around a cage. sentence_B: A tiger is walking around a cage"
+[output]="B_entails_A"
+""".strip(),
+    expected_content=""""sentence_A" and "sentence_B"
+    """.strip(),
+    optional_list=['input', 'output', '\n\n', '\\_\\_', 'therefore', 'Therefore', 'Hence'],
+    metric="exact_match",
+    labels=['B_entails_A', 'B_neutral_A', 'B_contradicts_A'],
+    is_classification=True,
+    extraction_examples=[
+    (
+        """
+        [input]="'Premise : All ten guys that proved to boast were divorcing.','Hypothesis : There are more than ten guys that proved to boast.'" [expected output] = "positive"
+        """.strip(),
+        """
+        'Premise : All ten guys that proved to boast were divorcing.','Hypothesis : There are exactly ten guys that proved to boast.'
+        """.strip()
+    ),
+    (
+        """
+        [input]="'Premise : All ten reports that can bore some waiter aren't disagreeing with Naomi.','Hypothesis : There are exactly ten reports that can bore some waiter.'" [expected output] = "negated"
+        """.strip(),
+        """
+        'Premise : All ten reports that can bore some waiter aren't disagreeing with Naomi.','Hypothesis : There are exactly eleven reports that can bore some waiter.'
+        """.strip()
+    ),
+        (
+        """
+        [input]="Premise : All ten guys that proved to boast weren't divorcing.','Hypothesis : There are exactly ten guys that proved to boast.'" [expected output] = "neutral"
+        """.strip(),
+        """
+        Premise : All ten guys that proved to boast weren't divorcing.','Hypothesis : There are exactly ten senators that proved to boast.'
+        """.strip()
+    ) 
+    ]
+)
+            

@@ -17,9 +17,7 @@ def get_highest_digit(number):
 
 # TODO change json file path
 files = [
-    "/home/cyzhao/main/NI_tasks/task_json/processed/task121_zest_text_modification.json",
-    "/home/cyzhao/main/NI_tasks/task_json/processed/task1195_disflqa_disfluent_to_fluent_conversion.json",
-    "/home/cyzhao/main/NI_tasks/task_json/processed/task1345_glue_qqp_question_paraprashing.json",
+    "/home/cyzhao/main/NI_tasks/task_json/processed/task121_zest_text_modification.json"
 ]
 
 for file_name in files:

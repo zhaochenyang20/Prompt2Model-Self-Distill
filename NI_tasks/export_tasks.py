@@ -7,21 +7,21 @@ import requests
 from datasets import Dataset
 
 sys.path.append("/home/cyzhao/main/test_scripts/unit_test")
-from test_ni import evaluate_model
+# from test_ni import evaluate_model
 
 # step0: specify the json files to be processed
 # TODO paste name of json files
 github_raw_urls = [
-    "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task1557_jfleg_answer_generation.json",
-    "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task760_msr_sqa_long_text_generation.json",
+    "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task642_esnli_classification.json"
 ]
 unprocessed_file_folder = "/home/cyzhao/main/NI_tasks/task_json/unprocessed/"
 for github_raw_url in github_raw_urls:
     local_file_path = unprocessed_file_folder + github_raw_url.split("/")[-1]
 
     response = requests.get(github_raw_url)
-
+    print(response)
     if response.status_code == 200:
+
         # 将文件内容保存到本地文件
         with open(local_file_path, "wb") as file:
             file.write(response.content)
@@ -136,6 +136,6 @@ for file_name in files:
     shutil.move(file_name, destination_folder)
 
 # step3: 测试
-evaluate_model(task_names)
+# evaluate_model(task_names)
 
 # step4: 加expected content和metrics

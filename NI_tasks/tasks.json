@@ -11,7 +11,10 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["No.", "Yes."]
+        "labels": [
+            "No.",
+            "Yes."
+        ]
     },
     {
         "task_instruction": "In this task, you need to write a topic word from the given fact. The topic word must have at least one word overlap with the given fact. The topic word often involves adding a new word from a related concept. In your topic word, use at least one word from the given fact. Topic words with two or more words work best.",
@@ -61,12 +64,15 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["yes", "no"]
+        "labels": [
+            "yes",
+            "no"
+        ]
     },
     {
         "task_instruction": "In this task, you're given a statement and three sentences as choices. Your job is to determine which sentence can be inferred from the statement. Incorrect choices change the meaning in important ways or have details that are not mentioned in the statement. Indicate your answer as 1,2, or 3 corresponding to the choice number of the selected sentence.",
         "task_name": "task200",
-        "examples": "[input]=\"Statement: Next to the MGM Grand you will find M and M World, four stories of merchandise and memorabilia dedicated to the candy that doesn't melt in your hand. Choices: 1. The candy has many fans who love its attractions. 2. There's four stories of memorabilia dedicated to a candy. 3. That particular candy melts and becomes difficult to eat.\"\n[output]=\"2\"\n\n[input]=\"Statment: I've forgotten his name now, confessed Tuppence. Choices: 1. Tuppence forgot his name. 2.Tuppence remembered his name later. 3. Tuppence never could forget his name.\"\n[output]=\"1\"\n\n[input]=\"Statement: One of the first organizational realignments taking place is in the Office of the Taxpayer Advocate. Choices: 1. The office of the taxpayer advocate is the last to be realigned. 2. The realignment is taking place over a few weeks. 3. The office of the taxpayer advocate is having an organizational realignment.\"\n[output]=\"3\"\n\n[input]=\"Statement: yeah i tell you what though if you go price some of those tennis shoes i can see why now you know they're getting up in the hundred dollar range. Choices: 1. The tennis shoes have a range of prices. 2. The tennis shoes can be in the hundred dollar range. 3. The tennis shoes are not over hundred dollars.\"\n[output]=\"2\"\n\n",
+        "examples": "[input]=\"Statement: Next to the MGM Grand you will find M and M World, four stories of merchandise and memorabilia dedicated to the candy that doesn't melt in your hand. Choices: 1. The candy has many fans who love its attractions. 2. There's four stories of memorabilia dedicated to a candy. 3. That particular candy melts and becomes difficult to eat.\"\n[output]=\"2\"\n\n[input]=\"Statment: I've forgotten his name now, confessed Tuppence. Choices: 1. Tuppence forgot his name. 2.Tuppence remembered his name later. 3. Tuppence never could forget his name.\"\n[output]=\"1\"\n\n[input]=\"Statement: One of the first organizational realignments taking place is in the Office of the Taxpayer Advocate. Choices: 1. The office of the taxpayer advocate is the last to be realigned. 2. The realignment is taking place over a few weeks. 3. The office of the taxpayer advocate is having an organizational realignment.\"\n[output]=\"3\"\n\n",
         "expected_content": "a \"Statement\" and three \"Choices\"",
         "optional_list": [
             "input",
@@ -75,7 +81,11 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["1", "2", "3"]
+        "labels": [
+            "1",
+            "2",
+            "3"
+        ]
     },
     {
         "task_instruction": "In this task, you're given a statement and three sentences as choices. Your job is to determine the neutral choice based on your inference from the statement and your commonsense knowledge. The neutral choice is a sentence that neither agrees nor disagrees with the statement. Indicate your answer as '1', '2', or '3', corresponding to the choice number of the selected sentence. If sentence X agrees with sentence Y, one's correctness follows from the other one. If sentence X disagrees with sentence Y, they can not be correct at the same time.",
@@ -89,7 +99,11 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["1", "2", "3"]
+        "labels": [
+            "1",
+            "2",
+            "3"
+        ]
     },
     {
         "task_instruction": "In this task, you're given a statement, and three sentences as choices. Your job is to determine which sentence clearly disagrees with the statement. Indicate your answer as '1', '2', or '3' corresponding to the choice number of the selected sentence.",
@@ -103,7 +117,11 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["1", "2", "3"]
+        "labels": [
+            "1",
+            "2",
+            "3"
+        ]
     },
     {
         "task_instruction": "You will be given three sentences. Read them, then identify a noun phrase (person, place, or thing) or event that is shared between all three sentences. As the output, write the span of the text corresponding to that phrase in each sentence. Keep the order of the sentences, that is, your answer should look like: 1: *a phras from sentence 1e* 2: *a phras from sentence 2* 3: *a phrase from sentence 3*",
@@ -112,10 +130,10 @@
         "expected_content": "three sentences with a noun phrase (person, place, or thing) or event that is shared between all three sentences",
         "optional_list": [
             "input",
-        "output",
-        "\n\n"
-    ],
-    "metric": "rouge"
+            "output",
+            "\n\n"
+        ],
+        "metric": "rouge"
     },
     {
         "task_instruction": "In this task, you are given a statement spoken by a politician in natural language. Your task is to generate the subject of the discussion for the given statement. The subject generated is not necessarily a part of the given input. Your answer should contain one or more words.",
@@ -142,21 +160,27 @@
             "Therefore"
         ],
         "metric": "exact_match",
-        "labels": ["support", "undermine"]
+        "labels": [
+            "support",
+            "undermine"
+        ]
     },
     {
         "task_instruction": "In this task, you are given a premise, a hypothesis, and an update. The premise sentence describes a real-world situation and is always assumed to be true. The hypothesis sentence describes an assumption or inference that you might make about that situation having read the premise. The update provides additional information about the situation that might weaken or strengthen the hypothesis. A weakener is a statement that weakens the hypothesis. It makes you much less likely to believe the hypothesis is true. A strengthener is a statement that strengthens the hypothesis. It makes you much more likely to believe the hypothesis is true. Your task is to output 'strengthener' or 'weakener' if the update strengths or weakens the hypothesis, respectively.",
         "task_name": "task935",
         "examples": "[input]=\"Premise: PersonX seems interested\nHypothesis: PersonX then good activity\nUpdate: PersonX was a good student\"\n[output]=\"strengthener\"\n\n[input]=\"Premise: PersonX seems interested\nHypothesis: PersonX then good activity\nUpdate: PersonX was faking to get close to a girl\"\n[output]=\"weakener\"\n\n",
         "expected_content": "\"Premise\", \"Hypothesis\", and \"Update\"",
-        "optional_list": [            
-        "input",
-        "output",
-        "\n\n",
-        "\\_\\_"
-    ],
-    "metric": "exact_match",
-    "labels": ["strengthener", "weakener"]
+        "optional_list": [
+            "input",
+            "output",
+            "\n\n",
+            "\\_\\_"
+        ],
+        "metric": "exact_match",
+        "labels": [
+            "strengthener",
+            "weakener"
+        ]
     },
     {
         "task_instruction": "In this task, you are given a premise, a hypothesis, and an update. The premise sentence describes a real-world situation and is always assumed to be true. The hypothesis sentence describes an assumption or inference that you might make about that situation having read the premise. The update provides additional information about the situation that might weaken or strengthen the hypothesis. A weakener is a statement that weakens the hypothesis, that is, it makes you much less likely to believe the hypothesis is true. A strengthener is a statement that strengthens the hypothesis, that is, it makes you much more likely to believe the hypothesis is true. Your task is to answer with 'strengthener' or 'weakener' if the update strengthens or weakens the hypothesis, respectively.",
@@ -177,7 +201,10 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["strengthener", "weakener"]
+        "labels": [
+            "strengthener",
+            "weakener"
+        ]
     },
     {
         "task_instruction": "In this task, you're given two sentences. Indicate if the first sentence clearly entails the second sentence (i.e., one can conclude the 2nd sentence by reading the 1st one). Indicate your answer with '1' if the first sentence entails the second sentence, otherwise answer with '0'.",
@@ -191,7 +218,10 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["0", "1"]
+        "labels": [
+            "0",
+            "1"
+        ]
     },
     {
         "task_instruction": "In this task, you will be presented with a premise and a hypothesis sentence. Determine whether the hypothesis sentence entails (implies), contradicts (opposes), or is neutral with respect to the given premise sentence. Please answer with \"Contradiction\", \"Neutral\", or \"Entailment\".",
@@ -205,7 +235,11 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["Neutral", "Contradiction", "Entailment"]
+        "labels": [
+            "Neutral",
+            "Contradiction",
+            "Entailment"
+        ]
     },
     {
         "task_instruction": "In this task, you will be presented with a premise and a hypothesis sentence. Determine whether the hypothesis sentence entails (implies), contradicts (opposes), or is neutral with respect to the given premise. Please answer with \"Contradiction\", \"Neutral\", or \"Entailment\".",
@@ -219,7 +253,11 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["Neutral", "Entailment", "Contradiction"]
+        "labels": [
+            "Neutral",
+            "Entailment",
+            "Contradiction"
+        ]
     },
     {
         "task_instruction": "In this task, you will be presented with a premise and a hypothesis sentence. Determine whether the hypothesis sentence entails (implies), contradicts (opposes), or is neutral with respect to the given premise sentence. Please answer with \"Contradiction\", \"Neutral\", or \"Entailment\".",
@@ -240,7 +278,11 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["Contradiction", "Entailment", "Neutral"]
+        "labels": [
+            "Contradiction",
+            "Entailment",
+            "Neutral"
+        ]
     },
     {
         "task_instruction": "In this task, you are given a premise and hypothesis. The task is to classify them into three categories: 'positive' if the hypothesis supports the premise, 'negated' if it opposes the premise, and 'neutral' if it neither supports nor opposes it.",
@@ -254,7 +296,12 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["neutral", "positive", "negated"]
+        "labels": [
+            "neutral",
+            "positive",
+            "negated"
+        ],
+        "extraction_examples": []
     },
     {
         "task_instruction": "You are given two sentences. You have to find if there is entailment or agreement of the Hypothesis by the Premise. From the given pair of sentences, you should identify if there is enough information in the Premise to support the claim made in the Hypothesis. The Premise may not exactly be the same as Hypothesis. Your task is to return 'entails' if the premise supports hypothesis else return 'neutral'.",
@@ -268,7 +315,10 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["neutral", "entails"]
+        "labels": [
+            "neutral",
+            "entails"
+        ]
     },
     {
         "task_instruction": "In this task, you are given two statements. The task is to output whether a given textual premise, i.e. Statement 2, entails or implies a given scientific fact, i.e. Statement 1. The output should be 'entails' if Statement 2 supports Statement 1 and should be 'neutral' otherwise.",
@@ -282,7 +332,10 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["entails", "neutral"]
+        "labels": [
+            "entails",
+            "neutral"
+        ]
     },
     {
         "task_instruction": "In this task, given 2 input sentences, you must classify the relation between them. If the second sentence has a similar meaning to that of the first sentence then the output is ' B_entails_A', if the second sentence has the opposite meaning to the first sentence then it is classified as ' B_contradicts_A'. If you cannot clearly ascertain agreement/disagreement between the two sentences, the label is ' B_neutral_A'.",
@@ -295,7 +348,12 @@
             "\n\n",
             "\\_\\_"
         ],
-        "metric": "exact_match"
+        "metric": "exact_match",
+        "labels": [
+            " B_entails_A",
+            " B_neutral_A",
+            " B_contradicts_A"
+        ]
     },
     {
         "task_instruction": "In this task, you're given a pair of sentences, sentence 1 and sentence 2. Your job is to choose whether the two sentences clearly agree (entailment)/disagree (contradiction) with each other, or if this cannot be determined (neutral). Your answer must be in the form of the numbers 0 (entailment), 1 (neutral), or 2(contradiction).",
@@ -309,7 +367,12 @@
             "\\_\\_"
         ],
         "metric": "exact_match",
-        "labels": ["0", "1", "2"]
+        "labels": [
+            "0",
+            "1",
+            "2"
+        ],
+        "extraction_examples": []
     },
     {
         "task_instruction": "Given an abstract, generate a keyword (a noun phrase) that best describes the focus or contribution of the paper. Such keywords can be directly from the given abstract or outside it.",
@@ -359,10 +422,11 @@
         "task_name": "task035",
         "examples": "[input]=\"Context word: upset. \nQuestion: PersonX yelled at PersonY because _ was so upset about the news. \nAnswer: PersonX.\"\n[output]=\"PersonX comforted at PersonY because _ was so upset about the news.\"\n\n[input]=\"Context word: library. \nQuestion: PersonX asked PersonY what time the library closes, because _ had forgotten. \nAnswer: PersonX.\"\n[output]=\"PersonX asked PersonY what time the library closes, but _ had forgotten.\"\n\n[input]=\"Context word: door. \nQuestion: PersonX knocked on PersonY's door, but there was no answer. _ was disappointed. \nAnswer: PersonX.\"\n[output]=\"PersonX knocked on PersonY's door, but there was no answer. _ was out.\"\n\n[input]=\"Context word: step. \nQuestion: PersonX was always ahead of PersonY, as _ walked with a quick step. \nAnswer: PersonX.\"\n[output]=\"PersonX was always behind PersonY, as _ walked with a quick step .\"\n\n[input]=\"Context word: dropped. \nQuestion: When PersonX dropped his ice cream, PersonY giggled, so father gave _ a sympathetic look. \nAnswer: PersonX.\"\n[output]=\"When PersonX dropped his ice cream, PersonY giggled, so father gave _ a stern look.\"\n\n",
         "expected_content": "Context word, Question and Answer",
-        "optional_list": [            
-        "input",
-        "output",
-        "\n\n"],
+        "optional_list": [
+            "input",
+            "output",
+            "\n\n"
+        ],
         "metric": "rouge"
     },
     {
@@ -522,9 +586,10 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ],
-        "metric":"rouge"
+        "metric": "rouge"
     },
     {
         "task_instruction": "You are given data in tabular format and you need to generate a passage with content in plain text format based on the information present in the table.",
@@ -534,14 +599,23 @@
         "optional_list": []
     },
     {
-       "task_name": "squad",
+        "task_name": "squad",
         "task_instruction": "Your task is to generate an answer to a natural question. In this task, the input is a string that consists of both a question and a context passage. The context is a descriptive passage related to the question and contains the answer. And the question can range from Math, Cultural, Social, Geometry, Biology, History, Sports, Technology, Science, and so on.",
-        "examples": "\n[input]=\"Question: What city did Super Bowl 50 take place in? Context: Super Bowl 50 was an American football game to determine the champion of the National Football League (NFL) for the 2015 season. The American Football Conference (AFC) champion Denver Broncos defeated the National Football Conference (NFC) champion Carolina Panthers 24\u201310 to earn their third Super Bowl title. The game was played on February 7, 2016, at Levi's Stadium in the San Francisco Bay Area at Santa Clara, California. As this was the 50th Super Bowl, the league emphasized the \"golden anniversary\" with various gold-themed initiatives, as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals (under which the game would have been known as \"Super Bowl L\"), so that the logo could prominently feature the Arabic numerals 50.\"\n[output]=\"Santa Clara\"\n\n[input]=\"Question: What river runs through Warsaw? Context: Warsaw (Polish: Warszawa [var\u02c8\u0282ava] ( listen); see also other names) is the capital and largest city of Poland. It stands on the Vistula River in east-central Poland, roughly 260 kilometres (160 mi) from the Baltic Sea and 300 kilometres (190 mi) from the Carpathian Mountains. Its population is estimated at 1.740 million residents within a greater metropolitan area of 2.666 million residents, which makes Warsaw the 9th most-populous capital city in the European Union. The city limits cover 516.9 square kilometres (199.6 sq mi), while the metropolitan area covers 6,100.43 square kilometres (2,355.39 sq mi).\"\n[output]=\"Vistula River\"\n\n[input]=\"Question: The Ottoman empire controlled territory on three continents, Africa, Asia and which other? Context: The Ottoman Empire was an imperial state that lasted from 1299 to 1923. During the 16th and 17th centuries, in particular at the height of its power under the reign of Suleiman the Magnificent, the Ottoman Empire was a powerful multinational, multilingual empire controlling much of Southeast Europe, Western Asia, the Caucasus, North Africa, and the Horn of Africa. At the beginning of the 17th century the empire contained 32 provinces and numerous vassal states. Some of these were later absorbed into the empire, while others were granted various types of autonomy during the course of centuries.\"\n[output]=\"Europe\"\n",
+        "examples": "\n[input]=\"Question: What city did Super Bowl 50 take place in? Context: Super Bowl 50 was an American football game to determine the champion of the National Football League (NFL) for the 2015 season. The American Football Conference (AFC) champion Denver Broncos defeated the National Football Conference (NFC) champion Carolina Panthers 24–10 to earn their third Super Bowl title. The game was played on February 7, 2016, at Levi's Stadium in the San Francisco Bay Area at Santa Clara, California. As this was the 50th Super Bowl, the league emphasized the \"golden anniversary\" with various gold-themed initiatives, as well as temporarily suspending the tradition of naming each Super Bowl game with Roman numerals (under which the game would have been known as \"Super Bowl L\"), so that the logo could prominently feature the Arabic numerals 50.\"\n[output]=\"Santa Clara\"\n\n[input]=\"Question: What river runs through Warsaw? Context: Warsaw (Polish: Warszawa [varˈʂava] ( listen); see also other names) is the capital and largest city of Poland. It stands on the Vistula River in east-central Poland, roughly 260 kilometres (160 mi) from the Baltic Sea and 300 kilometres (190 mi) from the Carpathian Mountains. Its population is estimated at 1.740 million residents within a greater metropolitan area of 2.666 million residents, which makes Warsaw the 9th most-populous capital city in the European Union. The city limits cover 516.9 square kilometres (199.6 sq mi), while the metropolitan area covers 6,100.43 square kilometres (2,355.39 sq mi).\"\n[output]=\"Vistula River\"\n\n[input]=\"Question: The Ottoman empire controlled territory on three continents, Africa, Asia and which other? Context: The Ottoman Empire was an imperial state that lasted from 1299 to 1923. During the 16th and 17th centuries, in particular at the height of its power under the reign of Suleiman the Magnificent, the Ottoman Empire was a powerful multinational, multilingual empire controlling much of Southeast Europe, Western Asia, the Caucasus, North Africa, and the Horn of Africa. At the beginning of the 17th century the empire contained 32 provinces and numerous vassal states. Some of these were later absorbed into the empire, while others were granted various types of autonomy during the course of centuries.\"\n[output]=\"Europe\"\n",
         "expected_content": "Question and Context",
         "optional_list": [
             "input",
-            "output"
+            "output",
+            "\n\n",
+            "\\_\\_"
         ],
         "metric": "exact_match"
+    },
+    {
+        "task_instruction": "Given Sentence 1 and Sentence 2, indicate your answer as yes when the two sentences clearly agree or clearly disagree with each other. If the relationship cannot be determined, answer with 'no'.",
+        "task_name": "task642",
+        "examples": "[input]=\"A boy in a blue jacket rides a skateboard down the street. <sep> A blue jacketed boy is standing in football field.\"\n[output]=\"yes\"\n\n[input]=\"A large group of people gather at a piano bar. <sep> A group of men at a piano bar\"\n[output]=\"no\"\n\n",
+        "expected_content": "",
+        "optional_list": []
     }
 ]

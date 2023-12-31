@@ -1,7 +1,7 @@
 import os
 
 # TODO 改卡
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "7"
 import gc
 import json
 import re
@@ -208,5 +208,5 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 
 
 # TODO 改任务
-task_names = ["task1529"]
+task_names = ["task200"]
 evaluate_model(task_names, finetuned=False, exact_match=True)

@@ -21,9 +21,9 @@ def find_best_directories(root_dir):
     return best_dirs
 
 
-root_dir = "/home/cyzhao/rerun_experiments"
+root_dir = "/home/cyzhao/classification_tasks"
 # best_directories = find_best_directories(root_dir)
-best_directories = ['/home/cyzhao/NI_task202_exp_3/best_ckpt_generated_content']
+best_directories = ['/home/cyzhao/NI_task1516_exp_1/best_ckpt_generated_content']
 ground_truth_biased_count = 0
 model_output_biased_count = 0
 total = 0

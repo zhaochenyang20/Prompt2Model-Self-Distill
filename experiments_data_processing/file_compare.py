@@ -26,16 +26,21 @@ def compare_files(file1_path, file2_path):
         print('they are same')
 
 # 用法示例
-task_number = '1385'
+task_number = '1615'
 temperatures = [0.6, 0.7, 0.8, 0.9, 1.0]
 pairs = [
     ('False', 'False'),
     ('True', 'False')
 ]
-experiment_number_1 = 3
-experiment_number_2 = 2
-for temperature in temperatures:
-    for (intput_length_constraint,output_length_constraint) in pairs:   
-        file1_path = f'/home/cyzhao/NI_task{task_number}_exp_{experiment_number_1}/task{task_number}_{temperature}_{intput_length_constraint}_{output_length_constraint}_{experiment_number_1}/dataset.txt'
-        file2_path = f'/home/cyzhao/NI_task{task_number}_exp_{experiment_number_2}/task{task_number}_{temperature}_{intput_length_constraint}_{output_length_constraint}_{experiment_number_2}/dataset.txt'
-        compare_files(file1_path, file2_path)
+root_path = "/home/cyzhao"
+res = []
+experiment_number_1 = 4
+experiment_number_2 = 1
+for generation_temperature in temperatures:
+    for (input_length_constraint,output_length_constraint) in pairs:  
+        for epoch in range(1,4):
+            res.append((generation_temperature, input_length_constraint, output_length_constraint, epoch))
+print(res) 
+        # file1_path = f'{root_path}/NI_task{task_number}_exp_{experiment_number_1}/task{task_number}_{generation_temperature}_{input_length_constraint}_{output_length_constraint}_{experiment_number_1}/dataset.txt'
+        # file2_path = f'{root_path}/NI_task{task_number}_exp_{experiment_number_2}/task{task_number}_{generation_temperature}_{input_length_constraint}_{output_length_constraint}_{experiment_number_2}/dataset.txt'
+        # compare_files(file1_path, file2_path)

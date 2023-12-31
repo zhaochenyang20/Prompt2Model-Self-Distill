@@ -126,6 +126,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     high_quality_input_string=high_quality_input_string,
                     conditional_label=conditional_label,
                 )
+            print(prompt)
             if count_tokens_from_string(prompt, "vicuna") < context_cutoff:
                 if conditional_label is None:
                     return (prompt,)
@@ -327,6 +328,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 for element in new_inputs
                 if element is not None and element != ""
             ]
+            print(filtered_new_inputs)
             filtered_new_inputs = ablation_filter(
                     length_filter(filtered_new_inputs)
                     if intput_length_constraint
@@ -336,8 +338,8 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 filtered_pesudo_labels = [input_to_label[input_item] for input_item in filtered_new_inputs]
                 if test:
                     before_verifier = dict(zip(filtered_new_inputs, filtered_pesudo_labels))
-                    print("\n\nbefore filtering")
-                    print(before_verifier)
+                    # print("\n\nbefore filtering")
+                    # print(before_verifier)
                 if early_end:
                     return
                 verified_inputs = self.verify(
