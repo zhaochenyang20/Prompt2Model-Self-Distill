@@ -126,12 +126,6 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                 examples=examples,
             )
 
-            tokenizer = AutoTokenizer.from_pretrained(
-                "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
-                local_files_only=True,
-                padding_side="left",
-                trust_remote_code=True,
-            )
             matches = re.findall(
                 r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
                 prompt_spec.examples,
@@ -150,11 +144,6 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                     new_input=example["input_col"],
                 ).strip()
                 example["model_output"] = example["output_col"]
-                example["text"] = (
-                    example["model_input"]
-                    + example["model_output"]
-                    + tokenizer.eos_token
-                )
                 return example
 
             test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
@@ -182,8 +171,14 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             tuned_vicuna_generated_outputs = [
                 each.outputs[0].text for each in tuned_vicuna_outputs
             ]
+            trancated_outputs = []
+            for each in tuned_vicuna_generated_outputs:
+                if "USER:" in each:
+                    trancated_outputs.append(each[: each.index("USER:")].strip())
+                else:
+                    trancated_outputs.append(each.strip())
             evaluate_result = (
-                rouge_l_score(GROUND_TRUTH, tuned_vicuna_generated_outputs)
+                rouge_l_score(GROUND_TRUTH, trancated_outputs)
                 if not exact_match
                 else exact_match_score(GROUND_TRUTH, tuned_vicuna_generated_outputs)
             )
@@ -208,5 +203,5 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 
 
 # TODO 改任务
-task_names = ["task200"]
-evaluate_model(task_names, finetuned=False, exact_match=True)
+task_names = ["task281"]
+evaluate_model(task_names, finetuned=False, exact_match=False)

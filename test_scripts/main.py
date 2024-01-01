@@ -256,21 +256,19 @@ def main(config_path: str):
         logging.log(logging.INFO, "generate_and_write_inputs!")
 
         generate_and_write_inputs(
-            prompt_spec,
-            loaded_params["generation_epochs"],
-            loaded_params["generation_batch_size"],
-            dict(
+            prompt_spec = prompt_spec,
+            generation_epochs = loaded_params["generation_epochs"],
+            generation_batch_size = loaded_params["generation_batch_size"],
+            parameter_dict = dict(
                 top_k=loaded_params["generation_top_k"],
                 temperature=loaded_params["generation_temperature"],
             ),
-            log_and_data_path,
-            gpu_memory_utilization,
-            tensor_parallel_size,
-            expected_content,
-            loaded_params["optional_list"],
-            loaded_params["portion"],
-            loaded_params["intput_length_constraint"],
-            loaded_params["conditional_labels"],
+            log_and_data_path = log_and_data_path,
+            gpu_memory_utilization = gpu_memory_utilization,
+            expected_content = expected_content,
+            optional_list = loaded_params["optional_list"],
+            intput_length_constraint=loaded_params["intput_length_constraint"],
+            conditional_labels=loaded_params["conditional_labels"],
             reannotate=True,
             extraction_examples=loaded_params["extraction_examples"]
         )

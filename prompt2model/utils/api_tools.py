@@ -256,6 +256,7 @@ def count_tokens_from_string(string: str, encoding_name: str = "cl100k_base") ->
     else:
         encoded_input = tokenizer(string)
         num_tokens = len(encoded_input["input_ids"])
+        print(num_tokens)
     return num_tokens
 
 

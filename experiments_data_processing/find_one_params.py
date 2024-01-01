@@ -21,7 +21,7 @@ def get_validation_score(task, parameter):
 best_score = 0
 best_parameter = None
 parameters = [(0.6, 'False', 'False', 1), (0.6, 'False', 'False', 2), (0.6, 'False', 'False', 3), (0.6, 'True', 'False', 1), (0.6, 'True', 'False', 2), (0.6, 'True', 'False', 3), (0.7, 'False', 'False', 1), (0.7, 'False', 'False', 2), (0.7, 'False', 'False', 3), (0.7, 'True', 'False', 1), (0.7, 'True', 'False', 2), (0.7, 'True', 'False', 3), (0.8, 'False', 'False', 1), (0.8, 'False', 'False', 2), (0.8, 'False', 'False', 3), (0.8, 'True', 'False', 1), (0.8, 'True', 'False', 2), (0.8, 'True', 'False', 3), (0.9, 'False', 'False', 1), (0.9, 'False', 'False', 2), (0.9, 'False', 'False', 3), (0.9, 'True', 'False', 1), (0.9, 'True', 'False', 2), (0.9, 'True', 'False', 3), (1.0, 'False', 'False', 1), (1.0, 'False', 'False', 2), (1.0, 'False', 'False', 3), (1.0, 'True', 'False', 1), (1.0, 'True', 'False', 2), (1.0, 'True', 'False', 3)]
-tasks = ["task202", "task199", "task1388", "task201", "task190", "task935", "task1386", "task1554", "task738"]
+tasks = ["task202", "task199", "task1388", "task201", "task190", "task935", "task1386", "task1554", "task738", "task1344", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task020", "task1615"]
 
 # Define a dictionary to store baseline validation scores for each task
 baseline_scores = {
@@ -33,7 +33,16 @@ baseline_scores = {
     "task935": 0.694,
     "task1386": 0.35918367346938773,
     "task1554": 0.713,
-    "task738": 0.838
+    "task738": 0.838,
+    "task1344": 0.741, 
+    "task1385": 0.4311111111111111, 
+    "task1529": 0.78, 
+    "task200": 0.729,
+    "task1612": 0.6025, 
+    "task937": 0.659, 
+    "task1516": 0.6057142857142858, 
+    "task020": 0.86, 
+    "task1615": 0.638
 }
 
 

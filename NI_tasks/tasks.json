@@ -24,7 +24,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ]
     },
     {
@@ -35,7 +36,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ],
         "metric": "rouge"
     },
@@ -131,7 +133,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ],
         "metric": "rouge"
     },
@@ -143,7 +146,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ]
     },
     {
@@ -389,7 +393,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ],
         "metric": "rouge"
     },
@@ -401,7 +406,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ],
         "metric": "rouge"
     },
@@ -413,7 +419,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ],
         "metric": "rouge"
     },
@@ -425,7 +432,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ],
         "metric": "rouge"
     },
@@ -437,7 +445,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ],
         "metric": "rouge"
     },
@@ -449,7 +458,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ],
         "metric": "rouge"
     },
@@ -461,7 +471,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ],
         "metric": "rouge"
     },
@@ -473,7 +484,9 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_",
+            "__"
         ],
         "metric": "rouge"
     },
@@ -485,7 +498,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ],
         "metric": "rouge"
     },
@@ -497,7 +511,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ],
         "metric": "rouge"
     },
@@ -509,7 +524,8 @@
         "optional_list": [
             "input",
             "output",
-            "\n\n"
+            "\n\n",
+            "\\_\\_"
         ],
         "metric": "rouge"
     },
@@ -607,7 +623,8 @@
             "input",
             "output",
             "\n\n",
-            "\\_\\_"
+            "\\_",
+            "_"
         ],
         "metric": "exact_match"
     },

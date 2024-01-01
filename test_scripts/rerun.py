@@ -6,29 +6,21 @@ os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
 
 from pathlib import Path
-# from utils.tasks import task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529, task190, task200, task937, task642, task1612, task1516, task1615
-# The upper line is for classifications
 import itertools
 
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "7"
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
-# TODO change task
-# task = task1615
-# TODO change experiment rank
-experiment_rank = 6
-# TODO change task name
-# task_name = task.task_name
 
-# squad 039 281 121 1195 / 034 1622 1562 671 1345 035 1659
+experiments = [("task035", 2), ("task035", 3), ("task1659", 2), ("task1659", 3)]
 
-# "squad", "task039", "task281", "task121", "task1195" 这些跑完了 6 轮
+experiments = [("task034", 1), ("task034", 2), ("task034", 3), ("task034", 4), ("task034", 5), ("task034", 6)]
 
-#! 这些需要跑 1 2 3 4 5 6
-task_names = ["task569", "task957", "task1598", "task1631", "task677", "task1557", "task036", "task613"]
-#! 还没跑 "task569", "task957", "task1598", "task1631", "task677", "task1557", "task036", "task613"
+experiments = [("task1540", 1), ("task1540", 2), ("task1540", 3), ("task1540", 4), ("task1540", 5), ("task1540", 6)]
 
-for task_name in task_names:
+experiments = [("task1356", 1), ("task1356", 2), ("task1356", 3), ("task1356", 4), ("task1356", 5), ("task1356", 6)]
+
+for task_name, experiment_rank in experiments:
     file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
     with open(file_path, "r", encoding="utf-8") as json_file:
         all_tasks = json.load(json_file)
@@ -150,7 +142,7 @@ for task_name in task_names:
             "expected_content": expected_content,
             "evaluation_dataset_path": evaluation_dataset_path,
             "test_set_path": test_set_path,
-            "generation_epochs": int(20),
+            "generation_epochs": int(40) if experiment_rank <=3 else int(20),
             "generation_batch_size": int(10),
             "generation_top_k": int(40),
             "min_frequency": float(0.3),

@@ -14,10 +14,8 @@ def generate_and_write_inputs(
     parameter_dict,
     log_and_data_path,
     gpu_memory_utilization,
-    tensor_parallel_size,
     expected_content,
     optional_list,
-    portion,
     intput_length_constraint,
     conditional_labels,
     reannotate=True,
@@ -28,23 +26,22 @@ def generate_and_write_inputs(
         tensor_parallel_size=1,
     )
     input_tuples = input_generator.batch_generation_inputs(
-        prompt_spec,
-        generation_epochs,
-        generation_batch_size,
-        parameter_dict,
-        expected_content,
-        optional_list,
-        portion,
-        intput_length_constraint,
-        conditional_labels,
-        extraction_examples,
+        prompt_spec=prompt_spec,
+        generation_epochs=generation_epochs,
+        per_epoch_num=generation_batch_size,
+        hyperparameter_choices=parameter_dict,
+        expected_content=expected_content,
+        optional_list=optional_list,
+        intput_length_constraint=intput_length_constraint,
+        conditional_labels=conditional_labels,
+        extraction_examples=extraction_examples,
     )
     inputs = [each[0] for each in input_tuples]
     pesudo_labels = [each[1] for each in input_tuples]
     with open(log_and_data_path / f"inputs.txt", "w", encoding="utf-8") as file:
         for index, item in enumerate(inputs):
             file.write(
-                fr"{index}:\n\n------------------------------------------------\n\n{item}\n\n------------------------------------------------\n\n"
+                f"{index}:\n\n------------------------------------------------\n\n{item}\n\n------------------------------------------------\n\n"
             )
     dataset = datasets.Dataset.from_dict({"input_col": inputs})
     dataset.save_to_disk(log_and_data_path / "inputs")

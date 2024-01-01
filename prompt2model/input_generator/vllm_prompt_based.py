@@ -11,7 +11,6 @@ from vllm import LLM, SamplingParams
 
 from prompt2model.input_generator import InputGenerator
 from prompt2model.input_generator.prompt_template import (
-    construct_conditional_generation_prompt,
     construct_meta_prompt,
     construct_verify_prompt,
 )
@@ -111,27 +110,15 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 for input in high_quality_inputs:
                     high_quality_input_string += f'[input]="{input}"\n\n'
 
-            # Construct the prompt.
-            assert conditional_label is not None
-            if conditional_label is None:
-                prompt = construct_meta_prompt(
-                    instruction=instruction,
-                    low_quality_input_string=low_quality_input_string,
-                    high_quality_input_string=high_quality_input_string,
-                )
-            else:
-                prompt = construct_conditional_generation_prompt(
-                    instruction=instruction,
-                    low_quality_input_string=low_quality_input_string,
-                    high_quality_input_string=high_quality_input_string,
-                    conditional_label=conditional_label,
-                )
-            print(prompt)
+            prompt = construct_meta_prompt(
+                instruction=instruction,
+                low_quality_input_string=low_quality_input_string,
+                high_quality_input_string=high_quality_input_string,
+                conditional_label=conditional_label,
+            )
+
             if count_tokens_from_string(prompt, "vicuna") < context_cutoff:
-                if conditional_label is None:
-                    return (prompt,)
-                else:
-                    return (prompt, conditional_label)
+                return (prompt, conditional_label)
             else:
                 orginal_input_string = (
                     instruction + few_shot_example_string
@@ -172,17 +159,17 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 few_shot_example_string=prompt_spec.examples,
                 generated_inputs=generated_inputs,
                 context_cutoff=hyperparameter_choices.get("context_cutoff", 3000),
-                conditional_label=random.choice(conditional_labels)
-                if conditional_labels != []
-                else None,
+                conditional_label=random.choice(conditional_labels) if conditional_labels != [] else None,
             )
             for _ in range(inputs_num)
         ]
         prompts = [each[0] for each in prompt_tuples]
+        pseudo_labels = [each[1] for each in prompt_tuples]
         if conditional_labels != []:
-            pseudo_labels = [each[1] for each in prompt_tuples]
+            assert all(label in conditional_labels for label in pseudo_labels)
         else:
-            pseudo_labels = [None for _ in prompt_tuples]
+            assert all(label is None for label in pseudo_labels)
+
         sampling_params = SamplingParams(
             n=hyperparameter_choices.get("n", 1),
             best_of=hyperparameter_choices.get("best_of", 1),
@@ -196,7 +183,14 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         ]
         return (new_inputs, pseudo_labels)
 
-    def verify(self, prompt_spec: PromptSpec, new_inputs: list[str], labels: list[str], expected_content, extraction_examples):
+    def verify(
+        self,
+        prompt_spec: PromptSpec,
+        new_inputs: list[str],
+        labels: list[str] = [],
+        expected_content: str = None,
+        extraction_examples: str = None,
+    ):
         """Check the generated inputs.
 
         Args:
@@ -207,13 +201,13 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
 
         if new_inputs is None:
             return None
-        
+
         def construct_filter_prompt(
             few_shot_example_string: str,
             new_input: str,
-            label: str,
-            instruction: str,
-            extraction_examples,
+            label: str = None,
+            instruction: str = None,
+            extraction_examples: list[str] = None,
         ):
             matches = re.findall(
                 r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
@@ -225,23 +219,38 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             high_quality_input_string = ""
             for input in high_quality_inputs:
                 high_quality_input_string += f'"{input}"\n\n'
-            extraction_example_string = ""
-            for extraction_input, extraction_output in extraction_examples:
-                extraction_example_string += f"USER: {extraction_input}\n"
-                extraction_example_string += f"ASSISTANT: {extraction_output}\n"
-            assert extraction_example_string != ""
+            if extraction_examples != []:
+                extraction_example_string = ""
+                for extraction_input, extraction_output in extraction_examples:
+                    extraction_example_string += f"USER: {extraction_input}\n"
+                    extraction_example_string += f"ASSISTANT: {extraction_output}\n"
+                assert extraction_example_string != ""
+            else:
+                assert extraction_examples == [] and label is None
             return construct_verify_prompt(
                 examples=high_quality_input_string,
                 new_input=new_input,
                 expected_content=expected_content,
-                extraction_example_string=extraction_example_string,
-                label = label,
-                instruction = instruction
+                extraction_example_string=extraction_example_string
+                if extraction_examples != []
+                else None,
+                label=label,
+                instruction=instruction if label is not None else None,
             )
 
         filter_prompts = []
         for i in range(len(new_inputs)):
-            filter_prompts.append(construct_filter_prompt(prompt_spec.examples, new_inputs[i], labels[i], prompt_spec.instruction, extraction_examples).strip())
+            assert (labels[i] is not None and extraction_examples != []) or (
+                labels[i] is None and extraction_examples == []
+            )
+            prompt = construct_filter_prompt(
+                prompt_spec.examples,
+                new_inputs[i],
+                labels[i],
+                prompt_spec.instruction,
+                extraction_examples,
+            )
+            filter_prompts.append(prompt.strip() if labels[i] is not None else prompt)
         sampling_params = SamplingParams(
             top_k=-1,
             top_p=1,
@@ -255,7 +264,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         trancated_outputs = []
         for each in filtered_inputs:
             if "USER:" in each:
-                trancated_outputs.append(each[:each.index("USER:")].strip())
+                trancated_outputs.append(each[: each.index("USER:")].strip())
             else:
                 trancated_outputs.append(each.strip())
         return trancated_outputs
@@ -268,10 +277,9 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         hyperparameter_choices: dict[str, Any],
         expected_content,
         optional_list=[],
-        portion=1,
         intput_length_constraint=False,
-        conditional_labels=[],
-        extraction_examples=[],
+        conditional_labels: list[str] = None,
+        extraction_examples: list[(str, str)] = None,
         early_end=False,
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
@@ -284,15 +292,11 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         """
 
         def calculate_string_metrics(string_list):
-            # Calculate the lengths of each string
             lengths = np.array([len(s) for s in string_list])
-            # Calculate mean and standard deviation
             mean_length = np.mean(lengths)
             std_dev = np.std(lengths)
-            # Calculate mean ± 2σ
             mean_plus_2std = mean_length + 2 * std_dev
             mean_minus_2std = mean_length - 2 * std_dev
-
             return mean_length, mean_plus_2std, mean_minus_2std
 
         ablation_filter = partial(ablation_list_filter, optional_list=optional_list)
@@ -305,6 +309,9 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         _, mean_plus_2std, mean_minus_2std = calculate_string_metrics(
             [match[0] for match in matches]
         )
+        # mean_plus_2std and mean_minus_2std of inputs
+        # 要么要求 input 在  mean_plus_2std and mean_minus_2std 之内，要么不做要求
+        # 不能只要求上界或者只要求下界
         length_filter = partial(
             min_max_length_filter,
             min_length=int(mean_minus_2std),
@@ -330,14 +337,18 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             ]
             print(filtered_new_inputs)
             filtered_new_inputs = ablation_filter(
-                    length_filter(filtered_new_inputs)
-                    if intput_length_constraint
-                    else filtered_new_inputs
-                )
+                length_filter(filtered_new_inputs)
+                if intput_length_constraint
+                else filtered_new_inputs
+            )
             if filtered_new_inputs is not None and filtered_new_inputs != []:
-                filtered_pesudo_labels = [input_to_label[input_item] for input_item in filtered_new_inputs]
+                filtered_pesudo_labels = [
+                    input_to_label[input_item] for input_item in filtered_new_inputs
+                ]
                 if test:
-                    before_verifier = dict(zip(filtered_new_inputs, filtered_pesudo_labels))
+                    before_verifier = dict(
+                        zip(filtered_new_inputs, filtered_pesudo_labels)
+                    )
                     # print("\n\nbefore filtering")
                     # print(before_verifier)
                 if early_end:
@@ -353,11 +364,20 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     after_verifier = dict(zip(verified_inputs, filtered_pesudo_labels))
                     print("\nafter filtering")
                     print(after_verifier)
-        
                     print("\ncomparing")
                     def compare_dictionaries(dict1, dict2):
-                        dict1 = {key.replace('"', '').replace("''", '').replace('\n', ''): value for key, value in dict1.items()}
-                        dict2 = {key.replace('"', '').replace("''", '').replace('\n', ''): value for key, value in dict2.items()}
+                        dict1 = {
+                            key.replace('"', "")
+                            .replace("''", "")
+                            .replace("\n", ""): value
+                            for key, value in dict1.items()
+                        }
+                        dict2 = {
+                            key.replace('"', "")
+                            .replace("''", "")
+                            .replace("\n", ""): value
+                            for key, value in dict2.items()
+                        }
                         common_keys = set(dict1.keys()) & set(dict2.keys())
                         unique_keys_dict1 = set(dict1.keys()) - set(dict2.keys())
                         unique_keys_dict2 = set(dict2.keys()) - set(dict1.keys())
@@ -375,11 +395,12 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                             print("\n只在第二个字典中的键和它们的值：")
                             for key in unique_keys_dict2:
                                 print(f"{key}: {dict2[key]}")
-                        
                     compare_dictionaries(before_verifier, after_verifier)
 
                 assert len(filtered_new_inputs) == len(verified_inputs)
-                filtered_input_to_label = dict(zip(verified_inputs, filtered_pesudo_labels))
+                filtered_input_to_label = dict(
+                    zip(verified_inputs, filtered_pesudo_labels)
+                )
                 filtered_verified_inputs = [
                     element
                     for element in verified_inputs
@@ -391,15 +412,25 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     else filtered_verified_inputs
                 )
 
-                if filtered_verified_inputs is not None and filtered_verified_inputs != []:
-                    filtered_verified_labels = [filtered_input_to_label[input_item] for input_item in filtered_verified_inputs]
-                    input_label_pairs = list(zip(filtered_verified_inputs, filtered_verified_labels))
+                if (
+                    filtered_verified_inputs is not None
+                    and filtered_verified_inputs != []
+                ):
+                    filtered_verified_labels = [
+                        filtered_input_to_label[input_item]
+                        for input_item in filtered_verified_inputs
+                    ]
+                    input_label_pairs = list(
+                        zip(filtered_verified_inputs, filtered_verified_labels)
+                    )
                     generated_inputs.extend(input_label_pairs)
                     unique_inputs = {}
                     filtered_generated_inputs = []
                     for input_item, label in generated_inputs:
                         if input_item not in unique_inputs:
                             unique_inputs[input_item] = label
-                            filtered_generated_inputs.append((input_item.strip(), label))
+                            filtered_generated_inputs.append(
+                                (input_item.strip(), label)
+                            )
                     generated_inputs = filtered_generated_inputs
         return generated_inputs

@@ -37,7 +37,7 @@ def finetune_vicuna(
     resume_from_checkpoint,
     run_name,
     task_name,
-    max_seq_length=1500,
+    max_seq_length=1000,
     per_device_train_batch_size=6,
 ):
 

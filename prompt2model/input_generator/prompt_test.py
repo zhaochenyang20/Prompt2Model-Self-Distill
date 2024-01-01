@@ -1367,7 +1367,6 @@ register_conv_template(
 )
 
 if __name__ == "__main__":
-
     print("-- Vicuna template --")
     conv = get_conv_template("vicuna_v9.9")
     conv.append_message(conv.roles[0], "Hello!")
