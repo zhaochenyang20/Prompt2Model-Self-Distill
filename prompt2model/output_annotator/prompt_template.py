@@ -44,5 +44,5 @@ def construct_meta_prompt(
         new_input=new_input,
         examples=examples,
     ).strip()
-    print(prompt)
+    # print(prompt)
     return prompt

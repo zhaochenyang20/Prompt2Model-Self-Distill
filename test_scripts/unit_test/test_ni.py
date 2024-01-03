@@ -1,12 +1,13 @@
 import os
 
 # TODO 改卡
-os.environ["CUDA_VISIBLE_DEVICES"] = "7"
+os.environ["CUDA_VISIBLE_DEVICES"] = "4"
 import gc
 import json
 import re
 from pathlib import Path
-
+from prompt2model.quality_evaluator import self_consistency_filter
+from functools import partial
 import datasets
 import torch
 from IPython import embed
@@ -158,29 +159,44 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             prompts = test_dataset["model_input"]
             GROUND_TRUTH = test_dataset["model_output"]
             hyperparameter_choices = {}
+
             sampling_params = SamplingParams(
-                top_k=hyperparameter_choices.get("top_k", -1),
-                top_p=hyperparameter_choices.get("top_p", 1),
-                temperature=hyperparameter_choices.get("temperature", 0),
+                n=hyperparameter_choices.get("n", 10),
+                best_of=hyperparameter_choices.get("best_of", 20),
+                top_k=hyperparameter_choices.get("top_k", 10),
+                temperature=hyperparameter_choices.get("temperature", 0.2),
                 max_tokens=hyperparameter_choices.get("max_tokens", 500),
             )
-
+            consistency_filter = partial(
+                self_consistency_filter,
+                min_frequency=hyperparameter_choices.get("min_frequency", 0.2),
+            )
             #! 这里测试轮次比较多，是为了看结果是否稳定
             # vicuna base model "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
             tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
-            tuned_vicuna_generated_outputs = [
-                each.outputs[0].text for each in tuned_vicuna_outputs
-            ]
-            trancated_outputs = []
-            for each in tuned_vicuna_generated_outputs:
-                if "USER:" in each:
-                    trancated_outputs.append(each[: each.index("USER:")].strip())
+            
+            decoded_outputs = []
+            
+            for idx, _ in enumerate(tuned_vicuna_outputs):
+                outputs = [
+                    output.text.strip()
+                    for output in tuned_vicuna_outputs[idx].outputs
+                    if (output.text is not None and output.text != "")
+                ]
+                consistent_output = consistency_filter(outputs)
+                if (
+                    consistent_output is not None
+                    and consistent_output != ""
+                    and isinstance(consistent_output, str)
+                ):
+                    decoded_outputs.append(consistent_output)
                 else:
-                    trancated_outputs.append(each.strip())
+                    decoded_outputs.append("No Output")
+                
             evaluate_result = (
-                rouge_l_score(GROUND_TRUTH, trancated_outputs)
+                rouge_l_score(GROUND_TRUTH, decoded_outputs)
                 if not exact_match
-                else exact_match_score(GROUND_TRUTH, tuned_vicuna_generated_outputs)
+                else exact_match_score(GROUND_TRUTH, decoded_outputs)
             )
             print(f"{task_name} {test_type}: {evaluate_result}")
             with open(inputs_dir / f"evaluate_10_times.txt", "a+") as file:
@@ -191,7 +207,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             evaluate_generated_content_path = inputs_dir / f"base_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
-                    model_output=tuned_vicuna_generated_outputs,
+                    model_output=decoded_outputs,
                     model_input=prompts,
                     groud_truth=GROUND_TRUTH,
                 )
@@ -203,5 +219,12 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 
 
 # TODO 改任务
-task_names = ["task281"]
+# classification tasks
+# task_names = ["task202", "task199", "task1388", "task201", "task190", "task935", "task1386", "task1554", "task738", "task1344", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task020", "task1615"]
+# generation tasks
+task_names = ["task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task1540", "task1356", "task569", "task957", "task1598", "task1631", "task677", "task1557", "task036", "task613", "task620"]
 evaluate_model(task_names, finetuned=False, exact_match=False)
+
+task_names = []
+# 这里是 classification
+evaluate_model(task_names, finetuned=False, exact_match=True)

@@ -168,7 +168,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                     context_cutoff=3000,
                 ).strip()
             ]
-
+        print(prompts[0])
         sampling_params = SamplingParams(
             n=hyperparameter_choices.get("n", 10),
             best_of=hyperparameter_choices.get("best_of", 20),
@@ -185,10 +185,16 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                 for output in output_sequence[idx].outputs
                 if (output.text is not None and output.text != "")
             ]
+            trancated_outputs = []
+            for each in outputs:
+                if "USER" in each:
+                    trancated_outputs.append(each[: each.index("USER")].strip())
+                else:
+                    trancated_outputs.append(each.strip())
             consistent_output = consistency_filter(
-                ablation_filter(length_filter(outputs))
+                ablation_filter(length_filter(trancated_outputs))
                 if output_length_constraint
-                else ablation_filter(outputs)
+                else ablation_filter(trancated_outputs)
             )
             if (
                 consistent_output is not None

@@ -10,15 +10,12 @@ import itertools
 
 # TODO change card name
 os.environ["CUDA_VISIBLE_DEVICES"] = "7"
+
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
-experiments = [("task035", 2), ("task035", 3), ("task1659", 2), ("task1659", 3)]
+experiments = [("task1631", 6)]
 
-experiments = [("task034", 1), ("task034", 2), ("task034", 3), ("task034", 4), ("task034", 5), ("task034", 6)]
-
-experiments = [("task1540", 1), ("task1540", 2), ("task1540", 3), ("task1540", 4), ("task1540", 5), ("task1540", 6)]
-
-experiments = [("task1356", 1), ("task1356", 2), ("task1356", 3), ("task1356", 4), ("task1356", 5), ("task1356", 6)]
+# ("task034", 4), ("task034", 5), ("task034", 6)
 
 for task_name, experiment_rank in experiments:
     file_path = "/home/cyzhao/main/NI_tasks/tasks.json"

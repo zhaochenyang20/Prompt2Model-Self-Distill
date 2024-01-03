@@ -115,7 +115,7 @@ def construct_verify_prompt(
             instruction=instruction,
             extraction_example_string=extraction_example_string,
         )
-    print(prompt)
+    # print(prompt)
     return prompt
 
 
@@ -150,5 +150,5 @@ def construct_meta_prompt(
             low_quality_input_string=low_quality_input_string,
             conditional_label=conditional_label,
         )
-    print(prompt)
+    # print(prompt)
     return prompt
