@@ -27,6 +27,7 @@ from utils.inference import vllm_inference
 from utils.input_generation import generate_and_write_inputs
 from utils.output_annotation import annotate_and_write_outputs
 from utils.trainer import finetune_vicuna
+from prompt2model.utils.prompt import PROMPT_TEMPLATE
 
 
 def set_seed(seed=42):
@@ -113,27 +114,24 @@ def validate_or_test(
     validation=True,
     metric="exact_match",
 ):
-    PROMPT_TEMPLATE = """
-    A chat between a curious user and an artificial intelligence assistant.
-    The assistant gives helpful, detailed, and polite answers to the user's questions.
-    USER: 
 
-    {task_instruction}
-
-    ASSISTANT: Okay.
-
-    USER:
-
-    {new_input}
-
-    ASSISTANT: The output is
-
-    """
 
     def map_func(example):
+        matches = re.findall(
+            r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
+            examples,
+            re.DOTALL,
+        )
+        assert matches != []
+        annotation_prompt_string = ""
+        for input, output in matches:
+            annotation_prompt_string += f"USER:\n\n{input}\n\n"
+            annotation_prompt_string += f"ASSISTANT:\n\n{output}\n\n"
+        assert annotation_prompt_string != ""
         example["model_input"] = PROMPT_TEMPLATE.format(
             task_instruction=instruction,
             new_input=example["input_col"],
+            examples = annotation_prompt_string.strip()
         )
         example["model_output"] = example["output_col"].strip()
         return example
@@ -167,9 +165,9 @@ def validate_or_test(
                 print(f"skip the evaluation of the {ckpt_index + 1} epoch.")
                 continue
             model_path = ckpt_path / each
-            tuned_model_generated_outputs = vllm_inference(
+            tuned_model_generated_outputs = [each.strip() for each in vllm_inference(
                 model_path, gpu_memory_utilization, tensor_parallel_size, prompts
-            )
+            )]
             if metric == "exact_match":
                 score = exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs)
             else:

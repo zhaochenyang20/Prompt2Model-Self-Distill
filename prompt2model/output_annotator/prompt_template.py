@@ -17,7 +17,7 @@ PROMPT_TEMPLATE_OLD = """
 
 """  # noqa E501
 
-PROMPT_TEMPLATE = """
+OUTPUT_ANNOTATOR_PROMPT_TEMPLATE = """
 A chat between a curious user and an artificial intelligence assistant.
 The assistant gives concise answers to the user's questions.
 USER: The artificial intelligence assistant only needs to help annotate label. The task is: {instruction} 
@@ -39,7 +39,7 @@ def construct_meta_prompt(
         input: A new input to be annotated.
         high_quality_input_string: A string representing the high quality examples.
     """
-    prompt = PROMPT_TEMPLATE.format(
+    prompt = OUTPUT_ANNOTATOR_PROMPT_TEMPLATE.format(
         instruction=instruction,
         new_input=new_input,
         examples=examples,

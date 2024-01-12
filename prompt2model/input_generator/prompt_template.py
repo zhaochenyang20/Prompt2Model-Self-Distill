@@ -1,6 +1,6 @@
 """Utilities to construct an LLM "metaprompt" for our dataset generator."""
 
-INPUT_PROMPT_TEMPLATE = """
+INPUT_GENERATOR_PROMPT_TEMPLATE = """
 As an InputGenerator, your task is to generate a new [input] based on the [instruction] and some example [input].
 
 Try your best to ensure that the new [input] you generate is distinct from the provided [input] while maintaining a diverse, detailed, precise, comprehensive, and high-quality response.
@@ -32,7 +32,7 @@ Think twice before generating a new [input]. Only response the new [input] witho
 [input]=
 """
 
-CONDITIOANL_INPUT_PROMPT_TEMPLATE = """
+CONDITIOANL_INPUT_GENERATOR_PROMPT_TEMPLATE = """
 As an InputGenerator, your task is to generate a new [input] based on the [instruction] and some example [input].
 
 Try your best to ensure that the new [input] you generate is distinct from the provided [input] while maintaining a diverse, detailed, precise, comprehensive, and high-quality response.
@@ -137,14 +137,14 @@ def construct_meta_prompt(
             are filled in.
     """
     if conditional_label is None:
-        prompt = INPUT_PROMPT_TEMPLATE.format(
+        prompt = INPUT_GENERATOR_PROMPT_TEMPLATE.format(
             instruction=instruction,
             high_quality_input_string=high_quality_input_string,
             low_quality_input_string=low_quality_input_string,
         )
     else:
         assert conditional_label is not None and conditional_label != ""
-        prompt = CONDITIOANL_INPUT_PROMPT_TEMPLATE.format(
+        prompt = CONDITIOANL_INPUT_GENERATOR_PROMPT_TEMPLATE.format(
             instruction=instruction,
             high_quality_input_string=high_quality_input_string,
             low_quality_input_string=low_quality_input_string,

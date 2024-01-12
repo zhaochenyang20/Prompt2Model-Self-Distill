@@ -1,6 +1,8 @@
 import gc
+import re
 import os
 from functools import partial
+from IPython import embed
 
 import datasets
 import torch
@@ -10,23 +12,8 @@ from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 
 from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.utils import count_tokens_from_string
+from prompt2model.utils.prompt import PROMPT_TEMPLATE
 
-PROMPT_TEMPLATE = """
-A chat between a curious user and an artificial intelligence assistant.
-The assistant gives helpful, detailed, and polite answers to the user's questions.
-USER: 
-
-{task_instruction}
-
-ASSISTANT: Okay.
-
-USER:
-
-{new_input}
-
-ASSISTANT: The output is
-
-"""
 
 def finetune_vicuna(
     prompt_spec,
@@ -37,7 +24,7 @@ def finetune_vicuna(
     resume_from_checkpoint,
     run_name,
     task_name,
-    max_seq_length=1000,
+    max_seq_length=2000,
     per_device_train_batch_size=6,
 ):
 
@@ -47,9 +34,21 @@ def finetune_vicuna(
     dataset = datasets.load_from_disk(log_and_data_path / "dataset").filter(filter_func)
 
     def map_func(example):
+        matches = re.findall(
+            r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
+            prompt_spec.examples,
+            re.DOTALL,
+        )
+        assert matches != []
+        annotation_prompt_string = ""
+        for input, output in matches:
+            annotation_prompt_string += f"USER:\n\n{input}\n\n"
+            annotation_prompt_string += f"ASSISTANT:\n\n{output}\n\n"
+        assert annotation_prompt_string != ""
         example["model_input"] = PROMPT_TEMPLATE.format(
             task_instruction=prompt_spec.instruction,
             new_input=example["input_col"],
+            examples=annotation_prompt_string.strip()
         )
         #! 此处绝对不可以 strip，否则 token 定位失效
         example["model_output"] = example["output_col"].strip()
@@ -72,7 +71,7 @@ def finetune_vicuna(
             lambda x: (count_tokens_from_string(x["text"], "vicuna") <= max_seq_length)
         )
     )
-    response_template_with_context = "ASSISTANT: The output is\n\n"
+    response_template_with_context = "ASSISTANT:\n\n"
     response_template_ids = tokenizer.encode(
         response_template_with_context, add_special_tokens=False
     )[2:]
@@ -80,6 +79,7 @@ def finetune_vicuna(
         response_template_ids, tokenizer=tokenizer
     )
     ckpt_path.mkdir(parents=True, exist_ok=True)
+    # embed()
     model = AutoModelForCausalLM.from_pretrained(
         pretrain_model_path,
         device_map="auto",

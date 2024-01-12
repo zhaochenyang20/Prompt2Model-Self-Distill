@@ -16,18 +16,7 @@ from vllm import LLM, SamplingParams
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
-
-# import os
-
-PROMPT_TEMPLATE = """
-A chat between a curious user and an artificial intelligence assistant.
-The assistant gives concise answers to the user's questions.
-USER: The artificial intelligence assistant only needs to help annotate label. The task is: {instruction} 
-ASSISTANT: Okay. 
-{examples}
-USER: [input] = {new_input}
-ASSISTANT: 
-"""  # noqa E501
+from prompt2model.utils.prompt import PROMPT_TEMPLATE
 
 def construct_meta_prompt(
     instruction: str = None,
@@ -92,9 +81,9 @@ def exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs):
 
 def evaluate_model(task_names, finetuned=False, exact_match=False):
     for task_name in task_names:
-        experiment_name = "NI_" + task_name + "_exp_1"
         base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
         # 改了这里的名字
+        experiment_name = "NI_" + task_name + "_exp_1"
         path = f"/data2/cyzhao/best_ckpt/{experiment_name}"
         tuned_vicuna = LLM(
             model=base_model if not finetuned else path,
@@ -192,7 +181,8 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                     decoded_outputs.append(consistent_output)
                 else:
                     decoded_outputs.append("No Output")
-                
+            
+            print(decoded_outputs)
             evaluate_result = (
                 rouge_l_score(GROUND_TRUTH, decoded_outputs)
                 if not exact_match
@@ -219,12 +209,10 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 
 
 # TODO 改任务
-# classification tasks
-# task_names = ["task202", "task199", "task1388", "task201", "task190", "task935", "task1386", "task1554", "task738", "task1344", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task020", "task1615"]
-# generation tasks
-task_names = ["task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task1540", "task1356", "task569", "task957", "task1598", "task1631", "task677", "task1557", "task036", "task613", "task620"]
+print("generation tasks:")
+task_names = ["task039"]
+# task_names = ["task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
 evaluate_model(task_names, finetuned=False, exact_match=False)
-
-task_names = []
-# 这里是 classification
-evaluate_model(task_names, finetuned=False, exact_match=True)
+# print("classification tasks:")
+# task_names = ["task202", "task199", "task1388", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
+# evaluate_model(task_names, finetuned=False, exact_match=True)

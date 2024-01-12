@@ -7,35 +7,55 @@ os.environ["HF_DATASETS_OFFLINE"] = "1"
 
 from pathlib import Path
 import itertools
+from utils.tasks import task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529, task190, task200, task937, task642, task1612, task1516, task1615
 
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "7"
+os.environ["CUDA_VISIBLE_DEVICES"] = "5"
 
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
-experiments = [("task1631", 6)]
+classfication_tasks = [task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529, task190, task200, task937, task642, task1612, task1516, task1615]
 
-# ("task034", 4), ("task034", 5), ("task034", 6)
+experiments = [("task202", 1),("task202", 2),("task202", 3),("task202", 4),("task202", 5),("task202", 6)]
+
+experiment_type = 'generation'
+
+# TODO according to experiment type, I will correspondingly change the code
+
 
 for task_name, experiment_rank in experiments:
-    file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
-    with open(file_path, "r", encoding="utf-8") as json_file:
-        all_tasks = json.load(json_file)
-
-    task_config_for_generation_tasks = None
-    for task in all_tasks:
-        if task["task_name"] == task_name:
-            task_config_for_generation_tasks = (
-                task["task_name"],
-                task["task_instruction"],
-                task["examples"],
-                task["expected_content"],
-                f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/{task_name}",
-                f"/home/cyzhao/prompt2model_test/testdataset/NI/test/{task_name}",
-                task.get("optional_list", []),
-                task.get("metric", "rouge"),
-            )
-
+    task_config = None
+    if experiment_type == 'generation':
+        file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
+        with open(file_path, "r", encoding="utf-8") as json_file:
+            all_tasks = json.load(json_file)
+            for task in all_tasks:
+                if task["task_name"] == task_name:
+                    task_config = (
+                        task["task_name"],
+                        task["task_instruction"],
+                        task["examples"],
+                        task["expected_content"],
+                        f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/{task_name}",
+                        f"/home/cyzhao/prompt2model_test/testdataset/NI/test/{task_name}",
+                        task.get("optional_list", []),
+                        task.get("metric", "rouge"),
+                    )
+    elif experiment_type == 'classification':
+        for task in classfication_tasks:
+            if task.task_name == task_name:
+                task_config = (
+                    task.task_name,
+                    task.task_instruction,
+                    task.examples,
+                    task.expected_content,
+                    f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/{task_name}",
+                    f"/home/cyzhao/prompt2model_test/testdataset/NI/test/{task_name}",
+                    task.optional_list,
+                    task.metric,
+                    task.labels,
+                    task.extraction_examples
+                )
 
     # TODO 加expected content和metrics
     experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
@@ -46,11 +66,10 @@ for task_name, experiment_rank in experiments:
     per_device_train_batch_size = 1
     # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
     max_training_epochs = 3
-    file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
 
     from main import main, validate_or_test
 
-    log_and_data_root = Path("/home/cyzhao") / experiment_name
+    log_and_data_root = Path("/home/cyzhao/generation_tasks_test") / experiment_name
     evaluation_result_file_tail = "result.json"
     ckpt_root = Path("/data2/cyzhao/ckpt_data_p2ms")
     best_ckpt_path = Path("/data2/cyzhao/best_ckpt")
@@ -97,23 +116,12 @@ for task_name, experiment_rank in experiments:
         print(command)
         os.system(command)
 
-    #! For classification tasks
-    # task_name = task.task_name
-    # instruction = task.task_instruction
-    # examples = task.examples
-    # expected_content = task.expected_content
-    # evaluation_dataset_path = f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/{task_name}"
-    # test_set_path = f"/home/cyzhao/prompt2model_test/testdataset/NI/test/{task_name}"
-    # optional_list = task.optional_list
-    # metric = task.metric
-    # labels = task.labels
-    # extraction_examples = task.extraction_examples
 
-    #! For generation tasks
 
-    task_name, instruction, examples, expected_content, evaluation_dataset_path, test_set_path, optional_list, metric  = task_config_for_generation_tasks
-    labels = []
-    extraction_examples = []
+    if experiment_type == 'generation':
+        task_name, instruction, examples, expected_content, evaluation_dataset_path, test_set_path, optional_list, metric  = task_config
+    elif experiment_type == 'classfication':
+        task_name, instruction, examples, expected_content, evaluation_dataset_path, test_set_path, optional_list, metric, labels, extraction_examples = task_config
 
     def objective_function(
         generation_temperature,
@@ -130,7 +138,6 @@ for task_name, experiment_rank in experiments:
         assert optional_list != []
         assert expected_content != ""
         assert metric != ""
-    # change generation epoch to 40 for 738
         params = {
             "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
             "task_name": task_name,
@@ -139,7 +146,7 @@ for task_name, experiment_rank in experiments:
             "expected_content": expected_content,
             "evaluation_dataset_path": evaluation_dataset_path,
             "test_set_path": test_set_path,
-            "generation_epochs": int(40) if experiment_rank <=3 else int(20),
+            "generation_epochs": int(20),
             "generation_batch_size": int(10),
             "generation_top_k": int(40),
             "min_frequency": float(0.3),

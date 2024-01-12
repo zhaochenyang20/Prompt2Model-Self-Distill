@@ -20,13 +20,7 @@ experiment_rank = 6
 # TODO change task name
 # task_name = task.task_name
 
-# squad 039 281 121 1195 / 034 1622 1562 671 1345 035 1659
-
-# "squad", "task039", "task281", "task121", "task1195" 这些跑完了 6 轮
-
-#! 这些需要跑 1 2 3 4 5 6
 task_names = ["task569", "task957", "task1598", "task1631", "task677", "task1557", "task036", "task613"]
-#! 还没跑 "task569", "task957", "task1598", "task1631", "task677", "task1557", "task036", "task613"
 
 for task_name in task_names:
     file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
@@ -141,7 +135,6 @@ for task_name in task_names:
         assert optional_list != []
         assert expected_content != ""
         assert metric != ""
-    # change generation epoch to 40 for 738
         params = {
             "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
             "task_name": task_name,

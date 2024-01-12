@@ -97,6 +97,8 @@ baseline_scores = {
 
 score_recording = {}
 for parameter in parameters:
+    if parameter[-1]==40:
+        continue
     parameter_score_sum = 0
     for task in generation_tasks:
         best_score_task = get_validation_score(generation_best_experiment, task, parameter)
