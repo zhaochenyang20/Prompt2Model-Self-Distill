@@ -1,7 +1,10 @@
 import os
+import torch
+print(torch.cuda.is_available())
+torch._C._cuda_init()
 
 # TODO 改卡
-os.environ["CUDA_VISIBLE_DEVICES"] = "4"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "4"
 import gc
 import json
 import re
@@ -17,12 +20,13 @@ from vllm.model_executor.parallel_utils.parallel_state import destroy_model_para
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
 from prompt2model.utils.prompt import PROMPT_TEMPLATE
+import ray
 
 def construct_meta_prompt(
     instruction: str = None,
     examples: str = None,
     new_input: str = None,
-) -> str:
+    ) -> str:
     """Constructs a prompt template for the dataset generator.
 
     Args:
@@ -31,7 +35,7 @@ def construct_meta_prompt(
         high_quality_input_string: A string representing the high quality examples.
     """
     return PROMPT_TEMPLATE.format(
-        instruction=instruction,
+        task_instruction=instruction,
         new_input=new_input,
         examples=examples,
     )
@@ -81,22 +85,24 @@ def exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs):
 
 def evaluate_model(task_names, finetuned=False, exact_match=False):
     for task_name in task_names:
-        base_model = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+        base_model = "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
         # 改了这里的名字
-        experiment_name = "NI_" + task_name + "_exp_1"
-        path = f"/data2/cyzhao/best_ckpt/{experiment_name}"
+        experiment_name = "NI_" + task_name + "_exp_-1"
+        path = f"/data/tir/projects/tir5/users/xjia2/best_ckpt/{experiment_name}"
+        ray.init(ignore_reinit_error=True)
         tuned_vicuna = LLM(
             model=base_model if not finetuned else path,
             gpu_memory_utilization=0.9,
-            tensor_parallel_size=1,  # 根据卡数改
+            swap_space = 16, 
+            tensor_parallel_size=2,  # 根据卡数改
         )
         for test_type in ["test", "eval"]:
             test_dataset = datasets.load_from_disk(
-                f"/home/cyzhao/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
+                f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
             )
-            inputs_dir = Path("/home/cyzhao/baseline_generated_data")
+            inputs_dir = Path("/home/xjia2/p2mss/baseline_generated_data")
 
-            file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
+            file_path = "/home/xjia2/p2mss/main/NI_tasks/tasks.json"
 
             with open(file_path, "r", encoding="utf-8") as json_file:
                 data = json.load(json_file)
@@ -161,7 +167,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                 min_frequency=hyperparameter_choices.get("min_frequency", 0.2),
             )
             #! 这里测试轮次比较多，是为了看结果是否稳定
-            # vicuna base model "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+            # vicuna base model "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
             tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
             
             decoded_outputs = []
@@ -182,7 +188,6 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                 else:
                     decoded_outputs.append("No Output")
             
-            print(decoded_outputs)
             evaluate_result = (
                 rouge_l_score(GROUND_TRUTH, decoded_outputs)
                 if not exact_match
@@ -194,7 +199,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                     f"\n\nresult of {path} th:\n\n------------------------------------------------{evaluate_result}------------------------------------------------\n\n"
                 )
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"base_{task_name}"
+            evaluate_generated_content_path = inputs_dir / f"base_{task_type}_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=decoded_outputs,
@@ -205,14 +210,14 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         del tuned_vicuna
         gc.collect()
         torch.cuda.empty_cache()
+        ray.shutdown()
         destroy_model_parallel()
 
 
 # TODO 改任务
 print("generation tasks:")
-task_names = ["task039"]
-# task_names = ["task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
+task_names = ["task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
 evaluate_model(task_names, finetuned=False, exact_match=False)
-# print("classification tasks:")
-# task_names = ["task202", "task199", "task1388", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
-# evaluate_model(task_names, finetuned=False, exact_match=True)
+print("classification tasks:")
+task_names = ["task202", "task199", "task1388", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
+evaluate_model(task_names, finetuned=False, exact_match=True)

@@ -290,7 +290,7 @@ def main(config_path: str):
         return None
 
     pretrain_model_path = Path(
-        "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+        "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
     )
 
     complete_ckpts = check_and_remove_checkpoints(ckpt_path)

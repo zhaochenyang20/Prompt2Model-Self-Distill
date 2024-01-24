@@ -23,7 +23,7 @@ experiment_rank = 6
 task_names = ["task569", "task957", "task1598", "task1631", "task677", "task1557", "task036", "task613"]
 
 for task_name in task_names:
-    file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
+    file_path = "/home/xjia2/p2mss/main/NI_tasks/tasks.json"
     with open(file_path, "r", encoding="utf-8") as json_file:
         all_tasks = json.load(json_file)
 
@@ -35,8 +35,8 @@ for task_name in task_names:
                 task["task_instruction"],
                 task["examples"],
                 task["expected_content"],
-                f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/{task_name}",
-                f"/home/cyzhao/prompt2model_test/testdataset/NI/test/{task_name}",
+                f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/eval/{task_name}",
+                f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/test/{task_name}",
                 task.get("optional_list", []),
                 task.get("metric", "rouge"),
             )
@@ -51,14 +51,14 @@ for task_name in task_names:
     per_device_train_batch_size = 1
     # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
     max_training_epochs = 3
-    file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
+    file_path = "/home/xjia2/p2mss/main/NI_tasks/tasks.json"
 
     from main import main, validate_or_test
 
-    log_and_data_root = Path("/home/cyzhao") / experiment_name
+    log_and_data_root = Path("/home/xjia2/p2mss") / experiment_name
     evaluation_result_file_tail = "result.json"
-    ckpt_root = Path("/data2/cyzhao/ckpt_data_p2ms")
-    best_ckpt_path = Path("/data2/cyzhao/best_ckpt")
+    ckpt_root = Path("/data/tir/projects/tir5/users/xjia2/ckpt_data_p2ms")
+    best_ckpt_path = Path("/data/tir/projects/tir5/users/xjia2/best_ckpt")
     best_validation_result_path = log_and_data_root / "best_validation_result.json"
     log_and_data_root.mkdir(parents=True, exist_ok=True)
     ckpt_root.mkdir(parents=True, exist_ok=True)
@@ -107,8 +107,8 @@ for task_name in task_names:
     # instruction = task.task_instruction
     # examples = task.examples
     # expected_content = task.expected_content
-    # evaluation_dataset_path = f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/{task_name}"
-    # test_set_path = f"/home/cyzhao/prompt2model_test/testdataset/NI/test/{task_name}"
+    # evaluation_dataset_path = f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/eval/{task_name}"
+    # test_set_path = f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/test/{task_name}"
     # optional_list = task.optional_list
     # metric = task.metric
     # labels = task.labels

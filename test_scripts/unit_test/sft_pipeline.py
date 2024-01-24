@@ -3,7 +3,7 @@ import os
 from functools import partial
 from pathlib import Path
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
 os.environ["WANDB_MODE"] = "offline"
 import datasets
 import torch
@@ -14,12 +14,12 @@ from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 model_path = Path(
-    "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+    "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
 )
-ckpt_path = Path("/home/cyzhao/ckpt")
-generated_dataset_path = Path("/home/cyzhao/generated_datasets")
+ckpt_path = Path("/home/xjia2/p2mss/ckpt")
+generated_dataset_path = Path("/home/xjia2/p2mss/generated_datasets")
 dataset_path = Path(
-    "/home/cyzhao/rerun_experiments/NI_squad_exp_1/squad_1.0_True_False_1/dataset"
+    "/home/xjia2/p2mss/rerun_experiments/NI_squad_exp_1/squad_1.0_True_False_1/dataset"
 )
 
 prompt_spec = MockPromptSpec(
@@ -116,11 +116,11 @@ training_args = TrainingArguments(
     report_to="wandb",
     do_eval=False,
     save_strategy="epoch",
-    output_dir="/data2/cyzhao/ckpt_1",
+    output_dir="/data/tir/projects/tir5/users/xjia2/ckpt_1",
     evaluation_strategy="no",
     logging_steps=4,
     num_train_epochs=3,
-    per_device_train_batch_size=3,
+    per_device_train_batch_size=1,
     seed=42,
 )
 trainer = SFTTrainer(
@@ -129,7 +129,7 @@ trainer = SFTTrainer(
     train_dataset=mapped_dataset,
     dataset_text_field="text",
     data_collator=data_collator,
-    max_seq_length=2000,
+    max_seq_length=1000,
 )
 trainer.train()
 del trainer

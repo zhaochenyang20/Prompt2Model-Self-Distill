@@ -26,7 +26,7 @@ experiment_type = 'generation'
 for task_name, experiment_rank in experiments:
     task_config = None
     if experiment_type == 'generation':
-        file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
+        file_path = "/home/xjia2/p2mss/main/NI_tasks/tasks.json"
         with open(file_path, "r", encoding="utf-8") as json_file:
             all_tasks = json.load(json_file)
             for task in all_tasks:
@@ -36,8 +36,8 @@ for task_name, experiment_rank in experiments:
                         task["task_instruction"],
                         task["examples"],
                         task["expected_content"],
-                        f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/{task_name}",
-                        f"/home/cyzhao/prompt2model_test/testdataset/NI/test/{task_name}",
+                        f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/eval/{task_name}",
+                        f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/test/{task_name}",
                         task.get("optional_list", []),
                         task.get("metric", "rouge"),
                     )
@@ -49,8 +49,8 @@ for task_name, experiment_rank in experiments:
                     task.task_instruction,
                     task.examples,
                     task.expected_content,
-                    f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/{task_name}",
-                    f"/home/cyzhao/prompt2model_test/testdataset/NI/test/{task_name}",
+                    f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/eval/{task_name}",
+                    f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/test/{task_name}",
                     task.optional_list,
                     task.metric,
                     task.labels,
@@ -69,10 +69,10 @@ for task_name, experiment_rank in experiments:
 
     from main import main, validate_or_test
 
-    log_and_data_root = Path("/home/cyzhao/generation_tasks_test") / experiment_name
+    log_and_data_root = Path("/home/xjia2/p2mss/generation_tasks_test") / experiment_name
     evaluation_result_file_tail = "result.json"
-    ckpt_root = Path("/data2/cyzhao/ckpt_data_p2ms")
-    best_ckpt_path = Path("/data2/cyzhao/best_ckpt")
+    ckpt_root = Path("/data/tir/projects/tir5/users/xjia2/ckpt_data_p2ms")
+    best_ckpt_path = Path("/data/tir/projects/tir5/users/xjia2/best_ckpt")
     best_validation_result_path = log_and_data_root / "best_validation_result.json"
     log_and_data_root.mkdir(parents=True, exist_ok=True)
     ckpt_root.mkdir(parents=True, exist_ok=True)

@@ -47,7 +47,7 @@ def process_folder(folder_path):
             clear_file(os.path.join(sub_folder_path, 'result.json'))
 
 # 主目录
-main_dir = '/home/cyzhao/generation_tasks_test'
+main_dir = '/home/xjia2/p2mss/generation_tasks_test'
 
 # 遍历主目录下的所有子文件夹
 for folder_name in os.listdir(main_dir):

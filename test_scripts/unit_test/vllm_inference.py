@@ -2,11 +2,12 @@ from vllm import LLM, SamplingParams
 
 path = "/data/cyzhao/best_ckpt/SQuAD"
 
-default = "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+default = "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
 
 language_model = LLM(
     model=default,
-    gpu_memory_utilization=0.5,
+    gpu_memory_utilization=0.9,
+    swap_space = 16,
     tensor_parallel_size=1,
 )
 

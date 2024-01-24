@@ -2,7 +2,7 @@ import json
 from tasks import Task
 
 # 读取JSON文件
-with open('/home/cyzhao/main/NI_tasks/tasks.json', 'r', encoding='utf-8') as json_file:
+with open('/home/xjia2/p2mss/main/NI_tasks/tasks.json', 'r', encoding='utf-8') as json_file:
     datas = json.load(json_file)
     for data in datas:
         print(data['task_name'])
@@ -21,7 +21,7 @@ with open('/home/cyzhao/main/NI_tasks/tasks.json', 'r', encoding='utf-8') as jso
             )
 
             # 将Task实例写入Python文件
-            with open('/home/cyzhao/main/test_scripts/utils/tasks.py', 'a', encoding='utf-8') as python_file:
+            with open('/home/xjia2/p2mss/main/test_scripts/utils/tasks.py', 'a', encoding='utf-8') as python_file:
                 python_file.write(f'''
 {task_instance.task_name} = Task(
     task_instruction="""{task_instance.task_instruction}""".strip(),

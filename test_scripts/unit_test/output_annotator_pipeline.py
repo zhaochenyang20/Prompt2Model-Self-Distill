@@ -27,7 +27,7 @@ prompt_spec = MockPromptSpec(
     examples=config["examples"],  # noqa E501
 )
 
-dataset_path = "/home/cyzhao/NI_task202_exp_1/task202_0.6_False_False_1/inputs"
+dataset_path = "/home/xjia2/p2mss/NI_task202_exp_1/task202_0.6_False_False_1/inputs"
 
 inputs = load_from_disk(dataset_path)['input_col']
 

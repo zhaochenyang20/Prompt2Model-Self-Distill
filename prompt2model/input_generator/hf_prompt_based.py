@@ -32,7 +32,7 @@ class HFPromptBasedInputGenerator(InputGenerator):
         """
         if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.tokenizer = AutoTokenizer.from_pretrained(
-                "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
+                "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5",
                 local_files_only=True,
                 padding_side="left",
                 trust_remote_code=True,
@@ -42,7 +42,7 @@ class HFPromptBasedInputGenerator(InputGenerator):
                 pretrained_model_name, padding_side="left"
             )
         model = AutoModelForCausalLM.from_pretrained(
-            "/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5",
+            "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5",
             trust_remote_code=True,
             device_map="auto",
             torch_dtype=torch.bfloat16,

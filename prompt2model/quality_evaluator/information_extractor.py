@@ -87,7 +87,7 @@ class VLLMInformationExtractor(QualityEvaluator):
         """
         if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.language_model = LLM(
-                model="/data/ckpts/huggingface/models/models--lmsys--vicuna-7b-v1.5/snapshots/de56c35b1763eaae20f4d60efd64af0a9091ebe5"
+                model="/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
             )
         else:
             self.language_model = LLM(model=pretrained_model_name)

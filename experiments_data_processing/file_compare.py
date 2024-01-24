@@ -32,7 +32,7 @@ pairs = [
     ('False', 'False'),
     ('True', 'False')
 ]
-root_path = "/home/cyzhao"
+root_path = "/home/xjia2/p2mss"
 res = []
 experiment_number_1 = 4
 experiment_number_2 = 1

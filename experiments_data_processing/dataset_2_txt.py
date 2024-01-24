@@ -101,7 +101,7 @@ def process_subfolders(base_path, target_base_path):
 
             instruction = None
             examples = None
-            json_path = "/home/cyzhao/main/NI_tasks/tasks.json"
+            json_path = "/home/xjia2/p2mss/main/NI_tasks/tasks.json"
 
             with open(json_path, "r", encoding="utf-8") as json_file:
                 all_tasks = json.load(json_file)
@@ -141,6 +141,6 @@ def process_subfolders(base_path, target_base_path):
             dataset_to_txt(best_ckpt_generated_content, new_path, 'prediction') 
 
 # Example usage
-base_path = '/home/cyzhao/generation_tasks_best_3'
-target_base_path = '/home/cyzhao/generation_tasks_best_ckpt_organized_data'
+base_path = '/home/xjia2/p2mss/generation_tasks_best_3'
+target_base_path = '/home/xjia2/p2mss/generation_tasks_best_ckpt_organized_data'
 process_subfolders(base_path, target_base_path)

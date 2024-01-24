@@ -20,7 +20,7 @@ task_names = ["1612"]
 
 for task_name in task_names:
     print(f"\n\nin task_{task_name}")
-    file_path = "/home/cyzhao/main/NI_tasks/tasks.json"
+    file_path = "/home/xjia2/p2mss/main/NI_tasks/tasks.json"
     with open(file_path, "r", encoding="utf-8") as json_file:
         all_tasks = json.load(json_file)
     choosen_task = None
@@ -31,8 +31,8 @@ for task_name in task_names:
                 task["task_instruction"],
                 task["examples"],
                 task["expected_content"],
-                f"/home/cyzhao/prompt2model_test/testdataset/NI/eval/task{task_name}",
-                f"/home/cyzhao/prompt2model_test/testdataset/NI/test/task{task_name}",
+                f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/eval/task{task_name}",
+                f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/test/task{task_name}",
                 task.get("optional_list", []),
                 task.get("metric", "exact_match"),
                 task.get("labels", [])

@@ -9,7 +9,7 @@ def copy_folder(source_folder_path, destination_folder_path):
     except Exception as e:
         print(f"复制文件夹时出错: {e}")
 
-root_path = '/home/cyzhao/generation_tasks_test'
+root_path = '/home/xjia2/p2mss/generation_tasks_test'
 best_eval_score = {}
 best_test_score = {}
 best_index = {}
@@ -42,7 +42,7 @@ for sub_folder in os.listdir(root_path):
                         best_index[task] = exp_number
                         best_test_score[task] = result_data.get('test_result', 0)
 
-destination_path_root = '/home/cyzhao/generation_tasks_best_3'
+destination_path_root = '/home/xjia2/p2mss/generation_tasks_best_3'
 for task in best_index.keys():
     source_path = root_path+ '/NI_' + task +'_exp_' + best_index[task]
     destination_path = destination_path_root + '/NI_' + task +'_exp_' + best_index[task]

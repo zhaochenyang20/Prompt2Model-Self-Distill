@@ -6,9 +6,9 @@ class ExperimentType:
         self.root_path = root_path
         self.total_experiments = total_experiments
 
-classfication_experiment = ExperimentType("/home/cyzhao/classification_tasks", 1)
-generation_experiment = ExperimentType("/home/cyzhao/generation_tasks", 3)
-generation_best_experiment = ExperimentType("/home/cyzhao/generation_tasks_best", 1)
+classfication_experiment = ExperimentType("/home/xjia2/p2mss/classification_tasks", 1)
+generation_experiment = ExperimentType("/home/xjia2/p2mss/generation_tasks", 3)
+generation_best_experiment = ExperimentType("/home/xjia2/p2mss/generation_tasks_best", 1)
 
 def retrieve_data(csv_path, parameter):
     temperature, input_constraint, output_constraint, epoch_number = parameter
