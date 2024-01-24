@@ -9,6 +9,7 @@ import torch
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 from functools import partial
 from prompt2model.output_annotator import VLLMPromptBasedOutputAnnotator
+import ray
 
 def filter_func(example, conditional_labels):
     return example["output_col"] in conditional_labels
@@ -31,9 +32,10 @@ def annotate_and_write_outputs(
 ):
     if (log_and_data_path / "dataset").exists():
         return
+    ray.init(ignore_reinit_error=True)
     output_annotator = VLLMPromptBasedOutputAnnotator(
         gpu_memory_utilization=gpu_memory_utilization,
-        tensor_parallel_size=1,
+        tensor_parallel_size=tensor_parallel_size,
     )
     dataset = datasets.load_from_disk(log_and_data_path / "inputs")
     inputs = dataset["input_col"]
@@ -46,8 +48,6 @@ def annotate_and_write_outputs(
         optional_list=optional_list,
         output_length_constraint=output_length_constraint,
     )
-    # from IPython import embed
-    # embed()
     if conditional_labels != []:
         mapping_function = partial(mapping_func, conditional_labels=conditional_labels)
         output_dataset = output_dataset.map(mapping_function)
@@ -96,4 +96,5 @@ def annotate_and_write_outputs(
     del output_annotator
     destroy_model_parallel()
     gc.collect()
+    ray.shutdown()
     torch.cuda.empty_cache()

@@ -11,16 +11,18 @@ from pathlib import Path
 import itertools
 
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 # TODO change task
 # task = task1615
 # TODO change experiment rank
-experiment_rank = 6
+experiment_rank = 1
 # TODO change task name
 # task_name = task.task_name
 
 task_names = ["task569", "task957", "task1598", "task1631", "task677", "task1557", "task036", "task613"]
+
+task_names = ["task569", "task957"]
 
 for task_name in task_names:
     file_path = "/home/xjia2/p2mss/main/NI_tasks/tasks.json"
@@ -48,7 +50,7 @@ for task_name in task_names:
     # TODO 改显存配置
     gpu_memory_utilization = 0.85
     # 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
-    per_device_train_batch_size = 1
+    per_device_train_batch_size = 5
     # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
     max_training_epochs = 3
     file_path = "/home/xjia2/p2mss/main/NI_tasks/tasks.json"
@@ -152,7 +154,7 @@ for task_name in task_names:
             "ckpt_path": str(ckpt_path),
             "gpu_memory_utilization": float(gpu_memory_utilization),
             "training_epochs": int(max_training_epochs),
-            "tensor_parallel_size": int(1),
+            "tensor_parallel_size": 2,
             "evaluation_result_file_tail": evaluation_result_file_tail,
             "optional_list": optional_list,
             "metric": metric,
@@ -269,7 +271,7 @@ for task_name in task_names:
                 instruction,
                 examples,
                 gpu_memory_utilization,
-                1,
+                2,
                 best_validation_result_path,
                 test_content_store_path=log_and_data_root / "best_ckpt_generated_content",
                 validation=False,

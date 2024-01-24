@@ -268,7 +268,8 @@ def main(config_path: str):
             intput_length_constraint=loaded_params["intput_length_constraint"],
             conditional_labels=loaded_params["conditional_labels"],
             reannotate=True,
-            extraction_examples=loaded_params["extraction_examples"]
+            extraction_examples=loaded_params["extraction_examples"],
+            tensor_parallel_size=tensor_parallel_size
         )
 
     if not (log_and_data_path / "dataset").exists():
