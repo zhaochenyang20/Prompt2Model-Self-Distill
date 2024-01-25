@@ -19,7 +19,7 @@ model_path = Path(
 ckpt_path = Path("/home/xjia2/p2mss/ckpt")
 generated_dataset_path = Path("/home/xjia2/p2mss/generated_datasets")
 dataset_path = Path(
-    "/home/xjia2/p2mss/generation_tasks_best_3/NI_task034_exp_5/task034_0.6_False_False_5/dataset"
+    "/home/xjia2/p2mss/rerun_experiments/NI_squad_exp_1/squad_1.0_True_False_1/dataset"
 )
 
 prompt_spec = MockPromptSpec(

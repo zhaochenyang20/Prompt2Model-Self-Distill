@@ -199,7 +199,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                     f"\n\nresult of {path} th:\n\n------------------------------------------------{evaluate_result}------------------------------------------------\n\n"
                 )
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"base_{test_type}_{task_name}"
+            evaluate_generated_content_path = inputs_dir / f"base_{task_type}_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=decoded_outputs,
@@ -217,7 +217,6 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 # TODO 改任务
 print("generation tasks:")
 task_names = ["task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
-task_names = ["task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
 evaluate_model(task_names, finetuned=False, exact_match=False)
 print("classification tasks:")
 task_names = ["task202", "task199", "task1388", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
