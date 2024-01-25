@@ -3,7 +3,6 @@ import gc
 import torch
 from vllm import LLM, SamplingParams
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
-import ray
 
 def vllm_inference(model_path, gpu_memory_utilization, tensor_parallel_size, prompts):
     hyperparameter_choices = {}
@@ -13,7 +12,6 @@ def vllm_inference(model_path, gpu_memory_utilization, tensor_parallel_size, pro
         temperature=hyperparameter_choices.get("temperature", 0),
         max_tokens=hyperparameter_choices.get("max_tokens", 500),
     )
-    ray.init(ignore_reinit_error=True)
     model = LLM(
         model=str(model_path),
         gpu_memory_utilization=gpu_memory_utilization,
@@ -25,5 +23,4 @@ def vllm_inference(model_path, gpu_memory_utilization, tensor_parallel_size, pro
     gc.collect()
     torch.cuda.empty_cache()
     destroy_model_parallel()
-    ray.shutdown()
     return model_generated_outputs

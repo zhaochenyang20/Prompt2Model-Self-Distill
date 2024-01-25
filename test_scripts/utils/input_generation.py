@@ -3,7 +3,6 @@ import gc
 import datasets
 import torch
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
-import ray
 
 from prompt2model.input_generator import VLLMPromptBasedInputGenerator
 
@@ -21,9 +20,8 @@ def generate_and_write_inputs(
     conditional_labels,
     reannotate=True,
     extraction_examples=[],
-    tensor_parallel_size=2,
+    tensor_parallel_size=1,
 ):
-    ray.init(ignore_reinit_error=True)
     input_generator = VLLMPromptBasedInputGenerator(
         gpu_memory_utilization=gpu_memory_utilization,
         tensor_parallel_size=tensor_parallel_size,
@@ -62,5 +60,4 @@ def generate_and_write_inputs(
     del input_generator
     destroy_model_parallel()
     gc.collect()
-    ray.shutdown()
     torch.cuda.empty_cache()

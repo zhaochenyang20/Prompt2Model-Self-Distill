@@ -48,7 +48,7 @@ for task_name in task_names:
     experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
     # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
     # TODO 改显存配置
-    gpu_memory_utilization = 0.85
+    gpu_memory_utilization = 0.70
     # 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
     per_device_train_batch_size = 5
     # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
@@ -154,7 +154,7 @@ for task_name in task_names:
             "ckpt_path": str(ckpt_path),
             "gpu_memory_utilization": float(gpu_memory_utilization),
             "training_epochs": int(max_training_epochs),
-            "tensor_parallel_size": 2,
+            "tensor_parallel_size": 1,
             "evaluation_result_file_tail": evaluation_result_file_tail,
             "optional_list": optional_list,
             "metric": metric,
@@ -271,7 +271,7 @@ for task_name in task_names:
                 instruction,
                 examples,
                 gpu_memory_utilization,
-                2,
+                1,
                 best_validation_result_path,
                 test_content_store_path=log_and_data_root / "best_ckpt_generated_content",
                 validation=False,

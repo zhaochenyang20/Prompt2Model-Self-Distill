@@ -20,7 +20,6 @@ from vllm.model_executor.parallel_utils.parallel_state import destroy_model_para
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
 from prompt2model.utils.prompt import PROMPT_TEMPLATE
-import ray
 
 def construct_meta_prompt(
     instruction: str = None,
@@ -89,12 +88,11 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         # 改了这里的名字
         experiment_name = "NI_" + task_name + "_exp_-1"
         path = f"/data/tir/projects/tir5/users/xjia2/best_ckpt/{experiment_name}"
-        ray.init(ignore_reinit_error=True)
         tuned_vicuna = LLM(
             model=base_model if not finetuned else path,
-            gpu_memory_utilization=0.9,
+            gpu_memory_utilization=0.70,
             swap_space = 16, 
-            tensor_parallel_size=2,  # 根据卡数改
+            tensor_parallel_size=1,  # 根据卡数改
         )
         for test_type in ["test", "eval"]:
             test_dataset = datasets.load_from_disk(
@@ -210,15 +208,16 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         del tuned_vicuna
         gc.collect()
         torch.cuda.empty_cache()
-        ray.shutdown()
         destroy_model_parallel()
 
 
 # TODO 改任务
-print("generation tasks:")
-task_names = ["task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
-task_names = ["task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
-evaluate_model(task_names, finetuned=False, exact_match=False)
+# print("generation tasks:")
+# task_names = ["task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
+# task_names = ["task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
+# task_names = ["task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
+# evaluate_model(task_names, finetuned=False, exact_match=False)
 print("classification tasks:")
 task_names = ["task202", "task199", "task1388", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
+task_names = ["task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
 evaluate_model(task_names, finetuned=False, exact_match=True)
