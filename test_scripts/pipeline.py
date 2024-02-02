@@ -11,7 +11,6 @@ from pathlib import Path
 import itertools
 
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 # TODO change task
 # task = task1615
@@ -20,7 +19,8 @@ experiment_rank = 6
 # TODO change task name
 # task_name = task.task_name
 
-task_names = ["task569", "task957", "task1598", "task1631", "task677", "task1557", "task036", "task613"]
+task_names = ["task957"]
+# "task569", , "task1598", "task1631", "task677", "task1557", "task036", "task613"
 
 for task_name in task_names:
     file_path = "/home/xjia2/p2mss/main/NI_tasks/tasks.json"
@@ -40,6 +40,7 @@ for task_name in task_names:
                 task.get("optional_list", []),
                 task.get("metric", "rouge"),
             )
+            break
 
 
     # TODO 加expected content和metrics
@@ -152,7 +153,7 @@ for task_name in task_names:
             "ckpt_path": str(ckpt_path),
             "gpu_memory_utilization": float(gpu_memory_utilization),
             "training_epochs": int(max_training_epochs),
-            "tensor_parallel_size": int(1),
+            "tensor_parallel_size": int(2),
             "evaluation_result_file_tail": evaluation_result_file_tail,
             "optional_list": optional_list,
             "metric": metric,

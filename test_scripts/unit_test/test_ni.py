@@ -1,10 +1,4 @@
 import os
-import torch
-print(torch.cuda.is_available())
-torch._C._cuda_init()
-
-# TODO 改卡
-# os.environ["CUDA_VISIBLE_DEVICES"] = "4"
 import gc
 import json
 import re
@@ -94,7 +88,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             model=base_model if not finetuned else path,
             gpu_memory_utilization=0.9,
             swap_space = 16, 
-            tensor_parallel_size=2,  # 根据卡数改
+            tensor_parallel_size=1,  # 根据卡数改
         )
         for test_type in ["test", "eval"]:
             test_dataset = datasets.load_from_disk(
@@ -199,25 +193,26 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                     f"\n\nresult of {path} th:\n\n------------------------------------------------{evaluate_result}------------------------------------------------\n\n"
                 )
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"base_{task_type}_{task_name}"
-            datasets.Dataset.from_dict(
-                dict(
-                    model_output=decoded_outputs,
-                    model_input=prompts,
-                    groud_truth=GROUND_TRUTH,
-                )
-            ).save_to_disk(evaluate_generated_content_path)
+            # evaluate_generated_content_path = inputs_dir / f"base_{test_type}_{task_name}"
+            # datasets.Dataset.from_dict(
+            #     dict(
+            #         model_output=decoded_outputs,
+            #         model_input=prompts,
+            #         groud_truth=GROUND_TRUTH,
+            #     )
+            # ).save_to_disk(evaluate_generated_content_path)
         del tuned_vicuna
         gc.collect()
         torch.cuda.empty_cache()
         ray.shutdown()
         destroy_model_parallel()
 
-
 # TODO 改任务
-print("generation tasks:")
-task_names = ["task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
+# print("generation tasks:")
+# task_names = ["task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
+task_names = ["task1631", "task1557", "task036"]
 evaluate_model(task_names, finetuned=False, exact_match=False)
-print("classification tasks:")
-task_names = ["task202", "task199", "task1388", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
-evaluate_model(task_names, finetuned=False, exact_match=True)
+# print("classification tasks:")
+# task_names = ["task202", "task199", "task1388", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
+# task_names = ["task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
+# evaluate_model(task_names, finetuned=False, exact_match=True)

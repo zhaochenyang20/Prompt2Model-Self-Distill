@@ -164,7 +164,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             for _ in range(inputs_num)
         ]
         prompts = [each[0] for each in prompt_tuples]
-        print(prompts[0])
         pseudo_labels = [each[1] for each in prompt_tuples]
         if conditional_labels != []:
             assert all(label in conditional_labels for label in pseudo_labels)
@@ -252,7 +251,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 extraction_examples,
             )
             filter_prompts.append(prompt.strip() if labels[i] is not None else prompt)
-            print(filter_prompts[0])
         sampling_params = SamplingParams(
             top_k=-1,
             top_p=1,

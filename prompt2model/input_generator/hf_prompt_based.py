@@ -46,7 +46,7 @@ class HFPromptBasedInputGenerator(InputGenerator):
             trust_remote_code=True,
             device_map="auto",
             torch_dtype=torch.bfloat16,
-            use_flash_attention_2=True,
+            attn_implementation="flash_attention_2",
         )
         self.model = BetterTransformer.transform(model, keep_original_model=True)
 

@@ -84,7 +84,7 @@ def finetune_vicuna(
         pretrain_model_path,
         device_map="auto",
         torch_dtype=torch.bfloat16,
-        use_flash_attention_2=True,
+        attn_implementation="flash_attention_2",
     )
     wandb.init(project=task_name, name=run_name)
     wandb.watch(model)
