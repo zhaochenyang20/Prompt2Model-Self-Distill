@@ -4,6 +4,7 @@ from collections import defaultdict
 import numpy as np
 from datasets import load_from_disk
 from sklearn.metrics import f1_score
+from utils.path import ROOT
 
 # from IPython import embed
 
@@ -21,9 +22,9 @@ def find_best_directories(root_dir):
     return best_dirs
 
 
-root_dir = "/home/xjia2/p2mss/classification_tasks"
+root_dir = ROOT + "/classification_tasks"
 # best_directories = find_best_directories(root_dir)
-best_directories = ['/home/xjia2/p2mss/NI_task1516_exp_1/best_ckpt_generated_content']
+best_directories = [ROOT+'/NI_task1516_exp_1/best_ckpt_generated_content']
 ground_truth_biased_count = 0
 model_output_biased_count = 0
 total = 0
