@@ -5,8 +5,9 @@ import sys
 
 import requests
 from datasets import Dataset
+from utils.path import ROOT
 
-sys.path.append("/home/xjia2/p2mss/main/test_scripts/unit_test")
+sys.path.append(ROOT + "/main/test_scripts/unit_test")
 # from test_ni import evaluate_model
 
 # step0: specify the json files to be processed
@@ -14,7 +15,7 @@ sys.path.append("/home/xjia2/p2mss/main/test_scripts/unit_test")
 github_raw_urls = [
     "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task642_esnli_classification.json"
 ]
-unprocessed_file_folder = "/home/xjia2/p2mss/main/NI_tasks/task_json/unprocessed/"
+unprocessed_file_folder = ROOT + "/main/NI_tasks/task_json/unprocessed/"
 for github_raw_url in github_raw_urls:
     local_file_path = unprocessed_file_folder + github_raw_url.split("/")[-1]
 
@@ -31,9 +32,9 @@ for github_raw_url in github_raw_urls:
 
 
 # step1: 导入task desciption到task json文件
-task_json_file_path = "/home/xjia2/p2mss/main/NI_tasks/tasks.json"
-folder_path = "/home/xjia2/p2mss/main/NI_tasks/task_json/unprocessed"
-destination_folder = "/home/xjia2/p2mss/main/NI_tasks/task_json/processed"
+task_json_file_path = ROOT + "/main/NI_tasks/tasks.json"
+folder_path = ROOT + "/main/NI_tasks/task_json/unprocessed"
+destination_folder = ROOT + "/main/NI_tasks/task_json/processed"
 
 files = []
 
@@ -119,18 +120,18 @@ for file_name in files:
 
     test_dataset = Dataset.from_dict(test_data_dict)
     test_dataset.save_to_disk(
-        f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/test/{task_name}"
+        f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
     )
     loaded_dataset = Dataset.load_from_disk(
-        f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/test/{task_name}"
+        f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
     )
 
     eval_dataset = Dataset.from_dict(eval_data_dict)
     eval_dataset.save_to_disk(
-        f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/eval/{task_name}"
+        f"{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
     )
     loaded_dataset = Dataset.load_from_disk(
-        f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/eval/{task_name}"
+        f"{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
     )
 
     shutil.move(file_name, destination_folder)

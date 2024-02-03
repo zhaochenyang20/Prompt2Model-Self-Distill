@@ -8,6 +8,7 @@ os.environ["HF_DATASETS_OFFLINE"] = "1"
 from pathlib import Path
 import itertools
 from utils.tasks import task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529, task190, task200, task937, task642, task1612, task1516, task1615
+from utils.path import ROOT, STORE_ROOT
 
 # TODO change card name
 os.environ["CUDA_VISIBLE_DEVICES"] = "5"
@@ -26,7 +27,7 @@ experiment_type = 'generation'
 for task_name, experiment_rank in experiments:
     task_config = None
     if experiment_type == 'generation':
-        file_path = "/home/xjia2/p2mss/main/NI_tasks/tasks.json"
+        file_path = ROOT + "/main/NI_tasks/tasks.json"
         with open(file_path, "r", encoding="utf-8") as json_file:
             all_tasks = json.load(json_file)
             for task in all_tasks:
@@ -36,8 +37,8 @@ for task_name, experiment_rank in experiments:
                         task["task_instruction"],
                         task["examples"],
                         task["expected_content"],
-                        f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/eval/{task_name}",
-                        f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/test/{task_name}",
+                        f"{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}",
+                        f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}",
                         task.get("optional_list", []),
                         task.get("metric", "rouge"),
                     )
@@ -49,8 +50,8 @@ for task_name, experiment_rank in experiments:
                     task.task_instruction,
                     task.examples,
                     task.expected_content,
-                    f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/eval/{task_name}",
-                    f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/test/{task_name}",
+                    f"{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}",
+                    f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}",
                     task.optional_list,
                     task.metric,
                     task.labels,
@@ -69,10 +70,10 @@ for task_name, experiment_rank in experiments:
 
     from main import main, validate_or_test
 
-    log_and_data_root = Path("/home/xjia2/p2mss/generation_tasks_test") / experiment_name
+    log_and_data_root = Path(ROOT+"/generation_tasks_test") / experiment_name
     evaluation_result_file_tail = "result.json"
-    ckpt_root = Path("/data/tir/projects/tir5/users/xjia2/ckpt_data_p2ms")
-    best_ckpt_path = Path("/data/tir/projects/tir5/users/xjia2/best_ckpt")
+    ckpt_root = Path(STORE_ROOT+"/ckpt_data_p2ms")
+    best_ckpt_path = Path(STORE_ROOT+"/best_ckpt")
     best_validation_result_path = log_and_data_root / "best_validation_result.json"
     log_and_data_root.mkdir(parents=True, exist_ok=True)
     ckpt_root.mkdir(parents=True, exist_ok=True)

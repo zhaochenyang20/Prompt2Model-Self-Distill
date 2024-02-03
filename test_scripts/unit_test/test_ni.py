@@ -15,7 +15,7 @@ from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
 from prompt2model.utils.prompt import PROMPT_TEMPLATE
 import ray
-
+from utils.path import STORE_ROOT, ROOT
 def construct_meta_prompt(
     instruction: str = None,
     examples: str = None,
@@ -82,7 +82,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         base_model = "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
         # 改了这里的名字
         experiment_name = "NI_" + task_name + "_exp_-1"
-        path = f"/data/tir/projects/tir5/users/xjia2/best_ckpt/{experiment_name}"
+        path = f"{STORE_ROOT}/best_ckpt/{experiment_name}"
         ray.init(ignore_reinit_error=True)
         tuned_vicuna = LLM(
             model=base_model if not finetuned else path,
@@ -92,11 +92,11 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         )
         for test_type in ["test", "eval"]:
             test_dataset = datasets.load_from_disk(
-                f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
+                f"{ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
             )
-            inputs_dir = Path("/home/xjia2/p2mss/baseline_generated_data")
+            inputs_dir = Path(ROOT+"/baseline_generated_data")
 
-            file_path = "/home/xjia2/p2mss/main/NI_tasks/tasks.json"
+            file_path = ROOT+"/main/NI_tasks/tasks.json"
 
             with open(file_path, "r", encoding="utf-8") as json_file:
                 data = json.load(json_file)

@@ -1,14 +1,15 @@
 import os
 import pandas as pd
+from utils.path import ROOT
 
 class ExperimentType:
     def __init__(self, root_path, total_experiments):
         self.root_path = root_path
         self.total_experiments = total_experiments
 
-classfication_experiment = ExperimentType("/home/xjia2/p2mss/classification_tasks", 1)
-generation_experiment = ExperimentType("/home/xjia2/p2mss/generation_tasks", 3)
-generation_best_experiment = ExperimentType("/home/xjia2/p2mss/generation_tasks_best", 1)
+classfication_experiment = ExperimentType(ROOT + "/classification_tasks", 1)
+generation_experiment = ExperimentType(ROOT + "/generation_tasks", 3)
+generation_best_experiment = ExperimentType(ROOT + "/generation_tasks_best", 1)
 
 def retrieve_data(csv_path, parameter):
     temperature, input_constraint, output_constraint, epoch_number = parameter

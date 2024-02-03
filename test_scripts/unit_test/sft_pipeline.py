@@ -12,14 +12,15 @@ from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 
 from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
+from utils.path import ROOT, STORE_ROOT
 
 model_path = Path(
     "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
 )
-ckpt_path = Path("/home/xjia2/p2mss/ckpt")
-generated_dataset_path = Path("/home/xjia2/p2mss/generated_datasets")
+ckpt_path = Path(STORE_ROOT+"/ckpt")
+generated_dataset_path = Path(ROOT+"/generated_datasets")
 dataset_path = Path(
-    "/home/xjia2/p2mss/rerun_experiments/NI_squad_exp_1/squad_1.0_True_False_1/dataset"
+    ROOT+"/rerun_experiments/NI_squad_exp_1/squad_1.0_True_False_1/dataset"
 )
 
 prompt_spec = MockPromptSpec(
@@ -116,7 +117,7 @@ training_args = TrainingArguments(
     report_to="wandb",
     do_eval=False,
     save_strategy="epoch",
-    output_dir="/data/tir/projects/tir5/users/xjia2/ckpt_1",
+    output_dir=STORE_ROOT+"/ckpt_1",
     evaluation_strategy="no",
     logging_steps=4,
     num_train_epochs=3,

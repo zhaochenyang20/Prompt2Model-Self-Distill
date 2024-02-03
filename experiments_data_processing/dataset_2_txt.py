@@ -4,6 +4,7 @@ import json
 import re
 import shutil
 from functools import partial
+from utils.path import ROOT
 
 PROMPT_TEMPLATE = """A chat between a curious user and an artificial intelligence assistant.
 The assistant gives helpful, detailed, and polite answers to the user's questions.
@@ -101,7 +102,7 @@ def process_subfolders(base_path, target_base_path):
 
             instruction = None
             examples = None
-            json_path = "/home/xjia2/p2mss/main/NI_tasks/tasks.json"
+            json_path = ROOT + "/main/NI_tasks/tasks.json"
 
             with open(json_path, "r", encoding="utf-8") as json_file:
                 all_tasks = json.load(json_file)
@@ -141,6 +142,6 @@ def process_subfolders(base_path, target_base_path):
             dataset_to_txt(best_ckpt_generated_content, new_path, 'prediction') 
 
 # Example usage
-base_path = '/home/xjia2/p2mss/generation_tasks_best_3'
-target_base_path = '/home/xjia2/p2mss/generation_tasks_best_ckpt_organized_data'
+base_path = ROOT + '/generation_tasks_best_3'
+target_base_path = ROOT + '/generation_tasks_best_ckpt_organized_data'
 process_subfolders(base_path, target_base_path)

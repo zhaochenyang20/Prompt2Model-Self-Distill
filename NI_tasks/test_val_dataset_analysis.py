@@ -3,7 +3,7 @@ from collections import Counter
 import os
 
 # 文件夹 A 的路径
-folder_a_path = '/home/xjia2/p2mss/prompt2model_test/testdataset/NI/eval'
+folder_a_path = ROOT + '/prompt2model_test/testdataset/NI/eval'
 
 # 遍历文件夹 A 中的所有数据集文件夹
 for dataset_folder in os.listdir(folder_a_path):

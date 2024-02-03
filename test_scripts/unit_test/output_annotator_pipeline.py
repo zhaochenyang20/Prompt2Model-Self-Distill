@@ -5,6 +5,7 @@ from pathlib import Path
 from datasets import Dataset, load_from_disk
 from prompt2model.output_annotator import VLLMPromptBasedOutputAnnotator
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
+from utils.path import ROOT
 
 config =      {
         "task_instruction": "In this task, you're given a statement, and three sentences as choices. Your job is to determine which sentence clearly disagrees with the statement. Indicate your answer as '1', '2', or '3' corresponding to the choice number of the selected sentence.",
@@ -27,7 +28,7 @@ prompt_spec = MockPromptSpec(
     examples=config["examples"],  # noqa E501
 )
 
-dataset_path = "/home/xjia2/p2mss/NI_task202_exp_1/task202_0.6_False_False_1/inputs"
+dataset_path = ROOT+"/NI_task202_exp_1/task202_0.6_False_False_1/inputs"
 
 inputs = load_from_disk(dataset_path)['input_col']
 

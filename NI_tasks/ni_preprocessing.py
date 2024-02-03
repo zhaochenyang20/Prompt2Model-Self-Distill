@@ -17,7 +17,7 @@ def get_highest_digit(number):
 
 # TODO change json file path
 files = [
-    "/home/xjia2/p2mss/main/NI_tasks/task_json/processed/task121_zest_text_modification.json"
+    ROOT + "/main/NI_tasks/task_json/processed/task121_zest_text_modification.json"
 ]
 
 for file_name in files:
@@ -51,16 +51,16 @@ for file_name in files:
 
     test_dataset = Dataset.from_dict(test_data_dict)
     test_dataset.save_to_disk(
-        f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/test/{task_name}"
+        f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
     )
     loaded_dataset = Dataset.load_from_disk(
-        f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/test/{task_name}"
+        f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
     )
 
     eval_dataset = Dataset.from_dict(eval_data_dict)
     eval_dataset.save_to_disk(
-        f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/eval/{task_name}"
+        f"{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
     )
     loaded_dataset = Dataset.load_from_disk(
-        f"/home/xjia2/p2mss/prompt2model_test/testdataset/NI/eval/{task_name}"
+        f"/{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
     )

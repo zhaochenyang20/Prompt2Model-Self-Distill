@@ -1,3 +1,4 @@
+from utils.path import ROOT
 def compare_files(file1_path, file2_path):
     # 逐行比较两个文件
     with open(file1_path, 'r') as file1, open(file2_path, 'r') as file2:
@@ -32,7 +33,7 @@ pairs = [
     ('False', 'False'),
     ('True', 'False')
 ]
-root_path = "/home/xjia2/p2mss"
+root_path = ROOT
 res = []
 experiment_number_1 = 4
 experiment_number_2 = 1

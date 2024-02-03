@@ -15,6 +15,7 @@ from vllm.model_executor.parallel_utils.parallel_state import destroy_model_para
 
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
+from utils.path import ROOT, STORE_ROOT
 
 #! TODO 改为新任务的 test set path
 
@@ -37,7 +38,7 @@ joined_dataset.remove_columns(["question", "answers"])
 validation_set = datasets.Dataset.from_dict(joined_dataset[0:1000])
 test_set = datasets.Dataset.from_dict(joined_dataset[1000:2000])
 test_dataset = test_set
-inputs_dir = Path("/home/xjia2/p2mss/evaluation_outputs")
+inputs_dir = Path(ROOT+"/evaluation_outputs")
 
 prompt_spec = MockPromptSpec(
     task_type=TaskType.TEXT_GENERATION,
@@ -99,7 +100,7 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 
 #! 这里测试轮次比较多，是为了看结果是否稳定
 base_model = "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
-path = "/data/tir/projects/tir5/users/xjia2/ckpt_1/checkpoint-31"
+path = STORE_ROOT+"/ckpt_1/checkpoint-31"
 ray.init(ignore_reinit_error=True)
 tuned_vicuna = LLM(model=path, gpu_memory_utilization=0.5, tensor_parallel_size=1)
 tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
