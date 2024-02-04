@@ -5,7 +5,7 @@ import sys
 
 import requests
 from datasets import Dataset
-from utils.path import ROOT
+from utils.path import ROOT, TEST_DATA_ROOT
 
 sys.path.append(ROOT + "/main/test_scripts/unit_test")
 # from test_ni import evaluate_model
@@ -120,18 +120,18 @@ for file_name in files:
 
     test_dataset = Dataset.from_dict(test_data_dict)
     test_dataset.save_to_disk(
-        f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
+        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
     )
     loaded_dataset = Dataset.load_from_disk(
-        f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
+        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
     )
 
     eval_dataset = Dataset.from_dict(eval_data_dict)
     eval_dataset.save_to_disk(
-        f"{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
+        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
     )
     loaded_dataset = Dataset.load_from_disk(
-        f"{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
+        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
     )
 
     shutil.move(file_name, destination_folder)

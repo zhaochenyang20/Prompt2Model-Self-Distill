@@ -8,14 +8,14 @@ from functools import partial
 import datasets
 import torch
 from IPython import embed
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForCausalLM
 from vllm import LLM, SamplingParams
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
 from prompt2model.utils.prompt import PROMPT_TEMPLATE
 import ray
-from utils.path import STORE_ROOT, ROOT
+from prompt2model.utils.path import STORE_ROOT, ROOT, TEST_DATA_ROOT, MODEL_PATH
 def construct_meta_prompt(
     instruction: str = None,
     examples: str = None,
@@ -79,7 +79,7 @@ def exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs):
 
 def evaluate_model(task_names, finetuned=False, exact_match=False):
     for task_name in task_names:
-        base_model = "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
+        base_model = MODEL_PATH
         # 改了这里的名字
         experiment_name = "NI_" + task_name + "_exp_-1"
         path = f"{STORE_ROOT}/best_ckpt/{experiment_name}"
@@ -92,7 +92,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         )
         for test_type in ["test", "eval"]:
             test_dataset = datasets.load_from_disk(
-                f"{ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
+                f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
             )
             inputs_dir = Path(ROOT+"/baseline_generated_data")
 
@@ -161,7 +161,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                 min_frequency=hyperparameter_choices.get("min_frequency", 0.2),
             )
             #! 这里测试轮次比较多，是为了看结果是否稳定
-            # vicuna base model "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
+            # vicuna base model MODEL_PATH
             tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
             
             decoded_outputs = []
@@ -209,8 +209,8 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 
 # TODO 改任务
 # print("generation tasks:")
-# task_names = ["task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
-task_names = ["task1631", "task1557", "task036"]
+# task_names = [, "task1557", "task036","task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
+task_names = ["task1631"]
 evaluate_model(task_names, finetuned=False, exact_match=False)
 # print("classification tasks:")
 # task_names = ["task202", "task199", "task1388", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]

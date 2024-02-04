@@ -12,15 +12,15 @@ from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 
 from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
-from utils.path import ROOT, STORE_ROOT
+from prompt2model.utils.path import ROOT, STORE_ROOT, MODEL_PATH
 
 model_path = Path(
-    "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
+    MODEL_PATH
 )
 ckpt_path = Path(STORE_ROOT+"/ckpt")
 generated_dataset_path = Path(ROOT+"/generated_datasets")
 dataset_path = Path(
-    ROOT+"/rerun_experiments/NI_squad_exp_1/squad_1.0_True_False_1/dataset"
+    ROOT+"/generation_squad/squad_exp_1/squad_0.6_False_False_1/dataset"
 )
 
 prompt_spec = MockPromptSpec(
@@ -97,7 +97,6 @@ def map_func(example):
 
 dataset = datasets.load_from_disk(dataset_path).filter(filter_func)
 mapped_dataset = dataset.map(map_func, load_from_cache_file=False)
-print(mapped_dataset[1]["text"])
 model = AutoModelForCausalLM.from_pretrained(
     model_path,
     device_map="auto",
@@ -121,7 +120,7 @@ training_args = TrainingArguments(
     evaluation_strategy="no",
     logging_steps=4,
     num_train_epochs=3,
-    per_device_train_batch_size=1,
+    per_device_train_batch_size=20,
     seed=42,
 )
 trainer = SFTTrainer(

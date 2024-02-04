@@ -1,6 +1,7 @@
 import json
 
 from datasets import Dataset
+from prompt2model.utils.path import TEST_DATA_ROOT
 
 
 def get_highest_digit(number):
@@ -51,16 +52,16 @@ for file_name in files:
 
     test_dataset = Dataset.from_dict(test_data_dict)
     test_dataset.save_to_disk(
-        f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
+        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
     )
     loaded_dataset = Dataset.load_from_disk(
-        f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
+        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
     )
 
     eval_dataset = Dataset.from_dict(eval_data_dict)
     eval_dataset.save_to_disk(
-        f"{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
+        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
     )
     loaded_dataset = Dataset.load_from_disk(
-        f"/{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
+        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
     )

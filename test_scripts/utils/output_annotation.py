@@ -51,10 +51,10 @@ def annotate_and_write_outputs(
     if conditional_labels != []:
         mapping_function = partial(mapping_func, conditional_labels=conditional_labels)
         output_dataset = output_dataset.map(mapping_function)
-        print(f"before label filtering {len(output_dataset)}")
+        # print(f"before label filtering {len(output_dataset)}")
         filter_func_partial = partial(filter_func, conditional_labels=conditional_labels)
         output_dataset = output_dataset.filter(filter_func_partial)
-        print(f"after label filtering {len(output_dataset)}")
+        # print(f"after label filtering {len(output_dataset)}")
         
         #! 强行将生成的 label 平衡起来
         output_col = output_dataset['output_col']
@@ -67,7 +67,7 @@ def annotate_and_write_outputs(
         for _ in range(min_count):
             for label in class_samples.keys():
                 sample = random.choice(class_samples[label])
-                print(sample)
+                # print(sample)
                 balanced_data['input_col'].append(sample[0])
                 balanced_data['output_col'].append(sample[1])
                 class_samples[label].remove(sample)
@@ -88,9 +88,9 @@ def annotate_and_write_outputs(
     loaded_params["selection_ratio"] = (
         loaded_params["generated_example_num"] / loaded_params["expected_example_num"]
     )
-    print(f"generated_example_num: {loaded_params['generated_example_num']}")
-    print(f"expected_example_num: {loaded_params['expected_example_num']}")
-    print(f"selection_ratio: {loaded_params['selection_ratio']}")
+    # print(f"generated_example_num: {loaded_params['generated_example_num']}")
+    # print(f"expected_example_num: {loaded_params['expected_example_num']}")
+    # print(f"selection_ratio: {loaded_params['selection_ratio']}")
     with open(log_and_data_path / "config.json", "w") as f:
         json.dump(loaded_params, f, indent=4)
     del output_annotator

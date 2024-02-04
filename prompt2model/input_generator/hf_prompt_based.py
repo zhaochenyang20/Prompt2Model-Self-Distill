@@ -13,6 +13,7 @@ from prompt2model.input_generator import InputGenerator
 from prompt2model.input_generator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import PromptSpec
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
+from prompt2model.utils.path import MODEL_PATH
 
 logger = get_formatted_logger("InputGenerator")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -32,7 +33,7 @@ class HFPromptBasedInputGenerator(InputGenerator):
         """
         if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.tokenizer = AutoTokenizer.from_pretrained(
-                "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5",
+                MODEL_PATH,
                 local_files_only=True,
                 padding_side="left",
                 trust_remote_code=True,
@@ -42,7 +43,7 @@ class HFPromptBasedInputGenerator(InputGenerator):
                 pretrained_model_name, padding_side="left"
             )
         model = AutoModelForCausalLM.from_pretrained(
-            "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5",
+            MODEL_PATH,
             trust_remote_code=True,
             device_map="auto",
             torch_dtype=torch.bfloat16,

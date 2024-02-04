@@ -8,18 +8,20 @@ os.environ["HF_DATASETS_OFFLINE"] = "1"
 from pathlib import Path
 import itertools
 from utils.tasks import task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529, task190, task200, task937, task642, task1612, task1516, task1615
-from utils.path import ROOT, STORE_ROOT
+from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "5"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "5"
 
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
 classfication_tasks = [task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529, task190, task200, task937, task642, task1612, task1516, task1615]
 
-experiments = [("task202", 1),("task202", 2),("task202", 3),("task202", 4),("task202", 5),("task202", 6)]
+# experiments = [("task202", 1),("task202", 2),("task202", 3),("task202", 4),("task202", 5),("task202", 6)]
 
-experiment_type = 'generation'
+experiments = [("task202", 1)]
+
+experiment_type = 'classification'
 
 # TODO according to experiment type, I will correspondingly change the code
 
@@ -37,8 +39,8 @@ for task_name, experiment_rank in experiments:
                         task["task_instruction"],
                         task["examples"],
                         task["expected_content"],
-                        f"{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}",
-                        f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}",
+                        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}",
+                        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}",
                         task.get("optional_list", []),
                         task.get("metric", "rouge"),
                     )
@@ -50,8 +52,8 @@ for task_name, experiment_rank in experiments:
                     task.task_instruction,
                     task.examples,
                     task.expected_content,
-                    f"{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}",
-                    f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}",
+                    f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}",
+                    f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}",
                     task.optional_list,
                     task.metric,
                     task.labels,
@@ -64,7 +66,7 @@ for task_name, experiment_rank in experiments:
     # TODO 改显存配置
     gpu_memory_utilization = 0.85
     # 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
-    per_device_train_batch_size = 1
+    per_device_train_batch_size = 20
     # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
     max_training_epochs = 3
 
@@ -114,14 +116,13 @@ for task_name, experiment_rank in experiments:
             return json.load(file)
 
     def print_and_execute_command(command):
-        print(command)
         os.system(command)
 
 
 
     if experiment_type == 'generation':
         task_name, instruction, examples, expected_content, evaluation_dataset_path, test_set_path, optional_list, metric  = task_config
-    elif experiment_type == 'classfication':
+    elif experiment_type == 'classification':
         task_name, instruction, examples, expected_content, evaluation_dataset_path, test_set_path, optional_list, metric, labels, extraction_examples = task_config
 
     def objective_function(
@@ -130,7 +131,6 @@ for task_name, experiment_rank in experiments:
         output_length_constraint,
     ):
         name = f"{task_name}_{generation_temperature}_{intput_length_constraint}_{output_length_constraint}_{experiment_rank}"
-        print(f"searching parameters: {name}")
         log_and_data_path = log_and_data_root / name
         log_and_data_path.mkdir(parents=True, exist_ok=True)
         ckpt_path = ckpt_root / name
@@ -140,7 +140,7 @@ for task_name, experiment_rank in experiments:
         assert expected_content != ""
         assert metric != ""
         params = {
-            "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
+            # "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
             "task_name": task_name,
             "instruction": instruction,
             "examples": examples,
@@ -199,7 +199,6 @@ for task_name, experiment_rank in experiments:
             not all(path.exists() for path in required_paths)
             or len(list(evaluate_result.keys())) < max_training_epochs
         ):
-            print(log_and_data_path)
             ckpt_paths_and_result = main(str(log_and_data_path / "config.json"))
 
             if ckpt_paths_and_result is None:

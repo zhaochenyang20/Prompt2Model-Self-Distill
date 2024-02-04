@@ -9,7 +9,7 @@ from pathlib import Path
 
 from prompt2model.input_generator import VLLMPromptBasedInputGenerator
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
-from utils.path import ROOT
+from utils.path import ROOT, TEST_DATA_ROOT
 
 # 测试
 input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=0.9)
@@ -20,7 +20,6 @@ input_generator = VLLMPromptBasedInputGenerator(gpu_memory_utilization=0.9)
 task_names = ["1612"]
 
 for task_name in task_names:
-    print(f"\n\nin task_{task_name}")
     file_path = ROOT+"/main/NI_tasks/tasks.json"
     with open(file_path, "r", encoding="utf-8") as json_file:
         all_tasks = json.load(json_file)
@@ -32,8 +31,8 @@ for task_name in task_names:
                 task["task_instruction"],
                 task["examples"],
                 task["expected_content"],
-                f"{ROOT}/prompt2model_test/testdataset/NI/eval/task{task_name}",
-                f"{ROOT}/prompt2model_test/testdataset/NI/test/task{task_name}",
+                f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/task{task_name}",
+                f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/task{task_name}",
                 task.get("optional_list", []),
                 task.get("metric", "exact_match"),
                 task.get("labels", [])

@@ -7,6 +7,7 @@ from vllm import LLM, SamplingParams
 
 from prompt2model.prompt_parser import PromptSpec
 from prompt2model.quality_evaluator.base import QualityEvaluator
+from prompt2model.utils.path import MODEL_PATH
 
 INPUT_FILTER_TEMPLATE = """<<SYS>>
 As an InformationExtractor, you should abstract the most important and meaningful content from [input] to work as a qualified input under the [instruction] and use [info] [/info] to wrap the useful content.
@@ -87,7 +88,7 @@ class VLLMInformationExtractor(QualityEvaluator):
         """
         if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.language_model = LLM(
-                model="/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
+                model=MODEL_PATH
             )
         else:
             self.language_model = LLM(model=pretrained_model_name)
@@ -133,7 +134,6 @@ class VLLMInformationExtractor(QualityEvaluator):
                 OUTPUT_FILTER_TEMPLATE.format(input=input, output=output)
                 for (input, output) in generated_responses
             ]
-        print(prompts[0])
         abstracted_contents = [
             each.outputs[0].text
             for each in self.language_model.generate(prompts, sampling_params)

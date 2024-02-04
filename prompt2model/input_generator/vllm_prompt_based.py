@@ -10,6 +10,7 @@ from tqdm import tqdm
 from vllm import LLM, SamplingParams
 
 from prompt2model.input_generator import InputGenerator
+from prompt2model.utils.path import MODEL_PATH
 from prompt2model.input_generator.prompt_template import (
     construct_meta_prompt,
     construct_verify_prompt,
@@ -44,7 +45,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         """
         if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.language_model = LLM(
-                model="/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5",
+                model=MODEL_PATH,
                 gpu_memory_utilization=gpu_memory_utilization,
                 tensor_parallel_size=tensor_parallel_size,
             )
@@ -142,7 +143,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         inputs_num: int,
         hyperparameter_choices: dict[str, Any],
         conditional_labels: list = [],
-    ) -> tuple(list[str]):
+    ) -> tuple[list[str]]:
         """Generate new inputs for a given prompt with a pre-trained model.
 
         Args:

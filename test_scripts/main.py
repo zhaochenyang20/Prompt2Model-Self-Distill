@@ -15,6 +15,7 @@ import torch
 import time
 
 from prompt2model.utils import count_tokens_from_string
+from prompt2model.utils.path import MODEL_PATH
 
 # wandb sync wandb/offline-run-*
 os.environ["WANDB_MODE"] = "offline"
@@ -290,7 +291,7 @@ def main(config_path: str):
         return None
 
     pretrain_model_path = Path(
-        "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
+        MODEL_PATH
     )
 
     complete_ckpts = check_and_remove_checkpoints(ckpt_path)
@@ -310,6 +311,7 @@ def main(config_path: str):
     ):
         print("finetune_vicuna!")
         logging.log(logging.INFO, "finetune_vicuna!")
+        print(f'complete_ckpts = {complete_ckpts}')
         finetune_vicuna(
             prompt_spec,
             log_and_data_path,

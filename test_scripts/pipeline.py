@@ -9,7 +9,7 @@ from pathlib import Path
 # from utils.tasks import task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529, task190, task200, task937, task642, task1612, task1516, task1615
 # The upper line is for classifications
 import itertools
-from utils.path import ROOT, STORE_ROOT
+from utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 
 # TODO change card name
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
@@ -36,8 +36,8 @@ for task_name in task_names:
                 task["task_instruction"],
                 task["examples"],
                 task["expected_content"],
-                f"{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}",
-                f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}",
+                f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}",
+                f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}",
                 task.get("optional_list", []),
                 task.get("metric", "rouge"),
             )
@@ -109,8 +109,8 @@ for task_name in task_names:
     # instruction = task.task_instruction
     # examples = task.examples
     # expected_content = task.expected_content
-    # evaluation_dataset_path = f"{ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
-    # test_set_path = f"{ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
+    # evaluation_dataset_path = f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
+    # test_set_path = f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
     # optional_list = task.optional_list
     # metric = task.metric
     # labels = task.labels

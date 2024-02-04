@@ -15,7 +15,7 @@ from vllm.model_executor.parallel_utils.parallel_state import destroy_model_para
 
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
-from utils.path import ROOT, STORE_ROOT
+from prompt2model.utils.path import ROOT, STORE_ROOT, MODEL_PATH
 
 #! TODO 改为新任务的 test set path
 
@@ -99,7 +99,7 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 )
 
 #! 这里测试轮次比较多，是为了看结果是否稳定
-base_model = "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
+base_model = MODEL_PATH
 path = STORE_ROOT+"/ckpt_1/checkpoint-31"
 ray.init(ignore_reinit_error=True)
 tuned_vicuna = LLM(model=path, gpu_memory_utilization=0.5, tensor_parallel_size=1)

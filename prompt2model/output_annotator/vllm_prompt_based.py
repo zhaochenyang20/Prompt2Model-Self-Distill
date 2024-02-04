@@ -10,6 +10,7 @@ from vllm import LLM, SamplingParams
 
 from prompt2model.output_annotator import OutputAnnotator
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
+from prompt2model.utils.path import MODEL_PATH
 from prompt2model.prompt_parser import PromptSpec
 from prompt2model.quality_evaluator import (
     ablation_list_filter,
@@ -39,7 +40,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         """
         if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.language_model = LLM(
-                model="/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5",
+                model=MODEL_PATH,
                 gpu_memory_utilization=gpu_memory_utilization,
                 tensor_parallel_size=tensor_parallel_size,
             )
@@ -168,7 +169,6 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                     context_cutoff=3000,
                 ).strip()
             ]
-        print(prompts[0])
         sampling_params = SamplingParams(
             n=hyperparameter_choices.get("n", 10),
             best_of=hyperparameter_choices.get("best_of", 20),

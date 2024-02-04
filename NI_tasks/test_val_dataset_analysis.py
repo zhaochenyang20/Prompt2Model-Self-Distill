@@ -1,9 +1,10 @@
 from datasets import load_from_disk
 from collections import Counter
 import os
+from prompt2model.utils.path import TEST_DATA_ROOT
 
 # 文件夹 A 的路径
-folder_a_path = ROOT + '/prompt2model_test/testdataset/NI/eval'
+folder_a_path = TEST_DATA_ROOT + '/prompt2model_test/testdataset/NI/eval'
 
 # 遍历文件夹 A 中的所有数据集文件夹
 for dataset_folder in os.listdir(folder_a_path):

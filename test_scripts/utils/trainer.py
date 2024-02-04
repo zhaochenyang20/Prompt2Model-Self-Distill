@@ -112,7 +112,7 @@ def finetune_vicuna(
     trainer.train(resume_from_checkpoint=resume_from_checkpoint)
     for dirpath, _, filenames in os.walk(str(ckpt_path), topdown=True):
         # Delete optimizer
-        for filename in filenames:
+        for filename in filenames:                  
             if filename == "optimizer.pt":
                 file_path = os.path.join(dirpath, filename)
                 print(f"Deleting {file_path}")

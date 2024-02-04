@@ -1,8 +1,9 @@
 from vllm import LLM, SamplingParams
+from prompt2model.utils.path import MODEL_PATH
 
 path = "/data/cyzhao/best_ckpt/SQuAD"
 
-default = "/data/datasets/models/huggingface/lmsys/vicuna-7b-v1.5"
+default = MODEL_PATH
 
 language_model = LLM(
     model=default,
