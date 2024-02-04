@@ -16,8 +16,8 @@ def vllm_inference(model_path, gpu_memory_utilization, tensor_parallel_size, pro
     model = LLM(
         model=str(model_path),
         gpu_memory_utilization=gpu_memory_utilization,
-        tensor_parallel_size=1,
-        dtype='bfloat16'
+        tensor_parallel_size=tensor_parallel_size,
+        enforce_eager = True,
     )
     model_outputs = model.generate(prompts, sampling_params)
     model_generated_outputs = [each.outputs[0].text for each in model_outputs]

@@ -10,6 +10,7 @@ language_model = LLM(
     gpu_memory_utilization=0.9,
     swap_space = 16,
     tensor_parallel_size=1,
+    enforce_eager = True,
 )
 
 input_prompt = """

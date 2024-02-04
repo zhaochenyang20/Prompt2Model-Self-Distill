@@ -102,7 +102,7 @@ VALIDATION_DATASET = datasets.Dataset.from_dict(
 base_model = MODEL_PATH
 path = STORE_ROOT+"/ckpt_1/checkpoint-31"
 ray.init(ignore_reinit_error=True)
-tuned_vicuna = LLM(model=path, gpu_memory_utilization=0.5, tensor_parallel_size=1)
+tuned_vicuna = LLM(model=path, gpu_memory_utilization=0.5, tensor_parallel_size=1, enforce_eager = True)
 tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
 tuned_vicuna_generated_outputs = [each.outputs[0].text for each in tuned_vicuna_outputs]
 
