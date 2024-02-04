@@ -12,7 +12,6 @@ from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 
 from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.utils import count_tokens_from_string
-from prompt2model.utils.prompt import PROMPT_TEMPLATE
 
 
 def finetune_vicuna(
@@ -34,21 +33,11 @@ def finetune_vicuna(
     dataset = datasets.load_from_disk(log_and_data_path / "dataset").filter(filter_func)
 
     def map_func(example):
-        matches = re.findall(
-            r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
-            prompt_spec.examples,
-            re.DOTALL,
-        )
-        assert matches != []
-        annotation_prompt_string = ""
-        for input, output in matches:
-            annotation_prompt_string += f"USER:\n\n{input}\n\n"
-            annotation_prompt_string += f"ASSISTANT:\n\n{output}\n\n"
-        assert annotation_prompt_string != ""
-        example["model_input"] = PROMPT_TEMPLATE.format(
-            task_instruction=prompt_spec.instruction,
+        assert prompt_spec.examples != ""
+        example["model_input"] = construct_meta_prompt(
+            instruction=prompt_spec.instruction,
             new_input=example["input_col"],
-            examples=annotation_prompt_string.strip()
+            examples=prompt_spec.examples
         )
         #! 此处绝对不可以 strip，否则 token 定位失效
         example["model_output"] = example["output_col"].strip()
@@ -71,7 +60,7 @@ def finetune_vicuna(
             lambda x: (count_tokens_from_string(x["text"], "vicuna") <= max_seq_length)
         )
     )
-    response_template_with_context = "ASSISTANT:\n\n"
+    response_template_with_context = "\n### Your Output:\n\n"
     response_template_ids = tokenizer.encode(
         response_template_with_context, add_special_tokens=False
     )[2:]
@@ -112,7 +101,7 @@ def finetune_vicuna(
     trainer.train(resume_from_checkpoint=resume_from_checkpoint)
     for dirpath, _, filenames in os.walk(str(ckpt_path), topdown=True):
         # Delete optimizer
-        for filename in filenames:                  
+        for filename in filenames:
             if filename == "optimizer.pt":
                 file_path = os.path.join(dirpath, filename)
                 print(f"Deleting {file_path}")

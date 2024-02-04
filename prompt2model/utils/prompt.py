@@ -1,31 +1,27 @@
-PROMPT_TEMPLATE = """A chat between a curious user and an artificial intelligence assistant.
-The assistant gives helpful, detailed, and polite answers to the user's questions.
+PROMPT_TEMPLATE = """
+### Instructions:
 
-USER:
+{instruction}
 
-{task_instruction}
-
-ASSISTANT:
-
-Okay.
+### Examples:
 
 {examples}
 
-USER:
+### New Input:
 
 {new_input}
 
-ASSISTANT:
+### Your Output:
 
-"""
+"""  # noqa E501
 
 # all the prompt we have:
 
-# input generator and input corrector: 
+# input generator and input corrector:
 # for generation tasks: INPUT_GENERATOR_PROMPT_TEMPLATE, INPUT_FILTER_TEMPLATE
 # for classification tasks: CONDITIOANL_INPUT_GENERATOR_PROMPT_TEMPLATE, CONDITIONAL_INPUT_FILTER_TEMPLATE
 
-# output anatator: 
+# output anatator:
 # OUTPUT_ANNOTATOR_PROMPT_TEMPLATE
 
 # inference (main.py): during test and evaluate

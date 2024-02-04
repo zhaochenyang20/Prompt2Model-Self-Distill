@@ -1,6 +1,6 @@
 """Utilities to construct an LLM "metaprompt" for our dataset generator."""
 
-PROMPT_TEMPLATE_OLD = """
+PROMPT_TEMPLATE = """
 ### Instructions:
 
 {instruction}
@@ -17,16 +17,6 @@ PROMPT_TEMPLATE_OLD = """
 
 """  # noqa E501
 
-OUTPUT_ANNOTATOR_PROMPT_TEMPLATE = """
-A chat between a curious user and an artificial intelligence assistant.
-The assistant gives concise answers to the user's questions.
-USER: The artificial intelligence assistant only needs to help annotate label. The task is: {instruction} 
-ASSISTANT: Okay. 
-{examples}
-USER: [input] = {new_input}
-ASSISTANT: 
-"""  # noqa E501
-
 def construct_meta_prompt(
     instruction: str = None,
     examples: str = None,
@@ -39,10 +29,11 @@ def construct_meta_prompt(
         input: A new input to be annotated.
         high_quality_input_string: A string representing the high quality examples.
     """
-    prompt = OUTPUT_ANNOTATOR_PROMPT_TEMPLATE.format(
+    prompt = PROMPT_TEMPLATE.format(
         instruction=instruction,
         new_input=new_input,
         examples=examples,
-    ).strip()
+    )
+    # 不可 strip，否则 token 定位失效
     # print(prompt)
     return prompt

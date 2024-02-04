@@ -88,7 +88,7 @@ USER:  [task description]: {instruction} The artificial intelligence assistant a
 ASSISTANT: Okay. I will focus on pinpointing and improving the extracted contents from the [input]. I won't execute the task or provide an explanation.
 {extraction_example_string}
 USER: [input] = {new_input} [expected output] = {label}
-ASSISTANT: 
+ASSISTANT:
 """  # noqa E501
 
 

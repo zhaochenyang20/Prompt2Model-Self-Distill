@@ -79,8 +79,8 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         assert matches != []
         annotation_prompt_string = ""
         for input, output in matches:
-            annotation_prompt_string += f"USER: [input] = {input}\n"
-            annotation_prompt_string += f"ASSISTANT: {output}\n"
+            annotation_prompt_string += f"[input] = {input}\n"
+            annotation_prompt_string += f"[output] = {output}\n"
         assert annotation_prompt_string != ""
         while True:
             # Construct the prompt.
@@ -167,7 +167,8 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                     prompt_spec.examples,
                     new_input=input,
                     context_cutoff=3000,
-                ).strip()
+                )
+                # 这里似乎不该 strip，和 trainer 对齐
             ]
         sampling_params = SamplingParams(
             n=hyperparameter_choices.get("n", 10),
@@ -187,9 +188,6 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             ]
             trancated_outputs = []
             for each in outputs:
-                if "USER" in each:
-                    trancated_outputs.append(each[: each.index("USER")].strip())
-                else:
                     trancated_outputs.append(each.strip())
             consistent_output = consistency_filter(
                 ablation_filter(length_filter(trancated_outputs))

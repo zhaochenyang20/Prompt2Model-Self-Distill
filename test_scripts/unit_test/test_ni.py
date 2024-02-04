@@ -8,31 +8,16 @@ from functools import partial
 import datasets
 import torch
 from IPython import embed
-from transformers import AutoTokenizer, AutoModelForCausalLM
 from vllm import LLM, SamplingParams
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
+from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
-from prompt2model.utils.prompt import PROMPT_TEMPLATE
 import ray
 from prompt2model.utils.path import STORE_ROOT, ROOT, TEST_DATA_ROOT, MODEL_PATH
-def construct_meta_prompt(
-    instruction: str = None,
-    examples: str = None,
-    new_input: str = None,
-    ) -> str:
-    """Constructs a prompt template for the dataset generator.
 
-    Args:
-        instruction: The natural language instruction for the prompt.
-        input: A new input to be annotated.
-        high_quality_input_string: A string representing the high quality examples.
-    """
-    return PROMPT_TEMPLATE.format(
-        task_instruction=instruction,
-        new_input=new_input,
-        examples=examples,
-    )
+TENSOR_PARALLEL_SIZE = 2
+
 
 def lcs_length_dp(x, y):
     """Compute the length of the longest common subsequence between two strings using dynamic programming."""
@@ -87,8 +72,8 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         tuned_vicuna = LLM(
             model=base_model if not finetuned else path,
             gpu_memory_utilization=0.9,
-            swap_space = 16, 
-            tensor_parallel_size=1,  # 根据卡数改
+            swap_space = 16,
+            tensor_parallel_size=TENSOR_PARALLEL_SIZE,  # 根据卡数改
         )
         for test_type in ["test", "eval"]:
             test_dataset = datasets.load_from_disk(
@@ -116,23 +101,12 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                 examples=examples,
             )
 
-            matches = re.findall(
-                r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
-                prompt_spec.examples,
-                re.DOTALL,
-            )
-            assert matches != []
-            annotation_prompt_string = ""
-            for input, output in matches:
-                annotation_prompt_string += f"USER: [input] = {input}\n"
-                annotation_prompt_string += f"ASSISTANT: {output}\n"
-            assert annotation_prompt_string != ""
             def map_func(example):
                 example["model_input"] = construct_meta_prompt(
                     instruction=prompt_spec.instruction,
-                    examples=annotation_prompt_string.strip(),
+                    examples=prompt_spec.examples,
                     new_input=example["input_col"],
-                ).strip()
+                )
                 example["model_output"] = example["output_col"]
                 return example
 
@@ -163,9 +137,8 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             #! 这里测试轮次比较多，是为了看结果是否稳定
             # vicuna base model MODEL_PATH
             tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
-            
             decoded_outputs = []
-            
+
             for idx, _ in enumerate(tuned_vicuna_outputs):
                 outputs = [
                     output.text.strip()
@@ -181,26 +154,22 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                     decoded_outputs.append(consistent_output)
                 else:
                     decoded_outputs.append("No Output")
-            
+
             evaluate_result = (
                 rouge_l_score(GROUND_TRUTH, decoded_outputs)
                 if not exact_match
                 else exact_match_score(GROUND_TRUTH, decoded_outputs)
             )
             print(f"{task_name} {test_type}: {evaluate_result}")
-            with open(inputs_dir / f"evaluate_10_times.txt", "a+") as file:
-                file.write(
-                    f"\n\nresult of {path} th:\n\n------------------------------------------------{evaluate_result}------------------------------------------------\n\n"
-                )
             #! 记得改名字
-            # evaluate_generated_content_path = inputs_dir / f"base_{test_type}_{task_name}"
-            # datasets.Dataset.from_dict(
-            #     dict(
-            #         model_output=decoded_outputs,
-            #         model_input=prompts,
-            #         groud_truth=GROUND_TRUTH,
-            #     )
-            # ).save_to_disk(evaluate_generated_content_path)
+            evaluate_generated_content_path = inputs_dir / f"{test_type}_{task_name}"
+            datasets.Dataset.from_dict(
+                dict(
+                    model_output=decoded_outputs,
+                    model_input=prompts,
+                    groud_truth=GROUND_TRUTH,
+                )
+            ).save_to_disk(evaluate_generated_content_path)
         del tuned_vicuna
         gc.collect()
         torch.cuda.empty_cache()
@@ -209,10 +178,8 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 
 # TODO 改任务
 # print("generation tasks:")
-# task_names = [, "task1557", "task036","task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557", "task036"]
-task_names = ["task1631"]
+task_names = ["task036","task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557"]
 evaluate_model(task_names, finetuned=False, exact_match=False)
 # print("classification tasks:")
-# task_names = ["task202", "task199", "task1388", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
-# task_names = ["task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
-# evaluate_model(task_names, finetuned=False, exact_match=True)
+task_names = ["task202", "task199", "task1388", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
+evaluate_model(task_names, finetuned=False, exact_match=True)
