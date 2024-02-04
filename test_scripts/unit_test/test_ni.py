@@ -6,18 +6,20 @@ from pathlib import Path
 from prompt2model.quality_evaluator import self_consistency_filter
 from functools import partial
 import datasets
-import torch
 from IPython import embed
 from vllm import LLM, SamplingParams
-from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
-import ray
 from prompt2model.utils.path import STORE_ROOT, ROOT, TEST_DATA_ROOT, MODEL_PATH
 
-TENSOR_PARALLEL_SIZE = 2
-
+VICUNA = LLM(
+    model=MODEL_PATH,
+    gpu_memory_utilization=0.9,
+    swap_space = 16,
+    tensor_parallel_size=2,  # 根据卡数改
+    enforce_eager = True,
+)
 
 def lcs_length_dp(x, y):
     """Compute the length of the longest common subsequence between two strings using dynamic programming."""
@@ -64,17 +66,7 @@ def exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs):
 
 def evaluate_model(task_names, finetuned=False, exact_match=False):
     for task_name in task_names:
-        base_model = MODEL_PATH
         # 改了这里的名字
-        experiment_name = "NI_" + task_name + "_exp_-1"
-        path = f"{STORE_ROOT}/best_ckpt/{experiment_name}"
-        ray.init(ignore_reinit_error=True)
-        tuned_vicuna = LLM(
-            model=base_model if not finetuned else path,
-            gpu_memory_utilization=0.9,
-            swap_space = 16,
-            tensor_parallel_size=TENSOR_PARALLEL_SIZE,  # 根据卡数改
-        )
         for test_type in ["test", "eval"]:
             test_dataset = datasets.load_from_disk(
                 f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
@@ -136,13 +128,13 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             )
             #! 这里测试轮次比较多，是为了看结果是否稳定
             # vicuna base model MODEL_PATH
-            tuned_vicuna_outputs = tuned_vicuna.generate(prompts, sampling_params)
+            VICUNA_outputs = VICUNA.generate(prompts, sampling_params)
             decoded_outputs = []
 
-            for idx, _ in enumerate(tuned_vicuna_outputs):
+            for idx, _ in enumerate(VICUNA_outputs):
                 outputs = [
                     output.text.strip()
-                    for output in tuned_vicuna_outputs[idx].outputs
+                    for output in VICUNA_outputs[idx].outputs
                     if (output.text is not None and output.text != "")
                 ]
                 consistent_output = consistency_filter(outputs)
@@ -170,11 +162,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                     groud_truth=GROUND_TRUTH,
                 )
             ).save_to_disk(evaluate_generated_content_path)
-        del tuned_vicuna
         gc.collect()
-        torch.cuda.empty_cache()
-        ray.shutdown()
-        destroy_model_parallel()
 
 # TODO 改任务
 # print("generation tasks:")
