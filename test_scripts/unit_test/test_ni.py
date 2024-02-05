@@ -53,6 +53,7 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
 
 
 def exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs):
+    tuned_model_generated_outputs = [each.replace("\\", "") for each in tuned_model_generated_outputs]
     index = 0
     for i in range(len(GROUND_TRUTH)):
         if (
@@ -154,7 +155,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             )
             print(f"{task_name} {test_type}: {evaluate_result}")
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"{test_type}_{task_name}"
+            evaluate_generated_content_path = inputs_dir / f"20240205_{test_type}_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=decoded_outputs,
