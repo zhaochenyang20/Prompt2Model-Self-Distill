@@ -13,12 +13,14 @@ from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
 from prompt2model.utils.path import STORE_ROOT, ROOT, TEST_DATA_ROOT, MODEL_PATH
 
+test_path = "/home/azureuser/p2mss/p2mss/ckpt_data_p2ms/task039_0.6_False_False_1/checkpoint-33"
+
 VICUNA = LLM(
-    model=MODEL_PATH,
+    # model=MODEL_PATH,
+    model=test_path,
     gpu_memory_utilization=0.9,
     swap_space = 16,
     tensor_parallel_size=2,  # 根据卡数改
-    enforce_eager = True,
 )
 
 def lcs_length_dp(x, y):

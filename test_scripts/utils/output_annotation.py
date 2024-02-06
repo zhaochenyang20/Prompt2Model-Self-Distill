@@ -23,7 +23,7 @@ def annotate_and_write_outputs(
     log_and_data_path,
     gpu_memory_utilization,
     min_frequency,
-    tensor_parallel_size,
+    TENSOR_SIZE,
     prompt_spec,
     optional_list,
     output_length_constraint,
@@ -33,7 +33,7 @@ def annotate_and_write_outputs(
         return
     output_annotator = VLLMPromptBasedOutputAnnotator(
         gpu_memory_utilization=gpu_memory_utilization,
-        tensor_parallel_size=1,
+        tensor_parallel_size=TENSOR_SIZE,
     )
     dataset = datasets.load_from_disk(log_and_data_path / "inputs")
     inputs = dataset["input_col"]

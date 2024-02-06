@@ -4,24 +4,37 @@ import os
 
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+
+
+TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
 
 from pathlib import Path
 # from utils.tasks import task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529, task190, task200, task937, task642, task1612, task1516, task1615
 # The upper line is for classifications
 import itertools
-from utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
+from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 
 # TODO change card name
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 # TODO change task
 # task = task1615
 # TODO change experiment rank
-experiment_rank = 6
+experiment_rank = 1
 # TODO change task name
 # task_name = task.task_name
 
-task_names = ["task957"]
-# "task569", , "task1598", "task1631", "task677", "task1557", "task036", "task613"
+gpu_memory_utilization = 0.9
+# 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
+per_device_train_batch_size = 1
+# bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
+max_training_epochs = 3
+from main import main, validate_or_test
+
+# task_names = ["task036","task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557"][::2]
+task_names = ["task036","task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557"][1::2]
+# "task569" , "task1598", "task1631", "task677", "task1557", "task036", "task613"
 
 for task_name in task_names:
     file_path = ROOT+"/main/NI_tasks/tasks.json"
@@ -48,14 +61,8 @@ for task_name in task_names:
     experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
     # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
     # TODO 改显存配置
-    gpu_memory_utilization = 0.85
-    # 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
-    per_device_train_batch_size = 1
-    # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
-    max_training_epochs = 3
-    file_path = ROOT+"/main/NI_tasks/tasks.json"
 
-    from main import main, validate_or_test
+    file_path = ROOT+"/main/NI_tasks/tasks.json"
 
     log_and_data_root = Path(ROOT) / experiment_name
     evaluation_result_file_tail = "result.json"
@@ -138,7 +145,7 @@ for task_name in task_names:
         assert expected_content != ""
         assert metric != ""
         params = {
-            "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
+            "CUDA_CONDITION": "0,1",
             "task_name": task_name,
             "instruction": instruction,
             "examples": examples,
@@ -154,7 +161,7 @@ for task_name in task_names:
             "ckpt_path": str(ckpt_path),
             "gpu_memory_utilization": float(gpu_memory_utilization),
             "training_epochs": int(max_training_epochs),
-            "tensor_parallel_size": int(2),
+            "tensor_parallel_size": TENSOR_SIZE,
             "evaluation_result_file_tail": evaluation_result_file_tail,
             "optional_list": optional_list,
             "metric": metric,

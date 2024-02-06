@@ -43,14 +43,12 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                 model=MODEL_PATH,
                 gpu_memory_utilization=gpu_memory_utilization,
                 tensor_parallel_size=tensor_parallel_size,
-                enforce_eager = True,
             )
         else:
             self.language_model = LLM(
                 model=pretrained_model_name,
                 gpu_memory_utilization=gpu_memory_utilization,
                 tensor_parallel_size=tensor_parallel_size,
-                enforce_eager = True,
             )
 
     def construct_prompt(

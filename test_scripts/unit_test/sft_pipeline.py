@@ -3,7 +3,7 @@ import os
 from functools import partial
 from pathlib import Path
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "6,7"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ["WANDB_MODE"] = "offline"
 import datasets
 import torch
@@ -101,7 +101,7 @@ model = AutoModelForCausalLM.from_pretrained(
     model_path,
     device_map="auto",
     torch_dtype=torch.bfloat16,
-    use_flash_attention_2=False,
+    use_flash_attention_2=True,
 )
 response_template_with_context = "ASSISTANT: The output is\n\n"
 response_template_ids = tokenizer.encode(
@@ -120,7 +120,7 @@ training_args = TrainingArguments(
     evaluation_strategy="no",
     logging_steps=4,
     num_train_epochs=3,
-    per_device_train_batch_size=20,
+    per_device_train_batch_size=1,
     seed=42,
 )
 trainer = SFTTrainer(

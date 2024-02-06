@@ -20,10 +20,11 @@ def generate_and_write_inputs(
     conditional_labels,
     reannotate=True,
     extraction_examples=[],
+    TENSOR_SIZE=1,
 ):
     input_generator = VLLMPromptBasedInputGenerator(
         gpu_memory_utilization=gpu_memory_utilization,
-        tensor_parallel_size=1,
+        tensor_parallel_size=TENSOR_SIZE,
     )
     input_tuples = input_generator.batch_generation_inputs(
         prompt_spec=prompt_spec,

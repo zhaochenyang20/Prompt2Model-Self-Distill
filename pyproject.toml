@@ -25,7 +25,7 @@ dependencies = [
     "datasets",
     "pandas",
     "fastapi",
-    "torch",
+    "torch==2.0.1",
     "pytest",
     "openai",
     "sentencepiece",
