@@ -9,6 +9,7 @@ import torch
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 from functools import partial
 from prompt2model.output_annotator import VLLMPromptBasedOutputAnnotator
+from IPython import embed
 
 def filter_func(example, conditional_labels):
     return example["output_col"] in conditional_labels
@@ -88,9 +89,6 @@ def annotate_and_write_outputs(
     loaded_params["selection_ratio"] = (
         loaded_params["generated_example_num"] / loaded_params["expected_example_num"]
     )
-    # print(f"generated_example_num: {loaded_params['generated_example_num']}")
-    # print(f"expected_example_num: {loaded_params['expected_example_num']}")
-    # print(f"selection_ratio: {loaded_params['selection_ratio']}")
     with open(log_and_data_path / "config.json", "w") as f:
         json.dump(loaded_params, f, indent=4)
     del output_annotator
