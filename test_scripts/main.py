@@ -6,7 +6,6 @@ import os
 import random
 import re
 import shutil
-from functools import partial
 from pathlib import Path
 
 import datasets

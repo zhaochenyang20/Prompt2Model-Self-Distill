@@ -164,6 +164,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             )
             for _ in range(inputs_num)
         ]
+        # [(prompt, pseudo_label), ...]
         prompts = [each[0] for each in prompt_tuples]
         pseudo_labels = [each[1] for each in prompt_tuples]
         if conditional_labels != []:
@@ -319,7 +320,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             max_length=int(mean_plus_2std),
         )
         generated_inputs = []
-        # [(prompt, label | None)]
+        # [(input, label)]
         for _ in tqdm(range(generation_epochs)):
             input_tuples = self.generate_inputs(
                 [each[0] for each in generated_inputs],
@@ -336,7 +337,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 for element in new_inputs
                 if element is not None and element != ""
             ]
-            # print(filtered_new_inputs)
             filtered_new_inputs = ablation_filter(
                 length_filter(filtered_new_inputs)
                 if intput_length_constraint
@@ -346,15 +346,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 filtered_pesudo_labels = [
                     input_to_label[input_item] for input_item in filtered_new_inputs
                 ]
-                if test:
-                    # before_verifier = dict(
-                    #     zip(filtered_new_inputs, filtered_pesudo_labels)
-                    # )
-                    # print("\n\nbefore filtering")
-                    # print(before_verifier)
-                    pass
-                if early_end:
-                    return
                 verified_inputs = self.verify(
                     prompt_spec,
                     [each.strip() for each in filtered_new_inputs],
@@ -362,43 +353,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     expected_content=expected_content,
                     extraction_examples=extraction_examples,
                 )
-                if test:
-                    pass
-                    # after_verifier = dict(zip(verified_inputs, filtered_pesudo_labels))
-                    # print("\nafter filtering")
-                    # print(after_verifier)
-                    # print("\ncomparing")
-                    # def compare_dictionaries(dict1, dict2):
-                    #     dict1 = {
-                    #         key.replace('"', "")
-                    #         .replace("''", "")
-                    #         .replace("\n", ""): value
-                    #         for key, value in dict1.items()
-                    #     }
-                    #     dict2 = {
-                    #         key.replace('"', "")
-                    #         .replace("''", "")
-                    #         .replace("\n", ""): value
-                    #         for key, value in dict2.items()
-                    #     }
-                        # common_keys = set(dict1.keys()) & set(dict2.keys())
-                        # unique_keys_dict1 = set(dict1.keys()) - set(dict2.keys())
-                        # unique_keys_dict2 = set(dict2.keys()) - set(dict1.keys())
-
-                        # print("在两个字典中都存在的键和它们的值：")
-                        # for key in common_keys:
-                        #     print(f"{key}: {dict1[key]} == {dict2[key]}")
-
-                        # if unique_keys_dict1:
-                        #     print("\n只在第一个字典中的键和它们的值：")
-                        #     for key in unique_keys_dict1:
-                        #         print(f"{key}: {dict1[key]}")
-
-                        # if unique_keys_dict2:
-                        #     print("\n只在第二个字典中的键和它们的值：")
-                        #     for key in unique_keys_dict2:
-                        #         print(f"{key}: {dict2[key]}")
-                    # compare_dictionaries(before_verifier, after_verifier)
 
                 assert len(filtered_new_inputs) == len(verified_inputs)
                 filtered_input_to_label = dict(

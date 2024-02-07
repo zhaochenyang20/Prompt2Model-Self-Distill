@@ -12,19 +12,17 @@ TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
 
 from pathlib import Path
 from utils.tasks import task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529, task190, task200, task937, task642, task1612, task1516, task1615
-# The upper line is for classifications
 import itertools
 from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 
 # TODO change card name
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 # TODO change task
-# task = task1615
+
 # TODO change experiment rank
 experiment_rank = 1
-# TODO change task name
-# task_name = task.task_name
 
+# TODO change task name
 gpu_memory_utilization = 0.9
 # 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
 per_device_train_batch_size = 1
@@ -32,50 +30,13 @@ per_device_train_batch_size = 1
 max_training_epochs = 3
 from main import main, validate_or_test
 
-# task_names = ['task036',
-#  'task281',
-#  'task1195',
-#  'task1622',
-#  'task671',
-#  'task035',
-#  'task569']
-
-# task_names = [
-# # 'task039',
-# #  'task121',
-# #  'task1562',
-# #  'task1345',
-#  'task1659',
-#  'task1631',
-#   'task1557']
-
-for task_name in task_names:
-    # file_path = ROOT+"/main/NI_tasks/tasks.json"
-    # with open(file_path, "r", encoding="utf-8") as json_file:
-    #     all_tasks = json.load(json_file)
-
-    # task_config_for_generation_tasks = None
-    # for task in all_tasks:
-    #     if task["task_name"] == task_name:
-    #         task_config_for_generation_tasks = (
-    #             task["task_name"],
-    #             task["task_instruction"],
-    #             task["examples"],
-    #             task["expected_content"],
-    #             f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}",
-    #             f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}",
-    #             task.get("optional_list", []),
-    #             task.get("metric", "rouge"),
-    #         )
-    #         break
-
+for task in [task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529, task190, task200, task937, task642, task1612, task1516, task1615]:
+    task_name = task.task_name
 
     # TODO 加expected content和metrics
     experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
     # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
     # TODO 改显存配置
-
-    file_path = ROOT+"/main/NI_tasks/tasks.json"
 
     log_and_data_root = Path(ROOT) / experiment_name
     evaluation_result_file_tail = "result.json"
@@ -125,22 +86,16 @@ for task_name in task_names:
         os.system(command)
 
     #! For classification tasks
-    # task_name = task.task_name
-    # instruction = task.task_instruction
-    # examples = task.examples
-    # expected_content = task.expected_content
-    # evaluation_dataset_path = f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
-    # test_set_path = f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
-    # optional_list = task.optional_list
-    # metric = task.metric
-    # labels = task.labels
-    # extraction_examples = task.extraction_examples
-
-    #! For generation tasks
-
-    task_name, instruction, examples, expected_content, evaluation_dataset_path, test_set_path, optional_list, metric  = task_config_for_generation_tasks
-    labels = []
-    extraction_examples = []
+    task_name = task.task_name
+    instruction = task.task_instruction
+    examples = task.examples
+    expected_content = task.expected_content
+    evaluation_dataset_path = f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
+    test_set_path = f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
+    optional_list = task.optional_list
+    metric = task.metric
+    labels = task.labels
+    extraction_examples = task.extraction_examples
 
     def objective_function(
         generation_temperature,
@@ -157,8 +112,10 @@ for task_name in task_names:
         assert optional_list != []
         assert expected_content != ""
         assert metric != ""
+        assert extraction_examples != []
+
         params = {
-            "CUDA_CONDITION": "0,1",
+            "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
             "task_name": task_name,
             "instruction": instruction,
             "examples": examples,
@@ -186,6 +143,7 @@ for task_name in task_names:
             "conditional_labels": labels,
             "extraction_examples": extraction_examples,
         }
+
         with open(log_and_data_path / "config.json", "w") as f:
             json.dump(params, f, indent=4)
         required_paths = [
@@ -269,9 +227,9 @@ for task_name in task_names:
     # 遍历每组参数组合
     for combination in all_combinations:
         generation_temperature, input_length_constraint, output_length_constraint = combination
-        
-        # if task.is_classification is not None:
-        #     output_length_constraint = False
+
+        if task.is_classification is not None:
+            output_length_constraint = False
 
         result = objective_function(
             generation_temperature,

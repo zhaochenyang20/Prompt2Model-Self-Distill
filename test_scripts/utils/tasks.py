@@ -888,7 +888,6 @@ task1615 = Task(
         """
         Premise : All ten guys that proved to boast weren't divorcing.','Hypothesis : There are exactly ten senators that proved to boast.'
         """.strip()
-    ) 
+    )
     ]
 )
-            
