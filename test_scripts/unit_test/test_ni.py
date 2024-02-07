@@ -13,12 +13,14 @@ from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
 from prompt2model.utils.path import STORE_ROOT, ROOT, TEST_DATA_ROOT, MODEL_PATH
 
+test_path = "/home/azureuser/p2mss/p2mss/ckpt_data_p2ms/task039_0.6_False_False_1/checkpoint-33"
+
 VICUNA = LLM(
-    model=MODEL_PATH,
+    # model=MODEL_PATH,
+    model=test_path,
     gpu_memory_utilization=0.9,
     swap_space = 16,
     tensor_parallel_size=2,  # 根据卡数改
-    enforce_eager = True,
 )
 
 def lcs_length_dp(x, y):
@@ -53,6 +55,7 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
 
 
 def exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs):
+    tuned_model_generated_outputs = [each.replace("\\", "") for each in tuned_model_generated_outputs]
     index = 0
     for i in range(len(GROUND_TRUTH)):
         if (
@@ -154,7 +157,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             )
             print(f"{task_name} {test_type}: {evaluate_result}")
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"{test_type}_{task_name}"
+            evaluate_generated_content_path = inputs_dir / f"20240205_{test_type}_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=decoded_outputs,

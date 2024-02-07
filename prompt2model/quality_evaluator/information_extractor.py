@@ -88,8 +88,7 @@ class VLLMInformationExtractor(QualityEvaluator):
         """
         if pretrained_model_name == "lmsys/vicuna-7b-v1.5":
             self.language_model = LLM(
-                model=MODEL_PATH
-                enforce_eager = True,
+                model=MODEL_PATH,
             )
         else:
             self.language_model = LLM(model=pretrained_model_name, enforce_eager = True)

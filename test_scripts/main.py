@@ -28,7 +28,7 @@ from utils.inference import vllm_inference
 from utils.input_generation import generate_and_write_inputs
 from utils.output_annotation import annotate_and_write_outputs
 from utils.trainer import finetune_vicuna
-from prompt2model.utils.prompt import PROMPT_TEMPLATE
+from prompt2model.output_annotator import construct_meta_prompt
 
 
 def set_seed(seed=42):
@@ -47,8 +47,9 @@ def check_and_remove_checkpoints(ckpt_path):
         "config.json",
         "special_tokens_map.json",
         "tokenizer_config.json",
-        "pytorch_model-00001-of-00002.bin",
-        "pytorch_model-00002-of-00002.bin",
+        "model-00001-of-00003.safetensors",
+        "model-00002-of-00003.safetensors",
+        "model-00003-of-00003.safetensors",
         "tokenizer.json",
         "tokenizer.model",
     ]
@@ -118,21 +119,10 @@ def validate_or_test(
 
 
     def map_func(example):
-        matches = re.findall(
-            r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
-            examples,
-            re.DOTALL,
-        )
-        assert matches != []
-        annotation_prompt_string = ""
-        for input, output in matches:
-            annotation_prompt_string += f"USER:\n\n{input}\n\n"
-            annotation_prompt_string += f"ASSISTANT:\n\n{output}\n\n"
-        assert annotation_prompt_string != ""
-        example["model_input"] = PROMPT_TEMPLATE.format(
-            task_instruction=instruction,
+        example["model_input"] = construct_meta_prompt(
+            instruction=instruction,
             new_input=example["input_col"],
-            examples = annotation_prompt_string.strip()
+            examples=examples
         )
         example["model_output"] = example["output_col"].strip()
         return example
@@ -151,7 +141,7 @@ def validate_or_test(
 
     if validation:
         sorted_list = sorted(
-            [each for each in os.listdir(ckpt_path) if "checkpoint" in each],
+            [each for each in os.listdir(ckpt_path) if ("checkpoint" in each and "tmp" not in each)],
             key=extract_number,
         )
 
@@ -239,7 +229,7 @@ def main(config_path: str):
     with open(config_path, "r") as json_file:
         loaded_params = json.load(json_file)
     gpu_memory_utilization = loaded_params["gpu_memory_utilization"]
-    tensor_parallel_size = loaded_params["tensor_parallel_size"]
+    TENSOR_SIZE = loaded_params["tensor_parallel_size"]
     expected_content = loaded_params["expected_content"]
     evaluation_dataset_path = loaded_params["evaluation_dataset_path"]
     prompt_spec = MockPromptSpec(
@@ -269,7 +259,8 @@ def main(config_path: str):
             intput_length_constraint=loaded_params["intput_length_constraint"],
             conditional_labels=loaded_params["conditional_labels"],
             reannotate=True,
-            extraction_examples=loaded_params["extraction_examples"]
+            extraction_examples=loaded_params["extraction_examples"],
+            TENSOR_SIZE=TENSOR_SIZE,
         )
 
     if not (log_and_data_path / "dataset").exists():
@@ -280,7 +271,7 @@ def main(config_path: str):
             log_and_data_path,
             gpu_memory_utilization,
             min_frequency,
-            tensor_parallel_size,
+            TENSOR_SIZE,
             prompt_spec,
             loaded_params["optional_list"],
             loaded_params["output_length_constraint"],
@@ -333,7 +324,7 @@ def main(config_path: str):
             prompt_spec.instruction,
             prompt_spec.examples,
             gpu_memory_utilization,
-            tensor_parallel_size,
+            TENSOR_SIZE,
             evaluate_result_path,
             log_and_data_path=log_and_data_path,
             validation=True,
