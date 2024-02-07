@@ -18,9 +18,9 @@ from prompt2model.quality_evaluator import (
     self_consistency_filter,
 )
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
+from IPython import embed
 
 logger = get_formatted_logger("OutputAnnotator")
-
 
 class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
     """Generate outputs from prompts."""
@@ -57,6 +57,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         few_shot_example_string: str,
         new_input: str,
         context_cutoff: int,
+        is_generation: bool = True,
     ) -> str:
         """Generates a prompt string.
 
@@ -71,24 +72,14 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         Returns:
             The generated prompt string.
         """
-        matches = re.findall(
-            r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
-            few_shot_example_string,
-            re.DOTALL,
-        )
-        assert matches != []
-        annotation_prompt_string = ""
-        for input, output in matches:
-            annotation_prompt_string += f"[input] = {input}\n"
-            annotation_prompt_string += f"[output] = {output}\n"
-        assert annotation_prompt_string != ""
         while True:
             # Construct the prompt.
             prompt = construct_meta_prompt(
                 instruction=instruction,
-                examples=annotation_prompt_string.strip(),
+                examples=few_shot_example_string,
                 new_input=new_input,
-            ).strip()
+                is_generation=is_generation,
+            )
             if count_tokens_from_string(prompt, "vicuna") < context_cutoff:
                 return prompt.strip()
             else:
@@ -114,6 +105,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         hyperparameter_choices: dict[str, Any],
         optional_list=[],
         output_length_constraint=False,
+        is_generation: bool = True,
     ) -> datasets.Dataset:
         """Generate candidate outputs for each given input.
 
@@ -147,7 +139,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         _, mean_plus_2std, mean_minus_2std = calculate_string_metrics(
             [match[1] for match in matches]
         )
-        # from IPython import embed
+
         # embed()
         prompts = []
         consistency_filter = partial(
@@ -167,9 +159,10 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                     prompt_spec.examples,
                     new_input=input,
                     context_cutoff=3000,
+                    is_generation=is_generation,
                 )
-                # 这里似乎不该 strip，和 trainer 对齐
             ]
+        embed()
         sampling_params = SamplingParams(
             n=hyperparameter_choices.get("n", 10),
             best_of=hyperparameter_choices.get("best_of", 20),
@@ -186,9 +179,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                 for output in output_sequence[idx].outputs
                 if (output.text is not None and output.text != "")
             ]
-            trancated_outputs = []
-            for each in outputs:
-                    trancated_outputs.append(each.strip())
+            trancated_outputs = [each.strip() for each in outputs]
             consistent_output = consistency_filter(
                 ablation_filter(length_filter(trancated_outputs))
                 if output_length_constraint

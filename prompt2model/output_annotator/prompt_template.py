@@ -1,6 +1,8 @@
 """Utilities to construct an LLM "metaprompt" for our dataset generator."""
 
-PROMPT_TEMPLATE = """
+import re
+
+GENERATION_PROMPT_TEMPLATE = """
 ### Instructions:
 
 {instruction}
@@ -17,10 +19,21 @@ PROMPT_TEMPLATE = """
 
 """  # noqa E501
 
+CLASSIFICATION_PROMPT_TEMPLATE = """
+A chat between a curious user and an artificial intelligence assistant.
+The assistant gives concise answers to the user's questions.
+USER: The artificial intelligence assistant only needs to help annotate label. The task is: {instruction}
+ASSISTANT: Okay.
+{examples}
+USER: [input] = {new_input}
+ASSISTANT:
+"""  # noqa E501
+
 def construct_meta_prompt(
     instruction: str = None,
     examples: str = None,
     new_input: str = None,
+    is_generation: bool = True,
 ) -> str:
     """Constructs a prompt template for the dataset generator.
 
@@ -29,11 +42,32 @@ def construct_meta_prompt(
         input: A new input to be annotated.
         high_quality_input_string: A string representing the high quality examples.
     """
-    prompt = PROMPT_TEMPLATE.format(
-        instruction=instruction,
-        new_input=new_input,
-        examples=examples,
+    matches = re.findall(
+        r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
+        examples,
+        re.DOTALL,
     )
-    # 不可 strip，否则 token 定位失效
-    # print(prompt)
+    assert matches != []
+    annotation_prompt_string = ""
+    if is_generation:
+        for input, output in matches:
+            annotation_prompt_string += f"[input] = {input}\n"
+            annotation_prompt_string += f"[output] = {output}\n"
+        assert annotation_prompt_string != ""
+        prompt = GENERATION_PROMPT_TEMPLATE.format(
+            instruction=instruction,
+            new_input=new_input,
+            examples=annotation_prompt_string.strip(),
+        )
+    else:
+        annotation_prompt_string = ""
+        for input, output in matches:
+            annotation_prompt_string += f"USER: [input] = {input}\n"
+            annotation_prompt_string += f"ASSISTANT: {output}\n"
+        assert annotation_prompt_string != ""
+        prompt = CLASSIFICATION_PROMPT_TEMPLATE.format(
+            instruction=instruction,
+            new_input=new_input,
+            examples=annotation_prompt_string.strip(),
+        )
     return prompt
