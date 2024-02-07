@@ -107,6 +107,7 @@ def construct_verify_prompt(
             expected_content=expected_content,
         )
     else:
+        assert (label is not None and instruction != "" and extraction_example_string != "")
         prompt = CONDITIONAL_INPUT_FILTER_TEMPLATE.format(
             few_shot_examples=examples,
             new_input=new_input,
@@ -150,5 +151,4 @@ def construct_meta_prompt(
             low_quality_input_string=low_quality_input_string,
             conditional_label=conditional_label,
         )
-    # print(prompt)
     return prompt
