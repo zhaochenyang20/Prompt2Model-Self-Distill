@@ -40,7 +40,7 @@ from main import main, validate_or_test
 
 [task1385, task1529, task200, task1612, task1516, task1615, task937]
 
-for task in  [task199, task201, task190, task1386, task1554, task738]:
+for task in [task1385, task1529, task200, task1612, task1516, task1615, task937]:
 
     task_name = task.task_name
     # TODO 加expected content和metrics
