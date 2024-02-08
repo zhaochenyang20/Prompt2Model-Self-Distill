@@ -140,7 +140,6 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             [match[1] for match in matches]
         )
 
-        # embed()
         prompts = []
         consistency_filter = partial(
             self_consistency_filter,
@@ -162,7 +161,6 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                     is_generation=is_generation,
                 )
             ]
-        embed()
         sampling_params = SamplingParams(
             n=hyperparameter_choices.get("n", 10),
             best_of=hyperparameter_choices.get("best_of", 20),

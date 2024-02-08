@@ -46,6 +46,7 @@ def annotate_and_write_outputs(
         ),
         optional_list=optional_list,
         output_length_constraint=output_length_constraint,
+        is_generation= False if conditional_labels != [] else True,
     )
     # from IPython import embed
     # embed()

@@ -20,7 +20,7 @@ from vllm.model_executor.parallel_utils.parallel_state import destroy_model_para
 # TODO change task
 
 # TODO change experiment rank
-experiment_rank = 1
+experiment_rank = 3
 
 # TODO change task name
 gpu_memory_utilization = 0.9
@@ -30,12 +30,13 @@ per_device_train_batch_size = 1
 max_training_epochs = 3
 from main import main, validate_or_test
 
-# [task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1615]
+# [task1388. task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1615]
 # [task1386, task1529, task190, task200, task937, task642, task1612, task1516]
 # 1388 ，task1386 先不跑了
-for task in [task1529, task190, task200, task937, task642, task1612, task1516]:
-    task_name = task.task_name
 
+for task in  [task1388, task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1615]:
+
+    task_name = task.task_name
     # TODO 加expected content和metrics
     experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
     # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
@@ -125,7 +126,7 @@ for task in [task1529, task190, task200, task937, task642, task1612, task1516]:
             "expected_content": expected_content,
             "evaluation_dataset_path": evaluation_dataset_path,
             "test_set_path": test_set_path,
-            "generation_epochs": int(20),
+            "generation_epochs": int(40),
             "generation_batch_size": int(10),
             "generation_top_k": int(40),
             "min_frequency": float(0.3),

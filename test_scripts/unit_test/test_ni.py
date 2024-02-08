@@ -101,6 +101,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                     instruction=prompt_spec.instruction,
                     examples=prompt_spec.examples,
                     new_input=example["input_col"],
+                    is_generation=False,
                 )
                 example["model_output"] = example["output_col"]
                 return example
