@@ -11,9 +11,11 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
 
 from pathlib import Path
-from utils.tasks import task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529, task190, task200, task937, task642, task1612, task1516, task1615
+from utils.tasks import task199, task201, task190, task1386, task1554, task738, task1385, task1529, task200, task1612, task1516, task1615, task937
+
 import itertools
 from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
+
 
 # TODO change card name
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
@@ -34,7 +36,11 @@ from main import main, validate_or_test
 # [task1386, task1529, task190, task200, task937, task642, task1612, task1516]
 # 1388 ，task1386 先不跑了
 
-for task in  [task1388, task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1615]:
+[task199, task201, task190, task1386, task1554, task738]
+
+[task1385, task1529, task200, task1612, task1516, task1615, task937]
+
+for task in  [task199, task201, task190, task1386, task1554, task738]:
 
     task_name = task.task_name
     # TODO 加expected content和metrics

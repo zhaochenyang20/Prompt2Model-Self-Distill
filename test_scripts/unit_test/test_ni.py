@@ -1,4 +1,7 @@
 import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 import gc
 import json
 import re
@@ -13,14 +16,12 @@ from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
 from prompt2model.utils.path import STORE_ROOT, ROOT, TEST_DATA_ROOT, MODEL_PATH
 
-test_path = "/home/azureuser/p2mss/p2mss/ckpt_data_p2ms/task039_0.6_False_False_1/checkpoint-33"
-
 VICUNA = LLM(
-    # model=MODEL_PATH,
-    model=test_path,
+    model=MODEL_PATH,
+    # model=test_path,
     gpu_memory_utilization=0.9,
     swap_space = 16,
-    tensor_parallel_size=2,  # 根据卡数改
+    tensor_parallel_size=1,  # 根据卡数改
 )
 
 def lcs_length_dp(x, y):
@@ -70,7 +71,8 @@ def exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs):
 def evaluate_model(task_names, finetuned=False, exact_match=False):
     for task_name in task_names:
         # 改了这里的名字
-        for test_type in ["test", "eval"]:
+        ["test", "eval"]
+        for test_type in ["eval"]:
             test_dataset = datasets.load_from_disk(
                 f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
             )
@@ -158,7 +160,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             )
             print(f"{task_name} {test_type}: {evaluate_result}")
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"20240205_{test_type}_{task_name}"
+            evaluate_generated_content_path = inputs_dir / f"20240208_{test_type}_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=decoded_outputs,
@@ -170,8 +172,8 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 
 # TODO 改任务
 # print("generation tasks:")
-task_names = ["task036","task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557"]
-evaluate_model(task_names, finetuned=False, exact_match=False)
+# task_names = ["task036","task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557"]
+# evaluate_model(task_names, finetuned=False, exact_match=False)
 # print("classification tasks:")
-task_names = ["task202", "task199", "task1388", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
+task_names = ["task937"]
 evaluate_model(task_names, finetuned=False, exact_match=True)

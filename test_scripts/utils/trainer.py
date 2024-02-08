@@ -32,12 +32,15 @@ def finetune_vicuna(
 
     dataset = datasets.load_from_disk(log_and_data_path / "dataset").filter(filter_func)
 
+    is_generation=False
+    
     def map_func(example):
         assert prompt_spec.examples != ""
         example["model_input"] = construct_meta_prompt(
             instruction=prompt_spec.instruction,
             new_input=example["input_col"],
-            examples=prompt_spec.examples
+            examples=prompt_spec.examples,
+            is_generation=is_generation,
         )
         #! 此处绝对不可以 strip，否则 token 定位失效
         example["model_output"] = example["output_col"].strip()
@@ -60,7 +63,10 @@ def finetune_vicuna(
             lambda x: (count_tokens_from_string(x["text"], "vicuna") <= max_seq_length)
         )
     )
-    response_template_with_context = "\n### Your Output:\n\n"
+    if is_generation:
+        response_template_with_context = "\n\n### Your Output:\n\n"
+    else:
+        response_template_with_context = "\nASSISTANT:\n"
     response_template_ids = tokenizer.encode(
         response_template_with_context, add_special_tokens=False
     )[2:]

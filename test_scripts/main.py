@@ -121,7 +121,8 @@ def validate_or_test(
         example["model_input"] = construct_meta_prompt(
             instruction=instruction,
             new_input=example["input_col"],
-            examples=examples
+            examples=examples,
+            is_generation=False,
         )
         example["model_output"] = example["output_col"].strip()
         return example
