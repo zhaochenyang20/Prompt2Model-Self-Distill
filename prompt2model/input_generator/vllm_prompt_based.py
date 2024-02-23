@@ -282,7 +282,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         intput_length_constraint=False,
         conditional_labels: list[str] = None,
         extraction_examples: list[(str, str)] = None,
-        early_end=False,
+        log_and_data_path: str = ''
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
 
@@ -321,7 +321,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         )
         generated_inputs = []
         # [(input, label)]
-        for _ in tqdm(range(generation_epochs)):
+        for epoch in tqdm(range(generation_epochs)):
             input_tuples = self.generate_inputs(
                 [each[0] for each in generated_inputs],
                 prompt_spec,
@@ -331,6 +331,24 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             )
             new_inputs = input_tuples[0]
             pseudo_labels = input_tuples[1]
+
+            # record all the data
+            last_part = log_and_data_path.split('/')[-1]
+            task_name, temperature, intput_length_constraint, output_length_constraint, exp_number = last_part.split('_')
+            print(epoch)
+            ids = list(range(len(inputs)))
+
+            data = {
+                'task_name': [task_name]*len(input_tuples),  # Example task numbers
+                'exp_number': [exp_number]*len(input_tuples),  # Example experiment numbers
+                'id': ids,  # Auto-generated IDs
+                'input': new_inputs,  
+                'output': ['']*len(input_tuples),
+                'drop_reason': ['']*len(input_tuples),  # Example drop reasons, None means no drop reason
+                'task type': ['']*len(input_tuples)  # Example task types
+            }
+
+
             input_to_label = dict(zip(new_inputs, pseudo_labels))
             filtered_new_inputs = [
                 element

@@ -36,6 +36,7 @@ def generate_and_write_inputs(
         intput_length_constraint=intput_length_constraint,
         conditional_labels=conditional_labels,
         extraction_examples=extraction_examples,
+        log_and_data_path=log_and_data_path
     )
     inputs = [each[0] for each in input_tuples]
     with open(log_and_data_path / f"inputs.txt", "w", encoding="utf-8") as file:

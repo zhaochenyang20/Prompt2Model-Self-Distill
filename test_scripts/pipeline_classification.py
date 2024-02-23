@@ -4,7 +4,7 @@ import os
 
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
@@ -22,7 +22,7 @@ from vllm.model_executor.parallel_utils.parallel_state import destroy_model_para
 # TODO change task
 
 # TODO change experiment rank
-experiment_rank = 3
+experiment_rank = 4
 
 # TODO change task name
 gpu_memory_utilization = 0.9
@@ -40,7 +40,7 @@ from main import main, validate_or_test
 
 [task1385, task1529, task200, task1612, task1516, task1615, task937]
 
-for task in [task1385, task1529, task200, task1612, task1516, task1615, task937]:
+for task in [task937]:
 
     task_name = task.task_name
     # TODO 加expected content和metrics
