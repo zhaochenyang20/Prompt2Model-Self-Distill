@@ -4,6 +4,7 @@ import random
 import re
 from functools import partial
 from typing import Any
+from datasets import Dataset
 
 import numpy as np
 from tqdm import tqdm
@@ -335,19 +336,54 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             # record all the data
             last_part = log_and_data_path.split('/')[-1]
             task_name, temperature, intput_length_constraint, output_length_constraint, exp_number = last_part.split('_')
-            print(epoch)
-            ids = list(range(len(inputs)))
 
-            data = {
-                'task_name': [task_name]*len(input_tuples),  # Example task numbers
-                'exp_number': [exp_number]*len(input_tuples),  # Example experiment numbers
-                'id': ids,  # Auto-generated IDs
-                'input': new_inputs,  
-                'output': ['']*len(input_tuples),
-                'drop_reason': ['']*len(input_tuples),  # Example drop reasons, None means no drop reason
-                'task type': ['']*len(input_tuples)  # Example task types
-            }
+            data_path = log_and_data_path / "unfiltered_data"
 
+            if data_path.exists():
+
+                existing_dataset = Dataset.load_from_disk(data_path)
+
+                start_id = len(existing_dataset)
+                end_id = start_id + len(new_inputs)
+                ids = list(range(start_id, end_id))
+
+                data = {
+                    'task_name': [task_name]*len(input_tuples),  # Example task numbers
+                    'exp_number': [exp_number]*len(input_tuples),  # Example experiment numbers
+                    'id': ids,  # Auto-generated IDs
+                    'temperature': [temperature]*len(input_tuples),
+                    'intput_length_constraint': [intput_length_constraint]*len(input_tuples),
+                    'output_length_constraint': [output_length_constraint]*len(input_tuples),
+                    'input': new_inputs,  
+                    'output': pseudo_labels,
+                    'drop_reason': ['']*len(input_tuples),  # Example drop reasons, None means no drop reason
+                    'task_type': ['']*len(input_tuples)  # Example task types
+                }
+
+                
+                new_dataset = Dataset.from_dict(data)
+                updated_dataset = existing_dataset.concatenate(new_dataset)
+
+            else:
+
+                ids = list(range(len(new_inputs)))
+
+                data = {
+                    'task_name': [task_name]*len(input_tuples),  # Example task numbers
+                    'exp_number': [exp_number]*len(input_tuples),  # Example experiment numbers
+                    'id': ids,  # Auto-generated IDs
+                    'temperature': [temperature]*len(input_tuples),
+                    'intput_length_constraint': [intput_length_constraint]*len(input_tuples),
+                    'output_length_constraint': [output_length_constraint]*len(input_tuples),
+                    'input': new_inputs,  
+                    'output': pseudo_labels,
+                    'drop_reason': ['']*len(input_tuples),  # Example drop reasons, None means no drop reason
+                    'task_type': ['']*len(input_tuples)  # Example task types
+                }
+
+                updated_dataset = Dataset.from_dict(data)
+
+            updated_dataset.save_to_disk(data_path)
 
             input_to_label = dict(zip(new_inputs, pseudo_labels))
             filtered_new_inputs = [
