@@ -324,6 +324,22 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         )
         generated_inputs = []
         # [(input, label)]
+
+        all_data = {
+            'task_name': [],
+            'exp_number': [],
+            'id': [],
+            'epoch': [],
+            'temperature': [],
+            'intput_length_constraint': [],
+            'output_length_constraint': [],
+            'input': [],
+            'verified_input': [],
+            'output': [],
+            'drop_reason': [],
+            'task_type': []
+        }
+
         for epoch in tqdm(range(generation_epochs)):
             input_tuples = self.generate_inputs(
                 [each[0] for each in generated_inputs],
@@ -336,61 +352,32 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             pseudo_labels = input_tuples[1]
 
             # record all the data
-            last_part = log_and_data_path.split('/')[-1]
-            task_name, temperature, intput_length_constraint, output_length_constraint, exp_number = last_part.split('_')
+            last_part = str(log_and_data_path).split('/')[-1]
+            task_name, temperature, intput_length_constraint, output_length_constraint, exp_number = last_part.split('_')      
 
-            data_path = log_and_data_path / "all_generated_data"
-
-            if data_path.exists():
-
-                existing_dataset = Dataset.load_from_disk(data_path)
-
-                start_id = len(existing_dataset)
+            if epoch > 0:
+                start_id = len(all_data['drop_reason'])
                 end_id = start_id + len(new_inputs)
                 ids = list(range(start_id, end_id))
 
-                data = {
-                    'task_name': [task_name]*len(input_tuples),  # Example task numbers
-                    'exp_number': [exp_number]*len(input_tuples),  # Example experiment numbers
-                    'id': ids,  # Auto-generated IDs
-                    'epoch': [epoch]*len(input_tuples),
-                    'temperature': [temperature]*len(input_tuples),
-                    'intput_length_constraint': [intput_length_constraint]*len(input_tuples),
-                    'output_length_constraint': [output_length_constraint]*len(input_tuples),
-                    'input': new_inputs,
-                    'verified_input': ['']*len(input_tuples),
-                    'output': pseudo_labels,
-                    'drop_reason': ['']*len(input_tuples),  # Example drop reasons, None means no drop reason
-                    'task_type': ['']*len(input_tuples)  # Example task types
-                }
-
-                new_dataset = Dataset.from_dict(data)
-                updated_dataset = existing_dataset.concatenate(new_dataset)
-
             else:
-
                 ids = list(range(len(new_inputs)))
 
-                data = {
-                    'task_name': [task_name]*len(input_tuples),  # Example task numbers
-                    'exp_number': [exp_number]*len(input_tuples),  # Example experiment numbers
-                    'id': ids,  # Auto-generated IDs
-                    'epoch': [epoch]*len(input_tuples),
-                    'temperature': [temperature]*len(input_tuples),
-                    'intput_length_constraint': [intput_length_constraint]*len(input_tuples),
-                    'output_length_constraint': [output_length_constraint]*len(input_tuples),
-                    'input': new_inputs,
-                    'verified_input': ['']*len(input_tuples),
-                    'output': pseudo_labels,
-                    'drop_reason': ['']*len(input_tuples),  # Example drop reasons, None means no drop reason
-                    'task_type': ['']*len(input_tuples)  # Example task types
-                }
-            # save together later
-            #     updated_dataset = Dataset.from_dict(data)
-            #
-            # updated_dataset.save_to_disk(data_path)
-
-            input_to_label = dict(zip(new_inputs, pseudo_labels))
+            data = {
+                'task_name': [task_name]*len(new_inputs), 
+                'exp_number': [exp_number]*len(new_inputs),
+                'id': ids, 
+                'epoch': [epoch]*len(new_inputs),
+                'temperature': [temperature]*len(new_inputs),
+                'intput_length_constraint': [intput_length_constraint]*len(new_inputs),
+                'output_length_constraint': [output_length_constraint]*len(new_inputs),
+                'input': new_inputs,
+                'verified_input': ['']*len(new_inputs),
+                'output': pseudo_labels,
+                'drop_reason': ['']*len(new_inputs),
+                'task_type': ['']*len(new_inputs)
+            }
+        
 
             if new_inputs is not None and new_inputs != []:
 
@@ -406,24 +393,30 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 data['verified_input'] = verified_inputs
 
                 inputs_with_idx = [(index, text) for index, text in enumerate(verified_inputs)]
+                
                 inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, empty_filter, "empty input")
                 if intput_length_constraint:
                     inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, length_filter, "input length constraint")
                 inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, ablation_filter, "ablation filter")
 
                 if (inputs_with_idx is not None and inputs_with_idx != []):
-                    unique_inputs = set([input for input, label in generated_inputs])
+                    unique_inputs = set([input for input, _ in generated_inputs])
                     filtered_generated_inputs = []
-                    for input_item, index in inputs_with_idx:
-                        if input_item not in unique_inputs:
-                            unique_inputs.add(input_item)
+                    for _, (index, text)  in enumerate(inputs_with_idx):
+                        if text not in unique_inputs:
+                            unique_inputs.add(text)
                             filtered_generated_inputs.append(
-                                (input_item.strip(), pseudo_labels[index])
+                                (text.strip(), pseudo_labels[int(index)])
                             )
                         else:
                             data['drop_reason'][index] = "duplicated input"
                     generated_inputs.extend(filtered_generated_inputs)
-                updated_dataset = Dataset.from_dict(data)
-                updated_dataset.save_to_disk(data_path)
+                
+                for key in all_data.keys():
+                    all_data[key].extend(data[key])
+                
+        data_path = log_and_data_path / "all_generated_data"
+        dataset = Dataset.from_dict(all_data)
+        dataset.save_to_disk(data_path)
 
         return generated_inputs

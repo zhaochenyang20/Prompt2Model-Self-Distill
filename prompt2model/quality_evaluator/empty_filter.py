@@ -1,6 +1,7 @@
 from prompt2model.utils import get_formatted_logger
 
 logger = get_formatted_logger("QualityEvaluator")
+
 def empty_filter(strings):
     """
     Filter out strings that is None or empty.
