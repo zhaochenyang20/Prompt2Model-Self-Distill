@@ -21,6 +21,8 @@ from prompt2model.quality_evaluator import (
     ablation_list_filter,
     get_middle_portion,
     min_max_length_filter,
+    empty_filter,
+    apply_and_track_filter,
 )
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 
@@ -337,7 +339,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             last_part = log_and_data_path.split('/')[-1]
             task_name, temperature, intput_length_constraint, output_length_constraint, exp_number = last_part.split('_')
 
-            data_path = log_and_data_path / "unfiltered_data"
+            data_path = log_and_data_path / "all_generated_data"
 
             if data_path.exists():
 
@@ -351,6 +353,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     'task_name': [task_name]*len(input_tuples),  # Example task numbers
                     'exp_number': [exp_number]*len(input_tuples),  # Example experiment numbers
                     'id': ids,  # Auto-generated IDs
+                    'epoch': [epoch]*len(input_tuples),
                     'temperature': [temperature]*len(input_tuples),
                     'intput_length_constraint': [intput_length_constraint]*len(input_tuples),
                     'output_length_constraint': [output_length_constraint]*len(input_tuples),
@@ -360,7 +363,6 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     'task_type': ['']*len(input_tuples)  # Example task types
                 }
 
-                
                 new_dataset = Dataset.from_dict(data)
                 updated_dataset = existing_dataset.concatenate(new_dataset)
 
@@ -372,6 +374,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     'task_name': [task_name]*len(input_tuples),  # Example task numbers
                     'exp_number': [exp_number]*len(input_tuples),  # Example experiment numbers
                     'id': ids,  # Auto-generated IDs
+                    'epoch': [epoch]*len(input_tuples),
                     'temperature': [temperature]*len(input_tuples),
                     'intput_length_constraint': [intput_length_constraint]*len(input_tuples),
                     'output_length_constraint': [output_length_constraint]*len(input_tuples),
@@ -380,23 +383,31 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     'drop_reason': ['']*len(input_tuples),  # Example drop reasons, None means no drop reason
                     'task_type': ['']*len(input_tuples)  # Example task types
                 }
-
-                updated_dataset = Dataset.from_dict(data)
-
-            updated_dataset.save_to_disk(data_path)
+            # save together later
+            #     updated_dataset = Dataset.from_dict(data)
+            #
+            # updated_dataset.save_to_disk(data_path)
 
             input_to_label = dict(zip(new_inputs, pseudo_labels))
-            filtered_new_inputs = [
-                element
-                for element in new_inputs
-                if element is not None and element != ""
-            ]
-            filtered_new_inputs = ablation_filter(
-                length_filter(filtered_new_inputs)
-                if intput_length_constraint
-                else filtered_new_inputs
-            )
-            if filtered_new_inputs is not None and filtered_new_inputs != []:
+
+            new_inputs_with_idx = [(index, text) for index, text in enumerate(new_inputs)]
+
+            # filtered_new_inputs = [
+            #     element
+            #     for element in new_inputs
+            #     if element is not None and element != ""
+            # ]
+            # filtered_new_inputs = ablation_filter(
+            #     length_filter(filtered_new_inputs)
+            #     if intput_length_constraint
+            #     else filtered_new_inputs
+            # )
+            new_inputs_with_idx, data = apply_and_track_filter(new_inputs_with_idx, data, empty_filter, "empty input")
+            if intput_length_constraint:
+                new_inputs_with_idx, data = apply_and_track_filter(new_inputs_with_idx, data, length_filter, "input length constraint")
+            new_inputs_with_idx, data = apply_and_track_filter(new_inputs_with_idx, data, ablation_filter, "ablation filter")
+
+            if new_inputs is not None and new_inputs != []:
                 filtered_pesudo_labels = [
                     input_to_label[input_item] for input_item in filtered_new_inputs
                 ]
