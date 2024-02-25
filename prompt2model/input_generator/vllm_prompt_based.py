@@ -357,7 +357,8 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     'temperature': [temperature]*len(input_tuples),
                     'intput_length_constraint': [intput_length_constraint]*len(input_tuples),
                     'output_length_constraint': [output_length_constraint]*len(input_tuples),
-                    'input': new_inputs,  
+                    'input': new_inputs,
+                    'verified_input': ['']*len(input_tuples),
                     'output': pseudo_labels,
                     'drop_reason': ['']*len(input_tuples),  # Example drop reasons, None means no drop reason
                     'task_type': ['']*len(input_tuples)  # Example task types
@@ -378,7 +379,8 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                     'temperature': [temperature]*len(input_tuples),
                     'intput_length_constraint': [intput_length_constraint]*len(input_tuples),
                     'output_length_constraint': [output_length_constraint]*len(input_tuples),
-                    'input': new_inputs,  
+                    'input': new_inputs,
+                    'verified_input': ['']*len(input_tuples),
                     'output': pseudo_labels,
                     'drop_reason': ['']*len(input_tuples),  # Example drop reasons, None means no drop reason
                     'task_type': ['']*len(input_tuples)  # Example task types
@@ -390,69 +392,38 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
 
             input_to_label = dict(zip(new_inputs, pseudo_labels))
 
-            new_inputs_with_idx = [(index, text) for index, text in enumerate(new_inputs)]
-
-            # filtered_new_inputs = [
-            #     element
-            #     for element in new_inputs
-            #     if element is not None and element != ""
-            # ]
-            # filtered_new_inputs = ablation_filter(
-            #     length_filter(filtered_new_inputs)
-            #     if intput_length_constraint
-            #     else filtered_new_inputs
-            # )
-            new_inputs_with_idx, data = apply_and_track_filter(new_inputs_with_idx, data, empty_filter, "empty input")
-            if intput_length_constraint:
-                new_inputs_with_idx, data = apply_and_track_filter(new_inputs_with_idx, data, length_filter, "input length constraint")
-            new_inputs_with_idx, data = apply_and_track_filter(new_inputs_with_idx, data, ablation_filter, "ablation filter")
-
             if new_inputs is not None and new_inputs != []:
-                filtered_pesudo_labels = [
-                    input_to_label[input_item] for input_item in filtered_new_inputs
-                ]
+
                 verified_inputs = self.verify(
                     prompt_spec,
-                    [each.strip() for each in filtered_new_inputs],
-                    filtered_pesudo_labels,
+                    [each.strip() for each in new_inputs],
+                    pseudo_labels,
                     expected_content=expected_content,
                     extraction_examples=extraction_examples,
                 )
 
-                assert len(filtered_new_inputs) == len(verified_inputs)
-                filtered_input_to_label = dict(
-                    zip(verified_inputs, filtered_pesudo_labels)
-                )
-                filtered_verified_inputs = [
-                    element
-                    for element in verified_inputs
-                    if element is not None and element != ""
-                ]
-                filtered_verified_inputs = ablation_filter(
-                    length_filter(filtered_verified_inputs)
-                    if intput_length_constraint
-                    else filtered_verified_inputs
-                )
+                assert len(new_inputs) == len(verified_inputs)
+                data['verified_input'] = verified_inputs
 
-                if (
-                    filtered_verified_inputs is not None
-                    and filtered_verified_inputs != []
-                ):
-                    filtered_verified_labels = [
-                        filtered_input_to_label[input_item]
-                        for input_item in filtered_verified_inputs
-                    ]
-                    input_label_pairs = list(
-                        zip(filtered_verified_inputs, filtered_verified_labels)
-                    )
-                    generated_inputs.extend(input_label_pairs)
-                    unique_inputs = {}
+                inputs_with_idx = [(index, text) for index, text in enumerate(verified_inputs)]
+                inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, empty_filter, "empty input")
+                if intput_length_constraint:
+                    inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, length_filter, "input length constraint")
+                inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, ablation_filter, "ablation filter")
+
+                if (inputs_with_idx is not None and inputs_with_idx != []):
+                    unique_inputs = set([input for input, label in generated_inputs])
                     filtered_generated_inputs = []
-                    for input_item, label in generated_inputs:
+                    for input_item, index in inputs_with_idx:
                         if input_item not in unique_inputs:
-                            unique_inputs[input_item] = label
+                            unique_inputs.add(input_item)
                             filtered_generated_inputs.append(
-                                (input_item.strip(), label)
+                                (input_item.strip(), pseudo_labels[index])
                             )
-                    generated_inputs = filtered_generated_inputs
+                        else:
+                            data['drop_reason'][index] = "duplicated input"
+                    generated_inputs.extend(filtered_generated_inputs)
+                updated_dataset = Dataset.from_dict(data)
+                updated_dataset.save_to_disk(data_path)
+
         return generated_inputs
