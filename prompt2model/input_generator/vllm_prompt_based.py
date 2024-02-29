@@ -353,7 +353,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
 
             # record all the data
             last_part = str(log_and_data_path).split('/')[-1]
-            task_name, temperature, intput_length_constraint, output_length_constraint, exp_number = last_part.split('_')      
+            task_name, temperature, intput_length_constraint, output_length_constraint, _ , exp_number = last_part.split('_')      
 
             if epoch > 0:
                 start_id = len(all_data['drop_reason'])
@@ -395,7 +395,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 inputs_with_idx = [(index, text) for index, text in enumerate(verified_inputs)]
                 
                 inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, empty_filter, "empty input")
-                if intput_length_constraint:
+                if intput_length_constraint=='True':
                     inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, length_filter, "input length constraint")
                 inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, ablation_filter, "ablation filter")
 
