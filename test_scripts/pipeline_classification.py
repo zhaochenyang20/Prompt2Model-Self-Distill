@@ -5,7 +5,7 @@ import os
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
 TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
@@ -22,7 +22,7 @@ from vllm.model_executor.parallel_utils.parallel_state import destroy_model_para
 # TODO change task
 
 # TODO change experiment rank
-experiment_rank = 4
+experiment_rank = 10
 
 # TODO change task name
 gpu_memory_utilization = 0.9
@@ -40,7 +40,12 @@ from main import main, validate_or_test
 
 [task1385, task1529, task200, task1612, task1516, task1615, task937]
 
-for task in [task937]:
+# this time
+[task199, task200, task738, task937, task1385, task1386]
+
+[task1516, task1529, task1612, task1615, task190]
+
+for task in [task199, task200, task738, task937, task1385, task1386]:
 
     task_name = task.task_name
     # TODO 加expected content和metrics
@@ -107,12 +112,14 @@ for task in [task937]:
     labels = task.labels
     extraction_examples = task.extraction_examples
 
+    # TODO: change generation epoch here
     def objective_function(
         generation_temperature,
         intput_length_constraint,
         output_length_constraint,
+        generation_epoch=40
     ):
-        name = f"{task_name}_{generation_temperature}_{intput_length_constraint}_{output_length_constraint}_{experiment_rank}"
+        name = f"{task_name}_{generation_temperature}_{intput_length_constraint}_{output_length_constraint}_{generation_epoch}_{experiment_rank}"
         print(f"searching parameters: {name}")
         log_and_data_path = log_and_data_root / name
         log_and_data_path.mkdir(parents=True, exist_ok=True)
@@ -132,7 +139,7 @@ for task in [task937]:
             "expected_content": expected_content,
             "evaluation_dataset_path": evaluation_dataset_path,
             "test_set_path": test_set_path,
-            "generation_epochs": int(40),
+            "generation_epochs": int(generation_epoch),
             "generation_batch_size": int(10),
             "generation_top_k": int(40),
             "min_frequency": float(0.3),
@@ -244,7 +251,7 @@ for task in [task937]:
         result = objective_function(
             generation_temperature,
             input_length_constraint,
-            output_length_constraint,
+            output_length_constraint
         )
 
     with open(best_validation_result_path, "r") as json_file:
