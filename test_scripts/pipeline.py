@@ -4,15 +4,13 @@ import os
 
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
 TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
 
 from pathlib import Path
-from utils.tasks import task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1388, task1386, task1529, task190, task200, task937, task642, task1612, task1516, task1615
-# The upper line is for classifications
 import itertools
 from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 
@@ -21,7 +19,7 @@ from vllm.model_executor.parallel_utils.parallel_state import destroy_model_para
 # TODO change task
 # task = task1615
 # TODO change experiment rank
-experiment_rank = 1
+experiment_rank = 11
 # TODO change task name
 # task_name = task.task_name
 
@@ -32,42 +30,42 @@ per_device_train_batch_size = 1
 max_training_epochs = 3
 from main import main, validate_or_test
 
-# task_names = ['task036',
-#  'task281',
-#  'task1195',
-#  'task1622',
-#  'task671',
-#  'task035',
-#  'task569']
+task_names = ['task036',
+ 'task281',
+ 'task1195',
+ 'task1622',
+ 'task671',
+ 'task035',
+ 'task569']
 
 # task_names = [
-# # 'task039',
-# #  'task121',
-# #  'task1562',
-# #  'task1345',
+# 'task039',
+#  'task121',
+#  'task1562',
+#  'task1345',
 #  'task1659',
 #  'task1631',
 #   'task1557']
 
 for task_name in task_names:
-    # file_path = ROOT+"/main/NI_tasks/tasks.json"
-    # with open(file_path, "r", encoding="utf-8") as json_file:
-    #     all_tasks = json.load(json_file)
+    file_path = ROOT+"/main/NI_tasks/tasks.json"
+    with open(file_path, "r", encoding="utf-8") as json_file:
+        all_tasks = json.load(json_file)
 
-    # task_config_for_generation_tasks = None
-    # for task in all_tasks:
-    #     if task["task_name"] == task_name:
-    #         task_config_for_generation_tasks = (
-    #             task["task_name"],
-    #             task["task_instruction"],
-    #             task["examples"],
-    #             task["expected_content"],
-    #             f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}",
-    #             f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}",
-    #             task.get("optional_list", []),
-    #             task.get("metric", "rouge"),
-    #         )
-    #         break
+    task_config_for_generation_tasks = None
+    for task in all_tasks:
+        if task["task_name"] == task_name:
+            task_config_for_generation_tasks = (
+                task["task_name"],
+                task["task_instruction"],
+                task["examples"],
+                task["expected_content"],
+                f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}",
+                f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}",
+                task.get("optional_list", []),
+                task.get("metric", "rouge"),
+            )
+            break
 
 
     # TODO 加expected content和metrics
@@ -124,17 +122,6 @@ for task_name in task_names:
         print(command)
         os.system(command)
 
-    #! For classification tasks
-    # task_name = task.task_name
-    # instruction = task.task_instruction
-    # examples = task.examples
-    # expected_content = task.expected_content
-    # evaluation_dataset_path = f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
-    # test_set_path = f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
-    # optional_list = task.optional_list
-    # metric = task.metric
-    # labels = task.labels
-    # extraction_examples = task.extraction_examples
 
     #! For generation tasks
 
@@ -146,8 +133,9 @@ for task_name in task_names:
         generation_temperature,
         intput_length_constraint,
         output_length_constraint,
+        generation_epoch=20,
     ):
-        name = f"{task_name}_{generation_temperature}_{intput_length_constraint}_{output_length_constraint}_{experiment_rank}"
+        name = f"{task_name}_{generation_temperature}_{intput_length_constraint}_{output_length_constraint}_{generation_epoch}_{experiment_rank}"
         print(f"searching parameters: {name}")
         log_and_data_path = log_and_data_root / name
         log_and_data_path.mkdir(parents=True, exist_ok=True)

@@ -41,16 +41,6 @@ for file_name in files:
         data = json.load(json_file)
 
     instances = data["Instances"]
-    # print(f"{file_name}:{len(instances)}")
-
-    # outputs = [instance['output'] for instance in instances]
-    # total_count = sum(outputs.values())
-
-    # outputs = Counter(outputs)
-    # output_ratios = {output: num / total_count for output, num in outputs.items()}
-    
-    # for output, ratio in output_ratios.items():
-    #     print(f"Output: {output}, Ratio: {ratio:.2%}")
 
     grouped_data = defaultdict(list)
     for instance in instances:
@@ -64,20 +54,7 @@ for file_name in files:
         eval_dataset.extend(data[:split_point])  # 10% 的数据分到第一个数据集
         test_dataset.extend(data[split_point:])  # 剩余 90% 分到第二个数据集
         
-    
 
-    # if len(instances) < 2000:
-    #     data_size = get_highest_digit(len(instances))
-    #     test_dataset = instances[: data_size // 2]
-    #     eval_dataset = instances[data_size // 2 : data_size]
-    # else:
-    #     test_dataset = instances[:1000]
-    #     eval_dataset = instances[1000:2000]
-    # task_name = test_dataset[0]["id"].split("-")[0]
-
-    # print(
-    #     f"{task_name}: evaluation data size = {len(eval_dataset)}, test data size = {len(test_dataset)}"
-    # )
 
     test_data_dict = {
         "input_col": [item["input"] for item in test_dataset],
