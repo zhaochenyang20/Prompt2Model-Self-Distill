@@ -4,10 +4,9 @@ def exact_match_score(
 ):
     index = 0
     for i in range(len(GROUND_TRUTH)):
-        if (
-            (GROUND_TRUTH[i] in tuned_model_generated_outputs[i] or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]) and (tuned_model_generated_outputs[i] != "")
-        ):
-            index += 1
+        if (GROUND_TRUTH[i] in tuned_model_generated_outputs[i]) or (tuned_model_generated_outputs[i] in GROUND_TRUTH[i]):
+            if tuned_model_generated_outputs[i] != "":
+                index += 1
     exact_match = index / len(GROUND_TRUTH)
     return exact_match
 
