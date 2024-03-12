@@ -54,14 +54,14 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
         scores.append(f_measure)
     return sum(scores) / len(scores)
 
-
-def exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs):
-    tuned_model_generated_outputs = [each.replace("\\", "") for each in tuned_model_generated_outputs]
+def exact_match_score(
+    GROUND_TRUTH,
+    tuned_model_generated_outputs,
+):
     index = 0
     for i in range(len(GROUND_TRUTH)):
         if (
-            GROUND_TRUTH[i] in tuned_model_generated_outputs[i]
-            or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]
+            (GROUND_TRUTH[i] in tuned_model_generated_outputs[i] or tuned_model_generated_outputs[i] in GROUND_TRUTH[i]) and (tuned_model_generated_outputs[i] != "")
         ):
             index += 1
     exact_match = index / len(GROUND_TRUTH)
@@ -72,7 +72,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
     for task_name in task_names:
         # 改了这里的名字
         ["test", "eval"]
-        for test_type in ["eval"]:
+        for test_type in ["test", "eval"]:
             test_dataset = datasets.load_from_disk(
                 f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
             )
@@ -160,7 +160,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             )
             print(f"{task_name} {test_type}: {evaluate_result}")
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"20240208_{test_type}_{task_name}"
+            evaluate_generated_content_path = inputs_dir / f"20240312_{test_type}_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=decoded_outputs,
@@ -172,8 +172,9 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 
 # TODO 改任务
 # print("generation tasks:")
-# task_names = ["task036","task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569", "task1631", "task1557"]
+# task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
 # evaluate_model(task_names, finetuned=False, exact_match=False)
-# print("classification tasks:")
-task_names = ["task937"]
+print("classification tasks:")
+task_names = ["task346", "task190", "task199", "task1612", "task200", "task738", "task937", 
+              "task1385", "task1386", "task1516", "task1529", "task1615", "task284", "task329"][0::2]
 evaluate_model(task_names, finetuned=False, exact_match=True)

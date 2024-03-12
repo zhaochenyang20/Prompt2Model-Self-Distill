@@ -5,7 +5,7 @@ import sys
 
 import requests
 from datasets import Dataset
-from utils.path import ROOT, TEST_DATA_ROOT
+from prompt2model.utils.path import ROOT, TEST_DATA_ROOT
 
 sys.path.append(ROOT + "/main/test_scripts/unit_test")
 # from test_ni import evaluate_model
@@ -13,7 +13,9 @@ sys.path.append(ROOT + "/main/test_scripts/unit_test")
 # step0: specify the json files to be processed
 # TODO paste name of json files
 github_raw_urls = [
-    "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task642_esnli_classification.json"
+    "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task284_imdb_classification.json",
+    "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task329_gap_classification.json",
+    "https://raw.githubusercontent.com/allenai/natural-instructions/master/tasks/task346_hybridqa_classification.json"
 ]
 unprocessed_file_folder = ROOT + "/main/NI_tasks/task_json/unprocessed/"
 for github_raw_url in github_raw_urls:
@@ -73,70 +75,70 @@ with open(task_json_file_path, "w", encoding="utf-8") as updated_file:
 # print("提取和保存完成")
 print("提取和插入完成")
 
-# step2: 分割出test和validation的数据集
-def get_highest_digit(number):
-    if number == 0:
-        return 0
-    temp = number
-    while temp >= 10:
-        temp //= 10
+# # step2: 分割出test和validation的数据集
+# def get_highest_digit(number):
+#     if number == 0:
+#         return 0
+#     temp = number
+#     while temp >= 10:
+#         temp //= 10
 
-    highest_digit = temp * 10 ** (len(str(number)) - 1)
+#     highest_digit = temp * 10 ** (len(str(number)) - 1)
 
-    return highest_digit
+#     return highest_digit
 
 
-task_names = []
+# task_names = []
 
-for file_name in files:
-    with open(file_name) as json_file:
-        data = json.load(json_file)
+# for file_name in files:
+#     with open(file_name) as json_file:
+#         data = json.load(json_file)
 
-    instances = data["Instances"]
+#     instances = data["Instances"]
 
-    if len(instances) < 2000:
-        data_size = get_highest_digit(len(instances))
-        test_dataset = instances[: data_size // 2]
-        eval_dataset = instances[data_size // 2 : data_size]
-    else:
-        test_dataset = instances[:1000]
-        eval_dataset = instances[1000:2000]
-    task_name = test_dataset[0]["id"].split("-")[0]
-    task_names.append(task_name)
+#     if len(instances) < 2000:
+#         data_size = get_highest_digit(len(instances))
+#         test_dataset = instances[: data_size // 2]
+#         eval_dataset = instances[data_size // 2 : data_size]
+#     else:
+#         test_dataset = instances[:1000]
+#         eval_dataset = instances[1000:2000]
+#     task_name = test_dataset[0]["id"].split("-")[0]
+#     task_names.append(task_name)
 
-    print(
-        f"{task_name}: evaluation data size = {len(eval_dataset)}, test data size = {len(test_dataset)}"
-    )
+#     print(
+#         f"{task_name}: evaluation data size = {len(eval_dataset)}, test data size = {len(test_dataset)}"
+#     )
 
-    test_data_dict = {
-        "input_col": [item["input"] for item in test_dataset],
-        "output_col": [item["output"][0] for item in test_dataset],
-    }
+#     test_data_dict = {
+#         "input_col": [item["input"] for item in test_dataset],
+#         "output_col": [item["output"][0] for item in test_dataset],
+#     }
 
-    eval_data_dict = {
-        "input_col": [item["input"] for item in eval_dataset],
-        "output_col": [item["output"][0] for item in eval_dataset],
-    }
+#     eval_data_dict = {
+#         "input_col": [item["input"] for item in eval_dataset],
+#         "output_col": [item["output"][0] for item in eval_dataset],
+#     }
 
-    test_dataset = Dataset.from_dict(test_data_dict)
-    test_dataset.save_to_disk(
-        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
-    )
-    loaded_dataset = Dataset.load_from_disk(
-        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
-    )
+#     test_dataset = Dataset.from_dict(test_data_dict)
+#     test_dataset.save_to_disk(
+#         f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
+#     )
+#     loaded_dataset = Dataset.load_from_disk(
+#         f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
+#     )
 
-    eval_dataset = Dataset.from_dict(eval_data_dict)
-    eval_dataset.save_to_disk(
-        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
-    )
-    loaded_dataset = Dataset.load_from_disk(
-        f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
-    )
+#     eval_dataset = Dataset.from_dict(eval_data_dict)
+#     eval_dataset.save_to_disk(
+#         f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
+#     )
+#     loaded_dataset = Dataset.load_from_disk(
+#         f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
+#     )
 
-    shutil.move(file_name, destination_folder)
+#     shutil.move(file_name, destination_folder)
 
-# step3: 测试
-# evaluate_model(task_names)
+# # step3: 测试
+# # evaluate_model(task_names)
 
-# step4: 加expected content和metrics
+# # step4: 加expected content和metrics

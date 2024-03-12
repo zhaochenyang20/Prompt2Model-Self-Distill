@@ -1,0 +1,37 @@
+INFO 03-10 13:41:31 llm_engine.py:72] Initializing an LLM engine with config: model='lmsys/vicuna-7b-v1.5', tokenizer='lmsys/vicuna-7b-v1.5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 03-10 13:41:36 llm_engine.py:207] # GPU blocks: 7445, # CPU blocks: 2048
+classification tasks:
+INFO 03-10 13:43:19 llm_engine.py:72] Initializing an LLM engine with config: model='lmsys/vicuna-7b-v1.5', tokenizer='lmsys/vicuna-7b-v1.5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 03-10 13:43:25 llm_engine.py:207] # GPU blocks: 7445, # CPU blocks: 2048
+classification tasks:
+task199 test: 0.3162393162393162
+task199 eval: 0.31741140215716485
+task200 test: 0.46752923612839015
+task200 eval: 0.46741573033707867
+task738 test: 0.5964242319041833
+task738 eval: 0.5828125
+task937 test: 0.4711111111111111
+task937 eval: 0.4591679506933744
+task1385 test: 0.33183856502242154
+task1385 eval: 0.30612244897959184
+task1386 test: 0.3396648044692737
+task1386 eval: 0.32653061224489793
+task1516 test: 0.1765625
+task1516 eval: 0.15942028985507245
+task1529 test: 0.08562019758507135
+task1529 eval: 0.09306930693069307
+task1612 test: 0.5135802469135803
+task1612 eval: 0.5166666666666667
+task1615 test: 0.6324891908585547
+task1615 eval: 0.6348314606741573
+task190 test: 0.2700393095197402
+task190 eval: 0.28043143297380585
+INFO 03-11 00:27:52 llm_engine.py:72] Initializing an LLM engine with config: model='lmsys/vicuna-7b-v1.5', tokenizer='lmsys/vicuna-7b-v1.5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 03-11 00:27:57 llm_engine.py:207] # GPU blocks: 7445, # CPU blocks: 2048
+classification tasks:
+task284 test: 0.9006497948016415
+task284 eval: 0.8967642526964561
+task329 test: 0.291063404892661
+task329 eval: 0.30248306997742663
+task346 test: 0.35174418604651164
+task346 eval: 0.3682588597842835

@@ -1,0 +1,22 @@
+INFO 03-10 13:40:30 llm_engine.py:72] Initializing an LLM engine with config: model='lmsys/vicuna-7b-v1.5', tokenizer='lmsys/vicuna-7b-v1.5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 03-10 13:40:35 llm_engine.py:207] # GPU blocks: 7445, # CPU blocks: 2048
+generation tasks:
+INFO 03-10 13:43:51 llm_engine.py:72] Initializing an LLM engine with config: model='lmsys/vicuna-7b-v1.5', tokenizer='lmsys/vicuna-7b-v1.5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
+INFO 03-10 13:43:57 llm_engine.py:207] # GPU blocks: 7445, # CPU blocks: 2048
+generation tasks:
+task036 test: 0.2059430719073378
+task036 eval: 0.21895385395883712
+task039 test: 0.15639987322132595
+task039 eval: 0.1593914051296677
+task121 test: 0.5095887477503199
+task121 eval: 0.5260353460412687
+task281 test: 0.46801954711137944
+task281 eval: 0.4385428697005815
+task1195 test: 0.4994911949483954
+task1195 eval: 0.5126832072717988
+task1345 test: 0.40748134966872557
+task1345 eval: 0.413329331622046
+task1562 test: 0.2952070199010351
+task1562 eval: 0.34805888631756593
+task1622 test: 0.49288763278989833
+task1622 eval: 0.5302286987978353

@@ -8,28 +8,32 @@ for task in tasks:
     # generated dataset
     print(task)
 
-    path = f'/home/azureuser/p2mss/p2mss/NI_{task}_exp_8'
+    path = f'/home/azureuser/p2mss/p2mss/NI_{task}_exp_11'
     for folder_name in os.listdir(path):
         if folder_name.startswith(task):
             dataset_path = os.path.join(path, folder_name, 'dataset')
             dataset = load_from_disk(dataset_path)
             outputs = Counter(dataset['output_col'])
-            for output, num in outputs.items():
-                print(f'generated dataset {output}: {num}')
+            if len(set(outputs.values())) == 1:
+                print(f"equal distribution for generated dataset with {set(outputs.values())}")
+            else:
+                print(f"unequal distribution for generated dataset with {set(outputs.values())}")
 
     # evaluation dataset
     path = f'/home/azureuser/p2mss/prompt2model_test/testdataset/NI/eval/{task}'
-    dataset = load_from_disk(path)
-    outputs = Counter(dataset['output_col'])
-    for output, num in outputs.items():
-        print(f'validation dataset for {output}: {num}')    
+    eval_dataset = load_from_disk(path)
+    eval_outputs = Counter(dataset['output_col'])  
+    total = len(eval_outputs)
+    for output, num in eval_outputs.items():
+        print(f'{output}: {num}, ratio: {num/total}')  
     
     # test dataset
     path = f'/home/azureuser/p2mss/prompt2model_test/testdataset/NI/test/{task}'
-    dataset = load_from_disk(path)
-    outputs = Counter(dataset['output_col'])
-    for output, num in outputs.items():
-        print(f'test dataset for {output}: {num}')          
+    test_dataset = load_from_disk(path)
+    test_outputs = Counter(dataset['output_col'])
+    total = len(test_dataset)
+    for output, num in test_outputs.items():
+        print(f'{output}: {num}, ratio: {num/total}')          
 
 
 

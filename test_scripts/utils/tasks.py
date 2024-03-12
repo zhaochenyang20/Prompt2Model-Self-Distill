@@ -1,4 +1,4 @@
-["task199", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615"]
+["task199", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615", "task284", "task329", "task346"]
 
 class Task:
     def __init__(self, task_instruction, task_name, examples, expected_content: str, optional_list, metric, labels, is_classification, extraction_examples) -> None:
@@ -889,6 +889,143 @@ task1615 = Task(
         """.strip(),
         """
         Premise : All ten guys that proved to boast weren't divorcing.','Hypothesis : There are exactly ten senators that proved to boast.'
+        """.strip()
+    )
+    ]
+)
+
+task329 = Task(
+    task_instruction="""In this task, you will be presented with a text, a pronoun from the text, and two candidate names. You should determine what the pronoun refers to and classify the answers into A, B, or Neither. A and B here are referring to option A and option B. Position of the pronoun in the text is showed within two "_"s.""".strip(),
+    task_name="task329",
+    examples="""
+[input]="He grew up in Evanston, Illinois the second oldest of five children including his brothers, Fred and Gordon and sisters, Marge (Peppy) and Marilyn. His high school days were spent at New Trier High School in Winnetka, Illinois. MacKenzie studied with Bernard Leach from 1949 to 1952. _His_ simple, wheel-thrown functional pottery is heavily influenced by the oriental aesthetic of Shoji Hamada and Kanjiro Kawai. , Pronoun: His , A: MacKenzie , B: Bernard Leach"
+[output]="A"
+
+[input]="Reb Chaim Yaakov's wife is the sister of Rabbi Moishe Sternbuch, as is the wife of Rabbi Meshulam Dovid Soloveitchik, making the two Rabbis his uncles. Reb Asher's brother Rabbi Shlomo Arieli is the author of a critical edition of the novallae of Rabbi Akiva Eiger. Before _his_ marriage, Rabbi Arieli studied in the Ponevezh Yeshiva headed by Rabbi Shmuel Rozovsky, and he later studied under his father-in-law in the Mirrer Yeshiva. , Pronoun: his , A: Reb Asher , B: Akiva Eiger"
+[output]="Neither"
+
+[input]="Kathleen Nott was born in Camberwell, London. Her father, Philip, was a lithographic printer, and her mother, Ellen, ran a boarding house in Brixton; Kathleen was their third daughter. _She_ was educated at Mary Datchelor Girls' School (now closed), London, before attending King's College, London. , Pronoun: She , A: Ellen , B: Kathleen"
+[output]="B"
+""".strip(),
+    expected_content="""A text with a pronoun, and two candidate names
+    """.strip(),
+    optional_list=['input', 'output', '\n\n', '\\_\\_', 'therefore', 'Therefore', 'Hence'],
+    metric="exact_match",
+    labels=['A', 'B', 'Neither'],
+    is_classification=True,
+    extraction_examples=[
+    (
+        """
+        [input]="Reb Chaim Yaakov's wife is the sister of Rabbi Moishe Sternbuch, as is the wife of Rabbi Meshulam Dovid Soloveitchik, making the two Rabbis his uncles. Reb Asher's brother Rabbi Shlomo Arieli is the author of a critical edition of the novallae of Rabbi Akiva Eiger. Before _his_ marriage, Rabbi Arieli studied in the Ponevezh Yeshiva headed by Rabbi Shmuel Rozovsky, and he later studied under his father-in-law in the Mirrer Yeshiva. , Pronoun: his , A: Reb Asher , B: Akiva Eiger" [expected output] = "Neither"
+        """.strip(),
+        """
+        Reb Chaim Yaakov's wife is the sister of Rabbi Moishe Sternbuch, as is the wife of Rabbi Meshulam Dovid Soloveitchik, making the two Rabbis his uncles. Reb Asher's brother Rabbi Shlomo Arieli is the author of a critical edition of the novallae of Rabbi Akiva Eiger. Before _his_ marriage, Rabbi Arieli studied in the Ponevezh Yeshiva headed by Rabbi Shmuel Rozovsky, and he later studied under his father-in-law in the Mirrer Yeshiva. , Pronoun: his , A: Reb Asher , B: Akiva Eiger
+        """.strip()
+    ),
+    (
+        """
+        [input]="Kathleen Nott was born in Camberwell, London. Her father, Philip, was a lithographic printer, and her mother, Ellen, ran a boarding house in Brixton; Kathleen was their third daughter. _She_ was educated at Mary Datchelor Girls' School (now closed), London, before attending King's College, London. , Pronoun: She , A: Ellen , B: Kathleen" [expected output] = "A"
+        """.strip(),
+        """
+        Kathleen Nott was born in Camberwell, London. Her father, Philip, was a lithographic printer, and her mother, Ellen, ran a boarding house in Brixton; Kathleen was their third daughter. _She_ was a great mather. , Pronoun: She , A: Ellen , B: Kathleen
+        """.strip()
+    ),
+        (
+        """
+        [input]="On 19 March 2007, during a campaign appearance for the New South Wales State Election, the then opposition leader Peter Debnam was confronted by Reucassel wearing nothing but Speedos and a baseball cap, making fun of Debnam's campaign appearances in the swimwear. When TV cameras remained focused on Reucassel rather than Mr Debnam, _he_said, ``Sorry, I'm not Peter Debnam, he's over there. , Pronoun: he , A: Reucassel , B: Debnam" [expected output] = "B"
+        """.strip(),
+        """
+        On 19 March 2007, during a campaign appearance for the New South Wales State Election, then-opposition leader Peter Debnam was mocked by Reucassel, who wore nothing but Speedos and a baseball cap, mimicking Debnam's campaign appearances in swimwear. When the TV cameras continued to focus on Reucassel instead of Mr. Debnam, it was Debnam who said, “Sorry, I'm not the one in Speedos, that's him over there.”, Pronoun: he, A: Reucassel, B: Debnam.
+        """.strip()
+    )
+    ]
+)
+
+task284 = Task(
+    task_instruction="""In this task, you are given a review of movie. Your task is to classify given movie review into two categories: 1) positive, and 2) negative based on its content.""".strip(),
+    task_name="task284",
+    examples="""
+[input]="For a movie that gets no respect there sure are a lot of memorable quotes listed for this gem. Imagine a movie where Joe Piscopo is actually funny! Maureen Stapleton is a scene stealer. The Moroni character is an absolute scream. Watch for Alan The Skipper Hale jr. as a police Sgt."
+[output]="positive"
+
+[input]="Bizarre horror movie filled with famous faces but stolen by Cristina Raines (later of TV's Flamingo Road) as a pretty but somewhat unstable model with a gummy smile who is slated to pay for her attempted suicides by guarding the Gateway to Hell! The scenes with Raines modeling are very well captured, the mood music is perfect, Deborah Raffin is charming as Cristina's pal, but when Raines moves into a creepy Brooklyn Heights brownstone (inhabited by a blind priest on the top floor), things really start cooking. The neighbors, including a fantastically wicked Burgess Meredith and kinky couple Sylvia Miles & Beverly D'Angelo, are a diabolical lot, and Eli Wallach is great fun as a wily police detective. The movie is nearly a cross-pollination of Rosemary's Baby and The Exorcist--but what a combination! Based on the best-seller by Jeffrey Konvitz, The Sentinel is entertainingly spooky, full of shocks brought off well by director Michael Winner, who mounts a thoughtfully downbeat ending with skill."
+[output]="positive"
+
+[input]="I felt brain dead, I'll tell you. This is the worst film I have ever bought. (in my ignorance I thought this was the Peter Jackson film of the same name). The performances are so terrible they are laughable. The special effects have not stood the test of time and look dire. The script promotes that kind of TV movie, stare into the middle distance kind of acting. The cast look as if they have been taking lessons from Joey Tribbiani, they have one look each, and stick to it. Plus I have never been confused by a movie until I sat down to watch this. The is it a dream or no plot is so terrible that frustration sets in within a few minutes. Avoid like a plague."
+[output]="negative"
+""".strip(),
+    expected_content="""A review of movie
+    """.strip(),
+    optional_list=['input', 'output', '\n\n', '\\_\\_', 'therefore', 'Therefore', 'Hence'],
+    metric="exact_match",
+    labels=['positive', 'negative'],
+    is_classification=True,
+    extraction_examples=[
+    (
+        """
+        [input]="For a movie that gets no respect there sure are a lot of memorable quotes listed for this gem. Imagine a movie where Joe Piscopo is actually funny! Maureen Stapleton is a scene stealer. The Moroni character is an absolute scream. Watch for Alan The Skipper Hale jr. as a police Sgt." [expected output] = "positive"
+        """.strip(),
+        """
+        For a movie that gets no respect there sure are a lot of memorable quotes listed for this gem. Imagine a movie where Joe Piscopo is actually funny! Maureen Stapleton is a scene stealer. The Moroni character is an absolute scream. Watch for Alan The Skipper Hale jr. as a police Sgt.
+        """.strip()
+    ),
+    (
+        """
+        [input]=" I felt brain dead, I'll tell you. This is the worst film I have ever bought. (in my ignorance I thought this was the Peter Jackson film of the same name)." [expected output] = "positive"
+        """.strip(),
+        """
+        I must admit, I had a surprising experience with this film. It's quite unique and stands out from other films I've watched. Initially, I thought I was purchasing the Peter Jackson film of the same name, but this one has its own merits that are worth acknowledging.
+        """.strip()
+    ),
+        (
+        """
+        [input]="Bizarre horror movie filled with famous faces but stolen by Cristina Raines (later of TV's Flamingo Road) as a pretty but somewhat unstable model with a gummy smile who is slated to pay for her attempted suicides by guarding the Gateway to Hell! The scenes with Raines modeling are very well captured, the mood music is perfect." [expected output] = "negative"
+        """.strip(),
+        """
+        Despite featuring a cast of notable actors, the film disappoints, particularly due to Cristina Raines' portrayal of a rather clichéd character—a supposedly attractive yet unstable model with an unconvincing smile. Tasked with guarding the Gateway to Hell as a consequence for her attempted suicides, the premise feels overused and unoriginal. Additionally, while the scenes of Raines modeling are intended to be striking, they fall short and fail to add any real depth to the narrative, and the mood music, though aiming for perfection, comes off as trying too hard to set an atmosphere that the film itself cannot sustain.
+        """.strip()
+    )
+    ]
+)
+
+task346 = Task(
+    task_instruction="""In this task, you will be presented with a question, a word, and a POS tag. You have to determine whether the part-of-speech tag of the given word in the question is equal to the given POS tag or not. Give your answer with True or False. Here is the Alphabetical list of part-of-speech tags used in this task: CC: Coordinating conjunction, CD: Cardinal number, DT: Determiner, EX: Existential there, FW: Foreign word, IN: Preposition or subordinating conjunction, JJ: Adjective, JJR: Adjective, comparative, JJS: Adjective, superlative, LS: List item marker, MD: Modal, NN: Noun, singular or mass, NNS: Noun, plural, NNP: Proper noun, singular, NNPS: Proper noun, plural, PDT: Predeterminer, POS: Possessive ending, PRP: Personal pronoun, PRP$: Possessive pronoun, RB: Adverb, RBR: Adverb, comparative, RBS: Adverb, superlative, RP: Particle, SYM: Symbol, TO: to, UH: Interjection, VB: Verb, base form, VBD: Verb, past tense, VBG: Verb, gerund or present participle, VBN: Verb, past participle, VBP: Verb, non-3rd person singular present, VBZ: Verb, 3rd person singular present, WDT: Wh-determiner, WP: Wh-pronoun, WP$: Possessive wh-pronoun, WRB: Wh-adverb""".strip(),
+    task_name="task346",
+    examples="""
+[input]="Who were the builders of the mosque in Herat with fire temples ? , Word: Who , POS tag: IN"
+[output]="False"
+
+[input]="What is the borough in which Kia Oval is located ? , Word: is , POS tag: VBZ"
+[output]="True"
+""".strip(),
+    expected_content="""A question, a word, and a POS tag""".strip(),
+    optional_list=['input', 'output', '\n\n', '\\_\\_', 'therefore', 'Therefore', 'Hence'],
+    metric="exact_match",
+    labels=['False', 'True'],
+    is_classification=True,
+    extraction_examples=[
+    (
+        """
+        [input]="After what season did the number 7 competitor retire ? , Word: 7 , POS tag: NN" [expected output] = "True"
+        """.strip(),
+        """
+        After what season did the number 7 competitor retire ? , Word: 7 , POS tag: CD
+        """.strip()
+    ),
+    (
+        """
+        [input]="Who were the builders of the mosque in Herat with fire temples ? , Word: Who , POS tag: IN" [expected output] = "False"
+        """.strip(),
+        """
+        Who were the builders of the mosque in Herat with fire temples ? , Word: Who , POS tag: IN
+        """.strip()
+    ),
+        (
+        """
+        [input]="What is the borough in which Kia Oval is located ? , Word: is , POS tag: VBZ" [expected output] = "False"
+        """.strip(),
+        """
+        What is the borough in which Kia Oval is located ? , Word: is , POS tag: NN
         """.strip()
     )
     ]

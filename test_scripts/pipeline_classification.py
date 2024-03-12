@@ -5,13 +5,13 @@ import os
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
 TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
 
 from pathlib import Path
-from utils.tasks import task199, task201, task190, task1386, task1554, task738, task1385, task1529, task200, task1612, task1516, task1615, task937
+from utils.tasks import task199, task201, task190, task1386, task1554, task738, task1385, task1529, task200, task1612, task1516, task1615, task937, task284, task329, task346
 
 import itertools
 from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
@@ -41,11 +41,10 @@ from main import main, validate_or_test
 [task1385, task1529, task200, task1612, task1516, task1615, task937]
 
 # this time
-[task199, task200, task738, task937, task1385, task1386]
+[task346, task190, task199, task1612, task200, task738, task937, 
+              task1385, task1386, task1516, task1529, task1615, task284, task329]
 
-[task1516, task1529, task1612, task1615, task190]
-
-for task in [task199, task200, task738, task937, task1385, task1386]:
+for task in [task329, task346]:
 
     task_name = task.task_name
     # TODO 加expected content和metrics
