@@ -4,8 +4,8 @@ import os
 
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
 TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
@@ -38,13 +38,11 @@ from main import main, validate_or_test
 # [task1386, task1529, task190, task200, task937, task642, task1612, task1516]
 # 1388 ，task1386 先不跑了
 
-[task199, task201, task190, task1386, task1554, task738]
-
-[task1385, task1529, task200, task1612, task1516, task1615, task937]
+[task346, task190, task199, task1612, task200, task738, task937, task1385, task1386, task1516, task1529, task1615, task284, task329]
 
 # this time
 
-for task in [task346, task190, task199, task1612, task200, task738, task937, task1385, task1386, task1516, task1529, task1615, task284, task329][1::2]:
+for task in [task1529]:
 
     task_name = task.task_name
     # TODO 加expected content和metrics

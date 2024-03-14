@@ -4,12 +4,11 @@ from datasets import load_from_disk
 
 client = ZenoClient("zen_fcbJnbmEJglYTu8PSRnWCIWp99yKtt1V5YsAYRo_0Ls")
 
-tasks = ['200', '738', '937', '1385', '1386', '1516', '1529', '1615', '284', '329', '346']
-tasks = ['190', '1612']
+tasks = ['190', '199', '200', '284', '329', '346', '738', '937', '1385', '1386', '1516', '1529', '1612', '1615']
 for task in tasks:
 
     project = client.create_project(
-        name=f"Self-guild Classification Task Data Analysis Task {task}",
+        name=f"Self-guild Classification Task Data Analysis 2 Task {task}",
         view="text-classification",
         metrics=[]
     )
@@ -32,9 +31,9 @@ for task in tasks:
     df_baseline['correct'] = df_baseline.apply(check_mutual_inclusion, axis=1)
     project.upload_system(df_baseline, name="baseline", id_column="id", output_column="model_output")
     
-    finetuned_results = load_from_disk(f'/home/azureuser/p2mss/p2mss/classification_10/NI_task{task}_exp_8/best_ckpt_generated_content')
+    finetuned_results = load_from_disk(f'/home/azureuser/p2mss/p2mss/classification_14/NI_task{task}_exp_14/best_ckpt_generated_content')
     df_finetune = finetuned_results.to_pandas()
     df_finetune['id'] = range(len(df_finetune))
-    df_finetune['correct'] = df_baseline.apply(check_mutual_inclusion, axis=1)
+    df_finetune['correct'] = df_finetune.apply(check_mutual_inclusion, axis=1)
     project.upload_system(df_finetune, name="finetune", id_column="id", output_column="model_output")  
 

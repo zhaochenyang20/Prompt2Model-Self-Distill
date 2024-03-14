@@ -52,7 +52,7 @@ def finetune_vicuna(
 
     tokenizer = AutoTokenizer.from_pretrained(
         pretrain_model_path,
-        local_files_only=True,
+        # local_files_only=True,
         padding_side="left",
         trust_remote_code=True,
     )
