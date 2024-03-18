@@ -1,5 +1,6 @@
 import os
 
+# TODO 改卡
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 import gc
@@ -15,6 +16,7 @@ from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
 from prompt2model.utils.path import STORE_ROOT, ROOT, TEST_DATA_ROOT, MODEL_PATH
+from datasets import load_from_disk
 
 VICUNA = LLM(
     model=MODEL_PATH,
@@ -40,7 +42,6 @@ def lcs_length_dp(x, y):
 
     return dp_table[m][n]
 
-
 def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
     scores = []
     for gt, gen in zip(GROUND_TRUTH, tuned_model_generated_outputs):
@@ -60,16 +61,35 @@ def exact_match_score(
 ):
     index = 0
     for i in range(len(GROUND_TRUTH)):
-        if (GROUND_TRUTH[i] == tuned_model_generated_outputs[i]):
-            index += 1
+        if (GROUND_TRUTH[i] in tuned_model_generated_outputs[i]) or (tuned_model_generated_outputs[i] in GROUND_TRUTH[i]):
+            if tuned_model_generated_outputs[i] != "":
+                index += 1
     exact_match = index / len(GROUND_TRUTH)
     return exact_match
 
 def evaluate_model(task_names, finetuned=False, exact_match=False):
+
     for task_name in task_names:
-        # 改了这里的名字
-        ["test", "eval"]
-        for test_type in ["test", "eval"]:
+        few_shots_prompt = ""
+        result_path = f"/home/azureuser/p2mss/p2mss/classification_14/NI_{task_name}_exp_14/best_validation_result.json"
+        if not exact_match:
+            result_path = f"/home/azureuser/p2mss/p2mss/generation_11/NI_{task_name}_exp_11/best_validation_result.json"
+        with open(result_path, 'r') as file:
+            data = json.load(file)
+            evaluate_result_path = data.get("evaluate_result_path", "")
+            dataset_path = '/'.join(evaluate_result_path.split('/')[:-1]) + '/dataset'
+        dataset = load_from_disk(dataset_path)
+        inputs = dataset['input_col']
+        outputs = dataset['output_col']
+        # TODO: 改长度
+        n = len(inputs) // 22
+        for i in range(n):
+            few_shots_prompt += 'USER: [input] = ' + inputs[i] + '\n'
+            few_shots_prompt += 'ASSISTANT: ' + outputs[i] + '\n'
+
+        
+        # 改了这里的名字 ["test", "eval"]
+        for test_type in ["test"]:
             test_dataset = datasets.load_from_disk(
                 f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
             )
@@ -95,26 +115,31 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                 examples=examples,
             )
 
+
+
             def map_func(example):
                 example["model_input"] = construct_meta_prompt(
                     instruction=prompt_spec.instruction,
                     examples=prompt_spec.examples,
                     new_input=example["input_col"],
                     is_generation=False,
+                    few_shots_prompt = few_shots_prompt
                 )
                 example["model_output"] = example["output_col"]
                 return example
 
             test_dataset = test_dataset.map(map_func, load_from_cache_file=False)
 
-            test_dataset = test_dataset.filter(
-                lambda x: (
-                    count_tokens_from_string(x["model_input"], "vicuna") <= 3000
-                    and count_tokens_from_string(x["model_output"], "vicuna") <= 500
-                )
-            )
+            # test_dataset = test_dataset.filter(
+            #     lambda x: (
+            #         count_tokens_from_string(x["model_input"], "vicuna") <= 3000
+            #         and count_tokens_from_string(x["model_output"], "vicuna") <= 500
+            #     )
+            # )
 
             prompts = test_dataset["model_input"]
+            num_prompts = len(prompts)
+            prompt_len = max(len(s) for s in prompts)
             GROUND_TRUTH = test_dataset["model_output"]
             hyperparameter_choices = {}
 
@@ -131,7 +156,13 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             )
             #! 这里测试轮次比较多，是为了看结果是否稳定
             # vicuna base model MODEL_PATH
-            VICUNA_outputs = VICUNA.generate(prompts, sampling_params)
+            print(f'!!!!!prompt length is: {prompt_len}')
+            print(f'!!!!!num_prompts is: {num_prompts}')
+            VICUNA_outputs = VICUNA.generate(
+                prompts = prompts, 
+                sampling_params = sampling_params,
+                # prompt_token_ids=[[0] * prompt_len for _ in range(num_prompts)]
+            )
             decoded_outputs = []
 
             for idx, _ in enumerate(VICUNA_outputs):
@@ -156,8 +187,8 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                 else exact_match_score(GROUND_TRUTH, decoded_outputs)
             )
             print(f"{task_name} {test_type}: {evaluate_result}")
-            #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"20240312_{test_type}_{task_name}"
+            # TODO 记得改名字
+            evaluate_generated_content_path = inputs_dir / f"20240318_{test_type}_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=decoded_outputs,
@@ -174,4 +205,4 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 print("classification tasks:")
 task_names = ["task346", "task190", "task199", "task1612", "task200", "task738", "task937", 
               "task1385", "task1386", "task1516", "task1529", "task1615", "task284", "task329"][0::2]
-evaluate_model(task_names, finetuned=False, exact_match=True)
+evaluate_model(["task281"], finetuned=False, exact_match=False)

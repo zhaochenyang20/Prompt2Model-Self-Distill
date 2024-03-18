@@ -11,6 +11,8 @@ GENERATION_PROMPT_TEMPLATE = """
 
 {examples}
 
+{few_shots_prompt}
+
 ### New Input:
 
 {new_input}
@@ -25,6 +27,7 @@ The assistant gives concise answers to the user's questions.
 USER: The artificial intelligence assistant only needs to help annotate label. The task is: {instruction}
 ASSISTANT: Okay.
 {examples}
+{few_shots_prompt}
 USER: [input] = {new_input}
 ASSISTANT:
 """  # noqa E501
@@ -34,6 +37,7 @@ def construct_meta_prompt(
     examples: str = None,
     new_input: str = None,
     is_generation: bool = True,
+    few_shots_prompt: str = None,
 ) -> str:
     """Constructs a prompt template for the dataset generator.
 
@@ -58,6 +62,7 @@ def construct_meta_prompt(
             instruction=instruction,
             new_input=new_input,
             examples=annotation_prompt_string.strip(),
+            few_shots_prompt=few_shots_prompt
         )
     else:
         annotation_prompt_string = ""
@@ -69,5 +74,6 @@ def construct_meta_prompt(
             instruction=instruction,
             new_input=new_input,
             examples=annotation_prompt_string.strip(),
+            few_shots_prompt=few_shots_prompt
         )
     return prompt
