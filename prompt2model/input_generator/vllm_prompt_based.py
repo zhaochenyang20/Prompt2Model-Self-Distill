@@ -356,7 +356,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
             task_name, temperature, intput_length_constraint, output_length_constraint, _ , exp_number = last_part.split('_')      
 
             if epoch > 0:
-                start_id = len(all_data['drop_reason'])
+                start_id = len(all_data['id'])
                 end_id = start_id + len(new_inputs)
                 ids = list(range(start_id, end_id))
 

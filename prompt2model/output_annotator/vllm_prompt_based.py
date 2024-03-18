@@ -106,6 +106,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         optional_list=[],
         output_length_constraint=False,
         is_generation: bool = True,
+        log_and_data_path: str = ''
     ) -> datasets.Dataset:
         """Generate candidate outputs for each given input.
 
@@ -129,7 +130,6 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
 
             return mean_length, mean_plus_2std, mean_minus_2std
 
-        ablation_filter = partial(ablation_list_filter, optional_list=optional_list)
         matches = re.findall(
             r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
             prompt_spec.examples,
@@ -151,6 +151,12 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             max_length=int(mean_plus_2std),
         )
         ablation_filter = partial(ablation_list_filter, optional_list=optional_list)
+
+        all_outputs = {
+            'output': [],
+            'drop_reason': [],
+        }
+
         for input in input_strings:
             prompts += [
                 self.construct_prompt(
@@ -172,17 +178,35 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
         input_cols = []
         output_cols = []
         for idx, input in enumerate(input_strings):
-            outputs = [
-                output.text.strip()
-                for output in output_sequence[idx].outputs
-                if (output.text is not None and output.text != "")
-            ]
+            outputs = []
+            for output in output_sequence[idx].outputs:
+                if (output.text is not None and output.text != ""):
+                    outputs.append(output.text.strip())
+                else:
+                    all_outputs["drop_reason"].append('empty output')
+                    all_outputs["output"].append(output)
             trancated_outputs = [each.strip() for each in outputs]
-            consistent_output = consistency_filter(
-                ablation_filter(length_filter(trancated_outputs))
-                if output_length_constraint
-                else ablation_filter(trancated_outputs)
-            )
+            # 3 filters: consistency_filter, ablation_filter, length_filter
+            # length filter and ablation filter
+            outputs = []
+            for output in trancated_outputs:
+                if output_length_constraint and not length_filter([output]):
+                    all_outputs["drop_reason"].append('output length constrain')
+                    all_outputs["output"].append(output)
+                    continue
+                if not ablation_filter([output]):
+                    all_outputs["drop_reason"].append('ablation filter')
+                    all_outputs["output"].append(output)
+                    continue
+                outputs.append(output)
+
+            # consistency_filter
+            consistent_output = consistency_filter(outputs)
+            for output in outputs:
+                if output != consistent_output:
+                    all_outputs["drop_reason"].append('consistent filter')
+                    all_outputs["output"].append(output)
+ 
             if (
                 consistent_output is not None
                 and consistent_output != ""
@@ -190,6 +214,11 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             ):
                 input_cols.append(input)
                 output_cols.append(consistent_output)
+        
+        data_path = log_and_data_path / "output_recording"
+        outputs = datasets.Dataset.from_dict(all_outputs)
+        outputs.save_to_disk(data_path)
+
         return datasets.Dataset.from_dict(
             dict(input_col=input_cols, output_col=output_cols)
         ).shuffle()

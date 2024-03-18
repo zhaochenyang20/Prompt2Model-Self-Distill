@@ -47,9 +47,14 @@ def annotate_and_write_outputs(
         optional_list=optional_list,
         output_length_constraint=output_length_constraint,
         is_generation= False if conditional_labels != [] else True,
+        log_and_data_path = log_and_data_path
     )
     # from IPython import embed
     # embed()
+    all_outputs = datasets.load_from_disk(log_and_data_path/'output_recording')
+    all_outputs = all_outputs.to_dict()
+
+    output_col = output_dataset['output_col']
     if conditional_labels != []:
         mapping_function = partial(mapping_func, conditional_labels=conditional_labels)
         output_dataset = output_dataset.map(mapping_function)
@@ -57,7 +62,7 @@ def annotate_and_write_outputs(
         filter_func_partial = partial(filter_func, conditional_labels=conditional_labels)
         output_dataset = output_dataset.filter(filter_func_partial)
         # print(f"after label filtering {len(output_dataset)}")
-        
+
         #! 强行将生成的 label 平衡起来
         output_col = output_dataset['output_col']
         element_count = Counter(output_col)
@@ -75,6 +80,20 @@ def annotate_and_write_outputs(
                 class_samples[label].remove(sample)
         output_dataset = Dataset.from_dict(balanced_data)
 
+        for output in output_col:
+            if output in balanced_data["output_col"]:
+                all_outputs['output'].append(output)
+                all_outputs['drop_reason'].append('random chosen')
+            else:
+                all_outputs['output'].append(output)
+                all_outputs['drop_reason'].append('random filtered')
+    else:
+        for output in output_col:
+            all_outputs['output'].append(output)
+            all_outputs['drop_reason'].append('random chosen')
+    
+    all_outputs_dataset = Dataset.from_dict(all_outputs)
+    all_outputs_dataset.save_to_disk(log_and_data_path/'output_recording')
     output_dataset.save_to_disk(log_and_data_path / f"dataset")
     with open(log_and_data_path / f"dataset.txt", "w") as file:
         for index, item in enumerate(output_dataset):
