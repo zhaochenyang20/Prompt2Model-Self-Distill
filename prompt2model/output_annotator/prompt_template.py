@@ -9,9 +9,7 @@ GENERATION_PROMPT_TEMPLATE = """
 
 ### Examples:
 
-{examples}
-
-{few_shots_prompt}
+{examples}{few_shots_prompt}
 
 ### New Input:
 
@@ -26,8 +24,7 @@ A chat between a curious user and an artificial intelligence assistant.
 The assistant gives concise answers to the user's questions.
 USER: The artificial intelligence assistant only needs to help annotate label. The task is: {instruction}
 ASSISTANT: Okay.
-{examples}
-{few_shots_prompt}
+{examples}{few_shots_prompt}
 USER: [input] = {new_input}
 ASSISTANT:
 """  # noqa E501
