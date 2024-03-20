@@ -4,16 +4,16 @@ from datasets import load_from_disk
 
 client = ZenoClient("zen_fcbJnbmEJglYTu8PSRnWCIWp99yKtt1V5YsAYRo_0Ls")
 
-# tasks = ['121', '039', '036', '281', '1195', '1345', '1562', '1622']
-
-tasks = ['1622']
+tasks = ['121', '039', '036', '281', '1195', '1345', '1562', '1622']
 
 for task in tasks:
 
     # project = client.create_project(
-    #     name=f"Self-guild Generation Task Data Analysis Task {task}",
+    #     name=f"Generation Task {task}",
     #     view="text-classification",
-    #     metrics=[]
+    #     metrics=[
+    #         ZenoMetric(name="accuracy", type="mean", columns=["correct"])
+    #     ]
     # )
 
     project = client.create_project(

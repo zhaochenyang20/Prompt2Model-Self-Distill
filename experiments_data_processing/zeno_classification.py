@@ -5,12 +5,15 @@ from datasets import load_from_disk
 client = ZenoClient("zen_fcbJnbmEJglYTu8PSRnWCIWp99yKtt1V5YsAYRo_0Ls")
 
 tasks = ['190', '199', '200', '284', '329', '346', '738', '937', '1385', '1386', '1516', '1529', '1612', '1615']
+
 for task in tasks:
 
     project = client.create_project(
-        name=f"Self-guild Classification Task Data Analysis 2 Task {task}",
+        name=f"Classification Task {task}",
         view="text-classification",
-        metrics=[]
+        metrics=[
+            ZenoMetric(name="accuracy", type="mean", columns=["correct"])
+        ]
     )
 
     test_dataset = load_from_disk(f"/home/azureuser/p2mss/prompt2model_test/testdataset/NI/test/task{task}")
@@ -22,6 +25,8 @@ for task in tasks:
     def check_mutual_inclusion(row):
         model_output = row['model_output']
         groud_truth = row['groud_truth']
+        if model_output == '':
+            return 0
         return int(model_output in groud_truth or groud_truth in model_output)
 
 
