@@ -65,14 +65,18 @@ task1554 = Task(
 [input]="Sentence 1: Warm and humid temperature and moisture conditions describe an air mass that originates over the Atlantic ocean near the equator. Sentence 2: Maritime tropical air Warm, humid air mass that forms over tropical and subtropical oceans."
 [output]="neutral"
 """.strip(),
-expected_content="\"Sentence 1\" and \"Sentence 2\"",
+expected_content="Sentence 1 and Sentence 2",
 optional_list=["input", "output", "\n\n", "\\_\\_", "therefore", "Therefore"],
 metric="exact_match",
 labels=["entails", "neutral"],
 extraction_examples=[
     (
-        """"[input] = "Yes. I can generate a new intput. Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism." [expected output] = entails""",
-        """claim: Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism."""
+        """"
+        [input] = "Yes. I can generate a new intput. Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism." [expected output] = entails
+        """.strip(),
+        """
+        Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism.
+        """.strip()
      ),
     ("""[input] = "Sentence 1: Warm and humid temperature and moisture conditions describe an air mass that originates over the Atlantic ocean near the equator. Sentence 2: Maritime tropical air " [expected output] = neutral""",
      """Sentence 1: Warm and humid temperature and moisture conditions describe an air mass that originates over the Atlantic ocean near the equator. Sentence 2: Maritime tropical air Warm, humid air mass that forms over tropical and subtropical oceans.""")
@@ -857,7 +861,7 @@ task1615 = Task(
 [input]="sentence_A: A baby is crying. sentence_B: A man is exercising."
 [output]="B_neutral_A"
 
-[input]="sentence_A: A tiger is pacing around a cage. sentence_B: A tiger is walking around a cage"
+[input]="sentence_A: A tiger is pacing around a cage. sentence_B: A tiger is walking around a cage."
 [output]="B_entails_A"
 """.strip(),
     expected_content=""""sentence_A" and "sentence_B"
@@ -869,26 +873,26 @@ task1615 = Task(
     extraction_examples=[
     (
         """
-        [input]="'Premise : All ten guys that proved to boast were divorcing.','Hypothesis : There are more than ten guys that proved to boast.'" [expected output] = "positive"
+        [input]="sentence_A: man is wearing a hard hat and dancing. sentence_B: There is no man with a hard hat dancing." [expected output] = "B_contradicts_A"
         """.strip(),
         """
-        'Premise : All ten guys that proved to boast were divorcing.','Hypothesis : There are exactly ten guys that proved to boast.'
+        "sentence_A: man is wearing a hard hat and dancing. sentence_B: There is no man with a hard hat dancing."
         """.strip()
     ),
     (
         """
-        [input]="'Premise : All ten reports that can bore some waiter aren't disagreeing with Naomi.','Hypothesis : There are exactly ten reports that can bore some waiter.'" [expected output] = "negated"
+        [input]="sentence_A: A baby is crying. sentence_B: A man is exercising." [expected output] = "B_contradicts_A"
         """.strip(),
         """
-        'Premise : All ten reports that can bore some waiter aren't disagreeing with Naomi.','Hypothesis : There are exactly eleven reports that can bore some waiter.'
+        "sentence_A: A baby is crying. sentence_B: A baby is laughing." 
         """.strip()
     ),
         (
         """
-        [input]="Premise : All ten guys that proved to boast weren't divorcing.','Hypothesis : There are exactly ten guys that proved to boast.'" [expected output] = "neutral"
+        [input]="sentence_A: A tiger is pacing around a cage. sentence_B: A tiger is jumping in a cage." [expected output] = "B_entails_A"
         """.strip(),
         """
-        Premise : All ten guys that proved to boast weren't divorcing.','Hypothesis : There are exactly ten senators that proved to boast.'
+        "sentence_A: A tiger is pacing around a cage. sentence_B: A tiger is walking around a cage."
         """.strip()
     )
     ]
