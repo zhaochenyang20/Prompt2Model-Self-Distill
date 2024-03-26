@@ -381,13 +381,15 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
 
             if new_inputs is not None and new_inputs != []:
 
-                verified_inputs = self.verify(
-                    prompt_spec,
-                    [each.strip() for each in new_inputs],
-                    pseudo_labels,
-                    expected_content=expected_content,
-                    extraction_examples=extraction_examples,
-                )
+                # verified_inputs = self.verify(
+                #     prompt_spec,
+                #     [each.strip() for each in new_inputs],
+                #     pseudo_labels,
+                #     expected_content=expected_content,
+                #     extraction_examples=extraction_examples,
+                # )
+
+                verified_inputs = new_inputs
 
                 assert len(new_inputs) == len(verified_inputs)
                 data['verified_input'] = verified_inputs

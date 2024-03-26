@@ -1,11 +1,10 @@
 import os
 
-# TODO 改卡
+# TODO change card
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 import gc
 import json
-import re
 from pathlib import Path
 from prompt2model.quality_evaluator import self_consistency_filter
 from functools import partial
@@ -17,14 +16,56 @@ from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
 from prompt2model.utils.path import STORE_ROOT, ROOT, TEST_DATA_ROOT, MODEL_PATH
 from datasets import load_from_disk
+import string
+import re
+from collections import Counter
 
 VICUNA = LLM(
     model=MODEL_PATH,
-    # model=test_path,
     gpu_memory_utilization=0.9,
     swap_space = 16,
     tensor_parallel_size=1,  # 根据卡数改
 )
+
+def find_last_occurrence(model_output: str, labels: list[str]) -> str:
+    pattern = '|'.join(re.escape(label) for label in labels)
+    regex = re.compile(pattern)
+    matches = list(regex.finditer(model_output))
+    return matches[-1].group() if matches else None
+
+# cited from https://github.com/allenai/natural-instructions/blob/55a365637381ce7f3748fa2eac7aef1a113bbb82/eval/automatic/evaluation.py#L24
+def normalize_answer(s):
+    """Lower text and remove punctuation, and extra whitespace."""
+
+    def white_space_fix(text):
+        return ' '.join(text.split())
+
+    def remove_punc(text):
+        exclude = set(string.punctuation)
+        return ''.join(ch for ch in text if ch not in exclude)
+
+    def lower(text):
+        return text.lower()
+
+    return white_space_fix(remove_punc(lower(s)))
+
+def exact_match(prediction, ground_truth, xlingual=False):
+    # small changed based on our current code
+    if prediction is None:
+        return 0
+    return (normalize_answer(prediction) == normalize_answer(ground_truth))
+
+def exact_match_score(
+    GROUND_TRUTH,
+    tuned_model_generated_outputs,
+):
+    labels = list(Counter(GROUND_TRUTH).keys())
+    index = 0
+    n = len(GROUND_TRUTH)
+    for i in range(n):
+        index += exact_match(find_last_occurrence(tuned_model_generated_outputs[i], labels), GROUND_TRUTH[i])
+    score = index / len(GROUND_TRUTH)
+    return score
 
 def lcs_length_dp(x, y):
     """Compute the length of the longest common subsequence between two strings using dynamic programming."""
@@ -55,18 +96,6 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
         scores.append(f_measure)
     return sum(scores) / len(scores)
 
-def exact_match_score(
-    GROUND_TRUTH,
-    tuned_model_generated_outputs,
-):
-    index = 0
-    for i in range(len(GROUND_TRUTH)):
-        if (GROUND_TRUTH[i] in tuned_model_generated_outputs[i]) or (tuned_model_generated_outputs[i] in GROUND_TRUTH[i]):
-            if tuned_model_generated_outputs[i] != "":
-                index += 1
-    exact_match = index / len(GROUND_TRUTH)
-    return exact_match
-
 def evaluate_model(task_names, finetuned=False, exact_match=False):
 
     for task_name in task_names:
@@ -81,14 +110,13 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         dataset = load_from_disk(dataset_path)
         inputs = dataset['input_col']
         outputs = dataset['output_col']
-        # TODO: 改长度
-        n = len(inputs) // 22
+        # TODO: change the number of examples in prompts
+        n = len(inputs) // 3
         for i in range(n):
             few_shots_prompt += 'USER: [input] = ' + inputs[i] + '\n'
             few_shots_prompt += 'ASSISTANT: ' + outputs[i] + '\n'
 
-        
-        # 改了这里的名字 ["test", "eval"]
+        # TODO 改了这里的名字 ["test", "eval"]
         for test_type in ["test"]:
             test_dataset = datasets.load_from_disk(
                 f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
@@ -115,9 +143,8 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                 examples=examples,
             )
 
-
-
             def map_func(example):
+                print(example)
                 example["model_input"] = construct_meta_prompt(
                     instruction=prompt_spec.instruction,
                     examples=prompt_spec.examples,
@@ -143,13 +170,14 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             GROUND_TRUTH = test_dataset["model_output"]
             hyperparameter_choices = {}
 
+            # change this to the same params as inference
             sampling_params = SamplingParams(
-                n=hyperparameter_choices.get("n", 10),
-                best_of=hyperparameter_choices.get("best_of", 20),
-                top_k=hyperparameter_choices.get("top_k", 10),
-                temperature=hyperparameter_choices.get("temperature", 0.2),
+                top_k=hyperparameter_choices.get("top_k", -1),
+                top_p=hyperparameter_choices.get("top_p", 1),
+                temperature=hyperparameter_choices.get("temperature", 0),
                 max_tokens=hyperparameter_choices.get("max_tokens", 500),
             )
+
             consistency_filter = partial(
                 self_consistency_filter,
                 min_frequency=hyperparameter_choices.get("min_frequency", 0.2),
@@ -161,7 +189,6 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             VICUNA_outputs = VICUNA.generate(
                 prompts = prompts, 
                 sampling_params = sampling_params,
-                # prompt_token_ids=[[0] * prompt_len for _ in range(num_prompts)]
             )
             decoded_outputs = []
 
@@ -187,8 +214,8 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                 else exact_match_score(GROUND_TRUTH, decoded_outputs)
             )
             print(f"{task_name} {test_type}: {evaluate_result}")
-            # TODO 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"20240318_{test_type}_{task_name}"
+            # TODO change the name
+            evaluate_generated_content_path = inputs_dir / f"20240325_self_icl_{test_type}_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=decoded_outputs,
@@ -198,11 +225,13 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             ).save_to_disk(evaluate_generated_content_path)
         gc.collect()
 
-# TODO 改任务
+# TODO change tasks
+
 # print("generation tasks:")
 # task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
 # evaluate_model(task_names, finetuned=False, exact_match=False)
-print("classification tasks:")
-task_names = ["task346", "task190", "task199", "task1612", "task200", "task738", "task937", 
-              "task1385", "task1386", "task1516", "task1529", "task1615", "task284", "task329"][0::2]
-evaluate_model(["task281"], finetuned=False, exact_match=False)
+
+# print("classification tasks:")
+# task_names = ["task346", "task190", "task199", "task1612", "task200", "task738", "task937", 
+#               "task1385", "task1386", "task1516", "task1529", "task1615", "task284", "task329"][0::2]
+evaluate_model(["task200"], finetuned=False, exact_match=True)

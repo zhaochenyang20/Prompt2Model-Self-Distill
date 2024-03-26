@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 os.environ["WANDB_MODE"] = "offline"
 
 import gc
@@ -175,8 +175,9 @@ def finetune_vicuna(
         evaluate_result_path = data.get("evaluate_result_path", "")
         dataset_path = '/'.join(evaluate_result_path.split('/')[:-1]) + '/dataset'
     dataset = load_from_disk(dataset_path)
-    n = len(dataset) // 22
-    dataset = dataset[:n]
+    # TODO change n
+    n = 16
+    dataset = dataset.select(range(n))
 
     def map_func(example):
         assert prompt_spec.examples != ""
@@ -294,7 +295,7 @@ def validate_or_test(
 
     loaded_dataset = datasets.load_from_disk(evaluation_dataset_path)
     test_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
-    test_dataset = loaded_dataset.filter(
+    test_dataset = test_dataset.filter(
         lambda x: (
             count_tokens_from_string(x["model_input"], "vicuna") <= 3000
             and count_tokens_from_string(x["model_output"], "vicuna") <= 500
@@ -321,7 +322,7 @@ def validate_or_test(
         evaluate_result[model_path] = score
         name = str(log_and_data_path).split("/")[-1]
         print(
-            f"\n\nresult of {name} epoch {ckpt_index + 1}\n\n------------------------------------------------\n\n{score}\n\n------------------------------------------------\n\n"
+            f"\n\nresult of {name} \n path = {model_path} \n epoch {ckpt_index + 1}\n\n------------------------------------------------\n\n{score}\n\n------------------------------------------------\n\n"
         )
         evaluate_generated_content_path = log_and_data_path / "generated_contents"
         evaluate_generated_content_path.mkdir(parents=True, exist_ok=True)
@@ -340,7 +341,7 @@ def validate_or_test(
     loaded_dataset = datasets.load_from_disk(test_dataset_path)
     test_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
     # remove since we're trying to get as much as possible, more than 3000 + 500
-    test_dataset = loaded_dataset.filter(
+    test_dataset = test_dataset.filter(
         lambda x: (
             count_tokens_from_string(x["model_input"], "vicuna") <= 3000
             and count_tokens_from_string(x["model_output"], "vicuna") <= 500
@@ -374,32 +375,48 @@ model_path = Path(
 
 # classification
 # task 1529
+# prompt_spec = MockPromptSpec(
+#     task_type=TaskType.CLASSIFICATION,
+#     instruction="You are given two sentences. You have to find if there is entailment or agreement of the Hypothesis by the Premise. From the given pair of sentences, you should identify if there is enough information in the Premise to support the claim made in the Hypothesis. The Premise may not exactly be the same as Hypothesis. Your task is to return 'entails' if the premise supports hypothesis else return 'neutral'.",
+#     examples="""
+# [input]="Premise: Lyme Disease is caused by a bacterium that's transmitted by tick bite, but many infected people don't remember a bite. \n Hypothesis: Lyme disease is caused by bacteria."
+# [output]="entails"
+# [input]="Premise: Corolla Collective term for all the petals of a flower, these petals may be separate or fused together. \n Hypothesis: All of the petals together are called a corolla."
+# [output]="entails"
+# [input]="Premise: This can be dangerous to both plants and animals. \n Hypothesis: Nematodes can be a parasite of both."
+# [output]="neutral"
+# [input]="Premise: The liver is divided into the right lobe and left lobes. \n Hypothesis: The gallbladder is near the right lobe of the liver."
+# [output]="neutral"
+# """
+# )
+# task 1612
 prompt_spec = MockPromptSpec(
     task_type=TaskType.CLASSIFICATION,
-    instruction="You are given two sentences. You have to find if there is entailment or agreement of the Hypothesis by the Premise. From the given pair of sentences, you should identify if there is enough information in the Premise to support the claim made in the Hypothesis. The Premise may not exactly be the same as Hypothesis. Your task is to return 'entails' if the premise supports hypothesis else return 'neutral'.",
+    instruction="In this task, you're given a pair of sentences, sentence 1 and sentence 2. Your job is to choose whether the two sentences clearly agree (entailment)/disagree (contradiction) with each other, or if this cannot be determined (neutral). Your answer must be in the form of the numbers 0 (entailment), 1 (neutral), or 2(contradiction).",
     examples="""
-[input]="Premise: Lyme Disease is caused by a bacterium that's transmitted by tick bite, but many infected people don't remember a bite. \n Hypothesis: Lyme disease is caused by bacteria."
-[output]="entails"
-[input]="Premise: Corolla Collective term for all the petals of a flower, these petals may be separate or fused together. \n Hypothesis: All of the petals together are called a corolla."
-[output]="entails"
-[input]="Premise: This can be dangerous to both plants and animals. \n Hypothesis: Nematodes can be a parasite of both."
-[output]="neutral"
-[input]="Premise: The liver is divided into the right lobe and left lobes. \n Hypothesis: The gallbladder is near the right lobe of the liver."
-[output]="neutral"
+[input]="sentence_A: A dancer is dancing on the stage. sentence_B: A girl is giving dance performance on the dais."
+[output]="0"
+[input]="sentence_A: The crowd is cheering at her dance performance. sentence_B: The group is enjoying while eating food."
+[output]="1"
+[input]="sentence_A: A man is standing and has tears of joy seeing the dance performance. sentence_B: There is no man standing with happiness seeing the dance."
+[output]="2"
 """
 )
 
-# TODO change pramas here
+
+# TODO change task name here
+task_name = 'task1612'
+# TODO change task pramas here
 prompt_spec = prompt_spec
 # TODO change log_and_data_path, choose best ckpt generated dataset to finetune, same as self-icl
-log_and_data_path = "/home/azureuser/p2mss/p2mss/classification_14/NI_task1529_exp_14/task1529_1.0_True_False_40_14"
-ckpt_path = Path(STORE_ROOT+"/ckpt_data_p2ms/few_finetune_1529")
+# log_and_data_path = "/home/azureuser/p2mss/p2mss/classification_14/NI_task1529_exp_14/task1529_1.0_True_False_40_14"
+log_and_data_path = "/home/azureuser/p2mss/p2mss/classification_14/NI_task1612_exp_14/task1612_1.0_False_False_40_14"
+ckpt_path = Path(STORE_ROOT+f"/ckpt_data_p2ms/few_finetune_{task_name}")
 pretrain_model_path = Path(MODEL_PATH)
-training_epochs = 3
+training_epochs = 6
 resume_from_checkpoint = False
 run_name = log_and_data_path.split('/')[-2] + 'x' # to be different from previous runs
 task_name = run_name.split('_')[1]
-exact_match = True
 
 finetune_vicuna(
     prompt_spec,
@@ -415,15 +432,18 @@ finetune_vicuna(
     exact_match=True
 )
 
-evaluation_dataset_path = '/home/azureuser/p2mss/prompt2model_test/testdataset/NI/eval/task1529'
-test_dataset_path = '/home/azureuser/p2mss/prompt2model_test/testdataset/NI/test/task1529'
-ckpt_path = Path(STORE_ROOT+"/ckpt_data_p2ms/few_finetune_1529")
+
+evaluation_dataset_path = '/home/azureuser/p2mss/prompt2model_test/testdataset/NI/eval/' + task_name
+test_dataset_path = '/home/azureuser/p2mss/prompt2model_test/testdataset/NI/test/' + task_name
+ckpt_path = Path(STORE_ROOT+f"/ckpt_data_p2ms/few_finetune_{task_name}")
 instruction = prompt_spec.instruction
 examples = prompt_spec.examples
 gpu_memory_utilization = 0.9
 tensor_parallel_size = 1
-log_and_data_root = Path(ROOT) / 'task1529_x_finetune'
-test_content_store_path = log_and_data_root + '/' + 'best_ckpt_test_result'
+# change path
+# log_and_data_path = Path(ROOT) / 'task1529_x_finetune'
+log_and_data_path = Path(ROOT) / 'task1612_x_finetune'
+test_content_store_path = log_and_data_path / 'best_few_shot_result'
 metric="exact_match"
 
 validate_or_test(
@@ -434,8 +454,8 @@ validate_or_test(
     examples,
     gpu_memory_utilization,
     tensor_parallel_size,
-    test_content_store_path=None,
-    log_and_data_path=None,
+    test_content_store_path=test_content_store_path,
+    log_and_data_path=log_and_data_path,
     metric="exact_match",
 )
 

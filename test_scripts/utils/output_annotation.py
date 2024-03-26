@@ -20,6 +20,13 @@ def mapping_func(example, conditional_labels):
             example["output_col"] = conditional_label
             return
 
+def reverse_func(example, conditional_labels):
+    if example['output_col'] == conditional_labels[0]:
+        example['output_col'] = conditional_labels[1]
+    else:
+        example['output_col'] = conditional_labels[0]
+    return example
+
 def annotate_and_write_outputs(
     log_and_data_path,
     gpu_memory_utilization,
@@ -58,6 +65,11 @@ def annotate_and_write_outputs(
     if conditional_labels != []:
         mapping_function = partial(mapping_func, conditional_labels=conditional_labels)
         output_dataset = output_dataset.map(mapping_function)
+        # TODO reverse experiments
+        # print('reverse')
+        # reverse_function = partial(reverse_func, conditional_labels=conditional_labels)
+        # output_dataset = output_dataset.map(reverse_function)
+        # print(output_dataset[0])
         # print(f"before label filtering {len(output_dataset)}")
         filter_func_partial = partial(filter_func, conditional_labels=conditional_labels)
         output_dataset = output_dataset.filter(filter_func_partial)

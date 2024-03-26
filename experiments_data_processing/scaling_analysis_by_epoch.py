@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 from datasets import load_from_disk
 
-task_name = 'task281'
-root_path = f'/home/azureuser/p2mss/p2mss/generation_11/NI_{task_name}_exp_11'
+task_name = 'task1195'
+task_type = 'generation_11'
+task_rank = '11'
+root_path = f'/home/azureuser/p2mss/p2mss/NI_{task_name}_exp_{task_rank}'
 
 
 data_by_epoch = defaultdict(lambda: defaultdict(list))

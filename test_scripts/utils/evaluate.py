@@ -39,8 +39,8 @@ def exact_match_score(
     n = len(GROUND_TRUTH)
     for i in range(n):
         index += exact_match(find_last_occurrence(tuned_model_generated_outputs[i], labels), GROUND_TRUTH[i])
-    exact_match = index / len(GROUND_TRUTH)
-    return exact_match
+    score = index / len(GROUND_TRUTH)
+    return score
 
 def lcs_length_dp(x, y):
     """Compute the length of the longest common subsequence between two strings using dynamic programming."""

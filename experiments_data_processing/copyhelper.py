@@ -23,8 +23,8 @@ def copy_dir_contents(src_dir, dst_dir):
             shutil.copy2(src_path, dst_path)
 
 # 指定源目录和目标目录的路径
-src_directory = '/home/azureuser/p2mss/p2mss/NI_task281_exp_11'
-dst_directory = '/home/azureuser/p2mss/p2mss/generation_11/NI_task281_exp_11'
+src_directory = '/home/azureuser/p2mss/p2mss/generation_11/NI_task1195_exp_11'
+dst_directory = '/home/azureuser/p2mss/p2mss/NI_task1195_exp_11'
 
 # 调用函数执行复制操作
 copy_dir_contents(src_directory, dst_directory)

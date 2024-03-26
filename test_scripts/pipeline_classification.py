@@ -4,9 +4,10 @@ import os
 
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
+
+# TODO change card name
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 # os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-
 
 TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
 
@@ -17,16 +18,18 @@ import itertools
 from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 
 
-# TODO change card name
+
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
-# TODO change task
 
 # TODO change experiment rank
-experiment_rank = 14
+experiment_rank = 19
+# 14 用双向 in + != ""，14 copy 是用双向 in + != ""
+# 15 strictly exact match
+# 16 for abblation study, without self verify
+# 17 reverse label
+# 18 for debugging
+# 19 prompt sensitivity
 
-# 14 用双向 in + != ""
-
-# TODO change task name
 gpu_memory_utilization = 0.9
 # 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
 per_device_train_batch_size = 1
@@ -40,9 +43,9 @@ from main import main, validate_or_test
 
 [task346, task190, task199, task1612, task200, task738, task937, task1385, task1386, task1516, task1529, task1615, task284, task329]
 
-# this time
+# TODO change task
 
-for task in [task1529]:
+for task in [task346]:
 
     task_name = task.task_name
     # TODO 加expected content和metrics
@@ -114,7 +117,7 @@ for task in [task1529]:
         generation_temperature,
         intput_length_constraint,
         output_length_constraint,
-        generation_epoch=40
+        generation_epoch,
     ):
         name = f"{task_name}_{generation_temperature}_{intput_length_constraint}_{output_length_constraint}_{generation_epoch}_{experiment_rank}"
         print(f"searching parameters: {name}")
@@ -232,15 +235,20 @@ for task in [task1529]:
         write_results(log_and_data_root, max_training_epochs)
         return highest_validation_result
 
-    temperatures = [0.6, 0.7, 0.8, 0.9, 1.0]
-    input_constraints = [False, True]
-    output_constraints = [False, True]
+    # 选择参数
+    # temperatures = [0.6, 0.7, 0.8, 0.9, 1.0]
+    # input_constraints = [False, True]
+    # output_constraints = [False, True]
+    temperatures = [0.7]
+    input_constraints = [True]
+    output_constraints = [True]
+    generation_epoches = [10, 40, 80, 120, 150, 200]
 
-    all_combinations = list(itertools.product(temperatures, input_constraints, output_constraints))
+    all_combinations = list(itertools.product(temperatures, input_constraints, output_constraints, generation_epoches))
 
     # 遍历每组参数组合
     for combination in all_combinations:
-        generation_temperature, input_length_constraint, output_length_constraint = combination
+        generation_temperature, input_length_constraint, output_length_constraint, generation_epoch = combination
 
         if task.is_classification is not None:
             output_length_constraint = False
@@ -248,7 +256,8 @@ for task in [task1529]:
         result = objective_function(
             generation_temperature,
             input_length_constraint,
-            output_length_constraint
+            output_length_constraint,
+            generation_epoch
         )
 
     with open(best_validation_result_path, "r") as json_file:
@@ -257,16 +266,16 @@ for task in [task1529]:
         print("Already tested.")
     else:
         print("test best ckpt.")
-        validate_or_test(
-                test_set_path,
-                best_ckpt_path / experiment_name,
-                instruction,
-                examples,
-                gpu_memory_utilization,
-                1,
-                best_validation_result_path,
-                test_content_store_path=log_and_data_root / "best_ckpt_generated_content",
-                validation=False,
-                metric=metric,
-            )
+        # validate_or_test(
+        #         test_set_path,
+        #         best_ckpt_path / experiment_name,
+        #         instruction,
+        #         examples,
+        #         gpu_memory_utilization,
+        #         1,
+        #         best_validation_result_path,
+        #         test_content_store_path=log_and_data_root / "best_ckpt_generated_content",
+        #         validation=False,
+        #         metric=metric,
+        #     )
     destroy_model_parallel()
