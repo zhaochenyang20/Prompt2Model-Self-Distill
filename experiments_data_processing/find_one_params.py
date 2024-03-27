@@ -1,15 +1,5 @@
-import os
 import pandas as pd
-from utils.path import ROOT
-
-class ExperimentType:
-    def __init__(self, root_path, total_experiments):
-        self.root_path = root_path
-        self.total_experiments = total_experiments
-
-classfication_experiment = ExperimentType(ROOT + "/classification_tasks", 1)
-generation_experiment = ExperimentType(ROOT + "/generation_tasks", 3)
-generation_best_experiment = ExperimentType(ROOT + "/generation_tasks_best", 1)
+import random
 
 def retrieve_data(csv_path, parameter):
     temperature, input_constraint, output_constraint, epoch_number = parameter
@@ -17,42 +7,57 @@ def retrieve_data(csv_path, parameter):
     query_string = f"generation_temperature == {temperature} and intput_length_constraint == {input_constraint} and output_length_constraint == {output_constraint}"
     selected_data = df.query(query_string)
     epoch_data = selected_data[f'epoch_{epoch_number}'].values
-    return epoch_data
+    return epoch_data[0]
 
-def get_validation_score(experiment_type, task, parameter):
-    root_path = experiment_type.root_path
-    total_experiments = experiment_type.total_experiments
-    experiments_dic = {
-        40: [1,2,3],
-        20: [4,5,6]
-    }
-    subdirectories = [d for d in os.listdir(root_path) if os.path.isdir(os.path.join(root_path, d))]
-    count = 0
-    best = 0
+def get_validation_score(generation, task, parameter):
+    if generation:
+        root_path = f'/home/azureuser/p2mss/p2mss/generation_11/NI_{task}_exp_11'
+    else:
+        root_path = f'/home/azureuser/p2mss/p2mss/classification_14/NI_{task}_exp_14'
+    fine_tuned_score = retrieve_data(root_path+"/experiment_results.csv", parameter)
+    return fine_tuned_score
+    # best += fine_tuned_score[0]/baseline_scores[task]
 
-    generation_batch_size = parameter[-1]
-    for subdirectory in subdirectories:
-        if subdirectory.split("_")[1] == task and int(subdirectory.split("_")[-1]) in experiments_dic[generation_batch_size]:
-            count+=1
-            subdirectory_path = os.path.join(root_path, subdirectory)
-            fine_tuned_score = retrieve_data(subdirectory_path+"/experiment_results.csv",parameter[:-1])
-            best = max(fine_tuned_score[0]/baseline_scores[task], best)
-            # best += fine_tuned_score[0]/baseline_scores[task]
-            if count == total_experiments:
-                return best
 
 best_score = 0
-best_parameter = None
 # for classification
-parameters = [(0.6, 'False', 'False', 1), (0.6, 'False', 'False', 2), (0.6, 'False', 'False', 3), (0.6, 'True', 'False', 1), (0.6, 'True', 'False', 2), (0.6, 'True', 'False', 3), (0.7, 'False', 'False', 1), (0.7, 'False', 'False', 2), (0.7, 'False', 'False', 3), (0.7, 'True', 'False', 1), (0.7, 'True', 'False', 2), (0.7, 'True', 'False', 3), (0.8, 'False', 'False', 1), (0.8, 'False', 'False', 2), (0.8, 'False', 'False', 3), (0.8, 'True', 'False', 1), (0.8, 'True', 'False', 2), (0.8, 'True', 'False', 3), (0.9, 'False', 'False', 1), (0.9, 'False', 'False', 2), (0.9, 'False', 'False', 3), (0.9, 'True', 'False', 1), (0.9, 'True', 'False', 2), (0.9, 'True', 'False', 3), (1.0, 'False', 'False', 1), (1.0, 'False', 'False', 2), (1.0, 'False', 'False', 3), (1.0, 'True', 'False', 1), (1.0, 'True', 'False', 2), (1.0, 'True', 'False', 3)]
+classification_parameters = [
+    (0.6, 'True', 'False', 1), 
+    (0.6, 'True', 'False', 2), 
+    (0.6, 'True', 'False', 3), 
+    (0.7, 'True', 'False', 1), 
+    (0.7, 'True', 'False', 2), 
+    (0.7, 'True', 'False', 3), 
+    (0.8, 'True', 'False', 1), 
+    (0.8, 'True', 'False', 2), 
+    (0.8, 'True', 'False', 3), 
+    (0.9, 'True', 'False', 1), 
+    (0.9, 'True', 'False', 2), 
+    (0.9, 'True', 'False', 3), 
+    (1.0, 'True', 'False', 1), 
+    (1.0, 'True', 'False', 2), 
+    (1.0, 'True', 'False', 3)
+]
+
 # for generation
-parameters = [(0.6, 'False', 'False', 1, 20), (0.6, 'False', 'False', 1, 40), (0.6, 'False', 'False', 2, 20), (0.6, 'False', 'False', 2, 40), (0.6, 'False', 'False', 3, 20), (0.6, 'False', 'False', 3, 40), (0.6, 'True', 'False', 1, 20), (0.6, 'True', 'False', 1, 40), (0.6, 'True', 'False', 2, 20), (0.6, 'True', 'False', 2, 40), (0.6, 'True', 'False', 3, 20), (0.6, 'True', 'False', 3, 40), (0.7, 'False', 'False', 1, 20), (0.7, 'False', 'False', 1, 40), (0.7, 'False', 'False', 2, 20), (0.7, 'False', 'False', 2, 40), (0.7, 'False', 'False', 3, 20), (0.7, 'False', 'False', 3, 40), (0.7, 'True', 'False', 1, 20), (0.7, 'True', 'False', 1, 40), (0.7, 'True', 'False', 2, 20), (0.7, 'True', 'False', 2, 40), (0.7, 'True', 'False', 3, 20), (0.7, 'True', 'False', 3, 40), (0.8, 'False', 'False', 1, 20), (0.8, 'False', 'False', 1, 40), (0.8, 'False', 'False', 2, 20), (0.8, 'False', 'False', 2, 40), (0.8, 'False', 'False', 3, 20), (0.8, 'False', 'False', 3, 40), (0.8, 'True', 'False', 1, 20), (0.8, 'True', 'False', 1, 40), (0.8, 'True', 'False', 2, 20), (0.8, 'True', 'False', 2, 40), (0.8, 'True', 'False', 3, 20), (0.8, 'True', 'False', 3, 40), (0.9, 'False', 'False', 1, 20), (0.9, 'False', 'False', 1, 40), (0.9, 'False', 'False', 2, 20), (0.9, 'False', 'False', 2, 40), (0.9, 'False', 'False', 3, 20), (0.9, 'False', 'False', 3, 40), (0.9, 'True', 'False', 1, 20), (0.9, 'True', 'False', 1, 40), (0.9, 'True', 'False', 2, 20), (0.9, 'True', 'False', 2, 40), (0.9, 'True', 'False', 3, 20), (0.9, 'True', 'False', 3, 40), (1.0, 'False', 'False', 1, 20), (1.0, 'False', 'False', 1, 40), (1.0, 'False', 'False', 2, 20), (1.0, 'False', 'False', 2, 40), (1.0, 'False', 'False', 3, 20), (1.0, 'False', 'False', 3, 40), (1.0, 'True', 'False', 1, 20), (1.0, 'True', 'False', 1, 40), (1.0, 'True', 'False', 2, 20), (1.0, 'True', 'False', 2, 40), (1.0, 'True', 'False', 3, 20), (1.0, 'True', 'False', 3, 40)]
-classification_tasks = ["task202", "task199", "task1388", "task201", "task190", "task935", "task1386", "task1554", "task738", "task1344", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task020", "task1615"]
-generation_tasks = ["task039", "task281", "task121", "task1195", "task034", "task1622", "task1562", "task671", "task1345", "task035", "task1659", "task569","task1631", "task1557", "task036"]
-# 没有继续跑的 "task1540",  "task620",  "task613", "task677", "task1356", "task957",  "task1598", 
+generation_parameters = [
+    (0.6, 'True', 'True', 1), (0.6, 'True', 'True', 2), (0.6, 'True', 'True', 3), 
+    (0.7, 'True', 'True', 1), (0.7, 'True', 'True', 2), (0.7, 'True', 'True', 3), 
+    (0.8, 'True', 'True', 1), (0.8, 'True', 'True', 2), (0.8, 'True', 'True', 3), 
+    (0.9, 'True', 'True', 1), (0.9, 'True', 'True', 2), (0.9, 'True', 'True', 3), 
+    (1.0, 'True', 'True', 1), (1.0, 'True', 'True', 2), (1.0, 'True', 'True', 3)
+]
+
+classification_tasks = ["task190", "task199", "task200", "task738", "task937", "task1385", "task1386"]
+generation_tasks = ["task039", "task036", "task1195", "task121"] 
+
+classification_test_tasks = ["task1615", "task284", "task329", "task346", "task1516", "task1529", "task1612"]
+generation_test_tasks = ["task281",  "task1622", "task1345", "task1562"]
+
+
 
 # Define a dictionary to store baseline validation scores for each task
-baseline_scores = {
+old_baseline_scores = {
     "task202": 0.21366666666666667,
     "task199": 0.4176666666666667,
     "task1388": 0.4533333333333333,
@@ -95,18 +100,70 @@ baseline_scores = {
     'task620': 0.23528267296145397
 }
 
+baseline_scores = {
+    "task190": 0.27003930951974, 
+    "task199": 0.316239316239316, 
+    "task200": 0.46752923612839, 
+    "task738": 0.596424231904183, 
+    "task937": 0.471111111111111, 
+    "task1385": 0.331838565022421, 
+    "task1386": 0.339664804469273, 
+    "task1516": 0.1765625, 
+    "task1529": 0.0856201975850713, 
+    "task1612": 0.51358024691358,
+    "task1615": 0.00555898702903026,
+    "task284": 0.900649794801641,
+    "task329": 0.291063404892661,
+    "task346": 0.351744186046511,
 
+    "task121": 0.492259181898013, 
+    "task039": 0.122302578999944, 
+    "task036": 0.188900032990357, 
+    "task1195": 0.436834178312443, 
+    "task1345": 0.371234390180198,
+    "task1562": 0.310781117123961,
+    "task281": 0.411776622489333,
+    "task1622": 0.444840217463775
+}
+
+print('generation tasks')
 score_recording = {}
-for parameter in parameters:
-    if parameter[-1]==40:
-        continue
-    parameter_score_sum = 0
+# all_generation = generation_tasks + generation_test_tasks
+# random_items = random.sample(all_generation, 4)
+for parameter in generation_parameters:
+    parameter_score = []
     for task in generation_tasks:
-        best_score_task = get_validation_score(generation_best_experiment, task, parameter)
-        parameter_score_sum += best_score_task
-    if parameter_score_sum >= best_score:
-        best_score = parameter_score_sum
-        best_parameter = parameter
-    score_recording[parameter] = parameter_score_sum
-print(best_parameter) 
-print(score_recording)
+        task_score = get_validation_score(generation=True, task=task, parameter=parameter)
+        task_score -= baseline_scores[task]
+        parameter_score.append(task_score)
+    score_recording[parameter] = min(parameter_score)
+param_with_max_improve = max(score_recording, key=lambda k: score_recording[k])
+# test_score_recording = {}
+# 
+# for task in all_generation:
+#     task_score = get_validation_score(generation=True, task=task, parameter=param_with_max_improve)
+#     test_score_recording[task] = task_score
+print(param_with_max_improve) 
+# print(score_recording)
+# print(test_score_recording)
+
+print('classification tasks')
+score_recording = {}
+# all_classification = classification_tasks + classification_test_tasks
+# random_items = random.sample(all_classification, 4)
+for parameter in classification_parameters:
+    parameter_score = []
+    for task in classification_tasks:
+        task_score = get_validation_score(generation=False, task=task, parameter=parameter)
+        task_score -= baseline_scores[task]
+        parameter_score.append(task_score)
+    score_recording[parameter] = min(parameter_score)
+param_with_max_improve = max(score_recording, key=lambda k: score_recording[k])
+# test_score_recording = {}
+# 
+# for task in all_classification:
+#     task_score = get_validation_score(generation=False, task=task, parameter=param_with_max_improve)
+#     test_score_recording[task] = task_score
+print(param_with_max_improve) 
+# print(score_recording)
+# print(test_score_recording)
