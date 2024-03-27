@@ -26,7 +26,7 @@ def min_max_length_filter(strings, min_length=120, max_length=None):
         logger.info("Input strings in min_max_length_filter is None.")
         return None
 
-    if not isinstance(min_length, int) or min_length <= 0:
+    if not isinstance(min_length, int):
         logger.info(
             "Invalid min_length value in min_max_length_filter. It should be a positive integer."
         )
