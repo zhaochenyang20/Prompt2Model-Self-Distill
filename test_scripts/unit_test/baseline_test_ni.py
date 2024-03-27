@@ -1,7 +1,7 @@
 import os
 
 # TODO
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 import gc
 import json
@@ -117,7 +117,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                 tensor_parallel_size=1,
             )
         # TODO change suffix
-        suffix = '\n\n\n\n'
+        suffix = '\n'
 
         # TODO change notion
         # notions = [':', ' ']
@@ -125,7 +125,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         for notion in notions:
             
             # TODO double check test type: "test" or "eval"
-            for test_type in ["test"]:
+            for test_type in ["eval"]:
                 # TODO double check if you want old or new dataset
                 test_dataset = datasets.load_from_disk(
                     f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
@@ -219,8 +219,8 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                 
                 print(f"{task_name} {test_type} notion={notion} => {evaluate_result}")
                 #TODO change file name every day
-                suffix_coding = 4
-                evaluate_generated_content_path = inputs_dir / f"20240325_{notion}_{task_name}_{suffix_coding}"
+                suffix_coding = 1
+                evaluate_generated_content_path = inputs_dir / f"20240326_{notion}_{task_name}_{suffix_coding}"
                 datasets.Dataset.from_dict(
                     dict(
                         model_output=decoded_outputs,
@@ -235,20 +235,22 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         torch.cuda.empty_cache()
         destroy_model_parallel()
 
+
+classification_tasks = ["task190", "task199", "task200", "task738", "task937", "task1385", "task1386", "task1516", "task1529", "task1612", "task1615", "task284", "task329", "task346"]
+generation_tasks = ["task121", "task039", "task036", "task1195", "task1345", "task1562","task281", "task1622"]
+
 # TODO change task
 # TODO determine baseline or finetuned model
 # TODO deterine generation or classification
             
 # generation tasks:
 # task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
-task_names = ["task281", "task1195", "task1345", "task1562"]
-evaluate_model(task_names, finetuned=False, exact_match=False)
-evaluate_model(task_names, finetuned=True, exact_match=False)  
+evaluate_model(generation_tasks, finetuned=False, exact_match=False)
+# evaluate_model(generation_tasks, finetuned=True, exact_match=False)  
 
 # classification tasks
 # task_names = ["task346", "task190", "task199", "task1612", "task200", "task738", "task937", 
 #               "task1385", "task1386", "task1516", "task1529", "task1615", "task284", "task329"][0::2]
 # task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
-task_names = ["task190", "task1529", "task1612", "task329"]
-evaluate_model(task_names, finetuned=False, exact_match=True)
-evaluate_model(task_names, finetuned=True, exact_match=True)
+evaluate_model(classification_tasks, finetuned=False, exact_match=True)
+# evaluate_model(classification_tasks, finetuned=True, exact_match=True)
