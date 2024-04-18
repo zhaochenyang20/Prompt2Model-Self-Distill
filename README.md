@@ -18,7 +18,7 @@ We use tasks from [NaturalInstructions V2](https://arxiv.org/abs/2204.07705). Fo
 
 According to our one param fits all parameters, you could use them to self-generate dataset and finetune on the dataset to improve its performance.
 
-Selected tasks including:
+Selected tasks including (The validation and test set can be accessed from NI_dataset folder)
 - Generation tasks: task121, task039, task036, task1195, task1345, task281, task1562, task1622
 - Classification tasks: task190, task199, task200, task738, task937, task1385, task1386, task1516, task1529, task1612, task1615, task284, task329, task346
 ### Notebook
