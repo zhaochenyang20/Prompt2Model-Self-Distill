@@ -6,15 +6,21 @@
 [![Discord](https://img.shields.io/discord/1144245269001678959)](https://discord.gg/UCy9csEmFc)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/neulab/prompt2model/blob/main/prompt2model_demo.ipynb)
 
-`Prompt2Model` is a system that takes a natural
-language task description (like the prompts used for
-LLMs such as ChatGPT) to train a small
-special-purpose model that is conducive for deployment.
+We introduce `SELF-GUIDE`, a novel methodology that enables LLMs to better execute task-specific instructions without requiring additional data or training signals. `SELF-GUIDE` operates in the few-shot setting, where we are given only a task instruction and around 3 examples of task demonstrations. `SELF-GUIDE` works by first employing the target model to generate a synthetic dataset for a given task. The model is then finetuned on this “self-generated’’ data.
 
-<img width="360" alt="prompt2model_teaser" src="https://github.com/neulab/prompt2model/assets/2577384/39ca466a-5355-4d82-8312-303e52ba2bca">
+<img width="360" alt="prompt2model_teaser" src="self_guide_diagram.png">
 
 ## Quick Start
 
+### Dataset
+
+We use tasks from [NaturalInstructions V2](https://arxiv.org/abs/2204.07705). For each task, we have task instruction and example input-output pairs according to the dataset.
+
+According to our one param fits all parameters, you could use them to self-generate dataset and finetune on the dataset to improve its performance.
+
+Selected tasks including:
+- Generation tasks: task121, task039, task036, task1195, task1345, task281, task1562, task1622
+- Classification tasks: task190, task199, task200, task738, task937, task1385, task1386, task1516, task1529, task1612, task1615, task284, task329, task346
 ### Notebook
 
 You can run our demo of `Prompt2Model` through a notebook:
@@ -56,31 +62,6 @@ API. For best results, run
 this script on a device with a GPU for training
 your model.
 
-## Demo
-
-<https://github.com/neulab/prompt2model/assets/2577384/8d73394b-3028-4a0b-bdc3-c127082868f2>
-
-## Tips and Examples to Write a Good Prompt
-
-You can see the tips and examples to write
-a good prompt in [prompt_examples](./prompt_examples.md).
-
-## Components
-
-The `prompt2model` package is composed
-of several components, each designed
-to fulfill a specific purpose. To gain
-a comprehensive understanding of how to
-utilize each component effectively,
-please consult the `readme.md` file
-situated in the directory of the respective
-component. These files can be found at
-`./prompt2model/<component>/readme.md`.
-They provide detailed information and
-instructions on customizing and maximizing
-the functionality of each
-component within the package.
-
 ## Contribution
 
 If you're interested in contributing to the `prompt2model` project, please
@@ -91,19 +72,3 @@ If you're interested in contributing to the `prompt2model` project, please
 - or reach out to [@vijaytarian](https://twitter.com/vijaytarian)
   and [@Chenan3_Zhao](https://twitter.com/Chenan3_Zhao) on Twitter
 
-## Cite
-
-We have [written a paper describing Prompt2Model in detail](https://arxiv.org/abs/2308.12261).
-
-If you use Prompt2Model in your research, please cite our paper:
-
-```bibtex
-@misc{prompt2model,
-      title={Prompt2Model: Generating Deployable Models from Natural Language Instructions},
-      author={Vijay Viswanathan and Chenyang Zhao and Amanda Bertsch and Tongshuang Wu and Graham Neubig},
-      year={2023},
-      eprint={2308.12261},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
-}
-```
