@@ -16,11 +16,9 @@ import time
 from prompt2model.utils import count_tokens_from_string
 from prompt2model.utils.path import MODEL_PATH
 
-# wandb sync wandb/offline-run-*
 os.environ["WANDB_MODE"] = "offline"
 
 from collections import OrderedDict
-
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from utils.evaluate import exact_match_score, rouge_l_score
 from utils.inference import vllm_inference
@@ -128,7 +126,6 @@ def validate_or_test(
         return example
 
     loaded_dataset = datasets.load_from_disk(evaluation_dataset_path)
-    # loaded_dataset = datasets.Dataset.from_dict(loaded_dataset[:20])
     loaded_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
     test_dataset = loaded_dataset.filter(
         lambda x: (
@@ -165,9 +162,6 @@ def validate_or_test(
                 score = rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs)
             evaluate_result[f"{ckpt_index + 1}"] = score
             name = str(log_and_data_path).split("/")[-1]
-            print(
-                f"\n\nresult of {name} epoch {ckpt_index + 1}\n\n------------------------------------------------\n\n{score}\n\n------------------------------------------------\n\n"
-            )
             with open(evaluate_result_path, "w") as f:
                 json.dump(evaluate_result, f, indent=4)
             with open(log_and_data_path / "config.json", "r") as json_file:
@@ -184,7 +178,6 @@ def validate_or_test(
                 content_store_path, tuned_model_generated_outputs, prompts, GROUND_TRUTH
             )
     else:
-        #! test
         tuned_model_generated_outputs = vllm_inference(
             ckpt_path, gpu_memory_utilization, tensor_parallel_size, prompts
         )
@@ -192,9 +185,6 @@ def validate_or_test(
             score = exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs)
         else:
             score = rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs)
-        print(
-            f"\n\nresult of {ckpt_path}\n\n------------------------------------------------\n\n{score}\n\n------------------------------------------------\n\n"
-        )
         with open(evaluate_result_path, "r") as json_file:
             evaluate_result = json.load(json_file)
         evaluate_result["test_result"] = score
