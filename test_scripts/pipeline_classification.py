@@ -1,58 +1,37 @@
+"""We use `pipeline_classification.py`to search a """
+
 import csv
 import json
 import os
 
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
-
-# TODO change card name
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
 
 from pathlib import Path
-from utils.tasks import task199, task201, task190, task1386, task1554, task738, task1385, task1529, task200, task1612, task1516, task1615, task937, task284, task329, task346
-
+# These tasks are configed in `utils.tasks`
+from utils.tasks import task199, task190, task1386, task738, task1385, task1529, task200, task1612, task1516, task1615, task937, task284, task329, task346
 import itertools
+
+# Change these path configs to set the experiment parameters
 from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
-
-
-
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
-# TODO change experiment rank
-experiment_rank = 19
-# 14 用双向 in + != ""，14 copy 是用双向 in + != ""
-# 15 strictly exact match
-# 16 for abblation study, without self verify
-# 17 reverse label
-# 18 for debugging
-# 19 prompt sensitivity
-
+# Mark the rank of the experiment
+experiment_rank = 1
 gpu_memory_utilization = 0.9
-# 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
 per_device_train_batch_size = 1
-# bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
 max_training_epochs = 3
 from main import main, validate_or_test
-
-# [task1388. task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1615]
-# [task1386, task1529, task190, task200, task937, task642, task1612, task1516]
-# 1388 ，task1386 先不跑了
-
-[task346, task190, task199, task1612, task200, task738, task937, task1385, task1386, task1516, task1529, task1615, task284, task329]
 
 # TODO change task
 
 for task in [task346]:
 
     task_name = task.task_name
-    # TODO 加expected content和metrics
     experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
-    # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-    # TODO 改显存配置
-
     log_and_data_root = Path(ROOT) / experiment_name
     evaluation_result_file_tail = "result.json"
     ckpt_root = Path(STORE_ROOT+"/ckpt_data_p2ms")
