@@ -2,45 +2,18 @@ import csv
 import json
 import os
 
-# TODO: change card
-os.environ["TRANSFORMERS_OFFLINE"] = "1"
-os.environ["HF_DATASETS_OFFLINE"] = "1"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-
-
-TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
-
 from pathlib import Path
 import itertools
+# Change these path configs to set the experiment parameters
 from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
-# TODO change experiment rank
-experiment_rank = 16
-
+# Mark the rank of the experiment
+experiment_rank = 1
 gpu_memory_utilization = 0.9
-# 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
 per_device_train_batch_size = 1
-# bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
 max_training_epochs = 3
 from main import main, validate_or_test
-
-# task_names = [
-#  'task121',
-#  'task039',
-#  'task036',
-#  'task281',]
-
-task_names = [
- 'task1195',
- 'task1345',
- 'task1562',
- 'task1622']
-
-# task281 task1195
-# task281 100 200 400
-# task1195 100 200 400 800
 
 # TODO: change task name
 for task_name in ["task1562"]:
@@ -55,7 +28,6 @@ for task_name in ["task1562"]:
                 task["task_name"],
                 task["task_instruction"],
                 task["examples"],
-                task["expected_content"],
                 f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}",
                 f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}",
                 task.get("optional_list", []),
@@ -64,13 +36,9 @@ for task_name in ["task1562"]:
             break
 
 
-    # TODO 加expected content和metrics
     experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
-    # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-    # TODO 改显存配置
-
-    file_path = ROOT+"/main/NI_tasks/tasks.json"
-
+    # Config the generation tasks in `NI_tasks/tasks.json`
+    file_path = ROOT+"/NI_tasks/tasks.json"
     log_and_data_root = Path(ROOT) / experiment_name
     evaluation_result_file_tail = "result.json"
     ckpt_root = Path(STORE_ROOT+"/ckpt_data_p2ms")
@@ -118,14 +86,10 @@ for task_name in ["task1562"]:
         print(command)
         os.system(command)
 
-
-    #! For generation tasks
-
-    task_name, instruction, examples, expected_content, evaluation_dataset_path, test_set_path, optional_list, metric  = task_config_for_generation_tasks
+    task_name, instruction, examples, evaluation_dataset_path, test_set_path, optional_list, metric  = task_config_for_generation_tasks
     labels = []
     extraction_examples = []
 
-    # TODO: change generation epoch
     def objective_function(
         generation_temperature,
         intput_length_constraint,
@@ -140,14 +104,12 @@ for task_name in ["task1562"]:
         ckpt_path.mkdir(parents=True, exist_ok=True)
 
         assert optional_list != []
-        assert expected_content != ""
         assert metric != ""
         params = {
-            "CUDA_CONDITION": "0,1",
+            "CUDA_CONDITION": "0",
             "task_name": task_name,
             "instruction": instruction,
             "examples": examples,
-            "expected_content": expected_content,
             "evaluation_dataset_path": evaluation_dataset_path,
             "test_set_path": test_set_path,
             "generation_epochs": generation_epoch,
@@ -159,7 +121,7 @@ for task_name in ["task1562"]:
             "ckpt_path": str(ckpt_path),
             "gpu_memory_utilization": float(gpu_memory_utilization),
             "training_epochs": int(max_training_epochs),
-            "tensor_parallel_size": TENSOR_SIZE,
+            "tensor_parallel_size": 1,
             "evaluation_result_file_tail": evaluation_result_file_tail,
             "optional_list": optional_list,
             "metric": metric,
@@ -253,12 +215,9 @@ for task_name in ["task1562"]:
 
     all_combinations = list(itertools.product(temperatures, input_constraints, output_constraints, generation_epoches))
 
-    # 遍历每组参数组合
+
     for combination in all_combinations:
         generation_temperature, input_length_constraint, output_length_constraint, generation_epoch = combination
-        
-        # if task.is_classification is not None:
-        #     output_length_constraint = False
 
         result = objective_function(
             generation_temperature,
@@ -269,20 +228,4 @@ for task_name in ["task1562"]:
 
     with open(best_validation_result_path, "r") as json_file:
         evaluate_result = json.load(json_file)
-    if "test_result" in evaluate_result:
-        print("Already tested.")
-    else:
-        print("test best ckpt.")
-        # validate_or_test(
-        #         test_set_path,
-        #         best_ckpt_path / experiment_name,
-        #         instruction,
-        #         examples,
-        #         gpu_memory_utilization,
-        #         1,
-        #         best_validation_result_path,
-        #         test_content_store_path=log_and_data_root / "best_ckpt_generated_content",
-        #         validation=False,
-        #         metric=metric,
-        #     )
     destroy_model_parallel()

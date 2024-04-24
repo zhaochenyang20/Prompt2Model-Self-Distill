@@ -83,7 +83,6 @@ for task in [task346]:
     task_name = task.task_name
     instruction = task.task_instruction
     examples = task.examples
-    expected_content = task.expected_content
     evaluation_dataset_path = f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
     test_set_path = f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
     optional_list = task.optional_list
@@ -106,7 +105,6 @@ for task in [task346]:
         ckpt_path.mkdir(parents=True, exist_ok=True)
 
         assert optional_list != []
-        assert expected_content != ""
         assert metric != ""
         assert extraction_examples != []
 

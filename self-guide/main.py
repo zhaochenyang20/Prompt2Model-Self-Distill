@@ -220,7 +220,6 @@ def main(config_path: str):
         loaded_params = json.load(json_file)
     gpu_memory_utilization = loaded_params["gpu_memory_utilization"]
     TENSOR_SIZE = loaded_params["tensor_parallel_size"]
-    expected_content = loaded_params["expected_content"]
     evaluation_dataset_path = loaded_params["evaluation_dataset_path"]
     prompt_spec = MockPromptSpec(
         task_type=TaskType.TEXT_GENERATION,
@@ -244,7 +243,7 @@ def main(config_path: str):
             ),
             log_and_data_path = log_and_data_path,
             gpu_memory_utilization = gpu_memory_utilization,
-            expected_content = expected_content,
+
             optional_list = loaded_params["optional_list"],
             intput_length_constraint=loaded_params["intput_length_constraint"],
             conditional_labels=loaded_params["conditional_labels"],
