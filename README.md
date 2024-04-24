@@ -16,3 +16,24 @@ Selected tasks including (The validation and test set can be accessed from the `
 - Generation tasks: task121, task039, task036, task1195, task1345, task281, task1562, task1622
 - Classification tasks: task190, task199, task200, task738, task937, task1385, task1386, task1516, task1529, task1612, task1615, task284, task329, task346
 
+### Environment
+
+1. Install our main framework with `pip install .`
+2. Install `vllm trl accelerate`
+
+In our experiment using `vicuna-7b` with full-parameter finetuning, we use a single 80G A100.
+
+### Running Self-Guide Parameter Searching
+
+We implement different parameter searching pipelines for classification tasks and generation tasks, i.e. `pipeline_classification.py` and `pipeline_generation.py` under the `self-guide` directory.
+
+```shell
+cd self-guide
+python pipeline_classification.py
+```
+
+Note that the pipeline is used for searching parameters with human-annotated datasets to evaluate the performance of the self-guided model.
+
+## Creating your own Self-Guided Model
+
+You can modify the pipeline and config tasks to create your new self-guided model without annotated data.

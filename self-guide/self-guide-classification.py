@@ -1,4 +1,4 @@
-"Create a Self-Guided Model for your own generaiton task."
+"Create a Self-Guided Model for your own classification task."
 
 import gc
 from pathlib import Path
@@ -11,6 +11,10 @@ from vllm.model_executor.parallel_utils.parallel_state import destroy_model_para
 from prompt2model.output_annotator import VLLMPromptBasedOutputAnnotator
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
+from functools import partial
+from collections import Counter
+from datasets import Dataset
+import random
 
 # We use a single 80G A100 to Self-Guide 7B Vicuna model
 
@@ -22,27 +26,27 @@ TENSOR_SIZE = 1
 
 # Change it to your own task instruction.
 INSTRUCTION = """
-In this task, you need to write a topic word from the given fact.
-The topic word must have at least one word overlap with the given fact.
-The topic word often involves adding a new word from a related concept.
-In your topic word, use at least one word from the given fact.
-Topic words with two or more words work best.
+In this task, you are given two statements.
+The task is to output whether a given textual premise,
+i.e. Statement 2, entails or implies a given scientific fact,
+i.e. Statement 1. The output should be 'entails' if Statement
+2 supports Statement 1 and should be 'neutral' otherwise.
 """
 
 # Change it to your own task examples.
 # Note that keep the format as follows:
 # [input]="xxxxx"
-# [output]="yyyy"
+# [output]="label_y"
 
 EXAMPLES = """
-[input]="Fact: pesticides cause pollution."
-[output]="pollution harms."
+[input]="Sentence 1: The sum of all chemical reactions that take place within an organism is known as metabolism. Sentence 2: Metabolism is the sum total of all chemical reactions performed by an organism."
+[output]="entails"
 
-[input]="Fact: pesticides cause pollution."
-[output]="modern farming pesticide."
+[input]="Sentence 1: The endocrine system produces most of the hormones that regulate body functions. Sentence 2: Your endocrine glands produce hormones that control all your body functions."
+[output]="entails"
 
-[input]="Fact: a solar panel converts sunlight into electricity."
-[output]="sunlight sun."
+[input]="Sentence 1: Warm and humid temperature and moisture conditions describe an air mass that originates over the Atlantic ocean near the equator. Sentence 2: Maritime tropical air Warm, humid air mass that forms over tropical and subtropical oceans."
+[output]="neutral"
 """
 
 prompt_spec = MockPromptSpec(
@@ -66,7 +70,7 @@ input_tuples = input_generator.batch_generation_inputs(
             ),
     optional_list=["input", "output", "\n\n", "\\_\\_"],
     intput_length_constraint=False,
-    conditional_labels=[],
+    conditional_labels=["entails", "neutral"],
 )
 inputs = [each[0] for each in input_tuples]
 del input_generator
@@ -93,10 +97,38 @@ destroy_model_parallel()
 gc.collect()
 torch.cuda.empty_cache()
 
+
+def mapping_func(example, conditional_labels):
+    for conditional_label in conditional_labels:
+        if conditional_label in example["output_col"]:
+            example["output_col"] = conditional_label
+            return
+
+mapping_function = partial(mapping_func, conditional_labels=["entails", "neutral"])
+output_dataset = output_dataset.map(mapping_function)
+
 def filter_func(example):
     return example["output_col"] is not None and example["input_col"] is not None
 
 dataset = output_dataset.filter(filter_func)
+
+output_col = output_dataset["output_col"]
+element_count = Counter(output_col)
+min_count = min(element_count.values())
+balanced_data = {"input_col": [], "output_col": []}
+class_samples = {label: [] for label in element_count.keys()}
+for input_val, output_val in zip(
+    output_dataset["input_col"], output_dataset["output_col"]
+):
+    class_samples[output_val].append((input_val, output_val))
+for _ in range(min_count):
+    for label in class_samples.keys():
+        sample = random.choice(class_samples[label])
+        # print(sample)
+        balanced_data["input_col"].append(sample[0])
+        balanced_data["output_col"].append(sample[1])
+        class_samples[label].remove(sample)
+output_dataset = Dataset.from_dict(balanced_data)
 
 
 def map_func(example):

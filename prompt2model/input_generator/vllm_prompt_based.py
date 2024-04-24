@@ -188,103 +188,15 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         ]
         return (new_inputs, pseudo_labels)
 
-    def verify(
-        self,
-        prompt_spec: PromptSpec,
-        new_inputs: list[str],
-        labels: list[str] = [],
-        expected_content: str = None,
-        extraction_examples: str = None,
-    ):
-        """Check the generated inputs.
-
-        Args:
-            prompt_spec: A prompt we use to generate new inputs.
-            new_inputs: The generated inputs.
-            labels: The inputs' corresponding labels.
-        """
-
-        if new_inputs is None:
-            return None
-
-        def construct_filter_prompt(
-            few_shot_example_string: str,
-            new_input: str,
-            label: str = None,
-            instruction: str = None,
-            extraction_examples: list[str] = None,
-        ):
-            matches = re.findall(
-                r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
-                few_shot_example_string,
-                re.DOTALL,
-            )
-            assert matches != []
-            high_quality_inputs = [match[0] for match in matches]
-            high_quality_input_string = ""
-            for input in high_quality_inputs:
-                high_quality_input_string += f'"{input}"\n\n'
-            if extraction_examples != []:
-                extraction_example_string = ""
-                for extraction_input, extraction_output in extraction_examples:
-                    extraction_example_string += f"USER: {extraction_input}\n"
-                    extraction_example_string += f"ASSISTANT: {extraction_output}\n"
-                assert extraction_example_string != ""
-            else:
-                assert extraction_examples == [] and label is None
-            return construct_verify_prompt(
-                examples=high_quality_input_string,
-                new_input=new_input,
-                expected_content=expected_content,
-                extraction_example_string=extraction_example_string
-                if extraction_examples != []
-                else None,
-                label=label,
-                instruction=instruction if label is not None else None,
-            )
-
-        filter_prompts = []
-        for i in range(len(new_inputs)):
-            assert (labels[i] is not None and extraction_examples != []) or (
-                labels[i] is None and extraction_examples == []
-            )
-            prompt = construct_filter_prompt(
-                prompt_spec.examples,
-                new_inputs[i],
-                labels[i],
-                prompt_spec.instruction,
-                extraction_examples,
-            )
-            filter_prompts.append(prompt.strip() if labels[i] is not None else prompt)
-        sampling_params = SamplingParams(
-            top_k=-1,
-            top_p=1,
-            temperature=0,
-            max_tokens=500,
-        )
-        output_sequence = self.language_model.generate(filter_prompts, sampling_params)
-        filtered_inputs = [
-            output.text for each in output_sequence for output in each.outputs
-        ]
-        trancated_outputs = []
-        for each in filtered_inputs:
-            if "USER:" in each:
-                trancated_outputs.append(each[: each.index("USER:")].strip())
-            else:
-                trancated_outputs.append(each.strip())
-        return trancated_outputs
-
     def batch_generation_inputs(
         self,
         prompt_spec: PromptSpec,
         generation_epochs: int,
         per_epoch_num: int,
         hyperparameter_choices: dict[str, Any],
-        expected_content,
         optional_list=[],
         intput_length_constraint=False,
         conditional_labels: list[str] = None,
-        extraction_examples: list[(str, str)] = None,
         log_and_data_path: str = ''
     ) -> list[str]:
         """Generate new inputs for a given prompt with a pre-trained model.
@@ -314,16 +226,12 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
         _, mean_plus_2std, mean_minus_2std = calculate_string_metrics(
             [match[0] for match in matches]
         )
-        # mean_plus_2std and mean_minus_2std of inputs
-        # 要么要求 input 在  mean_plus_2std and mean_minus_2std 之内，要么不做要求
-        # 不能只要求上界或者只要求下界
         length_filter = partial(
             min_max_length_filter,
             min_length=int(mean_minus_2std),
             max_length=int(mean_plus_2std),
         )
         generated_inputs = []
-        # [(input, label)]
 
         all_data = {
             'task_name': [],
@@ -377,17 +285,10 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 'drop_reason': ['']*len(new_inputs),
                 'task_type': ['']*len(new_inputs)
             }
-        
+
 
             if new_inputs is not None and new_inputs != []:
 
-                # verified_inputs = self.verify(
-                #     prompt_spec,
-                #     [each.strip() for each in new_inputs],
-                #     pseudo_labels,
-                #     expected_content=expected_content,
-                #     extraction_examples=extraction_examples,
-                # )
 
                 verified_inputs = new_inputs
 
@@ -395,12 +296,10 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 data['verified_input'] = verified_inputs
 
                 inputs_with_idx = [(index, text) for index, text in enumerate(verified_inputs)]
-                
                 inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, empty_filter, "empty input")
                 if intput_length_constraint=='True':
                     inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, length_filter, "input length constraint")
                 inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, ablation_filter, "ablation filter")
-
                 if (inputs_with_idx is not None and inputs_with_idx != []):
                     unique_inputs = set([input for input, _ in generated_inputs])
                     filtered_generated_inputs = []
@@ -413,10 +312,9 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                         else:
                             data['drop_reason'][index] = "duplicated input"
                     generated_inputs.extend(filtered_generated_inputs)
-                
                 for key in all_data.keys():
                     all_data[key].extend(data[key])
-                
+
         data_path = log_and_data_path / "all_generated_data"
         dataset = Dataset.from_dict(all_data)
         dataset.save_to_disk(data_path)
