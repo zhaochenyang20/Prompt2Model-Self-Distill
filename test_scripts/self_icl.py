@@ -1,6 +1,7 @@
 import os
-
+# TODO change card number
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ["WANDB_MODE"] = "offline"
 
 import gc
@@ -156,7 +157,8 @@ def finetune_vicuna(
     task_name,
     max_seq_length=2000,
     per_device_train_batch_size=1,
-    exact_match=True
+    exact_match=True,
+    temperature=0.6
 ):
 
     def filter_func(example):
@@ -164,20 +166,13 @@ def finetune_vicuna(
 
     dataset = datasets.load_from_disk(log_and_data_path +"/"+ "dataset").filter(filter_func)
 
-    is_generation=False
-
-    result_path = f"/home/azureuser/p2mss/p2mss/classification_14/NI_{task_name}_exp_14/best_validation_result.json"
+    dataset_path = f"/home/azureuser/p2mss/p2mss/classification_14/NI_{task_name}_exp_14/{task_name}_{temperature}_True_False_40_14/dataset"
     if not exact_match:
-        result_path = f"/home/azureuser/p2mss/p2mss/generation_11/NI_{task_name}_exp_11/best_validation_result.json"
-        is_generation = True
-    with open(result_path, 'r') as file:
-        data = json.load(file)
-        evaluate_result_path = data.get("evaluate_result_path", "")
-        dataset_path = '/'.join(evaluate_result_path.split('/')[:-1]) + '/dataset'
+        dataset_path = f"/home/azureuser/p2mss/p2mss/generation_11/NI_{task_name}_exp_11/{task_name}_{temperature}_True_True_20_11/dataset"
     dataset = load_from_disk(dataset_path)
     # TODO change n
-    n = 16
-    dataset = dataset.select(range(n))
+    # n = 16
+    # dataset = dataset.select(range(n))
 
     def map_func(example):
         assert prompt_spec.examples != ""
@@ -185,7 +180,7 @@ def finetune_vicuna(
             instruction=prompt_spec.instruction,
             examples=prompt_spec.examples,
             new_input=example["input_col"],
-            is_generation=is_generation,
+            is_generation=False,
             few_shots_prompt = ''
         )
         example["model_output"] = example["output_col"]
@@ -207,10 +202,10 @@ def finetune_vicuna(
             lambda x: (count_tokens_from_string(x["text"], "vicuna") <= max_seq_length)
         )
     )
-    if is_generation:
-        response_template_with_context = "\n\n### Your Output:\n\n"
-    else:
-        response_template_with_context = "\nASSISTANT:\n"
+    # if not exact_match:
+    #     response_template_with_context = "\n\n### Your Output:\n\n"
+    # else:
+    response_template_with_context = "\nASSISTANT:\n"
     response_template_ids = tokenizer.encode(
         response_template_with_context, add_special_tokens=False
     )[2:]
@@ -277,6 +272,7 @@ def validate_or_test(
     test_content_store_path=None,
     log_and_data_path=None,
     metric="exact_match",
+    training_epochs=3
 ):
 
 
@@ -285,7 +281,7 @@ def validate_or_test(
             instruction=instruction,
             new_input=example["input_col"],
             examples=examples,
-            is_generation= (metric == 'exact_match'),
+            is_generation= False,
             few_shots_prompt=''
         )
         example["model_output"] = example["output_col"]
@@ -293,47 +289,59 @@ def validate_or_test(
 
     # first evaluate 
 
-    loaded_dataset = datasets.load_from_disk(evaluation_dataset_path)
-    test_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
-    test_dataset = test_dataset.filter(
-        lambda x: (
-            count_tokens_from_string(x["model_input"], "vicuna") <= 3000
-            and count_tokens_from_string(x["model_output"], "vicuna") <= 500
-        )
-    )
-    prompts = test_dataset["model_input"]
-    GROUND_TRUTH = test_dataset["model_output"]
+    # loaded_dataset = datasets.load_from_disk(evaluation_dataset_path)
+    # test_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
+    # test_dataset = test_dataset.filter(
+    #     lambda x: (
+    #         count_tokens_from_string(x["model_input"], "vicuna") <= 3000
+    #         and count_tokens_from_string(x["model_output"], "vicuna") <= 500
+    #     )
+    # )
+    # prompts = test_dataset["model_input"]
+    # GROUND_TRUTH = test_dataset["model_output"]
 
-    sorted_list = sorted(
-        [each for each in os.listdir(ckpt_path) if ("checkpoint" in each and "tmp" not in each)],
-        key=extract_number,
-    )
+    # sorted_list = sorted(
+    #     [each for each in os.listdir(ckpt_path) if ("checkpoint" in each and "tmp" not in each)],
+    #     key=extract_number,
+    # )
+
+    final_ckpt = ''
+    for each in os.listdir(ckpt_path):
+        json_path = os.path.join(ckpt_path, each, 'trainer_state.json')
+        with open(json_path, 'r') as file:
+            data = json.load(file)
+            epoch_value = data.get("epoch", None)
+            if epoch_value == training_epochs:
+                final_ckpt = os.path.join(ckpt_path, each)
+                print(final_ckpt)
+                break
+            
     
-    evaluate_result = {}
-    for ckpt_index, each in enumerate(sorted_list):
-        model_path = ckpt_path / each
-        tuned_model_generated_outputs = [each.strip() for each in vllm_inference(
-            model_path, gpu_memory_utilization, tensor_parallel_size, prompts
-        )]
-        if metric == "exact_match":
-            score = exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs)
-        else:
-            score = rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs)
-        evaluate_result[model_path] = score
-        name = str(log_and_data_path).split("/")[-1]
-        print(
-            f"\n\nresult of {name} \n path = {model_path} \n epoch {ckpt_index + 1}\n\n------------------------------------------------\n\n{score}\n\n------------------------------------------------\n\n"
-        )
-        evaluate_generated_content_path = log_and_data_path / "generated_contents"
-        evaluate_generated_content_path.mkdir(parents=True, exist_ok=True)
-        content_store_path = str(
-            evaluate_generated_content_path / str(ckpt_index + 1)
-        )
-        store_evaluation_content(
-            content_store_path, tuned_model_generated_outputs, prompts, GROUND_TRUTH
-        )
+    # evaluate_result = {}
+    # for ckpt_index, each in enumerate(sorted_list):
+    #     model_path = ckpt_path / each
+    #     tuned_model_generated_outputs = [each.strip() for each in vllm_inference(
+    #         model_path, gpu_memory_utilization, tensor_parallel_size, prompts
+    #     )]
+    #     if metric == "exact_match":
+    #         score = exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs)
+    #     else:
+    #         score = rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs)
+    #     evaluate_result[model_path] = score
+    #     name = str(log_and_data_path).split("/")[-1]
+    #     print(
+    #         f"\n\nresult of {name} \n path = {model_path} \n epoch {ckpt_index + 1}\n\n------------------------------------------------\n\n{score}\n\n------------------------------------------------\n\n"
+    #     )
+    #     evaluate_generated_content_path = log_and_data_path / "generated_contents"
+    #     evaluate_generated_content_path.mkdir(parents=True, exist_ok=True)
+    #     content_store_path = str(
+    #         evaluate_generated_content_path / str(ckpt_index + 1)
+    #     )
+    #     store_evaluation_content(
+    #         content_store_path, tuned_model_generated_outputs, prompts, GROUND_TRUTH
+    #     )
 
-    best_model_path = max(evaluate_result, key=evaluate_result.get)
+    # best_model_path = max(evaluate_result, key=evaluate_result.get)
 
 
     #! test
@@ -351,7 +359,7 @@ def validate_or_test(
     GROUND_TRUTH = test_dataset["model_output"]
     
     tuned_model_generated_outputs = vllm_inference(
-        best_model_path, gpu_memory_utilization, tensor_parallel_size, prompts
+        final_ckpt, gpu_memory_utilization, tensor_parallel_size, prompts
     )
     if metric == "exact_match":
         score = exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs)
@@ -369,9 +377,9 @@ def validate_or_test(
 
 
 # TODO: store ckpt or call test ahd store model output
-model_path = Path(
-    MODEL_PATH
-)
+# model_path = Path(
+#     MODEL_PATH
+# )
 
 # classification
 # task 1529
@@ -390,33 +398,97 @@ model_path = Path(
 # """
 # )
 # task 1612
+# prompt_spec = MockPromptSpec(
+#     task_type=TaskType.CLASSIFICATION,
+#     instruction="In this task, you're given a pair of sentences, sentence 1 and sentence 2. Your job is to choose whether the two sentences clearly agree (entailment)/disagree (contradiction) with each other, or if this cannot be determined (neutral). Your answer must be in the form of the numbers 0 (entailment), 1 (neutral), or 2(contradiction).",
+#     examples="""
+# [input]="sentence_A: A dancer is dancing on the stage. sentence_B: A girl is giving dance performance on the dais."
+# [output]="0"
+# [input]="sentence_A: The crowd is cheering at her dance performance. sentence_B: The group is enjoying while eating food."
+# [output]="1"
+# [input]="sentence_A: A man is standing and has tears of joy seeing the dance performance. sentence_B: There is no man standing with happiness seeing the dance."
+# [output]="2"
+# """
+# )
+# task 1516
+# prompt_spec = MockPromptSpec(
+#     task_type=TaskType.CLASSIFICATION,
+#     instruction="In this task, you are given a premise and hypothesis. The task is to classify them into three categories: 'positive' if the hypothesis supports the premise, 'negated' if it opposes the premise, and 'neutral' if it neither supports nor opposes it.",
+#     examples="""
+# [input]="'Premise : All ten guys that proved to boast were divorcing.','Hypothesis : There are exactly ten guys that proved to boast.'"
+# [output]="positive"
+# [input]="'Premise : All ten reports that can bore some waiter aren't disagreeing with Naomi.','Hypothesis : There are exactly eleven reports that can bore some waiter.'"
+# [output]="negated"
+# [input]="Premise : All ten guys that proved to boast weren't divorcing.','Hypothesis : There are exactly ten senators that proved to boast.'"
+# [output]="neutral"
+# """
+# )
+# task 1615
+# prompt_spec = MockPromptSpec(
+#     task_type=TaskType.CLASSIFICATION,
+#     instruction="In this task, given 2 input sentences, you must classify the relation between them. If the second sentence has a similar meaning to that of the first sentence then the output is 'B_entails_A', if the second sentence has the opposite meaning to the first sentence then it is classified as 'B_contradicts_A'. If you cannot clearly ascertain agreement/disagreement between the two sentences, the label is 'B_neutral_A'.",
+#     examples="""
+# [input]="sentence_A: man is wearing a hard hat and dancing. sentence_B: There is no man with a hard hat dancing."
+# [output]="B_contradicts_A"
+# [input]="sentence_A: A baby is crying. sentence_B: A man is exercising."
+# [output]="B_neutral_A"
+# [input]="sentence_A: A tiger is pacing around a cage. sentence_B: A tiger is walking around a cage."
+# [output]="B_entails_A"
+# """
+# )
+# task 284
+# prompt_spec = MockPromptSpec(
+#     task_type=TaskType.CLASSIFICATION,
+#     instruction="In this task, you are given a review of movie. Your task is to classify given movie review into two categories: 1) positive, and 2) negative based on its content.",
+#     examples="""
+# [input]="For a movie that gets no respect there sure are a lot of memorable quotes listed for this gem. Imagine a movie where Joe Piscopo is actually funny! Maureen Stapleton is a scene stealer. The Moroni character is an absolute scream. Watch for Alan The Skipper Hale jr. as a police Sgt."
+# [output]="positive"
+# [input]="Bizarre horror movie filled with famous faces but stolen by Cristina Raines (later of TV's Flamingo Road) as a pretty but somewhat unstable model with a gummy smile who is slated to pay for her attempted suicides by guarding the Gateway to Hell! The scenes with Raines modeling are very well captured, the mood music is perfect, Deborah Raffin is charming as Cristina's pal, but when Raines moves into a creepy Brooklyn Heights brownstone (inhabited by a blind priest on the top floor), things really start cooking. The neighbors, including a fantastically wicked Burgess Meredith and kinky couple Sylvia Miles & Beverly D'Angelo, are a diabolical lot, and Eli Wallach is great fun as a wily police detective. The movie is nearly a cross-pollination of Rosemary's Baby and The Exorcist--but what a combination! Based on the best-seller by Jeffrey Konvitz, The Sentinel is entertainingly spooky, full of shocks brought off well by director Michael Winner, who mounts a thoughtfully downbeat ending with skill."
+# [output]="positive"
+# [input]="I felt brain dead, I'll tell you. This is the worst film I have ever bought. (in my ignorance I thought this was the Peter Jackson film of the same name). The performances are so terrible they are laughable. The special effects have not stood the test of time and look dire. The script promotes that kind of TV movie, stare into the middle distance kind of acting. The cast look as if they have been taking lessons from Joey Tribbiani, they have one look each, and stick to it. Plus I have never been confused by a movie until I sat down to watch this. The is it a dream or no plot is so terrible that frustration sets in within a few minutes. Avoid like a plague."
+# [output]="negative"
+# """
+# )
+# task 329
+# prompt_spec = MockPromptSpec(
+#     task_type=TaskType.CLASSIFICATION,
+#     instruction="""In this task, you will be presented with a text, a pronoun from the text, and two candidate names. You should determine what the pronoun refers to and classify the answers into A, B, or Neither. A and B here are referring to option A and option B. Position of the pronoun in the text is showed within two "_"s.""",
+#     examples="""
+# [input]="He grew up in Evanston, Illinois the second oldest of five children including his brothers, Fred and Gordon and sisters, Marge (Peppy) and Marilyn. His high school days were spent at New Trier High School in Winnetka, Illinois. MacKenzie studied with Bernard Leach from 1949 to 1952. _His_ simple, wheel-thrown functional pottery is heavily influenced by the oriental aesthetic of Shoji Hamada and Kanjiro Kawai. , Pronoun: His , A: MacKenzie , B: Bernard Leach"
+# [output]="A"
+# [input]="Reb Chaim Yaakov's wife is the sister of Rabbi Moishe Sternbuch, as is the wife of Rabbi Meshulam Dovid Soloveitchik, making the two Rabbis his uncles. Reb Asher's brother Rabbi Shlomo Arieli is the author of a critical edition of the novallae of Rabbi Akiva Eiger. Before _his_ marriage, Rabbi Arieli studied in the Ponevezh Yeshiva headed by Rabbi Shmuel Rozovsky, and he later studied under his father-in-law in the Mirrer Yeshiva. , Pronoun: his , A: Reb Asher , B: Akiva Eiger"
+# [output]="Neither"
+# [input]="Kathleen Nott was born in Camberwell, London. Her father, Philip, was a lithographic printer, and her mother, Ellen, ran a boarding house in Brixton; Kathleen was their third daughter. _She_ was educated at Mary Datchelor Girls' School (now closed), London, before attending King's College, London. , Pronoun: She , A: Ellen , B: Kathleen"
+# [output]="B"
+# """
+# )
+# task 346
 prompt_spec = MockPromptSpec(
     task_type=TaskType.CLASSIFICATION,
-    instruction="In this task, you're given a pair of sentences, sentence 1 and sentence 2. Your job is to choose whether the two sentences clearly agree (entailment)/disagree (contradiction) with each other, or if this cannot be determined (neutral). Your answer must be in the form of the numbers 0 (entailment), 1 (neutral), or 2(contradiction).",
+    instruction="""In this task, you will be presented with a question, a word, and a POS tag. You have to determine whether the part-of-speech tag of the given word in the question is equal to the given POS tag or not. Give your answer with True or False. Here is the Alphabetical list of part-of-speech tags used in this task: CC: Coordinating conjunction, CD: Cardinal number, DT: Determiner, EX: Existential there, FW: Foreign word, IN: Preposition or subordinating conjunction, JJ: Adjective, JJR: Adjective, comparative, JJS: Adjective, superlative, LS: List item marker, MD: Modal, NN: Noun, singular or mass, NNS: Noun, plural, NNP: Proper noun, singular, NNPS: Proper noun, plural, PDT: Predeterminer, POS: Possessive ending, PRP: Personal pronoun, PRP$: Possessive pronoun, RB: Adverb, RBR: Adverb, comparative, RBS: Adverb, superlative, RP: Particle, SYM: Symbol, TO: to, UH: Interjection, VB: Verb, base form, VBD: Verb, past tense, VBG: Verb, gerund or present participle, VBN: Verb, past participle, VBP: Verb, non-3rd person singular present, VBZ: Verb, 3rd person singular present, WDT: Wh-determiner, WP: Wh-pronoun, WP$: Possessive wh-pronoun, WRB: Wh-adverb""",
     examples="""
-[input]="sentence_A: A dancer is dancing on the stage. sentence_B: A girl is giving dance performance on the dais."
-[output]="0"
-[input]="sentence_A: The crowd is cheering at her dance performance. sentence_B: The group is enjoying while eating food."
-[output]="1"
-[input]="sentence_A: A man is standing and has tears of joy seeing the dance performance. sentence_B: There is no man standing with happiness seeing the dance."
-[output]="2"
+[input]="Who were the builders of the mosque in Herat with fire temples ? , Word: Who , POS tag: IN"
+[output]="False"
+[input]="What is the borough in which Kia Oval is located ? , Word: is , POS tag: VBZ"
+[output]="True"
 """
 )
 
-
 # TODO change task name here
-task_name = 'task1612'
+task_name = 'task346'
 # TODO change task pramas here
 prompt_spec = prompt_spec
 # TODO change log_and_data_path, choose best ckpt generated dataset to finetune, same as self-icl
 # log_and_data_path = "/home/azureuser/p2mss/p2mss/classification_14/NI_task1529_exp_14/task1529_1.0_True_False_40_14"
-log_and_data_path = "/home/azureuser/p2mss/p2mss/classification_14/NI_task1612_exp_14/task1612_1.0_False_False_40_14"
+log_and_data_path = f"/home/azureuser/p2mss/p2mss/classification_14/NI_{task_name}_exp_14/{task_name}_0.6_True_False_40_14"
 ckpt_path = Path(STORE_ROOT+f"/ckpt_data_p2ms/few_finetune_{task_name}")
 pretrain_model_path = Path(MODEL_PATH)
-training_epochs = 6
+# TODO change training_epochs
+training_epochs = 3
+# TODO change this
+is_classification = True
 resume_from_checkpoint = False
 run_name = log_and_data_path.split('/')[-2] + 'x' # to be different from previous runs
-task_name = run_name.split('_')[1]
 
 finetune_vicuna(
     prompt_spec,
@@ -429,7 +501,7 @@ finetune_vicuna(
     task_name,
     max_seq_length=2000,
     per_device_train_batch_size=1,
-    exact_match=True
+    exact_match=is_classification
 )
 
 
@@ -440,11 +512,11 @@ instruction = prompt_spec.instruction
 examples = prompt_spec.examples
 gpu_memory_utilization = 0.9
 tensor_parallel_size = 1
-# change path
-# log_and_data_path = Path(ROOT) / 'task1529_x_finetune'
-log_and_data_path = Path(ROOT) / 'task1612_x_finetune'
-test_content_store_path = log_and_data_path / 'best_few_shot_result'
-metric="exact_match"
+# TODO change path
+log_and_data_path = Path(ROOT) / f'{task_name}_rerun_test'
+test_content_store_path = log_and_data_path / 'inference_result'
+# TODO double check
+metric="exact_match" if is_classification else 'rouge'
 
 validate_or_test(
     evaluation_dataset_path,
@@ -456,7 +528,8 @@ validate_or_test(
     tensor_parallel_size,
     test_content_store_path=test_content_store_path,
     log_and_data_path=log_and_data_path,
-    metric="exact_match",
+    metric=metric,
+    training_epochs=training_epochs
 )
 
 

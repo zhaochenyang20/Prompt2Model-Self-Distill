@@ -12,11 +12,11 @@ from prompt2model.output_annotator import OutputAnnotator
 from prompt2model.output_annotator.prompt_template import construct_meta_prompt
 from prompt2model.utils.path import MODEL_PATH
 from prompt2model.prompt_parser import PromptSpec
-from prompt2model.quality_evaluator import (
-    ablation_list_filter,
-    min_max_length_filter,
-    self_consistency_filter,
-)
+# from prompt2model.quality_evaluator import (
+#     ablation_list_filter,
+#     min_max_length_filter,
+#     self_consistency_filter,
+# )
 from prompt2model.utils import count_tokens_from_string, get_formatted_logger
 from IPython import embed
 
@@ -118,44 +118,44 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             A dataset of `input_col` and `output_col`.
         """
 
-        def calculate_string_metrics(string_list):
-            # Calculate the lengths of each string
-            lengths = np.array([len(s) for s in string_list])
-            # Calculate mean and standard deviation
-            mean_length = np.mean(lengths)
-            std_dev = np.std(lengths)
-            # Calculate mean ± 2σ
-            mean_plus_2std = mean_length + 2 * std_dev
-            mean_minus_2std = mean_length - 2 * std_dev
+        # def calculate_string_metrics(string_list):
+        #     # Calculate the lengths of each string
+        #     lengths = np.array([len(s) for s in string_list])
+        #     # Calculate mean and standard deviation
+        #     mean_length = np.mean(lengths)
+        #     std_dev = np.std(lengths)
+        #     # Calculate mean ± 2σ
+        #     mean_plus_2std = mean_length + 2 * std_dev
+        #     mean_minus_2std = mean_length - 2 * std_dev
 
-            return mean_length, mean_plus_2std, mean_minus_2std
+        #     return mean_length, mean_plus_2std, mean_minus_2std
 
         matches = re.findall(
             r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
             prompt_spec.examples,
             re.DOTALL,
         )
-        assert matches != []
-        _, mean_plus_2std, mean_minus_2std = calculate_string_metrics(
-            [match[1] for match in matches]
-        )
+        # assert matches != []
+        # _, mean_plus_2std, mean_minus_2std = calculate_string_metrics(
+        #     [match[1] for match in matches]
+        # )
 
         prompts = []
-        consistency_filter = partial(
-            self_consistency_filter,
-            min_frequency=hyperparameter_choices.get("min_frequency", 0.2),
-        )
-        length_filter = partial(
-            min_max_length_filter,
-            min_length=int(mean_minus_2std),
-            max_length=int(mean_plus_2std),
-        )
-        ablation_filter = partial(ablation_list_filter, optional_list=optional_list)
+        # consistency_filter = partial(
+        #     self_consistency_filter,
+        #     min_frequency=hyperparameter_choices.get("min_frequency", 0.2),
+        # )
+        # length_filter = partial(
+        #     min_max_length_filter,
+        #     min_length=int(mean_minus_2std),
+        #     max_length=int(mean_plus_2std),
+        # )
+        # ablation_filter = partial(ablation_list_filter, optional_list=optional_list)
 
-        all_outputs = {
-            'output': [],
-            'drop_reason': [],
-        }
+        # all_outputs = {
+        #     'output': [],
+        #     'drop_reason': [],
+        # }
 
         for input in input_strings:
             prompts += [
@@ -168,7 +168,7 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
                 )
             ]
         sampling_params = SamplingParams(
-            n=hyperparameter_choices.get("n", 10),
+            n=hyperparameter_choices.get("n", 1), # TODO: to generate only one
             best_of=hyperparameter_choices.get("best_of", 20),
             top_k=hyperparameter_choices.get("top_k", 10),
             temperature=hyperparameter_choices.get("temperature", 0.2),
@@ -181,44 +181,47 @@ class VLLMPromptBasedOutputAnnotator(OutputAnnotator):
             outputs = []
             for output in output_sequence[idx].outputs:
                 if (output.text is not None and output.text != ""):
-                    outputs.append(output.text.strip())
-                else:
-                    all_outputs["drop_reason"].append('empty output')
-                    all_outputs["output"].append(output)
-            trancated_outputs = [each.strip() for each in outputs]
+                    outputs.append(output.text.strip()[1:-1])
+                # else:
+                #     all_outputs["drop_reason"].append('empty output')
+                #     all_outputs["output"].append(output)
+            outputs = [each.strip() for each in outputs]
             # 3 filters: consistency_filter, ablation_filter, length_filter
             # length filter and ablation filter
-            outputs = []
-            for output in trancated_outputs:
-                if output_length_constraint and not length_filter([output]):
-                    all_outputs["drop_reason"].append('output length constrain')
-                    all_outputs["output"].append(output)
-                    continue
-                if not ablation_filter([output]):
-                    all_outputs["drop_reason"].append('ablation filter')
-                    all_outputs["output"].append(output)
-                    continue
-                outputs.append(output)
+            # outputs = []
+            # for output in trancated_outputs:
+                # if output_length_constraint and not length_filter([output]):
+                #     all_outputs["drop_reason"].append('output length constrain')
+                #     all_outputs["output"].append(output)
+                #     continue
+                # if not ablation_filter([output]):
+                #     all_outputs["drop_reason"].append('ablation filter')
+                #     all_outputs["output"].append(output)
+                #     continue
+                # outputs.append(output)
+            # outputs = trancated_outputs
 
             # consistency_filter
-            consistent_output = consistency_filter(outputs)
-            for output in outputs:
-                if output != consistent_output:
-                    all_outputs["drop_reason"].append('consistent filter')
-                    all_outputs["output"].append(output)
+            # consistent_output = consistency_filter(outputs)
+            # for output in outputs:
+                # if output != consistent_output:
+                #     all_outputs["drop_reason"].append('consistent filter')
+                #     all_outputs["output"].append(output)
  
-            if (
-                consistent_output is not None
-                and consistent_output != ""
-                and isinstance(consistent_output, str)
-            ):
-                input_cols.append(input)
-                output_cols.append(consistent_output)
+            # if (
+            #     consistent_output is not None
+            #     and consistent_output != ""
+            #     and isinstance(consistent_output, str)
+            # ):
+            input_cols.append(input)
+            output_cols.append(outputs[0])
+            print(f'input = {input}, output = {outputs[0]}')
         
-        data_path = log_and_data_path / "output_recording"
-        outputs = datasets.Dataset.from_dict(all_outputs)
-        outputs.save_to_disk(data_path)
+        # data_path = log_and_data_path / "output_recording"
+        # outputs = datasets.Dataset.from_dict(all_outputs)
+        # outputs.save_to_disk(data_path)
 
         return datasets.Dataset.from_dict(
             dict(input_col=input_cols, output_col=output_cols)
-        ).shuffle()
+        )
+        # .shuffle()

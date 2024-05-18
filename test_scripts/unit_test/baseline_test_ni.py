@@ -10,6 +10,7 @@ from pathlib import Path
 from prompt2model.quality_evaluator import self_consistency_filter
 from functools import partial
 import datasets
+from datasets import load_from_disk
 from vllm import LLM, SamplingParams
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 from prompt2model.output_annotator import construct_meta_prompt
@@ -89,20 +90,16 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
         scores.append(f_measure)
     return sum(scores) / len(scores)
 
-def evaluate_model(task_names, finetuned=False, exact_match=False):  
+def evaluate_model(task_names, finetuned=False, classification=False):  
     if finetuned:
-        inputs_dir = Path(ROOT + '/finetune_generated_data_prompt_sensitivity')
+        inputs_dir = Path(ROOT + '/self_icl_finetune_generated_data')
     else:
-        inputs_dir = Path(ROOT+"/baseline_generated_data")
+        inputs_dir = Path(ROOT + "/self_icl_baseline_generated_data")
 
     for task_name in task_names:
 
         if finetuned:
-            if exact_match:
-                ckpt_path=f'/home/azureuser/p2mss/p2mss/best_ckpt/NI_{task_name}_exp_14'
-            else:
-                ckpt_path=f'/home/azureuser/p2mss/p2mss/best_ckpt/NI_{task_name}_exp_11' 
-
+            ckpt_path=f'/home/azureuser/p2mss/p2mss/best_ckpt/final_{task_name}'
             model = LLM(
                 model=ckpt_path,
                 gpu_memory_utilization=0.9,
@@ -116,17 +113,16 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                 swap_space = 16,
                 tensor_parallel_size=1,
             )
-        # TODO change suffix
+        # change suffix
         suffix = '\n'
 
-        # TODO change notion
+        # change notion
         # notions = [':', ' ']
         notions = ['=']
         for notion in notions:
             
-            # TODO double check test type: "test" or "eval"
-            for test_type in ["eval"]:
-                # TODO double check if you want old or new dataset
+            # double check test type: "test" or "eval"
+            for test_type in ["test"]:
                 test_dataset = datasets.load_from_disk(
                     f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
                 )
@@ -151,15 +147,27 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                     examples=examples,
                 )
 
+                few_shots_prompt = ""
+                dataset_path = f"/home/azureuser/p2mss/p2mss/classification_14/NI_{task_name}_exp_14/{task_name}_0.6_True_False_40_14/dataset"
+                if not classification:
+                    dataset_path = f"/home/azureuser/p2mss/p2mss/generation_11/NI_{task_name}_exp_11/{task_name}_1.0_True_True_20_11/dataset"
+                dataset = load_from_disk(dataset_path)
+                inputs = dataset['input_col']
+                outputs = dataset['output_col']
+                # TODO: 改长度
+                n = 22
+                for i in range(n):
+                    few_shots_prompt += 'USER: [input] = ' + inputs[i] + '\n'
+                    few_shots_prompt += 'ASSISTANT: ' + outputs[i] + '\n'
+
                 
                 def map_func(example):
-                    # TODO add \n or not
                     example["model_input"] = construct_meta_prompt(
                         instruction=prompt_spec.instruction,
                         examples=prompt_spec.examples,
                         new_input=example["input_col"],
                         is_generation=False,
-                        few_shots_prompt='',
+                        few_shots_prompt=few_shots_prompt,
                         notion=notion,
                         suffix=suffix
                     )
@@ -170,12 +178,15 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 
                 test_dataset = test_dataset.filter(
                     lambda x: (
-                        count_tokens_from_string(x["model_input"], "vicuna") <= 3000
-                        and count_tokens_from_string(x["model_output"], "vicuna") <= 500
+                        count_tokens_from_string(x["model_input"], "vicuna") <= 4096
+                        # and count_tokens_from_string(x["model_output"], "vicuna") <= 4096
                     )
                 )
 
                 prompts = test_dataset["model_input"]
+                for prompt in prompts:
+                    token_num = count_tokens_from_string(prompt, "vicuna")
+                    print(token_num)
                 GROUND_TRUTH = test_dataset["model_output"]
                 hyperparameter_choices = {}
 
@@ -213,14 +224,13 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 
                 evaluate_result = (
                     rouge_l_score(GROUND_TRUTH, decoded_outputs)
-                    if not exact_match
+                    if not classification
                     else exact_match_score(GROUND_TRUTH, decoded_outputs)
                 )
                 
                 print(f"{task_name} {test_type} notion={notion} => {evaluate_result}")
                 #TODO change file name every day
-                suffix_coding = 1
-                evaluate_generated_content_path = inputs_dir / f"20240326_{notion}_{task_name}_{suffix_coding}"
+                evaluate_generated_content_path = inputs_dir / f"20240327_{task_name}"
                 datasets.Dataset.from_dict(
                     dict(
                         model_output=decoded_outputs,
@@ -237,7 +247,8 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 
 
 classification_tasks = ["task190", "task199", "task200", "task738", "task937", "task1385", "task1386", "task1516", "task1529", "task1612", "task1615", "task284", "task329", "task346"]
-generation_tasks = ["task121", "task039", "task036", "task1195", "task1345", "task1562","task281", "task1622"]
+classification_tasks = ["task284"]
+# generation_tasks = ["task121", "task039", "task036", "task1195", "task1345", "task1562","task281", "task1622"]
 
 # TODO change task
 # TODO determine baseline or finetuned model
@@ -245,12 +256,12 @@ generation_tasks = ["task121", "task039", "task036", "task1195", "task1345", "ta
             
 # generation tasks:
 # task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
-evaluate_model(generation_tasks, finetuned=False, exact_match=False)
-# evaluate_model(generation_tasks, finetuned=True, exact_match=False)  
+# evaluate_model(generation_tasks, finetuned=False, classification=False)
+# evaluate_model(generation_tasks, finetuned=True, classification=False)  
 
 # classification tasks
 # task_names = ["task346", "task190", "task199", "task1612", "task200", "task738", "task937", 
 #               "task1385", "task1386", "task1516", "task1529", "task1615", "task284", "task329"][0::2]
 # task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
-evaluate_model(classification_tasks, finetuned=False, exact_match=True)
-# evaluate_model(classification_tasks, finetuned=True, exact_match=True)
+evaluate_model(classification_tasks, finetuned=False, classification=True)
+# evaluate_model(classification_tasks, finetuned=True, classification=True)

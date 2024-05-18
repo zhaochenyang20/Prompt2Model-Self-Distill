@@ -1,8 +1,0 @@
-INFO 02-08 04:22:00 llm_engine.py:72] Initializing an LLM engine with config: model='lmsys/vicuna-7b-v1.5', tokenizer='lmsys/vicuna-7b-v1.5', tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.float16, max_seq_len=4096, download_dir=None, load_format=auto, tensor_parallel_size=1, quantization=None, seed=0)
-INFO 02-08 04:22:05 llm_engine.py:207] # GPU blocks: 7445, # CPU blocks: 2048
-task1385 test: 0.34
-task1385 eval: 0.3333333333333333
-task1612 test: 0.513
-task1612 eval: 0.51625
-task1615 test: 0.604
-task1615 eval: 0.63

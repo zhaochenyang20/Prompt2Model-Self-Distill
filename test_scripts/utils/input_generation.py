@@ -1,11 +1,8 @@
 import gc
-
 import datasets
 import torch
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
-
 from prompt2model.input_generator import VLLMPromptBasedInputGenerator
-
 
 def generate_and_write_inputs(
     prompt_spec,
@@ -38,7 +35,7 @@ def generate_and_write_inputs(
         extraction_examples=extraction_examples,
         log_and_data_path=log_and_data_path
     )
-    inputs = [each[0] for each in input_tuples]
+    inputs = [each[0][1:-1] for each in input_tuples]
     with open(log_and_data_path / f"inputs.txt", "w", encoding="utf-8") as file:
         for index, item in enumerate(inputs):
             file.write(

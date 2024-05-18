@@ -15,6 +15,14 @@ from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
 from prompt2model.utils.path import STORE_ROOT, ROOT, TEST_DATA_ROOT, MODEL_PATH
+from IPython import embed
+import re
+import numpy as np
+from prompt2model.quality_evaluator import (
+    ablation_list_filter,
+    min_max_length_filter,
+)
+
 
 VICUNA = LLM(
     model=MODEL_PATH,
@@ -73,7 +81,8 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             test_dataset = datasets.load_from_disk(
                 f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
             )
-            inputs_dir = Path(ROOT+"/baseline_generated_data")
+            inputs_dir = Path(ROOT+"/pass_filter")
+            inputs_dir.mkdir(parents=True, exist_ok=True)
 
             file_path = ROOT+"/main/NI_tasks/tasks.json"
 
@@ -89,6 +98,34 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             task_name = data[index]["task_name"]
             examples = data[index]["examples"]
 
+            matches = re.findall(
+                r'\[input\]="(.*?)"\s*\[output\]="(.*?)"',
+                examples,
+                re.DOTALL,
+            )
+            
+            example_outputs = [match[1] for match in matches]
+
+            def calculate_string_metrics(string_list):
+                lengths = np.array([len(s) for s in string_list])
+                mean_length = np.mean(lengths)
+                std_dev = np.std(lengths)
+                mean_plus_2std = mean_length + 2 * std_dev
+                mean_minus_2std = mean_length - 2 * std_dev
+                return mean_length, mean_plus_2std, mean_minus_2std
+
+            _, mean_plus_2std, mean_minus_2std = calculate_string_metrics(
+                [match[0] for match in matches]
+            )
+            
+            length_filter = partial(
+            min_max_length_filter,
+            min_length=int(mean_minus_2std),
+            max_length=int(mean_plus_2std),
+        )
+
+            ablation_filter = partial(ablation_list_filter, optional_list=["input", "output", "\n\n", "\\_\\_"])
+        
             prompt_spec = MockPromptSpec(
                 task_type=TaskType.TEXT_GENERATION,
                 instruction=task_instruction,
@@ -121,8 +158,8 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             sampling_params = SamplingParams(
                 n=hyperparameter_choices.get("n", 10),
                 best_of=hyperparameter_choices.get("best_of", 20),
-                top_k=hyperparameter_choices.get("top_k", 10),
-                temperature=hyperparameter_choices.get("temperature", 0.2),
+                top_k=hyperparameter_choices.get("top_k", 40),
+                temperature=hyperparameter_choices.get("temperature", 1.0),
                 max_tokens=hyperparameter_choices.get("max_tokens", 500),
             )
             consistency_filter = partial(
@@ -140,15 +177,11 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                     for output in VICUNA_outputs[idx].outputs
                     if (output.text is not None and output.text != "")
                 ]
-                consistent_output = consistency_filter(outputs)
-                if (
-                    consistent_output is not None
-                    and consistent_output != ""
-                    and isinstance(consistent_output, str)
-                ):
-                    decoded_outputs.append(consistent_output)
-                else:
+                passed_outputs = ablation_filter(length_filter(outputs))
+                if passed_outputs is None:
                     decoded_outputs.append("No Output")
+                else:
+                    decoded_outputs.append(passed_outputs[0])
 
             evaluate_result = (
                 rouge_l_score(GROUND_TRUTH, decoded_outputs)
@@ -157,7 +190,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             )
             print(f"{task_name} {test_type}: {evaluate_result}")
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"20240312_{test_type}_{task_name}"
+            evaluate_generated_content_path = inputs_dir / f"20240426_{test_type}_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=decoded_outputs,
@@ -168,10 +201,10 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         gc.collect()
 
 # TODO 改任务
-# print("generation tasks:")
-# task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
-# evaluate_model(task_names, finetuned=False, exact_match=False)
-print("classification tasks:")
-task_names = ["task346", "task190", "task199", "task1612", "task200", "task738", "task937", 
-              "task1385", "task1386", "task1516", "task1529", "task1615", "task284", "task329"][0::2]
-evaluate_model(task_names, finetuned=False, exact_match=True)
+print("generation tasks:")
+task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
+evaluate_model(task_names, finetuned=False, exact_match=False)
+# print("classification tasks:")
+# task_names = ["task346", "task190", "task199", "task1612", "task200", "task738", "task937", 
+#               "task1385", "task1386", "task1516", "task1529", "task1615", "task284", "task329"]
+# evaluate_model(task_names, finetuned=False, exact_match=True)

@@ -6,8 +6,10 @@ os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
 
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+
+current_ckpt_path = ''
 
 TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
 
@@ -17,45 +19,42 @@ from utils.tasks import task199, task201, task190, task1386, task1554, task738, 
 import itertools
 from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 
-
-
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
 # TODO change experiment rank
-experiment_rank = 19
-# 14 用双向 in + != ""，14 copy 是用双向 in + != ""
-# 15 strictly exact match
+experiment_rank = 34
+# 14 新match
 # 16 for abblation study, without self verify
 # 17 reverse label
 # 18 for debugging
 # 19 prompt sensitivity
+# 20 scaling
+# 31 for no filter generation
+# 32 for no filter generation
+# 33 for no filter generation
+# ee for debug filter
+# 34 for debugging \\_
 
 gpu_memory_utilization = 0.9
 # 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
 per_device_train_batch_size = 1
 # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
+#! TODO 改动 max_training_epochs，这也是个可以搜的参数
 max_training_epochs = 3
-from main import main, validate_or_test
-
-# [task1388. task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1615]
-# [task1386, task1529, task190, task200, task937, task642, task1612, task1516]
-# 1388 ，task1386 先不跑了
-
-[task346, task190, task199, task1612, task200, task738, task937, task1385, task1386, task1516, task1529, task1615, task284, task329]
+from main_without_validation import main, validate_or_test
 
 # TODO change task
 
-for task in [task346]:
+for task in [task1615]: # task1516, task1529, task1612, task1615, task284, task329, task346
 
     task_name = task.task_name
     # TODO 加expected content和metrics
     experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
     # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
-    # TODO 改显存配置
-
     log_and_data_root = Path(ROOT) / experiment_name
     evaluation_result_file_tail = "result.json"
     ckpt_root = Path(STORE_ROOT+"/ckpt_data_p2ms")
+    current_ckpt_path = ckpt_root
     best_ckpt_path = Path(STORE_ROOT+"/best_ckpt")
     best_validation_result_path = log_and_data_root / "best_validation_result.json"
     log_and_data_root.mkdir(parents=True, exist_ok=True)
@@ -68,6 +67,7 @@ for task in [task346]:
             "generation_temperature",
             "intput_length_constraint",
             "output_length_constraint",
+            "generation_epochs",
         ] + ["epoch_" + str(i) for i in range(1, max_training_epochs + 1)]
         csv_data = []
         for experiment_folder in log_and_data_root.iterdir():
@@ -112,7 +112,6 @@ for task in [task346]:
     labels = task.labels
     extraction_examples = task.extraction_examples
 
-    # TODO: change generation epoch here
     def objective_function(
         generation_temperature,
         intput_length_constraint,
@@ -160,93 +159,20 @@ for task in [task346]:
             "conditional_labels": labels,
             "extraction_examples": extraction_examples,
         }
-
         with open(log_and_data_path / "config.json", "w") as f:
             json.dump(params, f, indent=4)
-        required_paths = [
-            log_and_data_path / evaluation_result_file_tail,
-            log_and_data_path / "inputs",
-            log_and_data_path / "dataset",
-        ]
+        main(str(log_and_data_path / "config.json"))
+        return 0
 
-        evaluate_result_path = log_and_data_path / evaluation_result_file_tail
 
-        if evaluate_result_path.exists():
-            evaluate_result = read_json(evaluate_result_path)
-        else:
-            evaluate_result = {}
-            with open(evaluate_result_path, "w") as f:
-                json.dump(evaluate_result, f, indent=4)
-
-        best_validation_result = 0
-        validation_results = {}
-        if best_validation_result_path.exists():
-            validation_results = read_json(best_validation_result_path)
-            best_validation_result = validation_results.get("validation_result", 0)
-        else:
-            best_validation_result = 0
-            with open(best_validation_result_path, "w") as f:
-                json.dump({}, f, indent=4)
-
-        if (
-            not all(path.exists() for path in required_paths)
-            or len(list(evaluate_result.keys())) < max_training_epochs
-        ):
-            print(log_and_data_path)
-            ckpt_paths_and_result = main(str(log_and_data_path / "config.json"))
-
-            if ckpt_paths_and_result is None:
-                return 0
-
-            highest_result_path = max(
-                ckpt_paths_and_result, key=ckpt_paths_and_result.get
-            )
-            highest_validation_result = ckpt_paths_and_result[highest_result_path]
-
-            if highest_validation_result > best_validation_result:
-                # Update the best validation result and write to file
-                validation_results = {
-                    "task_name": task_name,
-                    "validation_result": highest_validation_result,
-                    "evaluate_result_path": str(evaluate_result_path),
-                    "ckpt_path": str(highest_result_path),
-                }
-                with open(best_validation_result_path, "w") as f:
-                    json.dump(validation_results, f, indent=4)
-
-                # Move the best checkpoint and delete others
-                task_best_ckpt_path = Path(best_ckpt_path) / experiment_name
-                if task_best_ckpt_path.exists():
-                    print_and_execute_command(f"rm -rf {task_best_ckpt_path}")
-                print_and_execute_command(
-                    f"mv {highest_result_path} {task_best_ckpt_path}"
-                )
-
-                for ckpt_path in ckpt_paths_and_result:
-                    if ckpt_path != highest_result_path:
-                        print_and_execute_command(f"rm -rf {ckpt_path}")
-            else:
-                # If no new best result, delete all checkpoints
-                for ckpt_path in ckpt_paths_and_result:
-                    print_and_execute_command(f"rm -rf {ckpt_path}")
-        else:
-            highest_validation_result = max(evaluate_result.values())
-
-        write_results(log_and_data_root, max_training_epochs)
-        return highest_validation_result
-
-    # 选择参数
-    # temperatures = [0.6, 0.7, 0.8, 0.9, 1.0]
-    # input_constraints = [False, True]
-    # output_constraints = [False, True]
+    # TODO 选择参数
     temperatures = [0.7]
-    input_constraints = [True]
-    output_constraints = [True]
-    generation_epoches = [10, 40, 80, 120, 150, 200]
+    input_constraints = [False]
+    output_constraints = [False]
+    generation_epoches = [40]
 
     all_combinations = list(itertools.product(temperatures, input_constraints, output_constraints, generation_epoches))
 
-    # 遍历每组参数组合
     for combination in all_combinations:
         generation_temperature, input_length_constraint, output_length_constraint, generation_epoch = combination
 
@@ -259,23 +185,4 @@ for task in [task346]:
             output_length_constraint,
             generation_epoch
         )
-
-    with open(best_validation_result_path, "r") as json_file:
-        evaluate_result = json.load(json_file)
-    if "test_result" in evaluate_result:
-        print("Already tested.")
-    else:
-        print("test best ckpt.")
-        # validate_or_test(
-        #         test_set_path,
-        #         best_ckpt_path / experiment_name,
-        #         instruction,
-        #         examples,
-        #         gpu_memory_utilization,
-        #         1,
-        #         best_validation_result_path,
-        #         test_content_store_path=log_and_data_root / "best_ckpt_generated_content",
-        #         validation=False,
-        #         metric=metric,
-        #     )
     destroy_model_parallel()
