@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 import gc
 import json
@@ -9,13 +9,11 @@ from pathlib import Path
 from prompt2model.quality_evaluator import self_consistency_filter
 from functools import partial
 import datasets
-from IPython import embed
 from vllm import LLM, SamplingParams
 from prompt2model.output_annotator import construct_meta_prompt
 from prompt2model.prompt_parser import MockPromptSpec, TaskType
 from prompt2model.utils import count_tokens_from_string
-from prompt2model.utils.path import STORE_ROOT, ROOT, TEST_DATA_ROOT, MODEL_PATH
-from IPython import embed
+from prompt2model.utils.path import ROOT, TEST_DATA_ROOT, MODEL_PATH
 import re
 import numpy as np
 from prompt2model.quality_evaluator import (
@@ -73,11 +71,11 @@ def exact_match_score(
     exact_match = index / len(GROUND_TRUTH)
     return exact_match
 
-def evaluate_model(task_names, finetuned=False, exact_match=False):
+def evaluate_model(task_names, exact_match=False):
     for task_name in task_names:
         # 改了这里的名字
         ["test", "eval"]
-        for test_type in ["test", "eval"]:
+        for test_type in ["test"]:
             test_dataset = datasets.load_from_disk(
                 f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
             )
@@ -177,7 +175,9 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                     for output in VICUNA_outputs[idx].outputs
                     if (output.text is not None and output.text != "")
                 ]
+                # TODO: change this line back
                 passed_outputs = ablation_filter(length_filter(outputs))
+                # passed_outputs = ablation_filter(outputs)
                 if passed_outputs is None:
                     decoded_outputs.append("No Output")
                 else:
@@ -190,7 +190,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
             )
             print(f"{task_name} {test_type}: {evaluate_result}")
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"20240426_{test_type}_{task_name}"
+            evaluate_generated_content_path = inputs_dir / f"20240525_2_{test_type}_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=decoded_outputs,
@@ -203,8 +203,6 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
 # TODO 改任务
 print("generation tasks:")
 task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
-evaluate_model(task_names, finetuned=False, exact_match=False)
-# print("classification tasks:")
-# task_names = ["task346", "task190", "task199", "task1612", "task200", "task738", "task937", 
-#               "task1385", "task1386", "task1516", "task1529", "task1615", "task284", "task329"]
-# evaluate_model(task_names, finetuned=False, exact_match=True)
+task_names = ["task281"]
+
+evaluate_model(task_names, exact_match=False)

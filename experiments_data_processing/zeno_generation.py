@@ -4,7 +4,7 @@ from datasets import load_from_disk
 
 client = ZenoClient("zen_fcbJnbmEJglYTu8PSRnWCIWp99yKtt1V5YsAYRo_0Ls")
 
-tasks = ['121', '039', '036', '281', '1195', '1345', '1562', '1622']
+tasks = ['281', '1345', '1562', '1622']
 
 for task in tasks:
 
@@ -17,19 +17,18 @@ for task in tasks:
     # )
 
     project = client.create_project(
-        name=f"OLD Generation Task {task}",
+        name=f"generation self-icl {task}",
         view="text-classification",
         metrics=[]
     )
     
 
     # test_dataset = load_from_disk(f"/home/azureuser/p2mss/prompt2model_test/testdataset/NI/test/task{task}")
-    test_dataset = load_from_disk(f"/home/azureuser/p2mss/prompt2model_test/testdataset/NI/old_test/task{task}")
+    test_dataset = load_from_disk(f"/home/azureuser/p2mss/p2mss/self_icl_baseline_generated_data/20240327_task{task}")
     df_test = test_dataset.to_pandas()
     df_test['id'] = range(len(df_test))
-    df_test["input_length"] = df_test["input_col"].str.len()
-    df_test["ground_truth_output_length"] = df_test["output_col"].str.len()
-    project.upload_dataset(df_test, id_column="id", data_column="input_col", label_column="output_col")
+    df_test['id'] = df_test['id'].astype(str)
+    project.upload_dataset(df_test, id_column="id", data_column="model_input", label_column="groud_truth")
     
     def lcs_length_dp(x, y):
         """Compute the length of the longest common subsequence between two strings using dynamic programming."""
@@ -62,11 +61,11 @@ for task in tasks:
 
 
     # baseline_results = load_from_disk(f'/home/azureuser/p2mss/p2mss/baseline_generated_data/20240310_test_task{task}')
-    baseline_results = load_from_disk(f'/home/azureuser/p2mss/p2mss/baseline_generated_data/20240314_old_test_task{task}')
+    baseline_results = load_from_disk(f"/home/azureuser/p2mss/p2mss/self_icl_baseline_generated_data/20240327_task{task}")
     df_baseline = baseline_results.to_pandas()
     df_baseline['id'] = range(len(df_baseline))
+    df_baseline['id'] = df_baseline['id'].astype(str)
     df_baseline['correct'] = df_baseline.apply(rouge_l_score, axis=1)
-    df_baseline["baseline_output_length"] = df_baseline["model_output"].str.len()
     project.upload_system(df_baseline, name="baseline", id_column="id", output_column="model_output")
     
     # finetuned_results = load_from_disk(f'/home/azureuser/p2mss/p2mss/generation_11/NI_task{task}_exp_11/best_ckpt_generated_content')

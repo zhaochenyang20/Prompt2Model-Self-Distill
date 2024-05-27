@@ -232,4 +232,5 @@ def main(config_path: str):
             task_name=loaded_params["task_name"],
             per_device_train_batch_size=loaded_params["per_device_train_batch_size"],
         )
+    
     return 0

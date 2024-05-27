@@ -1,331 +1,10 @@
-import os
-# TODO change card number
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-os.environ["WANDB_MODE"] = "offline"
-
-import gc
-import re
-import wandb
-from functools import partial
-from pathlib import Path
-import json
 import datasets
-import torch
-import shutil
-from datasets import load_from_disk
-from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
-from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
-
-from prompt2model.output_annotator import construct_meta_prompt
-from prompt2model.prompt_parser import MockPromptSpec, TaskType
-from prompt2model.utils.path import ROOT, STORE_ROOT, MODEL_PATH
-from prompt2model.utils import count_tokens_from_string
 from utils.inference import vllm_inference
-
-import string
-import re
-from collections import Counter
-
-def store_evaluation_content(
-    content_store_path, tuned_model_generated_outputs, prompts, GROUND_TRUTH
-):
-    print(f"Genrated contents are stored in {content_store_path}")
-    datasets.Dataset.from_dict(
-        dict(
-            model_output=tuned_model_generated_outputs,
-            model_input=prompts,
-            groud_truth=GROUND_TRUTH,
-        )
-    ).save_to_disk(content_store_path)
-
-def find_last_occurrence(model_output: str, labels: list[str]) -> str:
-    pattern = '|'.join(re.escape(label) for label in labels)
-    regex = re.compile(pattern)
-    matches = list(regex.finditer(model_output))
-    return matches[-1].group() if matches else None
-
-# cited from https://github.com/allenai/natural-instructions/blob/55a365637381ce7f3748fa2eac7aef1a113bbb82/eval/automatic/evaluation.py#L24
-def normalize_answer(s):
-    """Lower text and remove punctuation, and extra whitespace."""
-
-    def white_space_fix(text):
-        return ' '.join(text.split())
-
-    def remove_punc(text):
-        exclude = set(string.punctuation)
-        return ''.join(ch for ch in text if ch not in exclude)
-
-    def lower(text):
-        return text.lower()
-
-    return white_space_fix(remove_punc(lower(s)))
-
-def exact_match(prediction, ground_truth, xlingual=False):
-    # small changed based on our current code
-    if prediction is None:
-        return 0
-    return (normalize_answer(prediction) == normalize_answer(ground_truth))
-
-def exact_match_score(
-    GROUND_TRUTH,
-    tuned_model_generated_outputs,
-):
-    labels = list(Counter(GROUND_TRUTH).keys())
-    index = 0
-    n = len(GROUND_TRUTH)
-    for i in range(n):
-        index += exact_match(find_last_occurrence(tuned_model_generated_outputs[i], labels), GROUND_TRUTH[i])
-    score = index / len(GROUND_TRUTH)
-    return score
-
-def lcs_length_dp(x, y):
-    """Compute the length of the longest common subsequence between two strings using dynamic programming."""
-    m, n = len(x), len(y)
-    dp_table = [[0] * (n + 1) for _ in range(m + 1)]
-
-    for i in range(m + 1):
-        for j in range(n + 1):
-            if i == 0 or j == 0:
-                dp_table[i][j] = 0
-            elif x[i - 1] == y[j - 1]:
-                dp_table[i][j] = dp_table[i - 1][j - 1] + 1
-            else:
-                dp_table[i][j] = max(dp_table[i - 1][j], dp_table[i][j - 1])
-
-    return dp_table[m][n]
-
-def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
-    scores = []
-    for gt, gen in zip(GROUND_TRUTH, tuned_model_generated_outputs):
-        lcs = lcs_length_dp(gt, gen)
-        if lcs == 0:
-            scores.append(0)
-            continue
-        precision = lcs / len(gen)
-        recall = lcs / len(gt)
-        f_measure = (2 * precision * recall) / (precision + recall)
-        scores.append(f_measure)
-    return sum(scores) / len(scores)
-
-def extract_number(s):
-    return int(re.search(r"\d+", s).group())
-
-def check_and_remove_checkpoints(ckpt_path):
-    required_files = [
-        "config.json",
-        "special_tokens_map.json",
-        "tokenizer_config.json",
-        "model-00001-of-00003.safetensors",
-        "model-00002-of-00003.safetensors",
-        "model-00003-of-00003.safetensors",
-        "tokenizer.json",
-        "tokenizer.model",
-    ]
-
-    sorted_list = sorted(
-        [each for each in os.listdir(ckpt_path) if each.startswith("checkpoint-")],
-        key=extract_number,
-    )
-
-    for each in sorted_list:
-        checkpoint_path = os.path.join(ckpt_path, each)
-        if all(
-            os.path.exists(os.path.join(checkpoint_path, file))
-            for file in required_files
-        ):
-            print(f"Checkpoint '{each}' is complete.")
-        else:
-            print(f"Checkpoint '{each}' is incomplete and will be removed.")
-            shutil.rmtree(checkpoint_path)
-
-    return len(
-        sorted(
-            [each for each in os.listdir(ckpt_path) if each.startswith("checkpoint-")],
-            key=extract_number,
-        )
-    )
-
-def finetune_vicuna(
-    prompt_spec,
-    data_path,
-    task_name,
-    sub_sample,
-    max_seq_length=2000,
-    per_device_train_batch_size=1,
-    ckpt_path = './output',
-    pretrain_model_path = Path(MODEL_PATH)
-):
-    ckpt_path = f'./output_{task_name}'
-
-    def filter_func(example):
-        return example["output_col"] is not None and example["input_col"] is not None
-
-    dataset_path = data_path
-    dataset = load_from_disk(dataset_path).filter(filter_func)
-    dataset = dataset.select(range(sub_sample))
-
-    def map_func(example):
-        assert prompt_spec.examples != ""
-        example["model_input"] = construct_meta_prompt(
-            instruction=prompt_spec.instruction,
-            examples=prompt_spec.examples,
-            new_input=example["input_col"],
-            is_generation=False,
-            few_shots_prompt = ''
-        )
-        example["model_output"] = example["output_col"]
-        example["text"] = (
-            example["model_input"] + example["model_output"] + tokenizer.eos_token
-        )
-        return example
-        
-    tokenizer = AutoTokenizer.from_pretrained(
-        pretrain_model_path,
-        padding_side="left",
-        trust_remote_code=True,
-    )
-    mapped_dataset = (
-        dataset.map(map_func, load_from_cache_file=False)
-        .shuffle(seed=42)
-        .filter(
-            lambda x: (count_tokens_from_string(x["text"], "vicuna") <= max_seq_length)
-        )
-    )
-    response_template_with_context = "\nASSISTANT:\n"
-    response_template_ids = tokenizer.encode(
-        response_template_with_context, add_special_tokens=False
-    )[2:]
-    data_collator = DataCollatorForCompletionOnlyLM(
-        response_template_ids, tokenizer=tokenizer
-    )
-    model = AutoModelForCausalLM.from_pretrained(
-        pretrain_model_path,
-        device_map="auto",
-        torch_dtype=torch.bfloat16,
-        use_flash_attention_2=True,
-    )
-    wandb.init(project=task_name)
-    wandb.watch(model)
-    training_args = TrainingArguments(
-        report_to="wandb",
-        output_dir=str(ckpt_path),
-        do_eval=False,
-        save_strategy="epoch",
-        evaluation_strategy="no",
-        logging_steps=4,
-        num_train_epochs=3,
-        per_device_train_batch_size=per_device_train_batch_size,
-        seed=42,
-    )
-    trainer = SFTTrainer(
-        model=model,
-        args=training_args,
-        train_dataset=mapped_dataset,
-        dataset_text_field="text",
-        data_collator=data_collator,
-        max_seq_length=max_seq_length,
-    )
-    wandb.config.update(training_args.to_dict(), allow_val_change=True)    
-    check_and_remove_checkpoints(ckpt_path)
-    trainer.train(resume_from_checkpoint=False)
-    
-    # hf_path = f"ShirleyJia/{task_name}_unfiltered_subsample_finetuning"
-    # model.push_to_hub(hf_path, token = "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") # Online saving
-    # tokenizer.push_to_hub(hf_path, token = "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") # Online saving
-
-    for dirpath, _, filenames in os.walk(str(ckpt_path), topdown=True):
-        # Delete optimizer
-        for filename in filenames:
-            if filename == "optimizer.pt":
-                file_path = os.path.join(dirpath, filename)
-                print(f"Deleting {file_path}")
-                os.system(f"rm -rf {(str(file_path))}")
-    wandb.finish()
-    del trainer
-    del model
-    gc.collect()
-    torch.cuda.empty_cache()
-    return ckpt_path
-
-def validate_or_test(
-    test_dataset_path,
-    ckpt_path,
-    instruction,
-    examples,
-    test_content_store_path,
-    metric,
-    gpu_memory_utilization=0.9,
-    tensor_parallel_size=1,
-):
-
-    def map_func(example):
-        example["model_input"] = construct_meta_prompt(
-            instruction=instruction,
-            new_input=example["input_col"],
-            examples=examples,
-            is_generation= False,
-            few_shots_prompt=''
-        )
-        example["model_output"] = example["output_col"]
-        return example
-            
-    loaded_dataset = datasets.load_from_disk(test_dataset_path)
-    test_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
-    # remove since we're trying to get as much as possible, more than 3000 + 500
-    test_dataset = test_dataset.filter(
-        lambda x: (
-            count_tokens_from_string(x["model_input"], "vicuna") <= 3000
-            and count_tokens_from_string(x["model_output"], "vicuna") <= 500
-        )
-    )
-    prompts = test_dataset["model_input"]
-    GROUND_TRUTH = test_dataset["model_output"]
-    
-    tuned_model_generated_outputs = vllm_inference(
-        ckpt_path, gpu_memory_utilization, tensor_parallel_size, prompts
-    )
-    if metric == "exact_match":
-        score = exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs)
-    else:
-        score = rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs)
-    print(
-        f"\n\nresult of {ckpt_path}\n\n------------------------------------------------\n\n{score}\n\n------------------------------------------------\n\n"
-    )
-    store_evaluation_content(
-        test_content_store_path,
-        tuned_model_generated_outputs,
-        prompts,
-        GROUND_TRUTH,
-    )
+from utils.evaluate import exact_match_score, rouge_l_score
+from prompt2model.utils.path import MODEL_PATH
+from prompt2model.prompt_parser import MockPromptSpec, TaskType
 
 
-# model_path = Path(
-#     MODEL_PATH
-# )
-
-# classification
-# task 1529
-
-# task 1612
-
-# task 1516
-
-# task 1615
-
-# task 284
-
-# task 329
-
-# task 346
-
-# task 1345
-
-# task 281
-
-# task 1562
-
-# task 1622
 tasks = {
     'task1345':{
         'prompt_spec': MockPromptSpec(
@@ -507,38 +186,33 @@ tasks = {
     }   
 }
 
-# TODO change task name here
+def validate_or_test(
+    dataset_path,
+    metric,
+    gpu_memory_utilization=0.9,
+    tensor_parallel_size=1,
+):  
+    test_dataset = datasets.load_from_disk(dataset_path)
+
+    prompts = test_dataset["model_input"]
+    GROUND_TRUTH = test_dataset["groud_truth"]
+    
+    tuned_model_generated_outputs = vllm_inference(
+        MODEL_PATH, gpu_memory_utilization, tensor_parallel_size, prompts
+    )
+    if metric == "exact_match":
+        score = exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs)
+    else:
+        score = rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs)
+    print(
+        f"\n\nresult\n------------------------------------------------\n\n{score}\n\n------------------------------------------------\n\n"
+    )
 
 for task_name in tasks.keys():
-    prompt_spec = tasks[task_name]['prompt_spec']
-    sub_sample=tasks[task_name]['sub_sample']
-    is_classification = tasks[task_name]['is_classification']
-    if is_classification:
-        data_path = f"/home/azureuser/p2mss/p2mss/NI_{task_name}_exp_33/{task_name}_0.7_False_False_40_33/dataset"
+    task = tasks[task_name]
+    dataset_path = f'/home/azureuser/p2mss/p2mss/baseline_generated_data/20240310_test_{task_name}'
+    if task['is_classification'] == True:
+        metric = 'exact_match'
     else:
-        data_path = f"/home/azureuser/p2mss/p2mss/NI_{task_name}_exp_33/{task_name}_1.0_False_False_20_33/dataset"
-
-    # ckpt_path = finetune_vicuna(
-    #     prompt_spec,
-    #     data_path,
-    #     task_name,
-    #     sub_sample,
-    # )
-    
-    ckpt_path = '/home/azureuser/p2mss/p2mss/main/test_scripts/output_task329/checkpoint-9'
-    test_dataset_path = '/home/azureuser/p2mss/prompt2model_test/testdataset/NI/test/' + task_name
-    instruction = prompt_spec.instruction
-    examples = prompt_spec.examples
-    # TODO change path
-    test_content_store_path = Path(ROOT) / f'{task_name}_unfiltered_subsample_finetuning' / 'inference_result'
-    # TODO double check
-    metric="exact_match" if is_classification else 'rouge'
-
-    validate_or_test(
-        test_dataset_path,
-        ckpt_path,
-        instruction,
-        examples,
-        test_content_store_path,
-        metric,
-    )
+        metric = 'rouge'
+    validate_or_test(dataset_path, metric)

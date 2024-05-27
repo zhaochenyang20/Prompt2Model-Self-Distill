@@ -6,8 +6,8 @@ os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
 
 # TODO change card name
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 current_ckpt_path = ''
 
@@ -22,7 +22,7 @@ from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
 # TODO change experiment rank
-experiment_rank = 34
+experiment_rank = 1
 # 14 新match
 # 16 for abblation study, without self verify
 # 17 reverse label
@@ -35,17 +35,19 @@ experiment_rank = 34
 # ee for debug filter
 # 34 for debugging \\_
 
+# 1 zero-Gen
+
 gpu_memory_utilization = 0.9
 # 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
 per_device_train_batch_size = 1
 # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
 #! TODO 改动 max_training_epochs，这也是个可以搜的参数
 max_training_epochs = 3
-from main_without_validation import main, validate_or_test
+from main import main, validate_or_test
 
 # TODO change task
 
-for task in [task1615]: # task1516, task1529, task1612, task1615, task284, task329, task346
+for task in [task1516, task1529, task1612, task1615, task284, task329, task346]: # task1516, task1529, task1612, task1615, task284, task329, task346
 
     task_name = task.task_name
     # TODO 加expected content和metrics
@@ -161,8 +163,77 @@ for task in [task1615]: # task1516, task1529, task1612, task1615, task284, task3
         }
         with open(log_and_data_path / "config.json", "w") as f:
             json.dump(params, f, indent=4)
-        main(str(log_and_data_path / "config.json"))
-        return 0
+        required_paths = [
+            log_and_data_path / evaluation_result_file_tail,
+            log_and_data_path / "inputs",
+            log_and_data_path / "dataset",
+        ]
+
+        evaluate_result_path = log_and_data_path / evaluation_result_file_tail
+
+        if evaluate_result_path.exists():
+            evaluate_result = read_json(evaluate_result_path)
+        else:
+            evaluate_result = {}
+            with open(evaluate_result_path, "w") as f:
+                json.dump(evaluate_result, f, indent=4)
+
+        best_validation_result = 0
+        validation_results = {}
+        if best_validation_result_path.exists():
+            validation_results = read_json(best_validation_result_path)
+            best_validation_result = validation_results.get("validation_result", 0)
+        else:
+            best_validation_result = 0
+            with open(best_validation_result_path, "w") as f:
+                json.dump({}, f, indent=4)
+
+        if (
+            not all(path.exists() for path in required_paths)
+            or len(list(evaluate_result.keys())) < max_training_epochs
+        ):
+            print(log_and_data_path)
+            ckpt_paths_and_result = main(str(log_and_data_path / "config.json"))
+
+            if ckpt_paths_and_result is None:
+                return 0
+
+            highest_result_path = max(
+                ckpt_paths_and_result, key=ckpt_paths_and_result.get
+            )
+            highest_validation_result = ckpt_paths_and_result[highest_result_path]
+
+            if highest_validation_result > best_validation_result:
+                # Update the best validation result and write to file
+                validation_results = {
+                    "task_name": task_name,
+                    "validation_result": highest_validation_result,
+                    "evaluate_result_path": str(evaluate_result_path),
+                    "ckpt_path": str(highest_result_path),
+                }
+                with open(best_validation_result_path, "w") as f:
+                    json.dump(validation_results, f, indent=4)
+
+                # Move the best checkpoint and delete others
+                task_best_ckpt_path = Path(best_ckpt_path) / experiment_name
+                if task_best_ckpt_path.exists():
+                    print_and_execute_command(f"rm -rf {task_best_ckpt_path}")
+                print_and_execute_command(
+                    f"mv {highest_result_path} {task_best_ckpt_path}"
+                )
+
+                for ckpt_path in ckpt_paths_and_result:
+                    if ckpt_path != highest_result_path:
+                        print_and_execute_command(f"rm -rf {ckpt_path}")
+            else:
+                # If no new best result, delete all checkpoints
+                for ckpt_path in ckpt_paths_and_result:
+                    print_and_execute_command(f"rm -rf {ckpt_path}")
+        else:
+            highest_validation_result = max(evaluate_result.values())
+
+        write_results(log_and_data_root, max_training_epochs)
+        return highest_validation_result
 
 
     # TODO 选择参数

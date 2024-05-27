@@ -92,27 +92,34 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
 
 def evaluate_model(task_names, finetuned=False, classification=False):  
     if finetuned:
-        inputs_dir = Path(ROOT + '/self_icl_finetune_generated_data')
+        inputs_dir = Path(ROOT + '/ft_without_filter_rerun')
     else:
-        inputs_dir = Path(ROOT + "/self_icl_baseline_generated_data")
+        inputs_dir = Path(ROOT + "/baseline_without_filter_rerun_test_results_0526")
+    
+    model = LLM(
+        model=MODEL_PATH,
+        gpu_memory_utilization=0.9,
+        swap_space = 16,
+        tensor_parallel_size=1,
+    )
 
     for task_name in task_names:
 
-        if finetuned:
-            ckpt_path=f'/home/azureuser/p2mss/p2mss/best_ckpt/final_{task_name}'
-            model = LLM(
-                model=ckpt_path,
-                gpu_memory_utilization=0.9,
-                swap_space = 16,
-                tensor_parallel_size=1,  # 根据卡数改
-            )
-        else:
-            model = LLM(
-                model=MODEL_PATH,
-                gpu_memory_utilization=0.9,
-                swap_space = 16,
-                tensor_parallel_size=1,
-            )
+        # if finetuned:
+        #     ckpt_path=f'/home/azureuser/p2mss/p2mss/best_ckpt/final_{task_name}'
+        #     model = LLM(
+        #         model=ckpt_path,
+        #         gpu_memory_utilization=0.9,
+        #         swap_space = 16,
+        #         tensor_parallel_size=1,  # 根据卡数改
+        #     )
+        # else:
+        #     model = LLM(
+        #         model=MODEL_PATH,
+        #         gpu_memory_utilization=0.9,
+        #         swap_space = 16,
+        #         tensor_parallel_size=1,
+        #     )
         # change suffix
         suffix = '\n'
 
@@ -126,7 +133,6 @@ def evaluate_model(task_names, finetuned=False, classification=False):
                 test_dataset = datasets.load_from_disk(
                     f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
                 )
-
                 file_path = ROOT+"/main/NI_tasks/tasks.json"
 
                 with open(file_path, "r", encoding="utf-8") as json_file:
@@ -148,17 +154,17 @@ def evaluate_model(task_names, finetuned=False, classification=False):
                 )
 
                 few_shots_prompt = ""
-                dataset_path = f"/home/azureuser/p2mss/p2mss/classification_14/NI_{task_name}_exp_14/{task_name}_0.6_True_False_40_14/dataset"
-                if not classification:
-                    dataset_path = f"/home/azureuser/p2mss/p2mss/generation_11/NI_{task_name}_exp_11/{task_name}_1.0_True_True_20_11/dataset"
-                dataset = load_from_disk(dataset_path)
-                inputs = dataset['input_col']
-                outputs = dataset['output_col']
-                # TODO: 改长度
-                n = 22
-                for i in range(n):
-                    few_shots_prompt += 'USER: [input] = ' + inputs[i] + '\n'
-                    few_shots_prompt += 'ASSISTANT: ' + outputs[i] + '\n'
+                # dataset_path = f"/home/azureuser/p2mss/p2mss/classification_14/NI_{task_name}_exp_14/{task_name}_0.6_True_False_40_14/dataset"
+                # if not classification:
+                #     dataset_path = f"/home/azureuser/p2mss/p2mss/generation_11/NI_{task_name}_exp_11/{task_name}_1.0_True_True_20_11/dataset"
+                # dataset = load_from_disk(dataset_path)
+                # inputs = dataset['input_col']
+                # outputs = dataset['output_col']
+                # # TODO: 改长度
+                # n = 22
+                # for i in range(n):
+                #     few_shots_prompt += 'USER: [input] = ' + inputs[i] + '\n'
+                #     few_shots_prompt += 'ASSISTANT: ' + outputs[i] + '\n'
 
                 
                 def map_func(example):
@@ -184,25 +190,32 @@ def evaluate_model(task_names, finetuned=False, classification=False):
                 )
 
                 prompts = test_dataset["model_input"]
-                for prompt in prompts:
-                    token_num = count_tokens_from_string(prompt, "vicuna")
-                    print(token_num)
                 GROUND_TRUTH = test_dataset["model_output"]
                 hyperparameter_choices = {}
 
                 # change this to the same params as inference
+                # sampling_params = SamplingParams(
+                #     top_k=hyperparameter_choices.get("top_k", -1),
+                #     top_p=hyperparameter_choices.get("top_p", 1),
+                #     temperature=hyperparameter_choices.get("temperature", 0),
+                #     max_tokens=hyperparameter_choices.get("max_tokens", 500),
+                # )
+
                 sampling_params = SamplingParams(
-                    top_k=hyperparameter_choices.get("top_k", -1),
-                    top_p=hyperparameter_choices.get("top_p", 1),
-                    temperature=hyperparameter_choices.get("temperature", 0),
+                    n=hyperparameter_choices.get("n", 10),
+                    best_of=hyperparameter_choices.get("best_of", 20),
+                    top_k=hyperparameter_choices.get("top_k", 40),
+                    temperature=hyperparameter_choices.get("temperature", 1.0),
                     max_tokens=hyperparameter_choices.get("max_tokens", 500),
                 )
+
 
                 consistency_filter = partial(
                     self_consistency_filter,
                     min_frequency=hyperparameter_choices.get("min_frequency", 0.2),
                 )
                 model_outputs = model.generate(prompts, sampling_params)
+                print(model_outputs[0:3])
                 decoded_outputs = []
 
 
@@ -228,9 +241,9 @@ def evaluate_model(task_names, finetuned=False, classification=False):
                     else exact_match_score(GROUND_TRUTH, decoded_outputs)
                 )
                 
-                print(f"{task_name} {test_type} notion={notion} => {evaluate_result}")
+                print(f"{task_name} {test_type} => {evaluate_result}")
                 #TODO change file name every day
-                evaluate_generated_content_path = inputs_dir / f"20240327_{task_name}"
+                evaluate_generated_content_path = inputs_dir / f"20240526_10sample_2_{task_name}" # 0327用的是只sample一个的，0526用的是sample10个的参数
                 datasets.Dataset.from_dict(
                     dict(
                         model_output=decoded_outputs,
@@ -241,27 +254,19 @@ def evaluate_model(task_names, finetuned=False, classification=False):
             
             gc.collect()
         
-        del model
+        # del model
         torch.cuda.empty_cache()
-        destroy_model_parallel()
-
-
-classification_tasks = ["task190", "task199", "task200", "task738", "task937", "task1385", "task1386", "task1516", "task1529", "task1612", "task1615", "task284", "task329", "task346"]
-classification_tasks = ["task284"]
-# generation_tasks = ["task121", "task039", "task036", "task1195", "task1345", "task1562","task281", "task1622"]
+    destroy_model_parallel()
 
 # TODO change task
 # TODO determine baseline or finetuned model
 # TODO deterine generation or classification
-            
-# generation tasks:
-# task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
-# evaluate_model(generation_tasks, finetuned=False, classification=False)
-# evaluate_model(generation_tasks, finetuned=True, classification=False)  
 
 # classification tasks
-# task_names = ["task346", "task190", "task199", "task1612", "task200", "task738", "task937", 
-#               "task1385", "task1386", "task1516", "task1529", "task1615", "task284", "task329"][0::2]
-# task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
-evaluate_model(classification_tasks, finetuned=False, classification=True)
-# evaluate_model(classification_tasks, finetuned=True, classification=True)
+# classification_tasks = ["task1516", "task1529", "task1612", "task1615", "task284", "task329", "task346"]
+# evaluate_model(classification_tasks, finetuned=False, classification=True)          
+# generation tasks:
+generation_tasks = ["task281", "task1345", "task1562", "task1622"]
+generation_tasks = ["task281"]
+evaluate_model(generation_tasks, finetuned=False, classification=False)
+
