@@ -476,13 +476,13 @@ task1529 = Task(
     task_instruction="""You are given two sentences. You have to find if there is entailment or agreement of the Hypothesis by the Premise. From the given pair of sentences, you should identify if there is enough information in the Premise to support the claim made in the Hypothesis. The Premise may not exactly be the same as Hypothesis. Your task is to return 'entails' if the premise supports hypothesis else return 'neutral'.""",
     task_name="task1529",
     examples="""   
-[input]="Premise: Lyme Disease is caused by a bacterium that's transmitted by tick bite, but many infected people don't remember a bite. \n Hypothesis: Lyme disease is caused by bacteria."
+[input]="The company has announced a new product line that is expected to be available in the market soon. The company's management team is confident that the new line will be well-received by customers. Based on the information provided, it can be inferred that the new product line will be successful, and the company will see an increase in revenue. The company's mission statement emphasizes the importance of customer satisfaction. Based on this information, it can be inferred that the new product line entails the company's mission statement."
 [output]="entails"
-[input]="Premise: Corolla Collective term for all the petals of a flower, these petals may be separate or fused together. \n Hypothesis: All of the petals together are called a corolla."
+[input]="The company recently announced a new product line, and it has received positive feedback from customers. The company has recently acquired a new facility to support its growth. The new product line is expected to be available in the market soon. The company is planning to expand its operations to new markets."
 [output]="entails"
-[input]="Premise: This can be dangerous to both plants and animals. \n Hypothesis: Nematodes can be a parasite of both."
+[input]="The company has announced plans to increase its workforce by 20% in the next quarter. The CEO stated that the additional staff will help the company to meet its growth targets."
 [output]="neutral"
-[input]="Premise: The liver is divided into the right lobe and left lobes. \n Hypothesis: The gallbladder is near the right lobe of the liver."
+[input]="The company has announced a new product line, and it is expected to be available in the market soon. The new product line has a range of features that will attract customers. The company's recent acquisition of a new facility indicates that it is planning to expand its operations to new markets."
 [output]="neutral"
 """.strip(),
 expected_content="""
@@ -757,13 +757,13 @@ task1612 = Task(
     task_instruction="""In this task, you're given a pair of sentences, sentence 1 and sentence 2. Your job is to choose whether the two sentences clearly agree (entailment)/disagree (contradiction) with each other, or if this cannot be determined (neutral). Your answer must be in the form of the numbers 0 (entailment), 1 (neutral), or 2(contradiction).""".strip(),
     task_name="task1612",
     examples="""
-[input]="sentence_A: A dancer is dancing on the stage. sentence_B: A girl is giving dance performance on the dais."
-[output]="0"
-
-[input]="sentence_A: The crowd is cheering at her dance performance. sentence_B: The group is enjoying while eating food."
+[input]="The company plans to lay off some employees, but it is not currently expanding."
 [output]="1"
 
-[input]="sentence_A: A man is standing and has tears of joy seeing the dance performance. sentence_B: There is no man standing with happiness seeing the dance."
+[input]="The sentence 'The sky is blue' and 'The grass is green' have a clear agreement."
+[output]="0"
+
+[input]="The company has not announced any plans to expand its operations, and it has not released any new products in the past year. However, the CEO announced during a recent earnings call that the company is planning to launch a new product next month. The new product will be a game-changer for the industry, and the company is investing significant resources in its development. This suggests that the company is planning to expand its operations, which contradicts its previous statements."
 [output]="2"
 
 """.strip(),
@@ -806,15 +806,11 @@ task1516 = Task(
     task_instruction="""In this task, you are given a premise and hypothesis. The task is to classify them into three categories: 'positive' if the hypothesis supports the premise, 'negated' if it opposes the premise, and 'neutral' if it neither supports nor opposes it.""".strip(),
     task_name="task1516",
     examples="""
-[input]="'Premise : All ten guys that proved to boast were divorcing.','Hypothesis : There are exactly ten guys that proved to boast.'"
+[input]="'The premise is that humans are destroying Earth. The hypothesis is that humans are destroying Earth at an alarming rate.'"
 [output]="positive"
 
-[input]="'Premise : All ten reports that can bore some waiter aren't disagreeing with Naomi.','Hypothesis : There are exactly eleven reports that can bore some waiter.'"
-[output]="negated"
-
-[input]="Premise : All ten guys that proved to boast weren't divorcing.','Hypothesis : There are exactly ten senators that proved to boast.'"
+[input]="The premise is that humans have a natural tendency to form groups and societies, and the hypothesis is that humans form communities for social and economic benefits. The hypothesis is neutral towards the premise as it does not necessarily support or oppose it.‘"
 [output]="neutral"
-
 """.strip(),
     expected_content="""
     "Premise" and "Hypothesis"
@@ -855,11 +851,11 @@ task1615 = Task(
     task_instruction="""In this task, given 2 input sentences, you must classify the relation between them. If the second sentence has a similar meaning to that of the first sentence then the output is 'B_entails_A', if the second sentence has the opposite meaning to the first sentence then it is classified as 'B_contradicts_A'. If you cannot clearly ascertain agreement/disagreement between the two sentences, the label is 'B_neutral_A'.""".strip(),
     task_name="task1615",
     examples="""
-[input]="sentence_A: man is wearing a hard hat and dancing. sentence_B: There is no man with a hard hat dancing."
+[input]="The company has announced a new policy, requiring all employees to work from home on Mondays. However, some employees have expressed concerns about the impact on their work-life balance, leading to a decrease in productivity. The company has announced that it will be discontinuing all of its existing product lines."
 [output]="B_contradicts_A"
 
-[input]="sentence_A: A baby is crying. sentence_B: A man is exercising."
-[output]="B_neutral_A"
+[input]="The company announced a new policy, requiring all employees to work from home on Mondays to improve work-life balance and productivity. However, the second sentence states that some employees have expressed concerns about the impact on their work-life balance and productivity, which implies that the new policy may not be effective and could have negative consequences for the employees."
+[output]="B_contradicts_A"
 
 [input]="sentence_A: A tiger is pacing around a cage. sentence_B: A tiger is walking around a cage."
 [output]="B_entails_A"
@@ -902,14 +898,11 @@ task329 = Task(
     task_instruction="""In this task, you will be presented with a text, a pronoun from the text, and two candidate names. You should determine what the pronoun refers to and classify the answers into A, B, or Neither. A and B here are referring to option A and option B. Position of the pronoun in the text is showed within two "_"s.""".strip(),
     task_name="task329",
     examples="""
-[input]="He grew up in Evanston, Illinois the second oldest of five children including his brothers, Fred and Gordon and sisters, Marge (Peppy) and Marilyn. His high school days were spent at New Trier High School in Winnetka, Illinois. MacKenzie studied with Bernard Leach from 1949 to 1952. _His_ simple, wheel-thrown functional pottery is heavily influenced by the oriental aesthetic of Shoji Hamada and Kanjiro Kawai. , Pronoun: His , A: MacKenzie , B: Bernard Leach"
+[input]="In the garden, there are two flowers, one red and one white. The pronoun 'it' refers to the red flower. Classify the answer as A or B."
 [output]="A"
 
-[input]="Reb Chaim Yaakov's wife is the sister of Rabbi Moishe Sternbuch, as is the wife of Rabbi Meshulam Dovid Soloveitchik, making the two Rabbis his uncles. Reb Asher's brother Rabbi Shlomo Arieli is the author of a critical edition of the novallae of Rabbi Akiva Eiger. Before _his_ marriage, Rabbi Arieli studied in the Ponevezh Yeshiva headed by Rabbi Shmuel Rozovsky, and he later studied under his father-in-law in the Mirrer Yeshiva. , Pronoun: his , A: Reb Asher , B: Akiva Eiger"
+[input]="In the library, there were three students, A, B, and C. They were sitting at a table. The pronoun 'it' referred to the books on the table. Based on the context, classify the answer as Neither."
 [output]="Neither"
-
-[input]="Kathleen Nott was born in Camberwell, London. Her father, Philip, was a lithographic printer, and her mother, Ellen, ran a boarding house in Brixton; Kathleen was their third daughter. _She_ was educated at Mary Datchelor Girls' School (now closed), London, before attending King's College, London. , Pronoun: She , A: Ellen , B: Kathleen"
-[output]="B"
 """.strip(),
     expected_content="""A text with a pronoun, and two candidate names
     """.strip(),
@@ -949,14 +942,8 @@ task284 = Task(
     task_instruction="""In this task, you are given a review of movie. Your task is to classify given movie review into two categories: 1) positive, and 2) negative based on its content.""".strip(),
     task_name="task284",
     examples="""
-[input]="For a movie that gets no respect there sure are a lot of memorable quotes listed for this gem. Imagine a movie where Joe Piscopo is actually funny! Maureen Stapleton is a scene stealer. The Moroni character is an absolute scream. Watch for Alan The Skipper Hale jr. as a police Sgt."
+[input]="Movie review: 'Mother!' (2017) is a thought-provoking and intense movie that explores themes of love, obsession, and the nature of reality. The acting is superb, the direction is flawless, and the cinematography is breathtaking. The plot is unique and compelling, and the characters are well-developed. Despite its intense and sometimes disturbing imagery, the movie's message is poignant and powerful. Overall, I would give this movie a 9 out of 10, which is a masterpiece that I would highly recommend to anyone who loves a good drama with a twist."
 [output]="positive"
-
-[input]="Bizarre horror movie filled with famous faces but stolen by Cristina Raines (later of TV's Flamingo Road) as a pretty but somewhat unstable model with a gummy smile who is slated to pay for her attempted suicides by guarding the Gateway to Hell! The scenes with Raines modeling are very well captured, the mood music is perfect, Deborah Raffin is charming as Cristina's pal, but when Raines moves into a creepy Brooklyn Heights brownstone (inhabited by a blind priest on the top floor), things really start cooking. The neighbors, including a fantastically wicked Burgess Meredith and kinky couple Sylvia Miles & Beverly D'Angelo, are a diabolical lot, and Eli Wallach is great fun as a wily police detective. The movie is nearly a cross-pollination of Rosemary's Baby and The Exorcist--but what a combination! Based on the best-seller by Jeffrey Konvitz, The Sentinel is entertainingly spooky, full of shocks brought off well by director Michael Winner, who mounts a thoughtfully downbeat ending with skill."
-[output]="positive"
-
-[input]="I felt brain dead, I'll tell you. This is the worst film I have ever bought. (in my ignorance I thought this was the Peter Jackson film of the same name). The performances are so terrible they are laughable. The special effects have not stood the test of time and look dire. The script promotes that kind of TV movie, stare into the middle distance kind of acting. The cast look as if they have been taking lessons from Joey Tribbiani, they have one look each, and stick to it. Plus I have never been confused by a movie until I sat down to watch this. The is it a dream or no plot is so terrible that frustration sets in within a few minutes. Avoid like a plague."
-[output]="negative"
 """.strip(),
     expected_content="""A review of movie
     """.strip(),
@@ -996,11 +983,11 @@ task346 = Task(
     task_instruction="""In this task, you will be presented with a question, a word, and a POS tag. You have to determine whether the part-of-speech tag of the given word in the question is equal to the given POS tag or not. Give your answer with True or False. Here is the Alphabetical list of part-of-speech tags used in this task: CC: Coordinating conjunction, CD: Cardinal number, DT: Determiner, EX: Existential there, FW: Foreign word, IN: Preposition or subordinating conjunction, JJ: Adjective, JJR: Adjective, comparative, JJS: Adjective, superlative, LS: List item marker, MD: Modal, NN: Noun, singular or mass, NNS: Noun, plural, NNP: Proper noun, singular, NNPS: Proper noun, plural, PDT: Predeterminer, POS: Possessive ending, PRP: Personal pronoun, PRP$: Possessive pronoun, RB: Adverb, RBR: Adverb, comparative, RBS: Adverb, superlative, RP: Particle, SYM: Symbol, TO: to, UH: Interjection, VB: Verb, base form, VBD: Verb, past tense, VBG: Verb, gerund or present participle, VBN: Verb, past participle, VBP: Verb, non-3rd person singular present, VBZ: Verb, 3rd person singular present, WDT: Wh-determiner, WP: Wh-pronoun, WP$: Possessive wh-pronoun, WRB: Wh-adverb""".strip(),
     task_name="task346",
     examples="""
-[input]="Who were the builders of the mosque in Herat with fire temples ? , Word: Who , POS tag: IN"
-[output]="False"
-
-[input]="What is the borough in which Kia Oval is located ? , Word: is , POS tag: VBZ"
+[input]="Determine whether the part-of-speech tag of the word 'the' in the question 'Are you coming or not?' is DT or not."
 [output]="True"
+
+[input]="In the sentence 'I am going to the store', is the part-of-speech tag of the word 'to' a coordinating conjunction?"
+[output]="False"
 """.strip(),
     expected_content="""A question, a word, and a POS tag""".strip(),
     optional_list=['input', 'output', '\n\n', '\\_\\_', 'therefore', 'Therefore', 'Hence'],

@@ -91,9 +91,9 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
 
 def evaluate_model(task_names, finetuned=False, exact_match=False):  
     if finetuned:
-        inputs_dir = Path(ROOT + '/finetune_generated_data_prompt_sensitivity')
+        output_dir = Path(ROOT + "/finetune_generated_data_rerun")
     else:
-        inputs_dir = Path(ROOT+"/baseline_generated_data")
+        output_dir = Path(ROOT+ "/baseline_generated_data_rerun")
 
     for task_name in task_names:
 
@@ -125,7 +125,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         for notion in notions:
             
             # TODO double check test type: "test" or "eval"
-            for test_type in ["eval"]:
+            for test_type in ["test"]:
                 # TODO double check if you want old or new dataset
                 test_dataset = datasets.load_from_disk(
                     f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/{test_type}/{task_name}"
@@ -202,6 +202,7 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                         if (output.text is not None and output.text != "")
                     ]
                     consistent_output = consistency_filter(outputs)
+                    # consistent_output = outputs[0]
                     if (
                         consistent_output is not None
                         and consistent_output != ""
@@ -217,10 +218,9 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
                     else exact_match_score(GROUND_TRUTH, decoded_outputs)
                 )
                 
-                print(f"{task_name} {test_type} notion={notion} => {evaluate_result}")
+                print(f"{task_name} {test_type} => {evaluate_result}")
                 #TODO change file name every day
-                suffix_coding = 1
-                evaluate_generated_content_path = inputs_dir / f"20240326_{notion}_{task_name}_{suffix_coding}"
+                evaluate_generated_content_path = output_dir / f"20240527_rerun_{task_name}_1"
                 datasets.Dataset.from_dict(
                     dict(
                         model_output=decoded_outputs,
@@ -236,21 +236,13 @@ def evaluate_model(task_names, finetuned=False, exact_match=False):
         destroy_model_parallel()
 
 
-classification_tasks = ["task190", "task199", "task200", "task738", "task937", "task1385", "task1386", "task1516", "task1529", "task1612", "task1615", "task284", "task329", "task346"]
-generation_tasks = ["task121", "task039", "task036", "task1195", "task1345", "task1562","task281", "task1622"]
-
 # TODO change task
 # TODO determine baseline or finetuned model
 # TODO deterine generation or classification
-            
-# generation tasks:
-# task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
+
+generation_tasks = ["task1345", "task281", "task1562", "task1622"]           
 evaluate_model(generation_tasks, finetuned=False, exact_match=False)
-# evaluate_model(generation_tasks, finetuned=True, exact_match=False)  
 
 # classification tasks
-# task_names = ["task346", "task190", "task199", "task1612", "task200", "task738", "task937", 
-#               "task1385", "task1386", "task1516", "task1529", "task1615", "task284", "task329"][0::2]
-# task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
+classification_tasks = ["task1516", "task1529", "task1615", "task329", "task346", "task284", "task1612"]
 evaluate_model(classification_tasks, finetuned=False, exact_match=True)
-# evaluate_model(classification_tasks, finetuned=True, exact_match=True)

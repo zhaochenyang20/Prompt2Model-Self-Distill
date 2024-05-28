@@ -5,8 +5,8 @@ import os
 # TODO: change card
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
 TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
@@ -17,13 +17,15 @@ from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
 # TODO change experiment rank
-experiment_rank = 16
+experiment_rank = 2
+
+# 2 pro-gen
 
 gpu_memory_utilization = 0.9
 # 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
 per_device_train_batch_size = 1
 # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
-max_training_epochs = 3
+max_training_epochs = 1
 from main import main, validate_or_test
 
 # task_names = [
@@ -33,7 +35,7 @@ from main import main, validate_or_test
 #  'task281',]
 
 task_names = [
- 'task1195',
+ 'task281',
  'task1345',
  'task1562',
  'task1622']
@@ -43,7 +45,7 @@ task_names = [
 # task1195 100 200 400 800
 
 # TODO: change task name
-for task_name in ["task1562"]:
+for task_name in task_names:
     file_path = ROOT+"/main/NI_tasks/tasks.json"
     with open(file_path, "r", encoding="utf-8") as json_file:
         all_tasks = json.load(json_file)
@@ -245,11 +247,11 @@ for task_name in ["task1562"]:
         write_results(log_and_data_root, max_training_epochs)
         return highest_validation_result
 
-    # temperatures = [0.6, 0.7, 0.8, 0.9, 1.0]
-    temperatures = [0.9]
+    # TODO change params
+    temperatures = [1.0]
     input_constraints = [False]
-    output_constraints = [True]
-    generation_epoches = [10, 40, 80, 120, 150, 200]
+    output_constraints = [False]
+    generation_epoches = [20]
 
     all_combinations = list(itertools.product(temperatures, input_constraints, output_constraints, generation_epoches))
 
@@ -273,16 +275,16 @@ for task_name in ["task1562"]:
         print("Already tested.")
     else:
         print("test best ckpt.")
-        # validate_or_test(
-        #         test_set_path,
-        #         best_ckpt_path / experiment_name,
-        #         instruction,
-        #         examples,
-        #         gpu_memory_utilization,
-        #         1,
-        #         best_validation_result_path,
-        #         test_content_store_path=log_and_data_root / "best_ckpt_generated_content",
-        #         validation=False,
-        #         metric=metric,
-        #     )
+        validate_or_test(
+                test_set_path,
+                best_ckpt_path / experiment_name,
+                instruction,
+                examples,
+                gpu_memory_utilization,
+                1,
+                best_validation_result_path,
+                test_content_store_path=log_and_data_root / "best_ckpt_generated_content",
+                validation=False,
+                metric=metric,
+            )
     destroy_model_parallel()
