@@ -22,7 +22,7 @@ from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
 # TODO change experiment rank
-experiment_rank = 1
+experiment_rank = 35
 # 14 新match
 # 16 for abblation study, without self verify
 # 17 reverse label
@@ -34,6 +34,7 @@ experiment_rank = 1
 # 33 for no filter generation
 # ee for debug filter
 # 34 for debugging \\_
+# 35 for rerun abaltion filter
 
 # 1 zero-Gen
 
