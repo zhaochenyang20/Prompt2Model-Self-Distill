@@ -199,7 +199,7 @@ def evaluate_model(task_names, exact_match=False):
             )
             print(f"{task_name} {test_type}: {evaluate_result}")
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"20240502_{test_type}_{task_name}"
+            evaluate_generated_content_path = inputs_dir / f"20240527_baseline_with_ablation_filter_rerun_{test_type}_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=decoded_outputs,
