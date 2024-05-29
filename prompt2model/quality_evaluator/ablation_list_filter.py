@@ -30,6 +30,7 @@ def ablation_list_filter(strings, optional_list=[]):
     Returns:
     list of str: A list of strings that do not contain any of the greetings.
     """
+    # return strings
     try:
         if strings is None:
             logger.info("strings passed in ablation_list_filter is None.")

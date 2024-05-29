@@ -40,7 +40,7 @@ task_names = [
  'task1622']
 
 # TODO: change task name
-for task_name in task_names:
+for task_name in task_names[::2]:
     file_path = ROOT+"/main/NI_tasks/tasks.json"
     with open(file_path, "r", encoding="utf-8") as json_file:
         all_tasks = json.load(json_file)
@@ -245,7 +245,7 @@ for task_name in task_names:
     temperatures = [0.9]
     input_constraints = [False]
     output_constraints = [True]
-    generation_epoches = [20]
+    generation_epoches = [1]
 
     all_combinations = list(itertools.product(temperatures, input_constraints, output_constraints, generation_epoches))
 
@@ -253,9 +253,6 @@ for task_name in task_names:
     for combination in all_combinations:
         generation_temperature, input_length_constraint, output_length_constraint, generation_epoch = combination
         
-        # if task.is_classification is not None:
-        #     output_length_constraint = False
-
         result = objective_function(
             generation_temperature,
             input_length_constraint,
