@@ -58,7 +58,9 @@ def annotate_and_write_outputs(
     )
     # from IPython import embed
     # embed()
-    all_outputs = datasets.load_from_disk(log_and_data_path/'output_recording')
+    output_path = log_and_data_path / "output_recording"
+    output_path.mkdir(parents=True, exist_ok=True)
+    all_outputs = datasets.load_from_disk(output_path)
     all_outputs = all_outputs.to_dict()
 
     output_col = output_dataset['output_col']

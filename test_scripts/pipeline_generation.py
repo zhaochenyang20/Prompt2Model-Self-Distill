@@ -17,7 +17,7 @@ from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
 # TODO change experiment rank
-experiment_rank = 2
+experiment_rank = 5
 
 # 2 pro-gen
 
@@ -73,7 +73,7 @@ for task_name in task_names:
 
     file_path = ROOT+"/main/NI_tasks/tasks.json"
 
-    log_and_data_root = Path(ROOT) / experiment_name
+    log_and_data_root = Path(ROOT)/ 'filter_length_only'  / experiment_name
     evaluation_result_file_tail = "result.json"
     ckpt_root = Path(STORE_ROOT+"/ckpt_data_p2ms")
     best_ckpt_path = Path(STORE_ROOT+"/best_ckpt")

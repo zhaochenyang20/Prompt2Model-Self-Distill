@@ -128,7 +128,7 @@ def validate_or_test(
         return example
 
     loaded_dataset = datasets.load_from_disk(evaluation_dataset_path)
-    # loaded_dataset = datasets.Dataset.from_dict(loaded_dataset[:20])
+    # loaded_dataset = datasets.Dataset.from_dict(loaded_dataset[:1000])
     loaded_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
     test_dataset = loaded_dataset.filter(
         lambda x: (
@@ -309,7 +309,7 @@ def main(config_path: str):
             ckpt_path,
             pretrain_model_path,
             loaded_params["training_epochs"],
-            resume_from_checkpoint=False if complete_ckpts == 0 else True,
+            resume_from_checkpoint=False,
             run_name=config_path.split("/")[-2],
             task_name=loaded_params["task_name"],
             per_device_train_batch_size=loaded_params["per_device_train_batch_size"],

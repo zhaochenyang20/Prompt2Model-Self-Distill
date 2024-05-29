@@ -22,7 +22,7 @@ from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
 # TODO change experiment rank
-experiment_rank = 2
+experiment_rank = 4
 # 14 用双向 in + != ""，14 copy 是用双向 in + != ""
 # 15 strictly exact match
 # 16 for abblation study, without self verify
@@ -32,6 +32,7 @@ experiment_rank = 2
 
 # 1 Zero-Gen
 # 2 Pro-Gen
+# 3 classification 去掉 ablation filter
 
 gpu_memory_utilization = 0.9
 # 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
@@ -40,11 +41,7 @@ per_device_train_batch_size = 1
 max_training_epochs = 1
 from main import main, validate_or_test
 
-# [task1388. task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1615]
-# [task1386, task1529, task190, task200, task937, task642, task1612, task1516]
-# 1388 ，task1386 先不跑了
-
-[task346, task190, task199, task1612, task200, task738, task937, task1385, task1386, task1516, task1529, task1615, task284, task329]
+[task346, task190, task199, task1612, task738, task937, task1385, task1386, task1516, task1529, task1615, task284, task329]
 
 # TODO change task
 
@@ -56,7 +53,7 @@ for task in [task1516, task1529, task1612, task1615, task284, task329, task346]:
     # 训练时能够用的显卡，加起来总共剩余的显存对于 7B model 需要接近 200G
     # TODO 改显存配置
 
-    log_and_data_root = Path(ROOT) / experiment_name
+    log_and_data_root = Path(ROOT) / 'filter_abaltion_only' / experiment_name
     evaluation_result_file_tail = "result.json"
     ckpt_root = Path(STORE_ROOT+"/ckpt_data_p2ms")
     best_ckpt_path = Path(STORE_ROOT+"/best_ckpt")

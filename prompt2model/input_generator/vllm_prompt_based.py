@@ -399,7 +399,7 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, empty_filter, "empty input")
                 if intput_length_constraint=='True':
                     inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, length_filter, "input length constraint")
-                inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, ablation_filter, "ablation filter")
+                # inputs_with_idx, data = apply_and_track_filter(inputs_with_idx, data, ablation_filter, "ablation filter")
 
                 if (inputs_with_idx is not None and inputs_with_idx != []):
                     unique_inputs = set([input for input, _ in generated_inputs])

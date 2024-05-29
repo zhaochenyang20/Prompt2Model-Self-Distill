@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 from vllm import LLM, SamplingParams
 from prompt2model.utils.path import MODEL_PATH
@@ -12,10 +12,11 @@ from datasets import load_from_disk
 default = MODEL_PATH
 
 language_model = LLM(
-    model=default,
+    model="baichuan-inc/Baichuan2-13B-Chat",
     gpu_memory_utilization=0.9,
     swap_space = 16,
     tensor_parallel_size=1,
+    trust_remote_code=True,
 )
 
 input_prompt = """
@@ -37,6 +38,6 @@ sampling_params = SamplingParams(
 output_sequence = language_model.generate(prompts, sampling_params)
 
 generated_inputs = [
-    [output.logprobs for output in each.outputs] for each in output_sequence
+    [output.text for output in each.outputs] for each in output_sequence
 ]
 generated_inputs
