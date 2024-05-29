@@ -3,18 +3,18 @@ import json
 import os
 
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
-os.environ["HF_DATASETS_OFFLINE"] = "1"
+os.environ["HF_DATASETS_OFFLINE"] = "0"
 
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 current_ckpt_path = ''
 
 TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
 
 from pathlib import Path
-from utils.tasks import task199, task201, task190, task1386, task1554, task738, task1385, task1529, task200, task1612, task1516, task1615, task937, task284, task329, task346
+from utils.tasks import task199, task201, task190, task1386, task1554, task738, task1385, task1529, task200, task1612, task1516, task1615, task937, task284, task329, task346, boolean_expressions
 
 import itertools
 from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
@@ -35,6 +35,7 @@ experiment_rank = 35
 # ee for debug filter
 # 34 for debugging \\_
 # 35 for rerun abaltion filter
+# 36 for bbh tasks
 
 # 1 zero-Gen
 
@@ -44,11 +45,11 @@ per_device_train_batch_size = 1
 # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
 #! TODO 改动 max_training_epochs，这也是个可以搜的参数
 max_training_epochs = 3
-from main import main, validate_or_test
+from main_without_validation import main
 
 # TODO change task
 
-for task in [task1516, task1529, task1612, task1615, task284, task329, task346]: # task1516, task1529, task1612, task1615, task284, task329, task346
+for task in [boolean_expressions]: # task1516, task1529, task1612, task1615, task284, task329, task346
 
     task_name = task.task_name
     # TODO 加expected content和metrics
@@ -108,8 +109,8 @@ for task in [task1516, task1529, task1612, task1615, task284, task329, task346]:
     instruction = task.task_instruction
     examples = task.examples
     expected_content = task.expected_content
-    evaluation_dataset_path = f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}"
-    test_set_path = f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}"
+    evaluation_dataset_path = task.testset_name
+    test_set_path = task.testset_name
     optional_list = task.optional_list
     metric = task.metric
     labels = task.labels
@@ -131,7 +132,6 @@ for task in [task1516, task1529, task1612, task1615, task284, task329, task346]:
         assert optional_list != []
         assert expected_content != ""
         assert metric != ""
-        assert extraction_examples != []
 
         params = {
             "CUDA_CONDITION": os.environ["CUDA_VISIBLE_DEVICES"],
@@ -196,45 +196,46 @@ for task in [task1516, task1529, task1612, task1615, task284, task329, task346]:
             print(log_and_data_path)
             ckpt_paths_and_result = main(str(log_and_data_path / "config.json"))
 
-            if ckpt_paths_and_result is None:
-                return 0
+        #     if ckpt_paths_and_result is None:
+        #         return 0
 
-            highest_result_path = max(
-                ckpt_paths_and_result, key=ckpt_paths_and_result.get
-            )
-            highest_validation_result = ckpt_paths_and_result[highest_result_path]
+        #     highest_result_path = max(
+        #         ckpt_paths_and_result, key=ckpt_paths_and_result.get
+        #     )
+        #     highest_validation_result = ckpt_paths_and_result[highest_result_path]
 
-            if highest_validation_result > best_validation_result:
-                # Update the best validation result and write to file
-                validation_results = {
-                    "task_name": task_name,
-                    "validation_result": highest_validation_result,
-                    "evaluate_result_path": str(evaluate_result_path),
-                    "ckpt_path": str(highest_result_path),
-                }
-                with open(best_validation_result_path, "w") as f:
-                    json.dump(validation_results, f, indent=4)
+        #     if highest_validation_result > best_validation_result:
+        #         # Update the best validation result and write to file
+        #         validation_results = {
+        #             "task_name": task_name,
+        #             "validation_result": highest_validation_result,
+        #             "evaluate_result_path": str(evaluate_result_path),
+        #             "ckpt_path": str(highest_result_path),
+        #         }
+        #         with open(best_validation_result_path, "w") as f:
+        #             json.dump(validation_results, f, indent=4)
 
-                # Move the best checkpoint and delete others
-                task_best_ckpt_path = Path(best_ckpt_path) / experiment_name
-                if task_best_ckpt_path.exists():
-                    print_and_execute_command(f"rm -rf {task_best_ckpt_path}")
-                print_and_execute_command(
-                    f"mv {highest_result_path} {task_best_ckpt_path}"
-                )
+        #         # Move the best checkpoint and delete others
+        #         task_best_ckpt_path = Path(best_ckpt_path) / experiment_name
+        #         if task_best_ckpt_path.exists():
+        #             print_and_execute_command(f"rm -rf {task_best_ckpt_path}")
+        #         print_and_execute_command(
+        #             f"mv {highest_result_path} {task_best_ckpt_path}"
+        #         )
 
-                for ckpt_path in ckpt_paths_and_result:
-                    if ckpt_path != highest_result_path:
-                        print_and_execute_command(f"rm -rf {ckpt_path}")
-            else:
-                # If no new best result, delete all checkpoints
-                for ckpt_path in ckpt_paths_and_result:
-                    print_and_execute_command(f"rm -rf {ckpt_path}")
-        else:
-            highest_validation_result = max(evaluate_result.values())
+        #         for ckpt_path in ckpt_paths_and_result:
+        #             if ckpt_path != highest_result_path:
+        #                 print_and_execute_command(f"rm -rf {ckpt_path}")
+        #     else:
+        #         # If no new best result, delete all checkpoints
+        #         for ckpt_path in ckpt_paths_and_result:
+        #             print_and_execute_command(f"rm -rf {ckpt_path}")
+        # else:
+        #     highest_validation_result = max(evaluate_result.values())
 
-        write_results(log_and_data_root, max_training_epochs)
-        return highest_validation_result
+        # write_results(log_and_data_root, max_training_epochs)
+        # return highest_validation_result
+        return
 
 
     # TODO 选择参数

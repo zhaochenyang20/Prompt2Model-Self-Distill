@@ -34,9 +34,18 @@ sampling_params = SamplingParams(
     logprobs=hyperparameter_choices.get("logprobs", 10),
 )
 
+sampling_params = SamplingParams(
+    top_k=hyperparameter_choices.get("top_k", -1),
+    top_p=hyperparameter_choices.get("top_p", 1),
+    temperature=hyperparameter_choices.get("temperature", 0),
+    max_tokens=hyperparameter_choices.get("max_tokens", 500),
+    presence_penalty = 1.0,
+    frequency_penalty = 1.0,
+)
+
 output_sequence = language_model.generate(prompts, sampling_params)
 
 generated_inputs = [
-    [output.logprobs for output in each.outputs] for each in output_sequence
+    [output.text for output in each.outputs] for each in output_sequence
 ]
 generated_inputs

@@ -199,7 +199,7 @@ def evaluate_model(task_names, exact_match=False):
             )
             print(f"{task_name} {test_type}: {evaluate_result}")
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"20240527_baseline_with_ablation_filter_rerun_{test_type}_{task_name}"
+            evaluate_generated_content_path = inputs_dir / f"20240527_classification_baseline_with_ablation_filter_rerun_{test_type}_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=decoded_outputs,
@@ -211,5 +211,5 @@ def evaluate_model(task_names, exact_match=False):
 
 # TODO 改任务
 print("classification tasks:")
-task_names = ["task284"]
+task_names = ["task1516", "task1529", "task1615", "task329", "task346", "task284", "task1612"]
 evaluate_model(task_names, exact_match=True)

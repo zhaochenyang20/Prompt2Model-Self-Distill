@@ -128,7 +128,7 @@ def validate_or_test(
         return example
 
     loaded_dataset = datasets.load_from_disk(evaluation_dataset_path)
-    # loaded_dataset = datasets.Dataset.from_dict(loaded_dataset[:20])
+    # loaded_dataset = datasets.Dataset.from_dict(loaded_dataset[3:])
     loaded_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
     test_dataset = loaded_dataset.filter(
         lambda x: (

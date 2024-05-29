@@ -45,7 +45,6 @@ def find_last_occurrence(model_output: str, labels: list[str]) -> str:
     matches = list(regex.finditer(model_output))
     return matches[-1].group() if matches else None
 
-# cited from https://github.com/allenai/natural-instructions/blob/55a365637381ce7f3748fa2eac7aef1a113bbb82/eval/automatic/evaluation.py#L24
 def normalize_answer(s):
     """Lower text and remove punctuation, and extra whitespace."""
 
@@ -62,7 +61,6 @@ def normalize_answer(s):
     return white_space_fix(remove_punc(lower(s)))
 
 def exact_match(prediction, ground_truth, xlingual=False):
-    # small changed based on our current code
     if prediction is None:
         return 0
     return (normalize_answer(prediction) == normalize_answer(ground_truth))
@@ -111,40 +109,6 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
 def extract_number(s):
     return int(re.search(r"\d+", s).group())
 
-def check_and_remove_checkpoints(ckpt_path):
-    required_files = [
-        "config.json",
-        "special_tokens_map.json",
-        "tokenizer_config.json",
-        "model-00001-of-00003.safetensors",
-        "model-00002-of-00003.safetensors",
-        "model-00003-of-00003.safetensors",
-        "tokenizer.json",
-        "tokenizer.model",
-    ]
-
-    sorted_list = sorted(
-        [each for each in os.listdir(ckpt_path) if each.startswith("checkpoint-")],
-        key=extract_number,
-    )
-
-    for each in sorted_list:
-        checkpoint_path = os.path.join(ckpt_path, each)
-        if all(
-            os.path.exists(os.path.join(checkpoint_path, file))
-            for file in required_files
-        ):
-            print(f"Checkpoint '{each}' is complete.")
-        else:
-            print(f"Checkpoint '{each}' is incomplete and will be removed.")
-            shutil.rmtree(checkpoint_path)
-
-    return len(
-        sorted(
-            [each for each in os.listdir(ckpt_path) if each.startswith("checkpoint-")],
-            key=extract_number,
-        )
-    )
 
 def finetune_vicuna(
     prompt_spec,

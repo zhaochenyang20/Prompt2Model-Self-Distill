@@ -1,7 +1,7 @@
 ["task199", "task201", "task190", "task1386", "task1554", "task738", "task1385", "task1529", "task200", "task1612", "task937", "task1516", "task1615", "task284", "task329", "task346"]
 
 class Task:
-    def __init__(self, task_instruction, task_name, examples, expected_content: str, optional_list, metric, labels, is_classification, extraction_examples) -> None:
+    def __init__(self, task_instruction, task_name, examples, expected_content: str, optional_list, metric, labels, is_classification, extraction_examples, testset_name='') -> None:
         self.task_instruction = task_instruction
         self.task_name = task_name
         self.examples = examples
@@ -16,6 +16,7 @@ class Task:
         self.is_classification = is_classification
         # [(generated input and expected label, extracted content)]
         self.extraction_examples = extraction_examples
+        self.testset_name = testset_name
         assert task_instruction is not None and task_instruction != ""
         assert task_name is not None and task_name != ""
         assert metric in ["exact_match", "rouge"]
@@ -1034,3 +1035,24 @@ task346 = Task(
     )
     ]
 )
+
+boolean_expressions = Task(
+    task_instruction="""In this task, you will evaluate the truth value of a random Boolean expression consisting of Boolean constants (True, False) and basic Boolean operators (and, or, not).""".strip(),
+    task_name="booleanExpressions",
+    examples="""
+[input]="not ( True ) and ( True ) is"
+[output]="False"
+
+[input]="True and not not ( not False ) is"
+[output]="True"
+
+[input]="not True or False or ( False ) is"
+[output]="False"
+""".strip(),
+    expected_content="""A Boolean expression and a Boolean response""".strip(),
+    optional_list=['input', 'output', '\n\n', '\\_\\_', 'therefore', 'Therefore', 'Hence'],
+    metric="exact_match",
+    labels=['False', 'True'],
+    is_classification=True,
+    extraction_examples=[],
+    testset_name='boolean_expressions')

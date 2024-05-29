@@ -19,7 +19,7 @@ from prompt2model.utils.path import MODEL_PATH
 # wandb sync wandb/offline-run-*
 os.environ["WANDB_MODE"] = "offline"
 
-
+from datasets import load_dataset
 
 from collections import OrderedDict
 
@@ -110,15 +110,16 @@ def validate_or_test(
     def map_func(example):
         example["model_input"] = construct_meta_prompt(
             instruction=instruction,
-            new_input=example["input_col"],
+            new_input=example["input"],
             examples=examples,
             is_generation=False,
         )
-        example["model_output"] = example["output_col"].strip()
+        example["model_output"] = example["target"].strip()
         return example
 
-    loaded_dataset = datasets.load_from_disk(evaluation_dataset_path)
-    # loaded_dataset = datasets.Dataset.from_dict(loaded_dataset[:20])
+    # loaded_dataset = datasets.load_from_disk(evaluation_dataset_path)
+    loaded_dataset = load_dataset('lukaemon/bbh', evaluation_dataset_path)['test']
+    loaded_dataset = datasets.Dataset.from_dict(loaded_dataset[3:])
     loaded_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
     test_dataset = loaded_dataset.filter(
         lambda x: (
@@ -232,5 +233,17 @@ def main(config_path: str):
             task_name=loaded_params["task_name"],
             per_device_train_batch_size=loaded_params["per_device_train_batch_size"],
         )
-    
+    validate_or_test(
+        loaded_params['evaluation_dataset_path'],
+        ckpt_path,
+        loaded_params['instruction'],
+        loaded_params['examples'],
+        gpu_memory_utilization,
+        len(os.environ["CUDA_VISIBLE_DEVICES"].split(",")),
+        'evaluate_result_path_for_bbh_task' + loaded_params['task_name'] + '.json',
+        test_content_store_path=None,
+        log_and_data_path=None,
+        validation=True,
+        metric="exact_match",
+    )
     return 0

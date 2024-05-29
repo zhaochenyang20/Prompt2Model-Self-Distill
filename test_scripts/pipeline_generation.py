@@ -48,7 +48,7 @@ for task_name in [ "task1562", "task1622","task281", "task1345"]: # "task1622","
             task_config_for_generation_tasks = (
                 task["task_name"],
                 task["task_instruction"],
-                """"examples": "[input]=\"None\"\n[output]=\"None\"""",
+                task["examples"],
                 task["expected_content"],
                 f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/eval/{task_name}",
                 f"{TEST_DATA_ROOT}/prompt2model_test/testdataset/NI/test/{task_name}",

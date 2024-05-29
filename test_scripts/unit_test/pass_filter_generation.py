@@ -1,6 +1,6 @@
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 import gc
 import json
@@ -22,7 +22,7 @@ from prompt2model.quality_evaluator import (
 )
 
 
-VICUNA = LLM(
+VICUNA = LLM( 
     model=MODEL_PATH,
     # model=test_path,
     gpu_memory_utilization=0.9,
@@ -178,6 +178,7 @@ def evaluate_model(task_names, exact_match=False):
                 # TODO: change this line back
                 passed_outputs = ablation_filter(length_filter(outputs))
                 # passed_outputs = ablation_filter(outputs)
+                # passed_outputs = length_filter(outputs)
                 if passed_outputs is None:
                     decoded_outputs.append("No Output")
                 else:
@@ -190,7 +191,7 @@ def evaluate_model(task_names, exact_match=False):
             )
             print(f"{task_name} {test_type}: {evaluate_result}")
             #! 记得改名字
-            evaluate_generated_content_path = inputs_dir / f"20240525_2_{test_type}_{task_name}"
+            evaluate_generated_content_path = inputs_dir / f"20240528_generation_rerun_{test_type}_{task_name}"
             datasets.Dataset.from_dict(
                 dict(
                     model_output=decoded_outputs,
@@ -203,6 +204,6 @@ def evaluate_model(task_names, exact_match=False):
 # TODO 改任务
 print("generation tasks:")
 task_names = ["task036","task039", "task121", "task281", "task1195", "task1345", "task1562", "task1622"]
-task_names = ["task281"]
+task_names = ["task1345", "task1562", "task1622", "task281"]
 
 evaluate_model(task_names, exact_match=False)

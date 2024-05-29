@@ -90,11 +90,8 @@ def rouge_l_score(GROUND_TRUTH, tuned_model_generated_outputs):
         scores.append(f_measure)
     return sum(scores) / len(scores)
 
-def evaluate_model(task_names, finetuned=False, classification=False):  
-    if finetuned:
-        inputs_dir = Path(ROOT + '/ft_without_filter_rerun')
-    else:
-        inputs_dir = Path(ROOT + "/baseline_without_filter_rerun_test_results_0526")
+def evaluate_model(task_names, classification=False):  
+    output_dir = Path(ROOT + "/baseline_without_filter_rerun_test_results_0526")
     
     model = LLM(
         model=MODEL_PATH,
@@ -105,22 +102,7 @@ def evaluate_model(task_names, finetuned=False, classification=False):
 
     for task_name in task_names:
 
-        # if finetuned:
-        #     ckpt_path=f'/home/azureuser/p2mss/p2mss/best_ckpt/final_{task_name}'
-        #     model = LLM(
-        #         model=ckpt_path,
-        #         gpu_memory_utilization=0.9,
-        #         swap_space = 16,
-        #         tensor_parallel_size=1,  # 根据卡数改
-        #     )
-        # else:
-        #     model = LLM(
-        #         model=MODEL_PATH,
-        #         gpu_memory_utilization=0.9,
-        #         swap_space = 16,
-        #         tensor_parallel_size=1,
-        #     )
-        # change suffix
+
         suffix = '\n'
 
         # change notion
@@ -153,27 +135,13 @@ def evaluate_model(task_names, finetuned=False, classification=False):
                     examples=examples,
                 )
 
-                few_shots_prompt = ""
-                # dataset_path = f"/home/azureuser/p2mss/p2mss/classification_14/NI_{task_name}_exp_14/{task_name}_0.6_True_False_40_14/dataset"
-                # if not classification:
-                #     dataset_path = f"/home/azureuser/p2mss/p2mss/generation_11/NI_{task_name}_exp_11/{task_name}_1.0_True_True_20_11/dataset"
-                # dataset = load_from_disk(dataset_path)
-                # inputs = dataset['input_col']
-                # outputs = dataset['output_col']
-                # # TODO: 改长度
-                # n = 22
-                # for i in range(n):
-                #     few_shots_prompt += 'USER: [input] = ' + inputs[i] + '\n'
-                #     few_shots_prompt += 'ASSISTANT: ' + outputs[i] + '\n'
-
-                
                 def map_func(example):
                     example["model_input"] = construct_meta_prompt(
                         instruction=prompt_spec.instruction,
                         examples=prompt_spec.examples,
                         new_input=example["input_col"],
                         is_generation=False,
-                        few_shots_prompt=few_shots_prompt,
+                        few_shots_prompt="",
                         notion=notion,
                         suffix=suffix
                     )
@@ -243,7 +211,7 @@ def evaluate_model(task_names, finetuned=False, classification=False):
                 
                 print(f"{task_name} {test_type} => {evaluate_result}")
                 #TODO change file name every day
-                evaluate_generated_content_path = inputs_dir / f"20240526_10sample_2_{task_name}" # 0327用的是只sample一个的，0526用的是sample10个的参数
+                evaluate_generated_content_path = output_dir / f"20240526_{task_name}" # 0327用的是只sample一个的，0526用的是sample10个的参数
                 datasets.Dataset.from_dict(
                     dict(
                         model_output=decoded_outputs,
@@ -266,7 +234,8 @@ def evaluate_model(task_names, finetuned=False, classification=False):
 # classification_tasks = ["task1516", "task1529", "task1612", "task1615", "task284", "task329", "task346"]
 # evaluate_model(classification_tasks, finetuned=False, classification=True)          
 # generation tasks:
-generation_tasks = ["task281", "task1345", "task1562", "task1622"]
-generation_tasks = ["task281"]
-evaluate_model(generation_tasks, finetuned=False, classification=False)
+
+if __name__ == "__main__":
+    generation_tasks = ["task281", "task1345", "task1562", "task1622"]
+    evaluate_model(generation_tasks, classification=False)
 
