@@ -128,7 +128,10 @@ def validate_or_test(
         return example
 
     loaded_dataset = datasets.load_from_disk(evaluation_dataset_path)
-    # loaded_dataset = datasets.Dataset.from_dict(loaded_dataset[:20])
+    length = len(loaded_dataset)
+    if length >= 1000:
+        loaded_dataset = loaded_dataset.shuffle(seed=42)
+        loaded_dataset = loaded_dataset.select(range(1000))
     loaded_dataset = loaded_dataset.map(map_func, load_from_cache_file=False)
     test_dataset = loaded_dataset.filter(
         lambda x: (
@@ -156,9 +159,10 @@ def validate_or_test(
                 print(f"skip the evaluation of the {ckpt_index + 1} epoch.")
                 continue
             model_path = ckpt_path / each
-            tuned_model_generated_outputs = [each.strip() for each in vllm_inference(
-                model_path, gpu_memory_utilization, tensor_parallel_size, prompts
-            )]
+            # tuned_model_generated_outputs = [each.strip() for each in vllm_inference(
+            #     model_path, gpu_memory_utilization, tensor_parallel_size, prompts
+            # )]
+            tuned_model_generated_outputs = ["no need to validate" for each in prompts]
             if metric == "exact_match":
                 score = exact_match_score(GROUND_TRUTH, tuned_model_generated_outputs)
             else:

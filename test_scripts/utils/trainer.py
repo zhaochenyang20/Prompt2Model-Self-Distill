@@ -88,7 +88,7 @@ def finetune_vicuna(
         run_name=run_name,
         output_dir=str(ckpt_path),
         do_eval=False,
-        save_strategy="epoch",
+        save_strategy="no",
         evaluation_strategy="no",
         logging_steps=4,
         num_train_epochs=training_epochs,
@@ -105,6 +105,9 @@ def finetune_vicuna(
     )
     wandb.config.update(training_args.to_dict(), allow_val_change=True)
     trainer.train(resume_from_checkpoint=resume_from_checkpoint)
+    mock_ckpt_path = ckpt_path / "checkpoint-1"
+    model.save_pretrained(mock_ckpt_path)
+    tokenizer.save_pretrained(mock_ckpt_path)
     for dirpath, _, filenames in os.walk(str(ckpt_path), topdown=True):
         # Delete optimizer
         for filename in filenames:

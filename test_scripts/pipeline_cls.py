@@ -22,13 +22,9 @@ from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
 # TODO change experiment rank
-experiment_rank = 19
-# 14 用双向 in + != ""，14 copy 是用双向 in + != ""
-# 15 strictly exact match
-# 16 for abblation study, without self verify
-# 17 reverse label
-# 18 for debugging
-# 19 prompt sensitivity
+experiment_rank = 3
+
+# 3 去掉 ablaiton
 
 gpu_memory_utilization = 0.9
 # 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
@@ -37,15 +33,7 @@ per_device_train_batch_size = 1
 max_training_epochs = 3
 from main import main, validate_or_test
 
-# [task1388. task738, task1554, task935, task199, task202, task1344, task1385, task201, task020, task1615]
-# [task1386, task1529, task190, task200, task937, task642, task1612, task1516]
-# 1388 ，task1386 先不跑了
-
-[task346, task190, task199, task1612, task200, task738, task937, task1385, task1386, task1516, task1529, task1615, task284, task329]
-
-# TODO change task
-
-for task in [task346]:
+for task in [task1516, task1529, task1612, task1615, task284, task329, task346]:
 
     task_name = task.task_name
     # TODO 加expected content和metrics
@@ -235,14 +223,10 @@ for task in [task346]:
         write_results(log_and_data_root, max_training_epochs)
         return highest_validation_result
 
-    # 选择参数
-    # temperatures = [0.6, 0.7, 0.8, 0.9, 1.0]
-    # input_constraints = [False, True]
-    # output_constraints = [False, True]
     temperatures = [0.7]
-    input_constraints = [True]
-    output_constraints = [True]
-    generation_epoches = [10, 40, 80, 120, 150, 200]
+    input_constraints = [False]
+    output_constraints = [False]
+    generation_epoches = [40]
 
     all_combinations = list(itertools.product(temperatures, input_constraints, output_constraints, generation_epoches))
 
@@ -266,16 +250,16 @@ for task in [task346]:
         print("Already tested.")
     else:
         print("test best ckpt.")
-        # validate_or_test(
-        #         test_set_path,
-        #         best_ckpt_path / experiment_name,
-        #         instruction,
-        #         examples,
-        #         gpu_memory_utilization,
-        #         1,
-        #         best_validation_result_path,
-        #         test_content_store_path=log_and_data_root / "best_ckpt_generated_content",
-        #         validation=False,
-        #         metric=metric,
-        #     )
+        validate_or_test(
+                test_set_path,
+                best_ckpt_path / experiment_name,
+                instruction,
+                examples,
+                gpu_memory_utilization,
+                1,
+                best_validation_result_path,
+                test_content_store_path=log_and_data_root / "best_ckpt_generated_content",
+                validation=False,
+                metric=metric,
+            )
     destroy_model_parallel()
