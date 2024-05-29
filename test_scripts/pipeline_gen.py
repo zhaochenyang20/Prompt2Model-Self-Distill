@@ -5,8 +5,7 @@ import os
 # TODO: change card
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
 TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
@@ -17,14 +16,15 @@ from prompt2model.utils.path import ROOT, STORE_ROOT, TEST_DATA_ROOT
 from vllm.model_executor.parallel_utils.parallel_state import destroy_model_parallel
 
 # TODO change experiment rank
-experiment_rank = 3
+experiment_rank = 5
 # 3 去掉 ablaiton
+# 4 两个都去掉
 
 gpu_memory_utilization = 0.9
 # 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
 per_device_train_batch_size = 1
 # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
-max_training_epochs = 3
+max_training_epochs = 1
 from main import main, validate_or_test
 
 # task_names = [
@@ -40,7 +40,7 @@ task_names = [
  'task1622']
 
 # TODO: change task name
-for task_name in task_names[::2]:
+for task_name in task_names[1::2]:
     file_path = ROOT+"/main/NI_tasks/tasks.json"
     with open(file_path, "r", encoding="utf-8") as json_file:
         all_tasks = json.load(json_file)
@@ -244,8 +244,8 @@ for task_name in task_names[::2]:
 
     temperatures = [0.9]
     input_constraints = [False]
-    output_constraints = [True]
-    generation_epoches = [1]
+    output_constraints = [False]
+    generation_epoches = [20]
 
     all_combinations = list(itertools.product(temperatures, input_constraints, output_constraints, generation_epoches))
 

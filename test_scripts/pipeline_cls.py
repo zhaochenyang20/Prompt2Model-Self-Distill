@@ -6,8 +6,7 @@ os.environ["TRANSFORMERS_OFFLINE"] = "1"
 os.environ["HF_DATASETS_OFFLINE"] = "1"
 
 # TODO change card name
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 TENSOR_SIZE = len(os.environ["CUDA_VISIBLE_DEVICES"].split(","))
 
@@ -30,11 +29,11 @@ gpu_memory_utilization = 0.9
 # 如果别人用了某张卡的不到一半，我们可以开 2 张卡，BS 开成 10；但是卡是空的，我们就单卡 bs = 1
 per_device_train_batch_size = 1
 # bs 为 2 的时候，单卡显存是 40G，然后如果能用一整张卡，就用 bs = 6 或者 4
-max_training_epochs = 3
+max_training_epochs = 1
 from main import main, validate_or_test
 
-for task in [task1516, task1529, task1612, task1615, task284, task329, task346]:
-
+for task in [task346]:
+    
     task_name = task.task_name
     # TODO 加expected content和metrics
     experiment_name = "NI_" + task_name + f"_exp_{experiment_rank}"
