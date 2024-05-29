@@ -80,6 +80,8 @@ def finetune_vicuna(
         device_map="auto",
         torch_dtype=torch.bfloat16,
         use_flash_attention_2=True,
+        # baichuan 不行
+        trust_remote_code=True,
     )
     wandb.init(project=task_name, name=run_name)
     wandb.watch(model)

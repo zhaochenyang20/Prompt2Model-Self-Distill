@@ -51,12 +51,14 @@ class VLLMPromptBasedInputGenerator(InputGenerator):
                 model=MODEL_PATH,
                 gpu_memory_utilization=gpu_memory_utilization,
                 tensor_parallel_size=tensor_parallel_size,
+                trust_remote_code=True,
             )
         else:
             self.language_model = LLM(
                 model=pretrained_model_name,
                 gpu_memory_utilization=gpu_memory_utilization,
                 tensor_parallel_size=tensor_parallel_size,
+                trust_remote_code=True,
             )
 
     def construct_generation_prompt(
